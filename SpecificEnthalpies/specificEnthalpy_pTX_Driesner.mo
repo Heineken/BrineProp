@@ -1,4 +1,4 @@
-within Brine.SpecificEnthalpies;
+within BrineProp.SpecificEnthalpies;
 function specificEnthalpy_pTX_Driesner
   "enthalpy calculation according to Driesner 2007 et al: 0-1000°C; 0.1-500MPa (doi:10.1016/j.gca.2007.05.026)"
 //Pressure limited to 100 MPa by Modelica Water property function
@@ -7,7 +7,7 @@ function specificEnthalpy_pTX_Driesner
   input Modelica.SIunits.MassFraction X_NaCl "mass fraction m_NaCl/m_Sol";
   output Modelica.SIunits.SpecificEnthalpy h;/**/
 public
-  constant Real M_NaCl=Salt_Data.M_NaCl "molar mass in [kg/mol]";
+  constant Real M_NaCl=BrineProp.SaltData.M_NaCl "molar mass in [kg/mol]";
 //  constant Real M_H2O =  PartialBrine.M_H2O "molar mass in [kg/mol] TODO";
 
 //  Molality mola=X[1]/M_NaCl "molality b (mol_NaCl/kg_sol) äöüö";

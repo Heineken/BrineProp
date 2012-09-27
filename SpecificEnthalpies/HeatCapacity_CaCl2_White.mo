@@ -1,9 +1,9 @@
-within Brine.SpecificEnthalpies;
+within BrineProp.SpecificEnthalpies;
 function HeatCapacity_CaCl2_White
 //2D-fit Reproduction of measurements of heat capacity of KCl solution
 //  input Modelica.SIunits.Pressure p;
   input Modelica.SIunits.Temp_K T;
-  input Brine.Partial_Units.Molality b "n_KCl/m_H2O";
+  input BrineProp.Partial_Units.Molality b "n_KCl/m_H2O";
 //  output Modelica.SIunits.SpecificHeatCapacity cp=1 "=cp_by_cpWater*cp_Water";
 //  output Real cp_by_cpWater;
   output Real int_cp_by_cpWater;

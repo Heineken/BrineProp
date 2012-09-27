@@ -1,4 +1,4 @@
-within Brine.Brine_Duan_Multi_TwoPhase_ngas_3;
+within BrineProp.Brine_Duan_Multi_TwoPhase_ngas_3;
 function fugacity_H2O
   "Calculation of fugacity coefficient according to (Duan 2003)"
   extends fugacity_pTX;

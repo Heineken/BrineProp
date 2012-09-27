@@ -1,4 +1,4 @@
-within Brine.Densities;
+within BrineProp.Densities;
 function density_Duan2008_pTX "density calculation of an aqueous salt solution according to Shide Mao and Zhenhao Duan (2008) 0-300°C; 0.1-100MPa; 0-6 mol/kg
   http://dx.doi.org/10.1016/j.jct.2008.03.005
   http://www.geochem-model.org/wp-content/uploads/2009/09/55-JCT_40_1046.pdf
@@ -76,7 +76,8 @@ protected
   Real[23] c;
 
 //  Modelica.SIunits.Density[nX_salt] rho;
-  Salt_Data_Duan.SaltConstants salt;
+  BrineProp.SaltData_Duan.SaltConstants
+                               salt;
   constant Molality[:] m=massFractionsToMolalities(X, MM_vec);
   Modelica.SIunits.Pressure p_sat=Modelica.Media.Water.IF97_Utilities.BaseIF97.Basic.psat(T);
 algorithm
@@ -108,7 +109,7 @@ algorithm
     if not X[i] > 0 then
       M_salt[i] := 1;
     else
-      salt := Salt_Data_Duan.saltConstants[i];
+      salt :=BrineProp.SaltData_Duan.saltConstants[i];
 
      if outOfRangeMode==1 then
         if not (m[i] >= 0 and m[i] <= salt.mola_max_rho) then

@@ -1,7 +1,7 @@
-within Brine.Examples;
+within BrineProp.Examples;
 model MediaExampleState
 
-package Medium = Brine_Duan_Multi_TwoPhase_ngas_3;
+package Medium = BrineProp.Brine_5salts_TwoPhase_3gas;
 //  package Medium = Modelica.Media.Water.WaterIF97_ph;
   Medium.ThermodynamicState state;
 

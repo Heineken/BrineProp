@@ -1,4 +1,4 @@
-within Brine.Viscosities;
+within BrineProp.Viscosities;
 function dynamicViscosity_Duan_pTX
   "Multisalt-Version of viscosity calculation according to Duan et al 2009: Considers NaCl and KCL, with linear mixing"
   //doi:10.1007/s10765-009-0646-7
@@ -7,7 +7,8 @@ function dynamicViscosity_Duan_pTX
   input Modelica.SIunits.Temp_K T_K;
   input Modelica.SIunits.MassFraction X[:] "mass fraction m_NaCl/m_Sol";
   input Modelica.SIunits.MolarMass MM[:];
-  input Salt_Data_Duan.SaltConstants[:] Salt_Constants;
+  input BrineProp.SaltData_Duan.SaltConstants[
+                                     :] Salt_Constants;
   output Modelica.SIunits.DynamicViscosity eta;
 protected
   Modelica.SIunits.Temp_C T_C = Modelica.SIunits.Conversions.to_degC(T_K);
@@ -25,7 +26,8 @@ protected
   Modelica.SIunits.DynamicViscosity eta_H2O;
   Modelica.Media.Water.WaterIF97_base.ThermodynamicState state_H2O;
 
-  Salt_Data_Duan.SaltConstants salt;
+  BrineProp.SaltData_Duan.SaltConstants
+                               salt;
 //  constant Molality[nXi] molalities=Partial_Gas_Data.massFractionsToMolalities(X[1:nXi],MM[1:nXi]) "TODO: direkter Verweis doof";
   constant Partial_Units.Molality[:] molalities=X[1:nX_salt] ./ MM[1:nX_salt]/
       X[end];

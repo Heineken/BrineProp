@@ -1,4 +1,4 @@
-within Brine.Examples;
+within BrineProp.Examples;
 model BinarySaltValidation "Calculation of Values given by Zhang1997"
 package Medium = PowerPlant.Media.Brine.Brine_Duan_Multi_TwoPhase_ngas_3;
 

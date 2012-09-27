@@ -1,4 +1,4 @@
-within Brine.SpecificEnthalpies;
+within BrineProp.SpecificEnthalpies;
 function specificEnthalpy_pTX_Francke_hsol
   "enthalpy calculation using solution enthalpies"
 //Pressure limited to 100 MPa by Modelica Water property function
@@ -8,7 +8,7 @@ function specificEnthalpy_pTX_Francke_hsol
   output Modelica.SIunits.SpecificEnthalpy h;/**/
 //  constant Real M_NaCl=Salt_Data.M_NaCl "molar mass in [kg/mol]";
 protected
-  Modelica.SIunits.MolarMass MM_vec_salt[:]=Salt_Data.MM_salt[1:5];
+  Modelica.SIunits.MolarMass MM_vec_salt[:]=BrineProp.SaltData.MM_salt[1:5];
 
 //   constant Modelica.SIunits.SpecificHeatCapacity cp_NaCl = 50.5/M_NaCl "[J/(kg·K)] http://hyperphysics.phy-astr.gsu.edu/hbase/tables/therprop.html";
 //   constant Modelica.SIunits.SpecificHeatCapacity cp_NaCl = 36.79/MM_vec_salt[NaCl] "[J/(kg·K)] http://en.wikipedia.org/wiki/Sodium_chloride";

@@ -1,4 +1,4 @@
-within Brine.Examples;
+within BrineProp.Examples;
 model FindBrineComposition
 //package Medium = Brine_Phillips;
 //package Medium = Brine_Magri;
@@ -45,9 +45,12 @@ package Medium = PowerPlant.Media.Brine.Brine_Duan_Multi_TwoPhase_ngas_3;
   // Modelica.SIunits.MassConcentration[:] X_g_gas(each start=0)={max(0,g/(1+sum(g)))  for  g in  gasMassPerLiquidMass};
   Modelica.SIunits.Pressure[:] PartialPressures(each start=1e4)=(props.p-props.p_H2O)*gasVolumeFractions;
   Modelica.SIunits.MassConcentration[:] X_l_gas(each start=0)= {
-    Partial_Gas_Data.solubility_CO2_pTX_Duan2003(props.p,props.T,props.X,Medium.MM_vec,PartialPressures[1]),
-    Partial_Gas_Data.solubility_N2_pTX_Duan2006(props.p,props.T,props.X,Medium.MM_vec,PartialPressures[2]),
-    Partial_Gas_Data.solubility_CH4_pTX_Duan2006(props.p,props.T,props.X,Medium.MM_vec,PartialPressures[3])}
+    BrineProp.PartialGasData.solubility_CO2_pTX_Duan2003(
+                                                 props.p,props.T,props.X,Medium.MM_vec,PartialPressures[1]),
+    BrineProp.PartialGasData.solubility_N2_pTX_Duan2006(
+                                                props.p,props.T,props.X,Medium.MM_vec,PartialPressures[2]),
+    BrineProp.PartialGasData.solubility_CH4_pTX_Duan2006(
+                                                 props.p,props.T,props.X,Medium.MM_vec,PartialPressures[3])}
     "gas mass in liquid phase per fluid mass";
 /*  Modelica.SIunits.MassConcentration[:] X_l_gas= {2.65E-08,3.61E-11,5.47E-11}.*PartialPressures;
 */

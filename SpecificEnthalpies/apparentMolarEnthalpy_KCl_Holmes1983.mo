@@ -1,4 +1,4 @@
-within Brine.SpecificEnthalpies;
+within BrineProp.SpecificEnthalpies;
 function apparentMolarEnthalpy_KCl_Holmes1983
   "enthalpy calculation according to H. F. Holmes, R. E. Mesmer 1983: 0-250°C; 0.1-MPa (doi:10.1021/j100230a030)"
 //  input Modelica.SIunits.Pressure p;

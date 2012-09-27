@@ -1,4 +1,4 @@
-within Brine.SpecificEnthalpies;
+within BrineProp.SpecificEnthalpies;
 function specificEnthalpy_pTX_Francke_cp "enthalpy calculation DIY"
 //based on Driesner enthalpy function NaCl and pressure independent 2D-fits (T,b) for cp measurement data for KCl and CaCl2 solutions
 //TODO: Add Cp_appmol for (NaCl),MgCl and SrCl
@@ -28,17 +28,17 @@ protected
     Delta_h_solution_MgCl2,
     Delta_h_solution_SrCl2};
 
-  Modelica.SIunits.MolarMass MM_vec_salt[:]=Salt_Data.MM_salt[1:5];
+  Modelica.SIunits.MolarMass MM_vec_salt[:]=BrineProp.SaltData.MM_salt[1:5];
   Partial_Units.Molality mola[size(X,1)]=massFractionsToMolalities(X,cat(1,MM_vec_salt,fill(-1,size(X,1)-size(MM_vec_salt,1))));
   Partial_Units.Molality b[5]=mola[1:5];
 
 //  Modelica.SIunits.SpecificEnthalpy h_H2O =  Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p, T);
-  Modelica.SIunits.SpecificEnthalpy h_Driesner =  Brine.SpecificEnthalpies.specificEnthalpy_pTX_Driesner(p, T, X[1]/(X[1]+X[end]));
+  Modelica.SIunits.SpecificEnthalpy h_Driesner =  BrineProp.SpecificEnthalpies.specificEnthalpy_pTX_Driesner(
+                                                                                                    p, T, X[1]/(X[1]+X[end]));
 
- Brine.Partial_Units.PartialMolarHeatCapacity[5] Cp_appmol={0,
-   HeatCapacity_KCl_White(T,b[KCl]),
-   HeatCapacity_CaCl2_White(T,b[CaCl2]),
-   0,0} "Apparent molar enthalpy of salts";
+ BrineProp.Partial_Units.PartialMolarHeatCapacity[5] Cp_appmol={0,
+      HeatCapacity_KCl_White(T, b[KCl]),HeatCapacity_CaCl2_White(T, b[CaCl2]),0,
+      0} "Apparent molar enthalpy of salts";
 
   /*Modelica.SIunits.Temp_C T_C = Modelica.SIunits.Conversions.to_degC(T);
   Pressure_bar p_bar=Modelica.SIunits.Conversions.to_bar(p); */
@@ -51,7 +51,9 @@ protected
     HeatCapacity_CaCl2_White(T,b[CaCl2]),
     0,0} "cp ratios integrated over T";
  Modelica.SIunits.SpecificHeatCapacity cp_H2O=Modelica.Media.Water.IF97_Utilities.cp_pT(p,T,1);
- Brine.Partial_Units.PartialMolarEnthalpy[:] H_appmol= { (if b[i]>0 then ((1 .+ MM_vec_salt[i] .* b[i]) .* int_cp_by_cpWater[i] .- T)*cp_H2O ./ b[i] else 0) for  i in 1:5}  .+ Delta_h_solution
+ BrineProp.Partial_Units.PartialMolarEnthalpy[:] H_appmol={(if b[i] > 0 then ((
+      1 .+ MM_vec_salt[i] .* b[i]) .* int_cp_by_cpWater[i] .- T)*cp_H2O ./ b[i]
+       else 0) for i in 1:5} .+ Delta_h_solution
     "Apparent molar enthalpy of salts";
 algorithm
 //Modelica.Utilities.Streams.print("h_H2O: "+String(h_H2O)+" J/kg");

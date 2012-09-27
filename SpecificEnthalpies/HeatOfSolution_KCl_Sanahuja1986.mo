@@ -1,4 +1,4 @@
-within Brine.SpecificEnthalpies;
+within BrineProp.SpecificEnthalpies;
 function HeatOfSolution_KCl_Sanahuja1986
   "2nd degree polynomial fit from Sanahuja1986 http://dx.doi.org/10.1016/0021-9614(86)90063-7"
   input Modelica.SIunits.Temperature T;

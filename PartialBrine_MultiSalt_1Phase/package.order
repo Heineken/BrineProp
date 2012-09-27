@@ -1,0 +1,16 @@
+BrineConstants
+explicitVars
+Salt_data
+MM_salt
+nM_salt
+MM_vec
+nM_vec
+saltNames
+nX_salt
+dynamicViscosity_pTX
+BaseProperties
+density_pTX
+specificEnthalpy_pTX
+temperature_phX
+setState_pTX
+setState_phX
