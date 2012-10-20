@@ -27,6 +27,7 @@ partial package PartialBrine_MultiSalt_1Phase "Template for one-phase (liquid) b
   constant String explicitVars = "ph"
   "set of variables the model is explicit for, may be set to all combinations of ph or pT, setting pT should speed up the model in pT cases";
 
+
  replaceable package Salt_data = BrineProp.SaltData;
 
   import Partial_Units;
@@ -41,6 +42,14 @@ partial package PartialBrine_MultiSalt_1Phase "Template for one-phase (liquid) b
 
   constant Integer nX_salt = size(saltNames, 1) "Number of salt components"   annotation(Evaluate=true);
 
+
+  redeclare function extends dynamicViscosity "viscosity calculation"
+  algorithm
+    eta:=dynamicViscosity_pTX(
+      state.p,
+      state.T,
+      state.X);
+  end dynamicViscosity;
 
   replaceable function dynamicViscosity_pTX "viscosity calculation"
     input Modelica.SIunits.Pressure p;

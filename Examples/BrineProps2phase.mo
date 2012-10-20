@@ -80,10 +80,12 @@ Real f=1;*/
   Modelica.SIunits.MassFraction X_CH4(start=1e-5,min=0);*/
 //  Modelica.SIunits.SpecificEnthalpy[:] h_salt_100(start={300500,0,0,0,0});
   Modelica.SIunits.SpecificEnthalpy h_Driesner= BrineProp.SpecificEnthalpies.specificEnthalpy_pTX_Driesner(
-                                                                                                    props.p,props.T,sum(props.X[1:5]));
+                                                                                                  props.p,props.T,sum(props.X[1:5]));
 //  Real tt=(h_francke-props.h)/h_francke;
 //  Modelica.SIunits.SpecificHeatCapacity c_p_brine= (Medium.specificEnthalpy_pTX(455e5,273.16+140,props.X)-Medium.specificEnthalpy_pTX(455e5,273.16+60,props.X))/(140-60);
 //  Modelica.SIunits.SpecificHeatCapacity c_p_salt= (c_p_brine-4190*props.X[end])/props.X[1];
+initial equation
+ props.T = 273.16+60;
 equation
 //  h_francke =props.h;
 //  h_salt_100[2:end]={0,0,0,0};
@@ -100,7 +102,9 @@ equation
   props.p = 15e5;
 //  props.h = 379778;
 //  props.p = (10+time)*1.01325e5 "STP";
- props.T = 273.16+30;
+// props.T = 273.16+30;
+    der(props.h)=10000;
+
 /*
   props.p = 9.13e5;
   props.T = 273.16+99.61;
@@ -139,7 +143,7 @@ equation
 //  props.Xi = {0.089190167,0.005198142,0.137663206,0*0.001453819,0*0.002621571, 5.87e-5, 8.04e-4,  7.14e-5}     "Messwerte aus STR04/16 direkt";
 //  f=.978235 "-> 265 g/l";
 //   props.Xi = f*{0.089182812,0.005197713,0.137651853,0.001453699,0.002621355,1.6015e-4,8.07e-4,7.209e-5}     "Entsprechend STR04/16 bei GG mit d_l=1091.37 kg/m³ - X_g stimmt";
-   props.Xi = {    0.081109,   0.0047275,     0.12519,   0*0.0013225,  0*0.0023842,  0*0.00016889,  0*0.00073464, 0*6.5657e-005}
+   props.Xi = {    0.081109,   0.0047275,     0.12519,   0.0013225,  0*0.0023842,  0*0.00016889,  0*0.00073464, 0*6.5657e-005}
     "Entsprechend STR04/16 bei GG mit d_l=1199.48 kg/m³ - X_g stimmt";
 //  props.Xi = {6*Salt_Data.M_NaCl/(1+6*Salt_Data.M_NaCl),0,0,0,0, 0,0,0} "NaCl, KCl, CaCl2, MgCl2, SrCl2, CO2, N2, CH4";
 

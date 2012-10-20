@@ -89,8 +89,8 @@ protected
  algorithm
   if T<273.16 then
      Modelica.Utilities.Streams.print("T="+String(T)+" too low (<0°C), setting to 0°C in PartialBrine_ngas_Newton.quality_pTX()");
-     T_corr:= max(273.16,T);
   end if;
+  T_corr:= max(273.16,T);
 
   eta := Viscosities.dynamicViscosity_Duan_pTX(
      p,

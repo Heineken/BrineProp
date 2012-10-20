@@ -3,12 +3,16 @@ model BrineProps1Phase
 package Medium = Brine_5salts_noGas;
   Medium.BaseProperties props;
 
-  Modelica.SIunits.Density d= props.d;  /**/
+  Modelica.SIunits.Density d= props.d;
+  Modelica.SIunits.SpecificEnthalpy h= props.h;
+  Modelica.SIunits.Temp_C T_C= props.T-273.15;
+  Modelica.SIunits.DynamicViscosity eta=Medium.dynamicViscosity(props.state);
+
 equation
   props.p = 15e5;
 //  props.h = 379778;
 //  props.p = (10+time)*1.01325e5 "STP";
- props.T = 273.16+30;
+ props.T = 273.16+60+time*80;
 /*
   props.p = 9.13e5;
   props.T = 273.16+99.61;

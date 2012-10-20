@@ -44,16 +44,18 @@ package Brine_5salts_noGas "One-phase (liquid) multisalt brine solution"
   protected
    Modelica.SIunits.Temperature T_corr;
  algorithm
+ //Modelica.Utilities.Streams.print("p="+String(p)+" Pa, T="+String(T)+" K (BrineProp.Brine_5salts_noGas.dynamicViscosity_pTX)");
+
   if T<273.16 then
      Modelica.Utilities.Streams.print("T="+String(T)+" too low (<0°C), setting to 0°C in PartialBrine_ngas_Newton.quality_pTX()");
-     T_corr:= max(273.16,T);
   end if;
+     T_corr:= max(273.16,T);
 
     eta := Viscosities.dynamicViscosity_Duan_pTX(
        p,
        T_corr,
        X,
-       PartialBrine_ngas_Newton.MM_vec,
+       MM_vec,
        Salt_data.saltConstants);
  end dynamicViscosity_pTX;
   annotation (Documentation(info="<html>
