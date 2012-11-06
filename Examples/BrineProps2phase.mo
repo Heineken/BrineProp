@@ -78,16 +78,20 @@ Real f=1;*/
 
 /*  Modelica.SIunits.MassFraction X_N2(start=1e-5,min=0);
   Modelica.SIunits.MassFraction X_CH4(start=1e-5,min=0);*/
-//  Modelica.SIunits.SpecificEnthalpy[:] h_salt_100(start={300500,0,0,0,0});
-  Modelica.SIunits.SpecificEnthalpy h_Driesner= BrineProp.SpecificEnthalpies.specificEnthalpy_pTX_Driesner(
-                                                                                                  props.p,props.T,sum(props.X[1:5]));
+  Modelica.SIunits.SpecificEnthalpy h_francke;
+  Real val2;
+//  Modelica.SIunits.SpecificEnthalpy h_Driesner= BrineProp.SpecificEnthalpies.specificEnthalpy_pTX_Driesner(props.p,props.T,sum(props.X[1:5]));
 //  Real tt=(h_francke-props.h)/h_francke;
-//  Modelica.SIunits.SpecificHeatCapacity c_p_brine= (Medium.specificEnthalpy_pTX(455e5,273.16+140,props.X)-Medium.specificEnthalpy_pTX(455e5,273.16+60,props.X))/(140-60);
 //  Modelica.SIunits.SpecificHeatCapacity c_p_salt= (c_p_brine-4190*props.X[end])/props.X[1];
+//  Modelica.SIunits.SpecificHeatCapacity c_p_Driesner= SpecificEnthalpies.specificHeatCapacity_pTX_Driesner(props.p,props.T,sum(props.X[1:5]));
+  Modelica.SIunits.SpecificHeatCapacity c_p_brine= Medium.specificHeatCapacityCp(props.state);
+  Modelica.SIunits.SpecificHeatCapacity c_p_brine2=(Medium.specificEnthalpy_pTX(props.p,props.T+.1,props.X)-Medium.specificEnthalpy_pTX(props.p,props.T-.1,props.X))/.2;
+  Modelica.SIunits.SpecificHeatCapacity c_p_liq=Medium.specificHeatCapacityCp_liq(props.state);
+  Modelica.SIunits.SpecificHeatCapacity c_p_gas=Medium.specificHeatCapacityCp_gas(props.state);
 initial equation
- props.T = 273.16+60;
+// props.T = 273.16+60;
 equation
-//  h_francke =props.h;
+  (h_francke,val2) =  SpecificEnthalpies.specificEnthalpy_pTX_liq_Francke_cp(props.p,props.T,props.X);
 //  h_salt_100[2:end]={0,0,0,0};
 
 //  props.p = (40-time)*1e5;
@@ -99,11 +103,12 @@ equation
 //  props.p = 45998589 "5 mol 150°C 450atm+p_H2O";
 //  props.p = 175*1.01325e5+Modelica.Media.Water.WaterIF97_base.saturationPressure(props.T) "1 mol 150°C";
 
-  props.p = 15e5;
-//  props.h = 379778;
+  props.p = 12e5;
+//  props.h = 600110;
 //  props.p = (10+time)*1.01325e5 "STP";
-// props.T = 273.16+30;
-    der(props.h)=10000;
+ props.T = 300+time "273.16+140";
+// props.T = 273.15+120.84;
+//    der(props.h)=10000;
 
 /*
   props.p = 9.13e5;
@@ -116,36 +121,18 @@ equation
 //  props.h = 342686;
 //  mola[:] = Medium.solubilities_pTX(props.p,props.T,props.X);
 //d = Medium.density_liquid_pTX(props.p,props.T,props.X, Medium.MM_vec);
-//1400000 = Medium.specificEnthalpy_pTX(1.01325e5,T,cat(1,Xi,{1-sum(Xi)}));
-//T = Medium.temperature_phXqy(1.01325e5,800695,cat(1,Xi,{1-sum(Xi)}),.5,.5);
 //T=props.T;
 
-//props.Xi = 257.681;
-//0-Gas
-//  props.Xi = {257.681,0,0,0,0}/d;
-//  props.Xi = {0.0982,0.0056,0.1505,0.0017,0.0035} "NaCl, c_KCl, c_CaCl2, c_MgCl2, c_SrCl2";
-//  props.Xi = {97.331,5.673,150.229,1.587,0}/d     "g/l NaCl, c_KCl, c_CaCl2, c_MgCl2, c_SrCl2";
-//  props.Xi = {0.089190167,0.005198142,0.137663206,0.001453819,0.002621571} "NaCl, c_KCl, c_CaCl2, c_MgCl2, c_SrCl2";
-
-//1-GAS
-//  props.Xi = {0,0,0,0,0,3.07582E-05} "NaCl, c_KCl, c_CaCl2, c_MgCl2, c_SrCl2, CO2/N2";
-//  props.Xi = {0.089190167,0.005198142,0.137663206,0.001453819,0.002621571, 7.85e-4} "NaCl, c_KCl, c_CaCl2, c_MgCl2, c_SrCl2, CO2/N2";
-//  props.Xi = {97.331,5.673,150.229,1.587,0.0}/props.d
-
-//2-GAS
-//  props.Xi = {0,0,0,0,0,3.07582E-05,0} "c_NaCl, c_KCl, c_CaCl2, c_MgCl2, c_SrCl2, CO2/N2";
-//  props.Xi = {0,0,0,0,0,0,3.076e-5} "NaCl, c_KCl, c_CaCl2, c_MgCl2, c_SrCl2, N2, CO2";
-//  props.Xi = {0.089190167,0.005198142,0.137663206,0.001453819,0.002621571, 7.85e-4,  5.73e-5};
-
-//3-GAS
 //  props.Xi = {0.089190167,0.005198142,0.137663206,0.001453819,0.002621571, 7.85e-4,  5.73e-5, 6.98e-5}  "NaCl, KCl, CaCl2, MgCl2, SrCl2, CO2, N2, CH4";
 //  props.Xi = {0*.225+5*Medium.Salt_data.M_NaCl/(1+5*Medium.Salt_data.M_NaCl),0,0,0,0,0,tt*50*0.000218855,(1-tt)*50*0.000125332}     "x mol NaCl";
 //  props.Xi = {0.089190167,0.005198142,0.137663206,0*0.001453819,0*0.002621571, 5.87e-5, 8.04e-4,  7.14e-5}     "Messwerte aus STR04/16 direkt";
 //  f=.978235 "-> 265 g/l";
 //   props.Xi = f*{0.089182812,0.005197713,0.137651853,0.001453699,0.002621355,1.6015e-4,8.07e-4,7.209e-5}     "Entsprechend STR04/16 bei GG mit d_l=1091.37 kg/m³ - X_g stimmt";
-   props.Xi = {    0.081109,   0.0047275,     0.12519,   0.0013225,  0*0.0023842,  0*0.00016889,  0*0.00073464, 0*6.5657e-005}
+   props.Xi = {    0.081109,   0.0047275,     0.12519,   0*0.0013225,  0*0.0023842,  0*0.00016889,  0*0.00073464, 0*6.5657e-005}
     "Entsprechend STR04/16 bei GG mit d_l=1199.48 kg/m³ - X_g stimmt";
-//  props.Xi = {6*Salt_Data.M_NaCl/(1+6*Salt_Data.M_NaCl),0,0,0,0, 0,0,0} "NaCl, KCl, CaCl2, MgCl2, SrCl2, CO2, N2, CH4";
+//  props.Xi = {6*SaltData.M_NaCl/(1+6*SaltData.M_NaCl),0,0,0,0, 0,0,0} "NaCl, KCl, CaCl2, MgCl2, SrCl2, CO2, N2, CH4";
+//  props.Xi = {0,SaltData.M_KCl/(1+SaltData.M_KCl),0,0,0,0,0,0} "NaCl, KCl, CaCl2, MgCl2, SrCl2, CO2, N2, CH4";
+//  props.Xi = {0,0,SaltData.M_CaCl2/(1+SaltData.M_CaCl2),0,0,0,0,0} "NaCl, KCl, CaCl2, MgCl2, SrCl2, CO2, N2, CH4";
 
 /*  props.Xi[1:5] = {0.089190167,0.005198142,0.137663206,0*0.001453819,0*0.002621571};
   X_g[6:8]={8.05e-4,  5.87e-5, 7.15e-5}; GEHT NICHT WEIL ER X<0 ausprobiert und das wird in PartialMedium abgefangen

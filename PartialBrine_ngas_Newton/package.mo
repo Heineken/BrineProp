@@ -11,6 +11,7 @@ constant String explicitVars = "ph"
 
   import Partial_Units;
 
+
  extends BrineProp.PartialGasData;
 
  constant Real[:] MM_gas;
@@ -185,15 +186,6 @@ redeclare record extends ThermodynamicState
 end ThermodynamicState;
 
 
-  redeclare function extends dynamicViscosity
-  algorithm
-    eta :=dynamicViscosity_pTX(
-        state.p,
-        state.T,
-        state.X);
-  end dynamicViscosity;
-
-
   redeclare function extends dewEnthalpy "dew curve specific enthalpy of water"
   algorithm
     hv := 1000;
@@ -352,7 +344,7 @@ protected
     assert(h>specificEnthalpy_pTX(p,T_a,X),"h="+String(h/1e3)+" kJ/kg -> Enthalpy too low (< 0°C) (Brine.PartialBrine_ngas_Newton.temperature_phX)");
     while true loop
       h_T:=specificEnthalpy_pTX(p,T_b,X);
-  // Modelica.Utilities.Streams.print(String(p)+","+String(T_b)+" K->"+String(h_T)+" J/kg (PartialBrine_ngas_Newton.temperature_phX)");
+  //    Modelica.Utilities.Streams.print(String(p)+","+String(T_b)+" K->"+String(h_T)+" J/kg (PartialBrine_ngas_Newton.temperature_phX)");
       if h>h_T then
         T_a := T_b;
         T_b := T_b + 50;
@@ -448,8 +440,6 @@ protected
   end saturationPressures;
 
 
-
-
   redeclare replaceable partial function extends setState_pTX
   "finds the VLE iteratively by varying the normalized quantity of gas in the gasphase, calculates the densities"
   input Real[nX_gas + 1] n_g_start=fill(.5,nX_gas+1)
@@ -465,6 +455,7 @@ protected
     Modelica.SIunits.Density d_g;
     Modelica.SIunits.Density d_l;
     Modelica.SIunits.MassFraction[nX] X_l=X "start value";
+    Modelica.SIunits.MassFraction[nX_gas+1] X_g;
     Modelica.SIunits.Pressure p_H2O;
     Modelica.SIunits.MassFraction x;
     Modelica.SIunits.Pressure p_degas;
@@ -666,12 +657,14 @@ protected
     d:=1/(x/d_g + (1 - x)/d_l);
   //  Modelica.Utilities.Streams.print(String(z)+" (p="+String(p)+" bar)");
 
+  // X_g:=if x>0 then (X-X_l*(1-x))/x else fill(0,nX);
+   X_g:=if x>0 then (X[end-nX_gas:end]-X_l[end-nX_gas:end]*(1-x))/x else fill(0,nX_gas+1);
    state :=ThermodynamicState(
       p=p,
       T=T,
       X=X,
       X_l=X_l,
-      h=x*specificEnthalpy_gas_pTX(p,T,X) + (1-x)*specificEnthalpy_liq_pTX(p,T,X),
+      h=x*specificEnthalpy_gas_pTX(p,T,X_g) + (1-x)*specificEnthalpy_liq_pTX(p,T,X_l),
       GVF=x*d/d_g,
       x=x,
       s=0,
@@ -705,13 +698,67 @@ algorithm
 end setState_phX;
 
 
-  replaceable function dynamicViscosity_pTX "viscosity calculation"
+  replaceable function dynamicViscosity_pTX_unused "viscosity calculation"
     input Modelica.SIunits.Pressure p;
     input Modelica.SIunits.Temp_K T;
     input MassFraction X[:] "mass fraction m_NaCl/m_Sol";
     output Modelica.SIunits.DynamicViscosity eta;
   //  constant Real M_NaCl=0.058443 "molar mass in [kg/mol]";
-  end dynamicViscosity_pTX;
+  end dynamicViscosity_pTX_unused;
+
+
+  redeclare replaceable function extends specificHeatCapacityCp
+  "numeric calculation of specific heat capacity at constant pressure"
+protected
+    Modelica.SIunits.SpecificHeatCapacity cp_liq=specificHeatCapacityCp_liq(state);
+    Modelica.SIunits.SpecificHeatCapacity cp_gas=specificHeatCapacityCp_gas(state);
+  algorithm
+    cp:=state.x*cp_gas + (1-state.x)*cp_liq;
+  //  Modelica.Utilities.Streams.print("c_p_liq("+String(state.T)+"°C)="+String(p)+" J/(kg·K)");
+      annotation (Documentation(info="<html>
+                                <p>In the two phase region this function returns the interpolated heat capacity between the
+                                liquid and vapour state heat capacities.</p>
+                                </html>"));
+  end specificHeatCapacityCp;
+
+
+  replaceable function specificHeatCapacityCp_liq
+  //extends specificHeatCapacityCp;SHOULD WORK WITH THIS!
+    extends Modelica.Icons.Function;
+    input ThermodynamicState state "thermodynamic state record";
+    output SpecificHeatCapacity cp
+    "Specific heat capacity at constant pressure";
+
+   /*protected 
+  constant Modelica.SIunits.TemperatureDifference dT=.1;
+algorithm 
+//    cp := Modelica.Media.Water.IF97_Utilities.cp_pT(state.p, state.T) "TODO";
+    cp:=(specificEnthalpy_pTX(state.p,state.T+dT,state.X)-state.h)/dT;
+    */
+
+  end specificHeatCapacityCp_liq;
+
+
+  replaceable function specificHeatCapacityCp_gas
+  //extends specificHeatCapacityCp;SHOULD WORK WITH THIS!
+    extends Modelica.Icons.Function;
+    input ThermodynamicState state "thermodynamic state record";
+    output SpecificHeatCapacity cp
+    "Specific heat capacity at constant pressure";
+  /*protected 
+  constant Modelica.SIunits.TemperatureDifference dT=.1;
+algorithm 
+//    cp := Modelica.Media.Water.IF97_Utilities.cp_pT(state.p, state.T) "TODO";
+    cp:=(specificEnthalpy_pTX(state.p,state.T+dT,state.X)-state.h)/dT;
+    */
+
+protected
+    Modelica.SIunits.MassFraction[nX] X_g=if state.x>0 then (state.X-state.X_l*(1-state.x))/state.x
+   else
+       fill(-1,nX);
+    Modelica.SIunits.SpecificHeatCapacity cp_vec[nX_gas+1];
+  end specificHeatCapacityCp_gas;
+
 
   annotation (Documentation(info="<html>
 <p>

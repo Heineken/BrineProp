@@ -7,7 +7,6 @@ package Brine_Duan "NaCl solution using Duan density"
   constant Salt_data.SaltConstants salt = Salt_data.saltConstants[NaCl];
 
 
-
   redeclare function extends dynamicViscosity_pTX
    //  constant Real M_NaCl=0.058443 "molar mass in [kg/mol]";
     /*  public 

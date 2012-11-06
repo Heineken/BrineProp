@@ -60,7 +60,7 @@ protected
   Modelica.SIunits.MassFraction X_NaCl = molalities[NaCl]*M_H2O
     "mole fraction of NaCl in liquid phase";
   Modelica.SIunits.MolarVolume v_l_H2O=M_H2O/Modelica.Media.Water.WaterIF97_base.density_pT(p,T);
-  Real phi_H2O = fugacity_H2O_Duan2006(p,T);
+  Real phi_H2O = fugacity_H2O_Duan2006N2(p,T);
   final constant Real R(final unit="bar.cm3/(mol.K)") = 83.14472
     "Molar gas constant";
 /*  Real y_H20 = (1-2*X_NaCl) * p_H2O/(phi_H2O*p) * exp(v_l_H2O*(p-p_H2O)/(Modelica.Constants.R*T)) 
@@ -86,7 +86,7 @@ algorithm
    end if;
  elseif outOfRangeMode==2 then
      assert(ignoreLimitN2_T or (273<=T and T<=400), "T="+String(T)+" K, but N2 solubility calculation is only valid for temperatures between 0 and 127°C");
-     assert(p>=1e5 and p<=600e5, "p="+String(p/1e5)+" bar, but N2 solubility calculation only valid for pressures between 1 and 600 bar");
+     assert(ignoreLimitN2_p or p>=1e5 and p<=600e5, "p="+String(p/1e5)+" bar, but N2 solubility calculation only valid for pressures between 1 and 600 bar");
      assert(molalities[NaCl]<6, "mola[NaCl]="+String(molalities[NaCl])+" mol/kg, but N2 solubility calculation only valid for salinities up to 6 mol/kg");
  end if;
 

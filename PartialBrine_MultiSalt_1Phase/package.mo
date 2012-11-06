@@ -51,6 +51,7 @@ partial package PartialBrine_MultiSalt_1Phase "Template for one-phase (liquid) b
       state.X);
   end dynamicViscosity;
 
+
   replaceable function dynamicViscosity_pTX "viscosity calculation"
     input Modelica.SIunits.Pressure p;
     input Modelica.SIunits.Temp_K T;

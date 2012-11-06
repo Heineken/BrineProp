@@ -2,7 +2,6 @@ fugacity_pTX
 fugacity_H2O
 setState_pTX
 solubilities_pTX
-dynamicViscosity_pTX
 density_liquid_pTX
 specificEnthalpy_liq_pTX
 specificEnthalpy_gas_pTX
@@ -10,5 +9,7 @@ dynamicViscosity_liq
 dynamicViscosity_gas
 saturationPressures
 thermalConductivity
-specificHeatCapacityCp
 surfaceTension
+dynamicViscosity_pTX_unused
+specificHeatCapacityCp_liq
+specificHeatCapacityCp_gas

@@ -54,7 +54,7 @@ protected
   Modelica.SIunits.Pressure p_H2O = p_sat_H2O_Duan2003(T);
   Partial_Units.Pressure_bar p_bar=Modelica.SIunits.Conversions.to_bar(p);
   Modelica.SIunits.MolarVolume v_l_H2O=M_H2O/Modelica.Media.Water.WaterIF97_base.density_pT(p,T);
-  Real phi_H2O = fugacity_H2O_Duan2006b(p,T);
+  Real phi_H2O = fugacity_H2O_Duan2006CH4(p,T);
   Real y_H20 "mole fraction of H2O in vapor phase";
   Real y_CH4;
   Real phi_CH4 = fugacity_CH4_Duan1992(p,T);

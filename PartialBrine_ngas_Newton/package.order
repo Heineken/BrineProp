@@ -13,7 +13,7 @@ nX_gas
 BrineConstants
 BaseProperties
 ThermodynamicState
-dynamicViscosity
+dynamicViscosity_unused
 dewEnthalpy
 bubbleEnthalpy
 saturationTemperature
@@ -28,7 +28,9 @@ specificEnthalpy_liq_pTX
 specificEnthalpy_gas_pTX
 saturationPressures
 saturationPressure_H2O
-quality_pTX_unused
 setState_pTX
 setState_phX
-dynamicViscosity_pTX
+dynamicViscosity_pTX_unused
+specificHeatCapacityCp
+specificHeatCapacityCp_liq
+specificHeatCapacityCp_gas

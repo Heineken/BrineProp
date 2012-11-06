@@ -1,9 +1,10 @@
 within ;
 package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solutions of multiple salts and gases"
-  import SI = Modelica.SIunits;
+import SI = Modelica.SIunits;
  constant Boolean debugmode = false "print messages in functions";
  constant Boolean ignoreLimitN2_T=true;
- constant Boolean[5] ignoreLimitSalt_p={false,true,false,false,false};
+ constant Boolean ignoreLimitN2_p=true;
+ constant Boolean[5] ignoreLimitSalt_p={false,true,true,false,false};
  constant Boolean[5] ignoreLimitSalt_visc={false,false,true,false,false};
  constant Integer outOfRangeMode=2
   "when out of validity range: 0-do nothing, 1-show warnings, 2-throw error";
@@ -16,19 +17,6 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
 
   constant Modelica.SIunits.MolarMass M_H2O = Modelica.Media.Water.waterConstants[1].molarMass
   "0.018015 [kg/mol]";
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   replaceable function massFractionsToMolalities

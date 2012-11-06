@@ -7,12 +7,15 @@ package Medium = Brine_5salts_noGas;
   Modelica.SIunits.SpecificEnthalpy h= props.h;
   Modelica.SIunits.Temp_C T_C= props.T-273.15;
   Modelica.SIunits.DynamicViscosity eta=Medium.dynamicViscosity(props.state);
+  Modelica.SIunits.SpecificHeatCapacity c_p_brine= Medium.specificHeatCapacityCp(props.state);
+  Modelica.SIunits.SpecificHeatCapacity c_p_brine2=(Medium.specificEnthalpy_pTX(props.p,props.T+.1,props.X)-Medium.specificEnthalpy_pTX(props.p,props.T-.1,props.X))/.2;
 
 equation
-  props.p = 15e5;
+  props.p = 12e5;
 //  props.h = 379778;
 //  props.p = (10+time)*1.01325e5 "STP";
- props.T = 273.16+60+time*80;
+ props.T = 300+time "273.16+140";
+// props.T = 273.16+60+time;
 /*
   props.p = 9.13e5;
   props.T = 273.16+99.61;

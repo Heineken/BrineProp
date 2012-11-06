@@ -1,6 +1,7 @@
 within BrineProp.PartialGasData;
 function fugacity_CO2_Duan2006
   "Calculation of fugacity coefficient according to (Duan 2006)"
+  //doi:10.1016/j.marchem.2005.09.001
   extends partial_fugacity_pTX;
 /*  input Modelica.SIunits.Pressure p;
   input Modelica.SIunits.Temp_K T;
@@ -137,6 +138,7 @@ algorithm
                      0,
                     -5.4965256E-7};
         end if;
+        //Region 6 omitted
   end if;
 
   phi := c[1] + (c[2] + c[3]*T + c[4]/T + c[5]/(T-150))*p_bar + (c[6] + c[7]*T + c[8]/T)*p_bar^2 + (c[9] + c[10]*T + c[11]/T)*log(p_bar) +(c[12]+c[13]*T)/p_bar + c[14]/T + c[15]*T^2;

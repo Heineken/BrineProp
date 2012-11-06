@@ -1,5 +1,6 @@
 debugmode
 ignoreLimitN2_T
+ignoreLimitN2_p
 ignoreLimitSalt_p
 ignoreLimitSalt_visc
 outOfRangeMode

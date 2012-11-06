@@ -59,7 +59,7 @@ package Brine_5salts_TwoPhase_3gas "Aqueous Solution of NaCl, KCl, CaCl2, MgCl2,
   //  Modelica.SIunits.MassFraction[:] X_l_corr=cat(1,X_l[1:nX_salt],{max(X_l[nX_salt+1],c_min),max(X_l[nX_salt+2],c_min), max(X_l[nX_salt+3],c_min), X_l[end]});
   algorithm
   //  if gasname =="carbondioxide" then
-      solu[1] := if X[nX_salt+1]>0 then solubility_CO2_pTX_Duan2003(p,T,X_l,MM_vec,p_gas[1]) else -1
+      solu[1] := if X[nX_salt+1]>0 then solubility_CO2_pTX_Duan2006(p,T,X_l,MM_vec,p_gas[1]) else -1
     "aus Partial_Gas_Data, mol/kg_H2O -> kg_CO2/kg_H2O";
   //  elseif gasname =="nitrogen" then
       solu[2] := if X[nX_salt+2]>0 then solubility_N2_pTX_Duan2006(p,T,X_l,MM_vec,p_gas[2]) else -1
@@ -81,24 +81,6 @@ package Brine_5salts_TwoPhase_3gas "Aqueous Solution of NaCl, KCl, CaCl2, MgCl2,
   //  Modelica.Utilities.Streams.print("solu={"+String(solu[1])+", "+String(solu[2])+", "+String(solu[3])+"}(solubilities_pTX)");
   //  solu:={2.03527e-008, 4.23495e-011, 6.42528e-011};
   end solubilities_pTX;
-
-
- redeclare function extends dynamicViscosity_pTX
-protected
-   Modelica.SIunits.Temperature T_corr;
- algorithm
-  if T<273.16 then
-     Modelica.Utilities.Streams.print("T="+String(T)+" too low (<0°C), setting to 0°C in PartialBrine_ngas_Newton.quality_pTX()");
-  end if;
-  T_corr:= max(273.16,T);
-
-  eta := Viscosities.dynamicViscosity_Duan_pTX(
-     p,
-     T_corr,
-     X,
-     MM_vec,
-     Salt_data.saltConstants);
- end dynamicViscosity_pTX;
 
 
   redeclare function extends density_liquid_pTX
@@ -129,7 +111,7 @@ protected
 */
 
  //    h := SpecificEnthalpies.specificEnthalpy_pTX_Driesner(p,T,X);
-     h := SpecificEnthalpies.specificEnthalpy_pTX_Francke_cp(p,T,X);
+     h := SpecificEnthalpies.specificEnthalpy_pTX_liq_Francke_cp(p,T,X);
 
  //  Modelica.Utilities.Streams.print(String(p*1e-5)+" bar,"+String(T)+" K->"+String(h)+" J/kg (Brine_Duan_Multi_TwoPhase_ngas_3.specificEnthalpy_liq_pTX)");
  //Modelica.Utilities.Streams.print("h="+String(X[1])+"*"+String(h_vec[1])+"="+String(X[1:nX_salt]*h_vec));
@@ -153,13 +135,27 @@ protected
 
 
  redeclare function extends dynamicViscosity_liq
+protected
+   Modelica.SIunits.Temperature T_corr;
  algorithm
-  eta := Partial_Viscosity.dynamicViscosity_Duan_pTX(
+  if state.T<273.16 then
+     Modelica.Utilities.Streams.print("T="+String(state.T)+" too low (<0°C), setting to 0°C in dynamicViscosity_liq");
+  end if;
+  T_corr:= max(273.16,state.T);
+
+  eta := Viscosities.dynamicViscosity_Duan_pTX(
      state.p,
-     state.T,
+     T_corr,
      state.X_l,
      MM_vec,
      Salt_data.saltConstants);
+ /*algorithm 
+ eta := Partial_Viscosity.dynamicViscosity_Duan_pTX(
+    state.p,
+    state.T,
+    state.X_l,
+    MM_vec,
+    Salt_data.saltConstants);*/
  end dynamicViscosity_liq;
 
 
@@ -168,10 +164,10 @@ protected
  algorithm
  //  eta  := dynamicViscosity_Phillips_pTX(p,T,X,MM_vec,Salt_data.saltConstants);
  //  eta  := Modelica.Media.Water.WaterIF97_base.dynamicViscosity(state);
- eta  := Modelica.Media.Water.IF97_Utilities.dynamicViscosity(state.d_g, state.T, Modelica.Media.Water.IF97_Utilities.BaseIF97.Basic.psat(state.T)-1, state.phase)
-    "Viskosität von gasförmigem Wasser";
+ //eta  := Modelica.Media.Water.IF97_Utilities.dynamicViscosity(state.d_g, state.T, Modelica.Media.Water.IF97_Utilities.BaseIF97.Basic.psat(state.T)-1, state.phase) "Viskosität von gasförmigem Wasser";
  //  eta  := Modelica.Media.Water.IF97_Utilities.dynamicViscosity(state.d_g, state.T, state.p, state.phase) "Viskosität von gasförmigem Wasser";
  //eta  := 0;
+   eta  := Modelica.Media.Air.MoistAir.dynamicViscosity(state);
  end dynamicViscosity_gas;
 
 
@@ -180,7 +176,7 @@ protected
   //  Modelica.Utilities.Streams.print("saturationPressures("+String(p)+","+String(T)+")");
 
   //  if gasname =="carbondioxide" then
-      p_sat[1] := if X[nX_salt+1]>0 then degassingPressure_CO2_Duan2003(p,T,X,MM_vec) else 0
+      p_sat[1] := if X[nX_salt+1]>0 then degassingPressure_CO2_Duan2006(p,T,X,MM_vec) else 0
     "aus Partial_Gas_Data";
   //  elseif gasname =="nitrogen" then
       p_sat[2] := if X[nX_salt+2]>0 then degassingPressure_N2_Duan2006(p,T,X,MM_vec) else 0
@@ -203,22 +199,90 @@ protected
   end thermalConductivity;
 
 
-  redeclare function extends specificHeatCapacityCp
-  "specific heat capacity at constant pressure of water"
-
-  algorithm
-      cp := Modelica.Media.Water.IF97_Utilities.cp_pT(state.p, state.T) "TODO";
-      annotation (Documentation(info="<html>
-                                <p>In the two phase region this function returns the interpolated heat capacity between the
-                                liquid and vapour state heat capacities.</p>
-                                </html>"));
-  end specificHeatCapacityCp;
-
-
   redeclare function extends surfaceTension
   algorithm
      sigma:=Modelica.Media.Water.WaterIF97_base.surfaceTension(sat) "TODO";
   end surfaceTension;
+
+
+redeclare function extends dynamicViscosity_pTX_unused
+protected
+  Modelica.SIunits.Temperature T_corr;
+algorithm
+ if T<273.16 then
+    Modelica.Utilities.Streams.print("T="+String(T)+" too low (<0°C), setting to 0°C in PartialBrine_ngas_Newton.quality_pTX()");
+ end if;
+ T_corr:= max(273.16,T);
+
+ eta := Viscosities.dynamicViscosity_Duan_pTX(
+    p,
+    T_corr,
+    X,
+    MM_vec,
+    Salt_data.saltConstants);
+end dynamicViscosity_pTX_unused;
+
+
+  redeclare function extends specificHeatCapacityCp_liq
+  "calculation of liquid specific heat capacity from apparent molar heat capacities"
+
+protected
+    Modelica.SIunits.MolarMass MM_vec_salt[:]=BrineProp.SaltData.MM_salt[1:5];
+    Modelica.SIunits.Pressure p=state.p;
+    Modelica.SIunits.Temperature T=state.T;
+    Modelica.SIunits.MassFraction X[:]=state.X "mass fraction m_NaCl/m_Sol";
+
+    Partial_Units.Molality b[size(X,1)]=massFractionsToMolalities(X,cat(1,MM_vec_salt,fill(-1,size(X,1)-size(MM_vec_salt,1))));
+
+  /*  Real cp_by_cpWater[:]={0,
+      SpecificEnthalpies.HeatCapacityRatio_KCl_White(T, b[KCl]),
+      SpecificEnthalpies.HeatCapacityRatio_CaCl2_White(T, b[CaCl2]),
+      0,0} "cp/cp_H2O of salt solutions";*/
+    Partial_Units.PartialMolarHeatCapacity[5] Cp_appmol
+    "Apparent molar enthalpy of salts";
+
+    Modelica.SIunits.SpecificHeatCapacity cp_Driesner=SpecificEnthalpies.specificHeatCapacity_pTX_Driesner(p,T,X[1]/(X[1]+X[end]));
+  //  Modelica.SIunits.SpecificHeatCapacity cp_H2O=Modelica.Media.Water.IF97_Utilities.cp_pT(p,T);
+  algorithm
+  Cp_appmol:={0,if b[KCl] > 0 then
+      SpecificEnthalpies.appMolarHeatCapacity_KCl_White(T, b[KCl]) else 0,if b[
+      CaCl2] > 0 then SpecificEnthalpies.appMolarHeatCapacity_CaCl2_White(T, b[
+      CaCl2]) else 0,0,0} "Apparent molar enthalpy of salts";
+  //    Cp_appmol:={(if b[i] > 0 and cp_by_cpWater[i]>0 then ((1 .+ MM_vec_salt[i] .* b[i]) .* cp_by_cpWater[i] .- 1)*cp_H2O ./ b[i] else 0) for i in 1:5};
+
+      cp := (X[NaCl]+X[end])*cp_Driesner + X[end]*b[2:5]*(Cp_appmol[2:5]);
+
+  //  cp:=(specificEnthalpy_pTX(state.p,state.T+.1,state.X)-state.h)/.1;
+  //  cp := Modelica.Media.Water.IF97_Utilities.cp_pT(state.p, state.T)+mola[1:size(MM_vec_salt,1)];
+  //  Modelica.Utilities.Streams.print("Cp_appmol: "+PowerPlant.vector2string(Cp_appmol)+" J/kg/K");
+  //  Modelica.Utilities.Streams.print("cp_Driesner("+String(cp_Driesner)+")= J/(kg·K)");
+
+      annotation (Documentation(info="<html>
+                                <p>In the two phase region this function returns the interpolated heat capacity between the
+                                liquid and vapour state heat capacities.</p>
+                                </html>"));
+  end specificHeatCapacityCp_liq;
+
+
+  redeclare function extends specificHeatCapacityCp_gas
+  "calculation of gas specific heat capacity"
+  import SG = Modelica.Media.IdealGases.SingleGases;
+  algorithm
+    if state.x>0 then
+      cp_vec:= {SG.CO2.specificHeatCapacityCp(state),
+               SG.N2.specificHeatCapacityCp(state),
+               SG.CH4.specificHeatCapacityCp(state),
+               SG.H2O.specificHeatCapacityCp(state)};
+      cp:=X_g[end - nX_gas:end]*cp_vec;
+    else
+      cp:=-1;
+    end if;
+
+      annotation (Documentation(info="<html>
+                                <p>In the two phase region this function returns the interpolated heat capacity between the
+                                liquid and vapour state heat capacities.</p>
+                                </html>"));
+  end specificHeatCapacityCp_gas;
 
 
   annotation (Documentation(info="<html>
