@@ -7,8 +7,8 @@ function dynamicViscosity_Duan_pTX
   input Modelica.SIunits.Temp_K T_K;
   input Modelica.SIunits.MassFraction X[:] "mass fraction m_NaCl/m_Sol";
   input Modelica.SIunits.MolarMass MM[:];
-  input BrineProp.SaltData_Duan.SaltConstants[
-                                     :] Salt_Constants;
+  input BrineProp.SaltData_Duan.SaltConstants[:]
+                                        Salt_Constants;
   output Modelica.SIunits.DynamicViscosity eta;
 protected
   Modelica.SIunits.Temp_C T_C = Modelica.SIunits.Conversions.to_degC(T_K);
@@ -28,9 +28,8 @@ protected
 
   BrineProp.SaltData_Duan.SaltConstants
                                salt;
-//  constant Molality[nXi] molalities=Partial_Gas_Data.massFractionsToMolalities(X[1:nXi],MM[1:nXi]) "TODO: direkter Verweis doof";
-  constant Partial_Units.Molality[:] molalities=X[1:nX_salt] ./ MM[1:nX_salt]/
-      X[end];
+  constant Molality[:] molalities=massFractionsToMolalities(X,MM);
+ // constant Partial_Units.Molality[:] molalities=X[1:nX_salt] ./ MM[1:nX_salt]/      X[end];
 algorithm
   if debugmode then
     Modelica.Utilities.Streams.print("p="+String(p_Pa)+" Pa, T_K"+String(T_K)+" K (Brine.Viscosities.dynamicViscosity_Duan_pTX)");
@@ -57,7 +56,7 @@ algorithm
           Modelica.Utilities.Streams.print("Ignoring "+salt.name+" content in Partial_Viscosity_Phillips.dynamicViscosity_Duan_pTX");
         end if;
       elseif outOfRangeMode==2 then
-          assert(ignoreLimitSalt_visc[i] or (molalities[i]>=0 and molalities[i]<=salt.mola_max_eta), "Molality of "+salt.name+" is "+String(molalities[i])+", but must be between 0 and "+String(salt.mola_max_eta)+" mol/kg");
+          assert(ignoreLimitSalt_visc[i] or (molalities[i]>=0 and molalities[i]<=salt.mola_max_eta), "Molality of "+salt.name+" is "+String(molalities[i])+"(X="+String(X[i])+"), but must be between 0 and "+String(salt.mola_max_eta)+" mol/kg");
       end if;
 
 //      Modelica.Utilities.Streams.print(salt.name+" content = "+String(molalities[i])+" (Partial_Viscosity_Phillips.dynamicViscosity_Phillips_pTX)");
@@ -76,7 +75,7 @@ algorithm
 //    eta := eta + etas[i]*molalities[i];
   end for;
  // eta := eta/(sum(molalities));
-  eta := etas*molalities/(sum(molalities))
+  eta := etas*molalities[1:nX_salt]/(sum(molalities[1:nX_salt]))
     "linear mixture (matrix multiplication)";
 //  Modelica.Utilities.Streams.print("Viscosity("+String(p_Pa)+","+String(T_K)+"): "+String(eta)+" Pa·s (Partial_Viscosity_Phillips.dynamicViscosity_Duan_pTX)");
 end dynamicViscosity_Duan_pTX;

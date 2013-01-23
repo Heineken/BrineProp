@@ -1,5 +1,5 @@
 within BrineProp;
-package Brine_5salts_TwoPhase_3gas "Aqueous Solution of NaCl, KCl, CaCl2, MgCl2, SrCl2, N2, CO2, CH4"
+package Brine_5salts_TwoPhase_3gas "Two-phase Aqueous Solution of NaCl, KCl, CaCl2, MgCl2, SrCl2, N2, CO2, CH4"
 
 //  extends PartialBrine_Multi_TwoPhase_ngas(
 //  extends PartialBrine_ngas_model(
@@ -196,12 +196,18 @@ protected
         state.T,
         state.p,
         state.phase);
+  //  assert(lambda>0,"lambda="+String(lambda));
+  if lambda<0 then
+    Modelica.Utilities.Streams.print("lambda = " + String(lambda) + "W/(m·K)");
+  end if;
+
   end thermalConductivity;
 
 
   redeclare function extends surfaceTension
   algorithm
-     sigma:=Modelica.Media.Water.WaterIF97_base.surfaceTension(sat) "TODO";
+     sigma:=Modelica.Media.Water.WaterIF97_base.surfaceTension(sat)
+    "TODO http://www.if.ufrgs.br/~levin/Pdfs.dir/6756.pdf";
   end surfaceTension;
 
 
@@ -230,7 +236,9 @@ protected
     Modelica.SIunits.MolarMass MM_vec_salt[:]=BrineProp.SaltData.MM_salt[1:5];
     Modelica.SIunits.Pressure p=state.p;
     Modelica.SIunits.Temperature T=state.T;
-    Modelica.SIunits.MassFraction X[:]=state.X "mass fraction m_NaCl/m_Sol";
+  //  Modelica.SIunits.MassFraction X[:]=state.X "mass fraction m_NaCl/m_Sol";
+    Modelica.SIunits.MassFraction X[:]=cat(1,state.X[1:end-1],{1-sum(state.X[1:end-1])})
+    "mass fraction m_NaCl/m_Sol";
 
     Partial_Units.Molality b[size(X,1)]=massFractionsToMolalities(X,cat(1,MM_vec_salt,fill(-1,size(X,1)-size(MM_vec_salt,1))));
 

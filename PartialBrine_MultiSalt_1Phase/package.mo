@@ -467,4 +467,13 @@ algorithm
   end if;
   state := setState_pTX(p,temperature_phX(p,h,X,phase),X,phase) ",fluidnames)";
 end setState_phX;
+
+  replaceable partial function surfaceTension_T
+  "Return surface tension sigma in the two phase region"
+  //standard function in MSL.Media takes sat-properties
+    extends Modelica.Icons.Function;
+    input SI.Temperature T "saturation property record";
+    output SurfaceTension sigma "Surface tension sigma in the two phase region";
+    annotation(Documentation(info="<html></html>"));
+  end surfaceTension_T;
 end PartialBrine_MultiSalt_1Phase;

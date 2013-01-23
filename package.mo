@@ -1,6 +1,6 @@
 within ;
 package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solutions of multiple salts and gases"
-import SI = Modelica.SIunits;
+  import SI = Modelica.SIunits;
  constant Boolean debugmode = false "print messages in functions";
  constant Boolean ignoreLimitN2_T=true;
  constant Boolean ignoreLimitN2_p=true;
@@ -35,9 +35,10 @@ import SI = Modelica.SIunits;
     if X[end]>0 then
       for i in 1:size(X, 1) loop
     // Modelica.Utilities.Streams.print("MM["+String(i)+"]="+String(MM[i]));
-    //   Modelica.Utilities.Streams.print("X["+String(i)+"]="+String(X[i]));
+    // Modelica.Utilities.Streams.print("X["+String(i)+"]="+String(X[i]));
     //    molalities[i] := if X[end]>0 then X[i]/(MM[i]*X[end]) else -1;
-        molalities[i] := X[i]/(MM[i]*X[end]);
+        molalities[i] := if X[i]<1e-6 then 0 else X[i]/(MM[i]*X[end])
+        "numerical errors my create X[i]>0, this prevents it";
       end for;
     else
        molalities:=fill(-1, size(X, 1));

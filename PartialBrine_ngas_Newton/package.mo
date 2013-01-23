@@ -74,13 +74,14 @@ constant FluidConstants[nS] BrineConstants(
 
 
  redeclare model extends BaseProperties "Base properties of medium"
-   MassFraction[nX] X_l "= X cat(1,X_salt/(X[end]*m_l),X[nX_salt+1:end])";
+   MassFraction[nX] X_l(start=cat(1,fill(0,nXi),{1}))
+    "= X cat(1,X_salt/(X[end]*m_l),X[nX_salt+1:end])";
 
    Modelica.SIunits.Density d_l;
    Modelica.SIunits.Density d_g;
 
    Real GVF "=x*d/d_ggas void fraction";
-   Real x "(min=0,max=1) gas phase mass fraction";
+   Real x "(start=0) (min=0,max=1) gas phase mass fraction";
    Modelica.SIunits.Pressure p_H2O;
    Modelica.SIunits.Pressure[nX_gas] p_gas;
    Modelica.SIunits.Pressure p_degas;
@@ -488,6 +489,7 @@ protected
     Real[nX_gas + 1,nX_gas + 1] Grad_f;
     Real DeltaC=.001;
     Modelica.SIunits.Temperature T2;
+    SpecificHeatCapacity R_gas;
   algorithm
     if debugmode then
       Modelica.Utilities.Streams.print("Running setState_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+"°C,X)...");
@@ -650,7 +652,9 @@ protected
     end if "p_degas< p";
 
   //  assert(x>=0 and (sum(n_gas_g) + n_H2O_g)>=0 or (not x>=0 and not (sum(n_gas_g) + n_H2O_g)>=0),"WEIRD!");
-    d_g:= if x>0 then p/(Modelica.Constants.R*T2)*(n_g*cat(1,MM_gas,{M_H2O}))/sum(n_g) else -1;
+    R_gas :=if x > 0 then sum(Modelica.Constants.R*X ./ MM_gas) else -1;
+    d_g :=if x > 0 then p/(T2*R_gas) else -1;
+  //  d_g:= if x>0 then p/(Modelica.Constants.R*T2)*(n_g*cat(1,MM_gas,{M_H2O}))/sum(n_g) else -1;
 
     d_l:=if not x<1 then -1 else density_liquid_pTX(p,T2,X_l,MM_vec)
     "gases are ignored anyway";

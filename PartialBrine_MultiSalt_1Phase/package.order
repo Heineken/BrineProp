@@ -15,3 +15,4 @@ specificEnthalpy_pTX
 temperature_phX
 setState_pTX
 setState_phX
+surfaceTension_T

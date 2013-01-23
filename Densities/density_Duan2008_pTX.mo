@@ -1,8 +1,5 @@
 within BrineProp.Densities;
-function density_Duan2008_pTX "density calculation of an aqueous salt solution according to Shide Mao and Zhenhao Duan (2008) 0-300°C; 0.1-100MPa; 0-6 mol/kg
-  http://dx.doi.org/10.1016/j.jct.2008.03.005
-  http://www.geochem-model.org/wp-content/uploads/2009/09/55-JCT_40_1046.pdf
-  Problems: Brine has the same evaporation temperature as pure water, only different  "
+function density_Duan2008_pTX "Brine density"
 //extends PartialBrine.density_pTX;
   input Modelica.SIunits.Pressure p;
   input Modelica.SIunits.Temp_K T;
@@ -242,4 +239,13 @@ algorithm
     "Mixing rule Laliberte&Cooper2004 equ. 5&6";
 
 //  Modelica.Utilities.Streams.print("m: "+String((1000 + m[1:nX_salt]*M_salt)*rho_H2O)+"="+ String(1/X[end]));
+
+  annotation (Documentation(info="<html>
+<p><h4><font color=\"#008000\">density calculation of an aqueous salt solution</font></h4></p>
+<p><br/>according&nbsp;to&nbsp;Shide&nbsp;Mao&nbsp;and&nbsp;Zhenhao&nbsp;Duan&nbsp;(2008)&nbsp;0-300&deg;C;&nbsp;0.1-100MPa;&nbsp;0-6&nbsp;mol/kg</p>
+<p><code><font style=\"color: #006400; \">&nbsp;&nbsp;<a href=\"http://dx.doi.org/10.1016/j.jct.2008.03.005\">http://dx.doi.org/10.1016/j.jct.2008.03.005</a></font></code></p>
+<p><code><font style=\"color: #006400; \">&nbsp;&nbsp;<a href=\"http://www.geochem-model.org/wp-content/uploads/2009/09/55-JCT_40_1046.pdf\">http://www.geochem-model.org/wp-content/uploads/2009/09/55-JCT_40_1046.pdf</a></font></code></p>
+<p><br/><h4><font color=\"#008000\">Known issues:</font></h4></p>
+<p>Brine&nbsp;has&nbsp;the&nbsp;same&nbsp;evaporation&nbsp;temperature&nbsp;as&nbsp;pure&nbsp;water,&nbsp;only&nbsp;different&nbsp;saturation pressure</p>
+</html>"));
 end density_Duan2008_pTX;

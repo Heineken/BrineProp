@@ -99,6 +99,12 @@ package Brine_5salts_noGas "One-phase (liquid) multisalt brine solution"
                                 liquid and vapour state heat capacities.</p>
                                 </html>"));
   end specificHeatCapacityCp;
+
+  redeclare function extends surfaceTension_T
+  algorithm
+     sigma:=Modelica.Media.Water.IF97_Utilities.surfaceTension(T)
+      "TODO http://www.if.ufrgs.br/~levin/Pdfs.dir/6756.pdf";
+  end surfaceTension_T;
   annotation (Documentation(info="<html>
 <p><b>Brine_5salts_nogas</b> is a package that provides properties of one-phase solution of 5 salts (NaCl, KCl, CaCl2, MgCl2, SrCl2).</p>
 <p><h4>Usage</h4></p>
