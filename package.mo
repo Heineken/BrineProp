@@ -19,6 +19,20 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
   "0.018015 [kg/mol]";
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   replaceable function massFractionsToMolalities
   "Calculate molalities (mole_i per kg H2O) from mass fractions X"
     extends Modelica.Icons.Function;

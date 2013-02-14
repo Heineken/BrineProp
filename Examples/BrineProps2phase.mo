@@ -61,11 +61,15 @@ Modelica.SIunits.DynamicViscosity eta_g = Medium.dynamicViscosityGasPhase(props.
 //  Real[:] yy=y[2:3]./fill(1-y[4],2) "volume fraction of gas phase w/o H2O";
 //  Real[:] yy=(props.p_gas/props.p./{.038,.829,.128}-{1,1,1});
   Real[:] xx=(X_g[6:8]-{5.87E-05,8.04E-04,7.14E-05})./{5.87E-05,8.04E-04,7.14E-05};
-  Real[:] y_l=if not max(props.X_l[6:8])>0 then fill(0,Medium.nX_gas) else props.X_l[6:8]./Medium.MM_gas / sum(props.X_l[6:8]./Medium.MM_gas) 
+*/
+  Real[:] y_l=if not max(props.X_l[6:8])>0 then fill(0,Medium.nX_gas) else props.X_l[6:8]./Medium.MM_gas / sum(props.X_l[6:8]./Medium.MM_gas)
     "mol fraction of dissolved gases";
-  Real V_l = sum(props.X_l[6:8]./Medium.MM_gas)*22.4/props.X_l[end] 
-    "Volume dissolved gas would have at standard conditions";
+  Real V_l = sum(props.X_l[6:8]./Medium.MM_gas)*22.4/props.X_l[end]
+    "Liter of dissolved gas per kg_brine would have after complete degassing at standard conditions";
+  Real ratioGasLiquid = V_l*props.d_l/1000;
+
 //  Real V_l = props.X_l[8]/Medium.MM_gas[3]/22.4*1000/props.X_l[end];
+/*
   Real[:] m=y[2:3]./fill(1-y[4],2) "mass fraction of gas in gas phase";
 
   Real m_t = sum(props.X[6:8]) "Total mass fraction of gases in fluid";
@@ -84,10 +88,11 @@ Real f=1;*/
 //  Real tt=(h_francke-props.h)/h_francke;
 //  Modelica.SIunits.SpecificHeatCapacity c_p_salt= (c_p_brine-4190*props.X[end])/props.X[1];
 //  Modelica.SIunits.SpecificHeatCapacity c_p_Driesner= SpecificEnthalpies.specificHeatCapacity_pTX_Driesner(props.p,props.T,sum(props.X[1:5]));
-  Modelica.SIunits.SpecificHeatCapacity c_p_brine= Medium.specificHeatCapacityCp(props.state);
+/*  Modelica.SIunits.SpecificHeatCapacity c_p_brine= Medium.specificHeatCapacityCp(props.state);
   Modelica.SIunits.SpecificHeatCapacity c_p_brine2=(Medium.specificEnthalpy_pTX(props.p,props.T+.1,props.X)-Medium.specificEnthalpy_pTX(props.p,props.T-.1,props.X))/.2;
   Modelica.SIunits.SpecificHeatCapacity c_p_liq=Medium.specificHeatCapacityCp_liq(props.state);
   Modelica.SIunits.SpecificHeatCapacity c_p_gas=Medium.specificHeatCapacityCp_gas(props.state);
+*/
 initial equation
 // props.T = 273.16+60;
 equation
@@ -95,7 +100,7 @@ equation
 //  h_salt_100[2:end]={0,0,0,0};
 
 //  props.p = (40-time)*1e5;
-//  props.p = 0e5 +time*1e5;
+  props.p = 3.82504e+007;
 //  props.p = 29.6937843572662*1.01325e5 "0 mol 150°C 25atm";
 //  props.p = 29.5346952874414*1.01325e5 "1 mol 150°C 25atm";
 //  props.p = 28.9812681963977*1.01325e5 "5 mol 150°C 25atm";
@@ -103,12 +108,12 @@ equation
 //  props.p = 45998589 "5 mol 150°C 450atm+p_H2O";
 //  props.p = 175*1.01325e5+Modelica.Media.Water.WaterIF97_base.saturationPressure(props.T) "1 mol 150°C";
 
-  props.p = 12e5;
-//  props.h = 600110;
+//  props.p = 1.01325e5;
+  props.h = 560984;
 //  props.p = (10+time)*1.01325e5 "STP";
- props.T = 300+time "273.16+140";
+//props.T = 273.16+0;
 // props.T = 273.15+120.84;
-//    der(props.h)=10000;
+// der(props.h)=10000;
 
 /*
   props.p = 9.13e5;
@@ -128,7 +133,7 @@ equation
 //  props.Xi = {0.089190167,0.005198142,0.137663206,0*0.001453819,0*0.002621571, 5.87e-5, 8.04e-4,  7.14e-5}     "Messwerte aus STR04/16 direkt";
 //  f=.978235 "-> 265 g/l";
 //   props.Xi = f*{0.089182812,0.005197713,0.137651853,0.001453699,0.002621355,1.6015e-4,8.07e-4,7.209e-5}     "Entsprechend STR04/16 bei GG mit d_l=1091.37 kg/m³ - X_g stimmt";
-   props.Xi = {    0.081109,   0.0047275,     0.12519,   0*0.0013225,  0*0.0023842,  0*0.00016889,  0*0.00073464, 0*6.5657e-005}
+   props.Xi = {    0.081109,   0.0047275,     0.12519,   0*0.0013225,  0*0.0023842,  0.00016889,  0.00073464, 6.5657e-005}
     "Entsprechend STR04/16 bei GG mit d_l=1199.48 kg/m³ - X_g stimmt";
 //  props.Xi = {6*SaltData.M_NaCl/(1+6*SaltData.M_NaCl),0,0,0,0, 0,0,0} "NaCl, KCl, CaCl2, MgCl2, SrCl2, CO2, N2, CH4";
 //  props.Xi = {0,SaltData.M_KCl/(1+SaltData.M_KCl),0,0,0,0,0,0} "NaCl, KCl, CaCl2, MgCl2, SrCl2, CO2, N2, CH4";

@@ -14,4 +14,5 @@ protected
   Modelica.SIunits.MassFraction solu;
 algorithm
     y:=c_gas-solufun(p=p,T=T,X=X,MM_vec=MM_vec,p_gas=u) "*X[end]";
+//    Modelica.Utilities.Streams.print("T="+String(T-273.16)+"°C");
 end solubility_res;

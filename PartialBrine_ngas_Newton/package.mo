@@ -20,7 +20,6 @@ constant String explicitVars = "ph"
  constant Real[:] MM_salt;
  constant Integer[:] nM_salt "number of ions per molecule";
 
-// constant Modelica.SIunits.MolarMass M_H2O = 0.018015 "[kg/mol] TODO";
  constant Modelica.SIunits.MolarMass MM_vec = cat(1,MM_salt, MM_gas, {M_H2O});
  constant Modelica.SIunits.MolarMass nM_vec = cat(1,nM_salt, nM_gas, {1});
 
@@ -185,6 +184,7 @@ redeclare record extends ThermodynamicState
 
 </html>"));
 end ThermodynamicState;
+
 
 
   redeclare function extends dewEnthalpy "dew curve specific enthalpy of water"
@@ -363,10 +363,10 @@ protected
       h_T:=specificEnthalpy_pTX(p,T,X);
       if h_T > h then
         T_b:=T;
-  //      Modelica.Utilities.Streams.print("T_b="+String(T)+"K -> h="+String(h_T-h));
+  //      Modelica.Utilities.Streams.print("T_b="+String(T)+"K -> dh="+String(h_T-h));
       else
         T_a:=T;
-  //      Modelica.Utilities.Streams.print("T_a="+String(T)+"K -> h="+String(h_T-h));
+  //      Modelica.Utilities.Streams.print("T_a="+String(T)+"K -> dh="+String(h_T-h));
       end if;
       z:=z+1;
   //    Modelica.Utilities.Streams.print(String(z)+": "+String(T_a)+" K & "+String(T_b)+" K -> "+String((h-h_T)/h)+"(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)\n");
@@ -441,6 +441,7 @@ protected
   end saturationPressures;
 
 
+
   redeclare replaceable partial function extends setState_pTX
   "finds the VLE iteratively by varying the normalized quantity of gas in the gasphase, calculates the densities"
   input Real[nX_gas + 1] n_g_start=fill(.5,nX_gas+1)
@@ -494,8 +495,9 @@ protected
     if debugmode then
       Modelica.Utilities.Streams.print("Running setState_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+"°C,X)...");
     end if;
+  //  assert(T-273.15<300,"Moooot!");
 
-  assert(p>0,"p="+String(p/1e5)+"bar - Negative pressure is not yet supported ;-) (PartialBrine_ngas_Newton.quality_pTX())");
+   assert(p>0,"p="+String(p/1e5)+"bar - Negative pressure is not yet supported ;-) (PartialBrine_ngas_Newton.quality_pTX())");
   /*  Modelica.Utilities.Streams.print("quality_pTX("+String(p)+","+String(T2)+","+PowerPlant.vector2string(X_l[1:end],false)+")");
   X[1:nX_salt] = X_[1:nX_salt];
   for i in nX_salt+1:nX-1 loop
@@ -518,7 +520,9 @@ protected
     p_degas := if phase==1 then 0 else sum(saturationPressures(p,T2,X,MM_vec)) + p_sat_H2O;
 
      if  p_degas< p then
-  //    Modelica.Utilities.Streams.print("1Phase-Liquid (PartialBrine_Multi_TwoPhase_ngas.quality_pTX("+String(p)+","+String(T2)+"))");
+     if debugmode then
+      Modelica.Utilities.Streams.print("1Phase-Liquid (PartialBrine_Multi_TwoPhase_ngas.quality_pTX("+String(p)+","+String(T2)+"))");
+     end if;
       x:=0;
       p_H2O := p_sat_H2O;
     else
@@ -652,7 +656,9 @@ protected
     end if "p_degas< p";
 
   //  assert(x>=0 and (sum(n_gas_g) + n_H2O_g)>=0 or (not x>=0 and not (sum(n_gas_g) + n_H2O_g)>=0),"WEIRD!");
-    R_gas :=if x > 0 then sum(Modelica.Constants.R*X ./ MM_gas) else -1;
+   X_g:=if x>0 then (X[end-nX_gas:end]-X_l[end-nX_gas:end]*(1-x))/x else fill(0,nX_gas+1);
+    R_gas :=if x > 0 then sum(Modelica.Constants.R*X_g ./ cat(1,MM_gas,{M_H2O})) else -1;
+  //  Modelica.Utilities.Streams.print("R_gas="+String(R_gas)+"(MM="+Modelica.Math.Matrices.toString({cat(1,MM_gas,{M_H2O})})+")");
     d_g :=if x > 0 then p/(T2*R_gas) else -1;
   //  d_g:= if x>0 then p/(Modelica.Constants.R*T2)*(n_g*cat(1,MM_gas,{M_H2O}))/sum(n_g) else -1;
 
@@ -662,7 +668,6 @@ protected
   //  Modelica.Utilities.Streams.print(String(z)+" (p="+String(p)+" bar)");
 
   // X_g:=if x>0 then (X-X_l*(1-x))/x else fill(0,nX);
-   X_g:=if x>0 then (X[end-nX_gas:end]-X_l[end-nX_gas:end]*(1-x))/x else fill(0,nX_gas+1);
    state :=ThermodynamicState(
       p=p,
       T=T,

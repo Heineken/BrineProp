@@ -1,14 +1,6 @@
 within BrineProp.Examples;
 model FindBrineComposition
-//package Medium = Brine_Phillips;
-//package Medium = Brine_Magri;
-//package Medium = Brine_Driesner;
-//package Medium = Brine_Duan;
-//package Medium = Brine_Duan_Multi;
-//package Medium = Brine_Duan_Multi_TwoPhase_N2;
-//package Medium = Brine_Duan_Multi_TwoPhase_CO2;
-//package Medium = Brine_Duan_Multi_TwoPhase_2gas;
-package Medium = PowerPlant.Media.Brine.Brine_Duan_Multi_TwoPhase_ngas_3;
+package Medium = BrineProp.Brine_5salts_TwoPhase_3gas;
   Medium.BaseProperties props;
 
   Modelica.SIunits.Density d_l(start=1200)= props.state.d_l;  /**/
@@ -57,7 +49,7 @@ package Medium = PowerPlant.Media.Brine.Brine_Duan_Multi_TwoPhase_ngas_3;
 equation
 
   props.p = 1.01325e5 "STP";
-  props.T = 273.16+0 "STP";
+  props.T = 273.16 "STP";
 //  props.Xi = {0.081139965786705,0.00472896349276478,0.12523788358023,0.00132259893695478,0.0023849508647916,0.000155632999623811,0.000734311259761201,0.000065661724072916}
   props.Xi = cat(1,c/d_l,X_g_gas+X_l_gas) "props.state.d_l";
 
