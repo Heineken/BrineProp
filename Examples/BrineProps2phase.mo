@@ -29,13 +29,13 @@ package Medium = BrineProp.Brine_5salts_TwoPhase_3gas;
   Real q2 = props2.state.q;
 */
 //  Modelica.SIunits.SpecificEntropy s;
-/*Modelica.SIunits.DynamicViscosity eta = Medium.dynamicViscosity(props.state);
-Modelica.SIunits.DynamicViscosity eta_Philips = PowerPlant.Media.Brine.Brine_Phillips.dynamicViscosity_pTX(props.p,props.T,props.X);
+//Modelica.SIunits.DynamicViscosity eta = Medium.dynamicViscosity(props.state);
+/*Modelica.SIunits.DynamicViscosity eta_Philips = PowerPlant.Media.Brine.Brine_Phillips.dynamicViscosity_pTX(props.p,props.T,props.X);
 Modelica.SIunits.DynamicViscosity eta_Duan = PowerPlant.Media.Brine.Brine_Duan.dynamicViscosity_pTX(props.p,props.T,props.X);
 */
-/*Modelica.SIunits.DynamicViscosity eta_l = Medium.dynamicViscosityLiquidPhase(props.state);
-Modelica.SIunits.DynamicViscosity eta_g = Medium.dynamicViscosityGasPhase(props.state);
-*/
+Modelica.SIunits.DynamicViscosity eta_l = Medium.dynamicViscosity_liq(props.state);
+Modelica.SIunits.DynamicViscosity eta_g = Medium.dynamicViscosity_gas(props.state);
+/**/
 //  constant Real MM[:] = Medium.MM;
 // Real TDS = sum(props.Xi)*props.d;
 //Real[:] Xi = {0.089190167,0.005198142,0.137663206,0.001453819,0.002621571, 7.85e-4};
@@ -88,8 +88,8 @@ Real f=1;*/
 //  Real tt=(h_francke-props.h)/h_francke;
 //  Modelica.SIunits.SpecificHeatCapacity c_p_salt= (c_p_brine-4190*props.X[end])/props.X[1];
 //  Modelica.SIunits.SpecificHeatCapacity c_p_Driesner= SpecificEnthalpies.specificHeatCapacity_pTX_Driesner(props.p,props.T,sum(props.X[1:5]));
-/*  Modelica.SIunits.SpecificHeatCapacity c_p_brine= Medium.specificHeatCapacityCp(props.state);
-  Modelica.SIunits.SpecificHeatCapacity c_p_brine2=(Medium.specificEnthalpy_pTX(props.p,props.T+.1,props.X)-Medium.specificEnthalpy_pTX(props.p,props.T-.1,props.X))/.2;
+  Modelica.SIunits.SpecificHeatCapacity c_p_brine= Medium.specificHeatCapacityCp(props.state);
+/*  Modelica.SIunits.SpecificHeatCapacity c_p_brine2=(Medium.specificEnthalpy_pTX(props.p,props.T+.1,props.X)-Medium.specificEnthalpy_pTX(props.p,props.T-.1,props.X))/.2;
   Modelica.SIunits.SpecificHeatCapacity c_p_liq=Medium.specificHeatCapacityCp_liq(props.state);
   Modelica.SIunits.SpecificHeatCapacity c_p_gas=Medium.specificHeatCapacityCp_gas(props.state);
 */
@@ -100,7 +100,7 @@ equation
 //  h_salt_100[2:end]={0,0,0,0};
 
 //  props.p = (40-time)*1e5;
-  props.p = 3.82504e+007;
+//  props.p = 3.82504e+007;
 //  props.p = 29.6937843572662*1.01325e5 "0 mol 150°C 25atm";
 //  props.p = 29.5346952874414*1.01325e5 "1 mol 150°C 25atm";
 //  props.p = 28.9812681963977*1.01325e5 "5 mol 150°C 25atm";
@@ -108,10 +108,10 @@ equation
 //  props.p = 45998589 "5 mol 150°C 450atm+p_H2O";
 //  props.p = 175*1.01325e5+Modelica.Media.Water.WaterIF97_base.saturationPressure(props.T) "1 mol 150°C";
 
-//  props.p = 1.01325e5;
-  props.h = 560984;
+  props.p = 1.01325e5;
+//  props.h = 560984;
 //  props.p = (10+time)*1.01325e5 "STP";
-//props.T = 273.16+0;
+props.T = 273.16+100;
 // props.T = 273.15+120.84;
 // der(props.h)=10000;
 

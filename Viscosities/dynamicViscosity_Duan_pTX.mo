@@ -48,6 +48,8 @@ algorithm
     return;
   end if;
 
+  eta:= eta_H2O^X[end];
+  Modelica.Utilities.Streams.print("eta_H2O^X[end]= "+String(eta_H2O)+"^"+String(X[end]) + " -> "+String(eta)+" Pa·s");
   for i in 1:nX_salt loop
     if X[i]>0 then
       salt := Salt_Constants[i];
@@ -71,11 +73,14 @@ algorithm
 //    Modelica.Utilities.Streams.print("eta_H2O: "+String(eta_H2O));
 //    Modelica.Utilities.Streams.print("eta_relative: "+String(eta_relative));
 //    Modelica.Utilities.Streams.print("etas["+String(i)+"]: "+String(etas[i]));
+      eta:= eta*etas[i]^X[i]
+        "geometric mean mixture rule (matrix multiplication)";
+      Modelica.Utilities.Streams.print("Viscosity: "+String(etas[i])+"->"+String(eta)+" Pa·s (BrineProp.Viscosities.dynamicViscosity_Duan_pTX)");
     end if;
 //    eta := eta + etas[i]*molalities[i];
   end for;
- // eta := eta/(sum(molalities));
-  eta := etas*molalities[1:nX_salt]/(sum(molalities[1:nX_salt]))
-    "linear mixture (matrix multiplication)";
+//  eta := etas*molalities[1:nX_salt]/(sum(molalities[1:nX_salt])) "linear mixing rule molality weighted (matrix multiplication)";
+//  eta := prod(cat(1,{eta_H2O},etas).^X[1:nX_salt]) "geometric mean mixture rule (matrix multiplication)";
+
 //  Modelica.Utilities.Streams.print("Viscosity("+String(p_Pa)+","+String(T_K)+"): "+String(eta)+" Pa·s (Partial_Viscosity_Phillips.dynamicViscosity_Duan_pTX)");
 end dynamicViscosity_Duan_pTX;

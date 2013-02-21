@@ -207,7 +207,8 @@ protected
 
   redeclare replaceable partial function extends setState_pTX
   "finds the VLE iteratively by varying the normalized quantity of gas in the gasphase, calculates the densities"
-  input Real[PartialBrine_ngas_Newton.nX_gas + 1]
+  input Real[BrineProp.PartialBrine_ngas_Newton.nX_gas
+                                             + 1]
                        n_g_start=fill(.5,nX_gas+1)
     "start value, all gas in gas phase, all water liquid";
   /*
@@ -227,41 +228,54 @@ protected
     Modelica.SIunits.Pressure p_sat_H2O
     "= saturationPressure_H2O(p,T2,X,MM_vec,nM_vec)";
     Modelica.SIunits.Pressure p_H2O_0;
-    Modelica.SIunits.Pressure[PartialBrine_ngas_Newton.nX_gas + 1]
+    Modelica.SIunits.Pressure[BrineProp.PartialBrine_ngas_Newton.nX_gas
+                                                              + 1]
                                         f;
-    Modelica.SIunits.Pressure[PartialBrine_ngas_Newton.nX_gas + 1]
+    Modelica.SIunits.Pressure[BrineProp.PartialBrine_ngas_Newton.nX_gas
+                                                              + 1]
                                           p_sat;
-    Modelica.SIunits.Pressure[PartialBrine_ngas_Newton.nX_gas + 1]
+    Modelica.SIunits.Pressure[BrineProp.PartialBrine_ngas_Newton.nX_gas
+                                                              + 1]
                                           p_sat_test;
-    Modelica.SIunits.Pressure[PartialBrine_ngas_Newton.nX_gas + 1]
+    Modelica.SIunits.Pressure[BrineProp.PartialBrine_ngas_Newton.nX_gas
+                                                              + 1]
                                         p_gas "=fill(0,nX_gas)";
-    Modelica.SIunits.MassFraction[PartialBrine_ngas_Newton.nX_gas + 1]
+    Modelica.SIunits.MassFraction[BrineProp.PartialBrine_ngas_Newton.nX_gas
+                                                                  + 1]
                                               Delta_n_g_norm = fill(1e3,nX_gas+1);
   //  Modelica.SIunits.MassFraction[nX_gas + 1] c = {3.16407e-5,0,3.6e-8,.746547} "cat(1,fill(1e-4, nX_gas), {X[end]})fill(0, nX_gas+1)X[nX_salt+1:end]";
     Real k_H2O "Henry coefficient";
-    Real k[PartialBrine_ngas_Newton.nX_gas];
-    Real[PartialBrine_ngas_Newton.nX_gas + 1]
+    Real k[BrineProp.PartialBrine_ngas_Newton.nX_gas];
+    Real[BrineProp.PartialBrine_ngas_Newton.nX_gas
+                                         + 1]
                      n "Total mol numbers";
-    Real[PartialBrine_ngas_Newton.nX_gas + 1]
+    Real[BrineProp.PartialBrine_ngas_Newton.nX_gas
+                                         + 1]
                      n_l "mols in liquid phase per kg fluid";
-    Real[PartialBrine_ngas_Newton.nX_gas + 1]
+    Real[BrineProp.PartialBrine_ngas_Newton.nX_gas
+                                         + 1]
                      n_g "mols in   gas  phase per kg fluid";
-    Real[PartialBrine_ngas_Newton.nX_gas + 1]
+    Real[BrineProp.PartialBrine_ngas_Newton.nX_gas
+                                         + 1]
                      n_g_norm_test;
   //  Modelica.SIunits.MassFraction[nX] X;
-    Real[PartialBrine_ngas_Newton.nX_gas + 1]
+    Real[BrineProp.PartialBrine_ngas_Newton.nX_gas
+                                         + 1]
                      n_g_norm
     "= X[end-nX_gas:end-1]./MM_gas fill(0,nX_gas) - start value: all degassed";
     Real dp_gas_dng_norm;
     Real dcdng_norm;
     Real dp_degas_dng_norm;
-    Real[PartialBrine_ngas_Newton.nX_gas + 1]
+    Real[BrineProp.PartialBrine_ngas_Newton.nX_gas
+                                         + 1]
                    dfdn_g_norm;
     Integer z=0;
     Real sum_n_ion;
     constant Integer zmax=1000 "maximum number of iteration";
   //  Integer ju = nX_gas+1;
-    Real[PartialBrine_ngas_Newton.nX_gas + 1,PartialBrine_ngas_Newton.nX_gas + 1]
+    Real[BrineProp.PartialBrine_ngas_Newton.nX_gas
+                                         + 1,BrineProp.PartialBrine_ngas_Newton.nX_gas
+                                                                             + 1]
                             Grad_f;
     Real DeltaC=.001;
     Modelica.SIunits.Temperature T2;

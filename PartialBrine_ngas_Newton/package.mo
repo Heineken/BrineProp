@@ -9,7 +9,7 @@ constant String explicitVars = "ph"
 
  replaceable package Salt_data = BrineProp.SaltData;
 
-  import Partial_Units;
+import Partial_Units;
 
 
  extends BrineProp.PartialGasData;
@@ -170,6 +170,8 @@ redeclare record extends ThermodynamicState
 /*  AbsolutePressure p "Absolute pressure of medium";
   Temperature T(unit="K") "Temperature of medium";*/
   SpecificEnthalpy h "Specific enthalpy";
+  Modelica.SIunits.SpecificEnthalpy h_g "Specific enthalpy gas phase";
+  Modelica.SIunits.SpecificEnthalpy h_l "Specific enthalpy liquid phase";
   SpecificEntropy s "Specific entropy";
   Density d(start=300) "density";
   Real GVF "Gas Void Fraction";
@@ -456,6 +458,8 @@ protected
     Modelica.SIunits.Density d;
     Modelica.SIunits.Density d_g;
     Modelica.SIunits.Density d_l;
+    Modelica.SIunits.SpecificEnthalpy h_g;
+    Modelica.SIunits.SpecificEnthalpy h_l;
     Modelica.SIunits.MassFraction[nX] X_l=X "start value";
     Modelica.SIunits.MassFraction[nX_gas+1] X_g;
     Modelica.SIunits.Pressure p_H2O;
@@ -668,12 +672,16 @@ protected
   //  Modelica.Utilities.Streams.print(String(z)+" (p="+String(p)+" bar)");
 
   // X_g:=if x>0 then (X-X_l*(1-x))/x else fill(0,nX);
+   h_l:=specificEnthalpy_liq_pTX(p,T,X_l);
+   h_g:=specificEnthalpy_gas_pTX(p,T,X_g);
    state :=ThermodynamicState(
       p=p,
       T=T,
       X=X,
       X_l=X_l,
-      h=x*specificEnthalpy_gas_pTX(p,T,X_g) + (1-x)*specificEnthalpy_liq_pTX(p,T,X_l),
+      h_g=h_g,
+      h_l=h_l,
+      h=x*h_g + (1-x)*h_l,
       GVF=x*d/d_g,
       x=x,
       s=0,
