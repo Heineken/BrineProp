@@ -15,7 +15,7 @@ package Medium = BrineProp.Brine_5salts_TwoPhase_3gas;
     "{.225} Mass fractions";
 */
 //  package Medium = Modelica.Media.Water.WaterIF97_ph;
-  Medium.BaseProperties props(phase=0);
+  Medium.BaseProperties props(phase=0,n_g_norm_start=fill(.5,Medium.nX_gas+1));
 
   Modelica.SIunits.Density d= props.d;  /**/
 
@@ -33,8 +33,8 @@ package Medium = BrineProp.Brine_5salts_TwoPhase_3gas;
 /*Modelica.SIunits.DynamicViscosity eta_Philips = PowerPlant.Media.Brine.Brine_Phillips.dynamicViscosity_pTX(props.p,props.T,props.X);
 Modelica.SIunits.DynamicViscosity eta_Duan = PowerPlant.Media.Brine.Brine_Duan.dynamicViscosity_pTX(props.p,props.T,props.X);
 */
-Modelica.SIunits.DynamicViscosity eta_l = Medium.dynamicViscosity_liq(props.state);
-Modelica.SIunits.DynamicViscosity eta_g = Medium.dynamicViscosity_gas(props.state);
+//Modelica.SIunits.DynamicViscosity eta_l = Medium.dynamicViscosity_liq(props.state);
+//Modelica.SIunits.DynamicViscosity eta_g = Medium.dynamicViscosity_gas(props.state);
 /**/
 //  constant Real MM[:] = Medium.MM;
 // Real TDS = sum(props.Xi)*props.d;
@@ -62,12 +62,12 @@ Modelica.SIunits.DynamicViscosity eta_g = Medium.dynamicViscosity_gas(props.stat
 //  Real[:] yy=(props.p_gas/props.p./{.038,.829,.128}-{1,1,1});
   Real[:] xx=(X_g[6:8]-{5.87E-05,8.04E-04,7.14E-05})./{5.87E-05,8.04E-04,7.14E-05};
 */
-  Real[:] y_l=if not max(props.X_l[6:8])>0 then fill(0,Medium.nX_gas) else props.X_l[6:8]./Medium.MM_gas / sum(props.X_l[6:8]./Medium.MM_gas)
+/*  Real[:] y_l=if not max(props.X_l[6:8])>0 then fill(0,Medium.nX_gas) else props.X_l[6:8]./Medium.MM_gas / sum(props.X_l[6:8]./Medium.MM_gas) 
     "mol fraction of dissolved gases";
-  Real V_l = sum(props.X_l[6:8]./Medium.MM_gas)*22.4/props.X_l[end]
+  Real V_l = sum(props.X_l[6:8]./Medium.MM_gas)*22.4/props.X_l[end] 
     "Liter of dissolved gas per kg_brine would have after complete degassing at standard conditions";
   Real ratioGasLiquid = V_l*props.d_l/1000;
-
+*/
 //  Real V_l = props.X_l[8]/Medium.MM_gas[3]/22.4*1000/props.X_l[end];
 /*
   Real[:] m=y[2:3]./fill(1-y[4],2) "mass fraction of gas in gas phase";
@@ -82,13 +82,13 @@ Real f=1;*/
 
 /*  Modelica.SIunits.MassFraction X_N2(start=1e-5,min=0);
   Modelica.SIunits.MassFraction X_CH4(start=1e-5,min=0);*/
-  Modelica.SIunits.SpecificEnthalpy h_francke;
-  Real val2;
+//  Modelica.SIunits.SpecificEnthalpy h_francke;
+//  Real val2;
 //  Modelica.SIunits.SpecificEnthalpy h_Driesner= BrineProp.SpecificEnthalpies.specificEnthalpy_pTX_Driesner(props.p,props.T,sum(props.X[1:5]));
 //  Real tt=(h_francke-props.h)/h_francke;
 //  Modelica.SIunits.SpecificHeatCapacity c_p_salt= (c_p_brine-4190*props.X[end])/props.X[1];
 //  Modelica.SIunits.SpecificHeatCapacity c_p_Driesner= SpecificEnthalpies.specificHeatCapacity_pTX_Driesner(props.p,props.T,sum(props.X[1:5]));
-  Modelica.SIunits.SpecificHeatCapacity c_p_brine= Medium.specificHeatCapacityCp(props.state);
+//  Modelica.SIunits.SpecificHeatCapacity c_p_brine= Medium.specificHeatCapacityCp(props.state);
 /*  Modelica.SIunits.SpecificHeatCapacity c_p_brine2=(Medium.specificEnthalpy_pTX(props.p,props.T+.1,props.X)-Medium.specificEnthalpy_pTX(props.p,props.T-.1,props.X))/.2;
   Modelica.SIunits.SpecificHeatCapacity c_p_liq=Medium.specificHeatCapacityCp_liq(props.state);
   Modelica.SIunits.SpecificHeatCapacity c_p_gas=Medium.specificHeatCapacityCp_gas(props.state);
@@ -96,7 +96,7 @@ Real f=1;*/
 initial equation
 // props.T = 273.16+60;
 equation
-  (h_francke,val2) =  SpecificEnthalpies.specificEnthalpy_pTX_liq_Francke_cp(props.p,props.T,props.X);
+//  (h_francke,val2) =  SpecificEnthalpies.specificEnthalpy_pTX_liq_Francke_cp(props.p,props.T,props.X);
 //  h_salt_100[2:end]={0,0,0,0};
 
 //  props.p = (40-time)*1e5;
@@ -108,11 +108,13 @@ equation
 //  props.p = 45998589 "5 mol 150°C 450atm+p_H2O";
 //  props.p = 175*1.01325e5+Modelica.Media.Water.WaterIF97_base.saturationPressure(props.T) "1 mol 150°C";
 
-  props.p = 1.01325e5;
+//  props.p = 2E7;
+  props.p = 1.99e7;
 //  props.h = 560984;
-//  props.p = (10+time)*1.01325e5 "STP";
-props.T = 273.16+100;
-// props.T = 273.15+120.84;
+//  props.p = (445*(1-time)+10)*1.01325e5 "STP";
+//props.T = 273.16+145-(time)*50;
+// props.T = 395.244;
+ props.T = 408;
 // der(props.h)=10000;
 
 /*
@@ -120,7 +122,7 @@ props.T = 273.16+100;
   props.T = 273.16+99.61;
  */
 
-// props.n_g_start={.1,.1,.1,time};
+// props.n_g_norm_start={.1,.1,.1,time};
 //  mola_gas=Medium.solubility_N2_pTX_Duan2006(props.p,props.T,props.X,Medium.MM_vec,p_gas);
 //  props.h =2e5 "+time*1e4";
 //  props.h = 342686;

@@ -33,11 +33,10 @@ algorithm
 
   if  p_bar<P_1 then
     //1 273<T<573 and p_bar<P_1
-      c[:] := {1,
-               1.0,
+      c[:] := {1.0,
                4.7586835E-3,
               -3.3569963E-6,
-               0
+               0,
               -1.3179396,
               -3.8389101E-6,
                0,
@@ -142,5 +141,5 @@ algorithm
   end if;
 
   phi := c[1] + (c[2] + c[3]*T + c[4]/T + c[5]/(T-150))*p_bar + (c[6] + c[7]*T + c[8]/T)*p_bar^2 + (c[9] + c[10]*T + c[11]/T)*log(p_bar) +(c[12]+c[13]*T)/p_bar + c[14]/T + c[15]*T^2;
-//  PowerPlant.Components.PipeStuff.print_msg(phi,"phi_CO2=");
+//   Modelica.Utilities.Streams.print("P1="+String(P_1));
 end fugacity_CO2_Duan2006;

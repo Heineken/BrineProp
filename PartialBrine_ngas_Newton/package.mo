@@ -9,7 +9,7 @@ constant String explicitVars = "ph"
 
  replaceable package Salt_data = BrineProp.SaltData;
 
-import Partial_Units;
+  import Partial_Units;
 
 
  extends BrineProp.PartialGasData;
@@ -86,7 +86,7 @@ constant FluidConstants[nS] BrineConstants(
    Modelica.SIunits.Pressure p_degas;
  //  Modelica.SIunits.Pressure p_check=sum(p_gas)+p_H2O;
  //  Real k[nX_gas];
-   Real[nX_gas+1] n_g_start = fill(.5,nX_gas+1)
+   parameter Real[nX_gas+1] n_g_norm_start = fill(.5,nX_gas+1)
     "start value, all gas in gas phase, all water liquid";
  //  Real[nX_gas+1] n_g_norm;
    parameter Integer phase=0;
@@ -111,11 +111,11 @@ protected
    if explicitVars=="pT" or explicitVars=="pT" then
      h=state.h;
    else
-     h = specificEnthalpy_pTX(p,T,X,phase,n_g_start);
+     h = specificEnthalpy_pTX(p,T,X,phase,n_g_norm_start);
    end if;
  //  (x,d,d_g,d_l,p_H2O,p_gas,X_l,p_degas,k)= quality_pTX(p_corr,T_corr,X);
 
-   state = setState_pTX(p,T,X,phase,n_g_start);
+   state = setState_pTX(p,T,X,phase,n_g_norm_start);
    X_l=state.X_l;
    GVF=state.GVF;
    x=state.x;
@@ -265,7 +265,7 @@ end vapourQuality;
     input Modelica.SIunits.Temp_K T;
     input MassFraction X[:] "mass fraction m_NaCl/m_Sol";
     input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
-    input Real[nX_gas+1] n_g_start=fill(.5,nX_gas+1)
+    input Real[nX_gas+1] n_g_norm_start=fill(.5,nX_gas+1)
     "start value, all gas in gas phase, all water liquid";
     output Modelica.SIunits.SpecificEnthalpy h;
   /*  output Real x "gas mass fraction";
@@ -309,12 +309,12 @@ end vapourQuality;
       p,
       T,
       X,
-      phase));
+      phase,n_g_norm_start));
 
   //Modelica.Utilities.Streams.print(String(p)+","+String(T)+" K->"+String(h)+" J/kg & (PartialBrine_Multi_TwoPhase_ngas.specificEnthalpy_pTX)");
    //,p=pressure_ThX(T,h,X);
 
-   annotation(LateInline=true,inverse(T=temperature_phX(p,h,X,phase,n_g_start)));
+   annotation(LateInline=true,inverse(T=temperature_phX(p,h,X,phase,n_g_norm_start)));
   end specificEnthalpy_pTX;
 
 
@@ -446,8 +446,8 @@ protected
 
   redeclare replaceable partial function extends setState_pTX
   "finds the VLE iteratively by varying the normalized quantity of gas in the gasphase, calculates the densities"
-  input Real[nX_gas + 1] n_g_start=fill(.5,nX_gas+1)
-    "start value, all gas in gas phase, all water liquid";
+  input Real[nX_gas + 1] n_g_norm_start "=fill(.1,nX_gas+1) 
+    start value, all gas in gas phase, all water liquid, set in BaseProps";
   /*
 //output Modelica.SIunits.Density d_g= if x>0 then (n_CO2_g*d_g_CO2 + n_N2_g*d_g_N2)/(n_CO2_g + n_H2O_g) else -1;
 //output Real[nX_gas + 1] n_g_norm;
@@ -534,11 +534,13 @@ protected
   //    Modelica.Utilities.Streams.print("2Phase (PartialBrine_Multi_TwoPhase_ngas.quality_pTX)");
   //    Modelica.Utilities.Streams.print("p="+String(p/1e5)+" bar");
 
-      n:=X[nX_salt + 1:end] ./ MM_vec[nX_salt + 1:nX] "total mole numbers";
+      n:=X[nX_salt + 1:end] ./ MM_vec[nX_salt + 1:nX]
+      "total mole numbers per kg brine";
   //    n_g_norm:=cat(1, fill(1,nX_gas), {0.01})
   //    n_g:={0.0175164,0.00204528,0.00435, 2.51075};
   //    n_g_norm :=n_g ./ n;
-      n_g_norm:=n_g_start .* sign(X[nX_salt + 1:nX]);
+      n_g_norm:=n_g_norm_start .* sign(X[nX_salt + 1:nX])
+      "switch off unused salts";
 
       while z<1 or max(abs(Delta_n_g_norm))>5e-5 loop
       //abbrechen wenn Druck-GG gefunden oder sehr geringer Gasanteil
@@ -580,7 +582,7 @@ protected
   //        k:=solubilities_pTX(p=p, T=T2, X_l=X_l, X=X, p_gas=fill(p/3,3)) ./ fill(p/3,3);
   //  Modelica.Utilities.Streams.print("X_l="+PowerPlant.vector2string(X_l[nX_salt+1:end]));
           k:=solubilities_pTX(p=p, T=T2, X_l=X_l, X=X, p_gas=p_gas[1:nX_gas]) ./ p_gas[1:nX_gas];
-  //    Modelica.Utilities.Streams.print("k="+PowerPlant.vector2string(k)+" (PartialBrine_ngas_Newton.quality_pTX)");
+  //    Modelica.Utilities.Streams.print("k="+PowerPlant.vector2string(k)+" (PartialBrine_ngas_Newton.quality_pTX)");p,T,X_l,MM_vec,p_gas[1])
           for i in 1:nX_gas loop
             p_sat[i] := X_l[nX_salt+i]/ (if k[i]>0 then k[i] else 1e10)
           "Entlösedruck";
@@ -642,8 +644,8 @@ protected
     //SOLVE NEWTON STEP
   //        Delta_n_g_norm := Modelica.Math.Matrices.solve(Grad_f, -f)         "solve Grad_f*Delta_n_g_norm=-f";
   //        n_g_norm := n_g_norm + Delta_n_g_norm;
-  //        Modelica.Utilities.Streams.print("Delta_n_g_norm="+PowerPlant.vector2string(Delta_n_g_norm));
 
+  //        Modelica.Utilities.Streams.print("n_g_norm="+Modelica.Math.Matrices.toString({n_g_norm}));
           for alpha in 1 :nX_gas+1 loop
   //        for alpha in ju:ju loop
   //          Delta_n_g_norm[alpha] := -f[alpha]/Grad_f[alpha,alpha];
@@ -654,7 +656,11 @@ protected
           "new concentration limited by all dissolved/none dissolved, 1e-9 to avoid k=NaN";
   //          end if;
           end for;
-
+  //       Modelica.Utilities.Streams.print("p_sat="+String(p_sat[1])+", solu="+String(solubility_CO2_pTX_Duan2006(p,T2,X_l,MM_vec,p_gas[1]))+", p_gas="+String(p_gas[1]));
+  //         Modelica.Utilities.Streams.print("p="+String(p)+",T2="+String(T2)+",p_gas[1]="+String(p_gas[1]));
+  /*        Modelica.Utilities.Streams.print("X_l="+Modelica.Math.Matrices.toString({X_l}));
+        Modelica.Utilities.Streams.print("MM_vec="+Modelica.Math.Matrices.toString({MM_vec}));
+*/
       end while;
 
     end if "p_degas< p";
@@ -669,7 +675,7 @@ protected
     d_l:=if not x<1 then -1 else density_liquid_pTX(p,T2,X_l,MM_vec)
     "gases are ignored anyway";
     d:=1/(x/d_g + (1 - x)/d_l);
-  //  Modelica.Utilities.Streams.print(String(z)+" (p="+String(p)+" bar)");
+  //  Modelica.Utilities.Streams.print(String(z)+" (p="+String(p_gas[1])+" bar)");
 
   // X_g:=if x>0 then (X-X_l*(1-x))/x else fill(0,nX);
    h_l:=specificEnthalpy_liq_pTX(p,T,X_l);
@@ -778,16 +784,11 @@ protected
 
 
   annotation (Documentation(info="<html>
-<p>
-<b>PartialBrine_ngas_Newton</b> is template package for aqueous solution of m Salts and n Gases. The vapour-liquid-equilibrium
-(VLE) is defined by the water vapour pressure and the gas solubilites.<br>
-The VLE is solved by Newton's method.<br>
-Explicit functions for density and enthalpy of the phases are not specified in this package, as it is just a template.
-</p>
-
-<h2>Fluid model assumptions</h2>
-<ul>
-<li>The fluid consists of water, N<sub>s</sub> salts and N<sub>g</sub>gases.</li>
+<p><b>PartialBrine_ngas_Newton</b> is template package for aqueous solution of m Salts and n Gases. The vapour-liquid-equilibrium (VLE) is defined by the water vapour pressure and the gas solubilites.</p><p>The VLE is solved by Newton&apos;s method.</p><p>Explicit functions for density and enthalpy of the phases are not specified in this package, as it is just a template.</p>
+<p>The package has to be in one file, because it extends a MSL package (DYMOLA limitiation???).</p>
+<p><b><font style=\"font-size: 12pt; \">Fluid model assumptions</b></p>
+<p><ul>
+<li>The fluid consists of water, Ns salts and Nggases.</li>
 <li>Its total composition is given by vector of mass fractions X.</li>
 <li>There are one or two phases: liquid and, if absolute pressure is low enough, gas.</li>
 <li>The salts are completely dissolved in and limited to the liquid phase.</li>
@@ -796,45 +797,19 @@ Explicit functions for density and enthalpy of the phases are not specified in t
 <li>Mass and energy conservation are fulfilled.</li>
 <li>Gases dissolve in liquid depending on their respective solubility, which depends on temperature and salt content, but not on the content of other gases.</li>
 <li>The saturation pressure of water is reduced by the salt content.</li>
-<li>Boundary surface enthalpies are neglected.</li>
-</ul>
-
-<h2>Specific Enthalpy</h2>
-<pre>
-h:=x·h_G + (1-x)·h_L
-</pre>
-<h2>Density</h2>
-The total density <i>d</i> of the fluid is calculated by combining the densities of both phases (<i>d<sub>g</sub></i> and 
-<i>d<sub>l</sub></i>) according to their volume fractions. The gas phase is assumed to be an Density of the gas phase is assumed
-to be an ideal mixture of ideal gases.
-<pre>
-d:=1/(x/d_g + (1 - x)/d_l)
-</pre>
-<p>
-
-<p>
-All files in this library, including the C source files are released under the Modelica License 2.
-</p>
-
-<p>
-<h2>TODO:</h2>
-<ul>
-<li></li>
-</ul>
-
-</p>
-
-
-<h3> Created by</h3>
-Henning Francke<br/>
-Helmholtz Centre Potsdam<br/>
-GFZ German Research Centre for Geosciences<br/>
-Telegrafenberg, D-14473 Potsdam<br/>
-Germany
-<p>
-<a href=mailto:francke@gfz-potsdam.de>francke@gfz-potsdam.de</a>
-</html>
-",
+<li>Boundary surface enthalpies are neglected. </li>
+</ul></p>
+<p><b>Specific Enthalpy</b></p>
+<pre>h:=x&middot;h_G + (1-x)&middot;h_L</pre>
+<p><b>Density</b></p>
+<p>The total density <i>d</i> of the fluid is calculated by combining the densities of both phases (<i>dg</i> and <i>dl</i>) according to their volume fractions. The gas phase is assumed to be an Density of the gas phase is assumed to be an ideal mixture of ideal gases. </p>
+<pre>d:=1/(x/d_g + (1 - x)/d_l)</pre>
+<p>All files in this library, including the C source files are released under the Modelica License 2. </p>
+<p><b>TODO:</b></p>
+<p><b></font><font style=\"font-size: 10pt; \">Created by</b></p>
+<p>Henning Francke</p><p>Helmholtz Centre Potsdam</p><p>GFZ German Research Centre for Geosciences</p><p>Telegrafenberg, D-14473 Potsdam</p><p>Germany </p>
+<p><a href=\"mailto:francke@gfz-potsdam.de\">francke@gfz-potsdam.de</a> </p>
+</html>",
  revisions="<html>
 
 </html>"));

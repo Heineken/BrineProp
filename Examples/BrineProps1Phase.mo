@@ -15,7 +15,7 @@ equation
 //  props.h = 379778;
 //  props.p = (10+time)*1.01325e5 "STP";
 // props.T = 273.16+60;
- props.T = 273.16+140;
+ props.T = 273.16+23.9;
 /*
   props.p = 9.13e5;
   props.T = 273.16+99.61;
@@ -23,9 +23,9 @@ equation
 
 //3-GAS
 //   props.Xi = {    0.081109,   0.0047275,     0.12519,   0*0.0013225,  0*0.0023842}     "Entsprechend STR04/16 bei GG mit d_l=1199.48 kg/m³ - X_g stimmt";
+  props.Xi = {0.0828264747936192,0.00250100280471612,0.12120451826216,0.000603955715249515,0.00211187457541221};
 //   props.Xi = {    0.001,   0,     0,   0,  0}
-  props.Xi = {6*SaltData.M_NaCl/(1+6*SaltData.M_NaCl),0,0,0,0}
-    "NaCl, KCl, CaCl2, MgCl2, SrCl2";
+//  props.Xi = {6*SaltData.M_NaCl/(1+6*SaltData.M_NaCl),0,0,0,0} "NaCl, KCl, CaCl2, MgCl2, SrCl2";
 
 algorithm
 //  Modelica.Utilities.Streams.print("rho="+String(d)+" kg/m³, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));

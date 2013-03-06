@@ -5,8 +5,9 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
  constant Boolean ignoreLimitN2_T=true;
  constant Boolean ignoreLimitN2_p=true;
  constant Boolean[5] ignoreLimitSalt_p={false,true,true,false,false};
+ constant Boolean[5] ignoreLimitSalt_T={false,false,false,false,false};
  constant Boolean[5] ignoreLimitSalt_visc={false,false,true,false,false};
- constant Integer outOfRangeMode=2
+ constant Integer outOfRangeMode=1
   "when out of validity range: 0-do nothing, 1-show warnings, 2-throw error";
 
   constant Integer NaCl=1 "reference number";
@@ -134,5 +135,6 @@ Germany</p></font>
 </html>",
  revisions="<html>
 
-</html>"), version="0.1", versionDate="2012-08-01", uses(Modelica(version="3.2"), MediaTwoPhaseMixture(version="0.2")));
+</html>"), version="0.1", versionDate="2012-08-01", uses(Modelica(version="3.2"), MediaTwoPhaseMixture(version="0.2"),
+      DataFiles(version="1.0")));
 end BrineProp;

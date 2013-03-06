@@ -2,6 +2,7 @@ debugmode
 ignoreLimitN2_T
 ignoreLimitN2_p
 ignoreLimitSalt_p
+ignoreLimitSalt_T
 ignoreLimitSalt_visc
 outOfRangeMode
 NaCl

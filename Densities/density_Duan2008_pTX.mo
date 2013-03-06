@@ -115,11 +115,11 @@ algorithm
         if not (ignoreLimitSalt_p[i] or (p >= salt.p_min_rho and p <= salt.p_max_rho)) then
           Modelica.Utilities.Streams.print("Pressure is " + String(p_bar) + " bar, but for "+salt.name + " must be between " + String(salt.p_min_rho*1e-5) + " bar and " + String(salt.p_max_rho*1e-5) + " bar (Brine.Salt_Data_Duan.density_Duan2008_pTX())");
         end if;
-        if not (T >= salt.T_min_rho and T <= salt.T_max_rho) then
+        if not (ignoreLimitSalt_T[i] or (T >= salt.T_min_rho and T <= salt.T_max_rho)) then
           Modelica.Utilities.Streams.print("Temperature is "+String(Modelica.SIunits.Conversions.to_degC(T)) + "°C, but for " + salt.name + " must be between " + String(Modelica.SIunits.Conversions.to_degC(salt.T_min_rho)) + "°C and " + String(Modelica.SIunits.Conversions.to_degC(salt.T_max_rho)) + "°C (Brine.Salt_Data_Duan.density_Duan2008_pTX())");
         end if;
      elseif outOfRangeMode==2 then
-       assert(T >= salt.T_min_rho and T <= salt.T_max_rho, "Temperature is "+String(Modelica.SIunits.Conversions.to_degC(T)) + "°C, but for " + salt.name + " must be between " + String(Modelica.SIunits.Conversions.to_degC(salt.T_min_rho)) + "°C and " + String(Modelica.SIunits.Conversions.to_degC(salt.T_max_rho)) + "°C");
+       assert(ignoreLimitSalt_T[i] or (T >= salt.T_min_rho and T <= salt.T_max_rho), "Temperature is "+String(Modelica.SIunits.Conversions.to_degC(T)) + "°C, but for " + salt.name + " must be between " + String(Modelica.SIunits.Conversions.to_degC(salt.T_min_rho)) + "°C and " + String(Modelica.SIunits.Conversions.to_degC(salt.T_max_rho)) + "°C");
        assert(m[i] >= 0 and m[i] <= salt.mola_max_rho, "Molality of "+salt.name+" is "+String(m[i]) + ", but must be between 0 and "+ String(salt.mola_max_rho) + " mol/kg");
        assert(ignoreLimitSalt_p[i] or (p >= salt.p_min_rho and p <= salt.p_max_rho), "Pressure is " + String(p_bar) + " bar, but for "+salt.name + " must be between " + String(salt.p_min_rho*1e-5) + " bar and " + String(salt.p_max_rho*1e-5) + " bar");
      end if;
