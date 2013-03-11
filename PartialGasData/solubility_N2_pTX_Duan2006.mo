@@ -56,7 +56,7 @@ protected
 
   Modelica.SIunits.Pressure p_H2O=Modelica.Media.Water.WaterIF97_base.saturationPressure(T);
 //  Pressure_bar p_H2O_bar=Modelica.SIunits.Conversions.to_bar(p_sat_H2O_Duan2003(T));
-  Partial_Units.Pressure_bar p_bar=Modelica.SIunits.Conversions.to_bar(p);
+//  Partial_Units.Pressure_bar p_bar=Modelica.SIunits.Conversions.to_bar(p);
   Modelica.SIunits.MassFraction X_NaCl = molalities[NaCl]*M_H2O
     "mole fraction of NaCl in liquid phase";
   Modelica.SIunits.MolarVolume v_l_H2O=M_H2O/Modelica.Media.Water.WaterIF97_base.density_pT(p,T);
@@ -66,7 +66,7 @@ protected
 /*  Real y_H20 = (1-2*X_NaCl) * p_H2O/(phi_H2O*p) * exp(v_l_H2O*(p-p_H2O)/(Modelica.Constants.R*T)) 
     "equ. 4 (gamma_H2O=1";
   Real y_N2 = 1-y_H20 "mole fraction of CO2 in vapor phase";*/
-  Real y_N2 = p_gas/p "mole fraction of N2 in vapor phase";
+//  Real y_N2 = p_gas/p "mole fraction of N2 in vapor phase";
   Real phi_N2 = fugacity_N2_Duan2006(p,T);
   Real mu_l0_N2_RT = Par_N2_Duan2006(p,T,mu_l0_N2_RT_c);
   Real lambda_N2_Na = Par_N2_Duan2006(p,T,lambda_N2_Na_c);
@@ -91,7 +91,9 @@ algorithm
  end if;
 
   //equ. 9
-    solu := y_N2*p_bar*phi_N2 * exp(-mu_l0_N2_RT - 2*lambda_N2_Na*(m_Na + m_K + 2*m_Ca + 2*m_Mg) - xi_N2_NaCl*(m_Cl+2*m_SO4)*(m_Na + m_K + 2*m_Ca + 2*m_Mg) - 4*0.0371*m_SO4);
+//    solu := y_N2*p_bar*phi_N2 * exp(-mu_l0_N2_RT - 2*lambda_N2_Na*(m_Na + m_K + 2*m_Ca + 2*m_Mg) - xi_N2_NaCl*(m_Cl+2*m_SO4)*(m_Na + m_K + 2*m_Ca + 2*m_Mg) - 4*0.0371*m_SO4);
+    solu := Modelica.SIunits.Conversions.to_bar(p_gas)*phi_N2 * exp(-mu_l0_N2_RT - 2*lambda_N2_Na*(m_Na + m_K + 2*m_Ca + 2*m_Mg) - xi_N2_NaCl*(m_Cl+2*m_SO4)*(m_Na + m_K + 2*m_Ca + 2*m_Mg) - 4*0.0371*m_SO4);
+
 //    solu := max(0, solu) "algorithm can return negative values";
 //  solu := p_H2O;
 //  solu := 0;

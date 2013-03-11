@@ -54,14 +54,14 @@ algorithm
       salt := Salt_Constants[i];
       if outOfRangeMode==1 then
         if molalities[i]>salt.mola_max_eta then
-          Modelica.Utilities.Streams.print(salt.name+" content exceeds limit in Partial_Viscosity_Phillips.dynamicViscosity_Duan_pTX");
+          Modelica.Utilities.Streams.print(salt.name+" content exceeds limit in Viscosities.dynamicViscosity_Duan_pTX");
 //          molalities[i]=min(molalities[i],salt.mola_max_eta);
         end if;
       elseif outOfRangeMode==2 then
           assert(ignoreLimitSalt_visc[i] or (molalities[i]>=0 and molalities[i]<=salt.mola_max_eta), "Molality of "+salt.name+" is "+String(molalities[i])+"(X="+String(X[i])+"), but must be between 0 and "+String(salt.mola_max_eta)+" mol/kg");
       end if;
 
-//      Modelica.Utilities.Streams.print(salt.name+" content = "+String(molalities[i])+" (Partial_Viscosity_Phillips.dynamicViscosity_Phillips_pTX)");
+//      Modelica.Utilities.Streams.print(salt.name+" content = "+String(molalities[i])+" (Viscosities.dynamicViscosity_Duan_pTX)");
 //      if salt.name <> "NaCl" then
       //factors
       A := salt.a[1] + salt.a[2]*T_K + salt.a[3]*T_K^2;

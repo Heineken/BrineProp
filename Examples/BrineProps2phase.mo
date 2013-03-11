@@ -55,13 +55,13 @@ Modelica.SIunits.DynamicViscosity eta_Duan = PowerPlant.Media.Brine.Brine_Duan.d
   */
 /*
   Modelica.SIunits.MassConcentration TDS= sum(props.X_l[1:Medium.nX_salt])*props.d_l;
-  Modelica.SIunits.MassFraction[:] X_g=props.X-props.X_l*(1-props.x);
-  Real[:] y=cat(1,props.p_gas,{props.p_H2O})/props.p 
+  Modelica.SIunits.MassFraction[:] X_g=props.X-props.X_l*(1-props.x);*/
+  Real[:] y=cat(1,props.p_gas,{props.p_H2O})/props.p
     "volume fraction of gas phase";
 //  Real[:] yy=y[2:3]./fill(1-y[4],2) "volume fraction of gas phase w/o H2O";
 //  Real[:] yy=(props.p_gas/props.p./{.038,.829,.128}-{1,1,1});
-  Real[:] xx=(X_g[6:8]-{5.87E-05,8.04E-04,7.14E-05})./{5.87E-05,8.04E-04,7.14E-05};
-*/
+//  Real[:] xx=(X_g[6:8]-{5.87E-05,8.04E-04,7.14E-05})./{5.87E-05,8.04E-04,7.14E-05};
+
 /*  Real[:] y_l=if not max(props.X_l[6:8])>0 then fill(0,Medium.nX_gas) else props.X_l[6:8]./Medium.MM_gas / sum(props.X_l[6:8]./Medium.MM_gas) 
     "mol fraction of dissolved gases";
   Real V_l = sum(props.X_l[6:8]./Medium.MM_gas)*22.4/props.X_l[end] 
@@ -109,12 +109,12 @@ equation
 //  props.p = 175*1.01325e5+Modelica.Media.Water.WaterIF97_base.saturationPressure(props.T) "1 mol 150°C";
 
 //  props.p = 2E7;
-  props.p = 1.99e7;
+  props.p = 25e5+time*1e5;
 //  props.h = 560984;
 //  props.p = (445*(1-time)+10)*1.01325e5 "STP";
-//props.T = 273.16+145-(time)*50;
+props.T = 273.16+110;
 // props.T = 395.244;
- props.T = 408;
+// props.T = 408;
 // der(props.h)=10000;
 
 /*

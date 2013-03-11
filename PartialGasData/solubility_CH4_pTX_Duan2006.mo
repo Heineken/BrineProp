@@ -52,11 +52,11 @@ protected
 
 //  Modelica.SIunits.Pressure p_H2O = Modelica.Media.Water.WaterIF97_base.saturationPressure(T);
   Modelica.SIunits.Pressure p_H2O = p_sat_H2O_Duan2003(T);
-  Partial_Units.Pressure_bar p_bar=Modelica.SIunits.Conversions.to_bar(p);
+//  Partial_Units.Pressure_bar p_bar=Modelica.SIunits.Conversions.to_bar(p);
   Modelica.SIunits.MolarVolume v_l_H2O=M_H2O/Modelica.Media.Water.WaterIF97_base.density_pT(p,T);
   Real phi_H2O = fugacity_H2O_Duan2006CH4(p,T);
   Real y_H20 "mole fraction of H2O in vapor phase";
-  Real y_CH4;
+//  Real y_CH4 =p_gas/p;
   Real phi_CH4 = fugacity_CH4_Duan1992(p,T);
   Real mu_l0_CH4_RT = Par_CH4_Duan2006(p,T,mu_l0_CH4_RT_c);
   Real lambda_CH4_Na = Par_CH4_Duan2006(p,T,lambda_CH4_Na_c);
@@ -90,10 +90,10 @@ algorithm
     p_H2O)/(Modelica.Constants.R*T)) "equ. 5 (x_H2O=1-2x_NaCl)";
   y_CH4 :=1 - y_H20 "mole fraction of CH4 in vapor phase"; Das ist wie im Paper*/
   //y_CH4 = (p-p_H2O)/p "mole fraction of CH4 in vapor phase TODO:neglecting other phases?" Das ist wie CO2_Duan2003;
-  y_CH4 :=p_gas/p;
 
   //equ. 10
-    solu := y_CH4*phi_CH4*p_bar*exp(-mu_l0_CH4_RT - 2*lambda_CH4_Na*(m_Na + m_K + 2*m_Ca + 2*m_Mg) - xi_CH4_NaCl*(m_Na + m_K + 2*m_Ca + 2*m_Mg)*(m_Cl + 2*m_SO4) - 4*0.0332*m_SO4);
+//    solu := y_CH4*phi_CH4*p_bar*exp(-mu_l0_CH4_RT - 2*lambda_CH4_Na*(m_Na + m_K + 2*m_Ca + 2*m_Mg) - xi_CH4_NaCl*(m_Na + m_K + 2*m_Ca + 2*m_Mg)*(m_Cl + 2*m_SO4) - 4*0.0332*m_SO4);
+    solu := Modelica.SIunits.Conversions.to_bar(p_gas)*phi_CH4*exp(-mu_l0_CH4_RT - 2*lambda_CH4_Na*(m_Na + m_K + 2*m_Ca + 2*m_Mg) - xi_CH4_NaCl*(m_Na + m_K + 2*m_Ca + 2*m_Mg)*(m_Cl + 2*m_SO4) - 4*0.0332*m_SO4);
 
 //  solu := max(0, solu) "algorithm can return negative values";
 //  solu := p_H2O;
