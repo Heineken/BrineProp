@@ -8,6 +8,7 @@ package SaltData_Duan "Coefficients used in Duan density calculation"
 
   redeclare record extends SaltConstants
     String name;
+    //DENSITY
     Real C[23];
     //    Modelica.SIunits.MolarMass M_salt "Molar Mass in kg/mol";
     Real m_r "reference molality";
@@ -20,10 +21,17 @@ package SaltData_Duan "Coefficients used in Duan density calculation"
     Modelica.SIunits.Temperature T_max_rho;
     Modelica.SIunits.Pressure p_min_rho;
     Modelica.SIunits.Pressure p_max_rho;
+   //VISCOSITY
     Real[3] a=fill(0, 3);
     Real[3] b=fill(0, 3);
     Real[2] c=fill(0, 2);
-    Real mola_max_eta "maximum molality for which density function is valid";
+    Real Zh_A=0 "Zhang viscosity coefficients";
+    Real Zh_B=0;
+    Real Zh_D=0;
+    Real Zh_E=0;
+    Real Zh_F=0;
+
+    Real mola_max_eta "maximum molality for which viscosity function is valid";
     annotation (Documentation(info="<html></html>"));
   end SaltConstants;
 
@@ -72,7 +80,11 @@ constant SaltConstants[:] saltConstants = {
        +0.20852448E-6},
     c=  {-0.25988855E-2,
        +0.77989227E-5},
-    mola_max_eta=  6),
+    Zh_A=0.0061,
+    Zh_B=0.0799,
+    Zh_D=0.01040,
+    Zh_E=7.56,
+     mola_max_eta=  6),
   SaltConstants(
        name=  "KCl",
        M_salt=  M_KCl,
@@ -117,7 +129,11 @@ constant SaltConstants[:] saltConstants = {
  -0.99280575E-7},
       c=  {0,
           0},
-      mola_max_eta=  4.5),
+    Zh_A= 0.0051,
+    Zh_B=-0.0152,
+    Zh_D= 0.00725,
+    Zh_E= 0.80,
+    mola_max_eta=  4.5),
   SaltConstants(
      name=  "CaCl2",
      M_salt=  M_CaCl2,
@@ -154,7 +170,12 @@ constant SaltConstants[:] saltConstants = {
     T_max_rho=523,
     p_min_rho=.1e6,
     p_max_rho=60e6,
-    mola_max_eta=  0),
+    Zh_A=   0.0157,
+    Zh_B=   0.271,
+    Zh_D=   0.04712,
+    Zh_E=   94,
+    Zh_F=   3,
+    mola_max_eta=  3),
   SaltConstants(
      name=  "MgCl2",
      M_salt=  M_MgCl2,

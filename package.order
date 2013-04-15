@@ -14,11 +14,11 @@ M_H2O
 Examples
 Partial_Units
 SaltData
+SaltData_Duan
 Densities
 SpecificEnthalpies
 Viscosities
 PartialBrine_MultiSalt_1Phase
-SaltData_Duan
 Brine_Duan
 Brine_Driesner
 Brine_5salts_noGas

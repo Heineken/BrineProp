@@ -33,7 +33,7 @@ package Medium = BrineProp.Brine_5salts_TwoPhase_3gas;
 /*Modelica.SIunits.DynamicViscosity eta_Philips = PowerPlant.Media.Brine.Brine_Phillips.dynamicViscosity_pTX(props.p,props.T,props.X);
 Modelica.SIunits.DynamicViscosity eta_Duan = PowerPlant.Media.Brine.Brine_Duan.dynamicViscosity_pTX(props.p,props.T,props.X);
 */
-//Modelica.SIunits.DynamicViscosity eta_l = Medium.dynamicViscosity_liq(props.state);
+Modelica.SIunits.DynamicViscosity eta_l = Medium.dynamicViscosity_liq(props.state);
 //Modelica.SIunits.DynamicViscosity eta_g = Medium.dynamicViscosity_gas(props.state);
 /**/
 //  constant Real MM[:] = Medium.MM;
@@ -93,6 +93,7 @@ Real f=1;*/
   Modelica.SIunits.SpecificHeatCapacity c_p_liq=Medium.specificHeatCapacityCp_liq(props.state);
   Modelica.SIunits.SpecificHeatCapacity c_p_gas=Medium.specificHeatCapacityCp_gas(props.state);
 */
+//Real beta=(props.d-Medium.density_liquid_pTX(props.p,props.T-1,props.X));
 initial equation
 // props.T = 273.16+60;
 equation
@@ -112,7 +113,7 @@ equation
   props.p = 25e5+time*1e5;
 //  props.h = 560984;
 //  props.p = (445*(1-time)+10)*1.01325e5 "STP";
-props.T = 273.16+110;
+props.T = 273.16+25;
 // props.T = 395.244;
 // props.T = 408;
 // der(props.h)=10000;

@@ -7,7 +7,7 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
  constant Boolean[5] ignoreLimitSalt_p={false,true,true,false,false};
  constant Boolean[5] ignoreLimitSalt_T={false,false,false,false,false};
  constant Boolean[5] ignoreLimitSalt_visc={false,false,true,false,false};
- constant Integer outOfRangeMode=0
+ constant Integer outOfRangeMode=1
   "when out of validity range: 0-do nothing, 1-show warnings, 2-throw error";
 
   constant Integer NaCl=1 "reference number";

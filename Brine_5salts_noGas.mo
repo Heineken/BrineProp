@@ -41,7 +41,7 @@ package Brine_5salts_noGas "One-phase (liquid) multisalt brine solution"
  //Modelica.Utilities.Streams.print("h="+String(X[1])+"*"+String(h_vec[1])+"="+String(X[1:nX_salt]*h_vec));
  end specificEnthalpy_pTX;
 
- redeclare function extends dynamicViscosity_pTX
+ redeclare function extends dynamicViscosity_pTXd
   protected
    Modelica.SIunits.Temperature T_corr;
  algorithm
@@ -52,13 +52,14 @@ package Brine_5salts_noGas "One-phase (liquid) multisalt brine solution"
   end if;
      T_corr:= max(273.16,T);
 
-    eta := Viscosities.dynamicViscosity_Duan_pTX(
+    eta := Viscosities.dynamicViscosity_DuanZhang_pTXd(
        p,
        T_corr,
        X,
+       d,
        MM_vec,
        Salt_data.saltConstants);
- end dynamicViscosity_pTX;
+ end dynamicViscosity_pTXd;
 
   redeclare function extends specificHeatCapacityCp
     "calculation of liquid specific heat capacity from apparent molar heat capacities"
@@ -105,6 +106,34 @@ package Brine_5salts_noGas "One-phase (liquid) multisalt brine solution"
      sigma:=Modelica.Media.Water.IF97_Utilities.surfaceTension(T)
       "TODO http://www.if.ufrgs.br/~levin/Pdfs.dir/6756.pdf";
   end surfaceTension_T;
+
+  redeclare function extends thermalConductivity
+    "Thermal conductivity of water TODO"
+  algorithm
+    lambda := Modelica.Media.Water.IF97_Utilities.thermalConductivity(
+        Modelica.Media.Water.IF97_Utilities.rho_props_pT(state.p, state.T, Modelica.Media.Water.IF97_Utilities.waterBaseProp_pT(state.p, state.T, 1)),
+        state.T,
+        state.p,
+        1);
+  end thermalConductivity;
+
+ redeclare function extends dynamicViscosity_pTX
+  protected
+   Modelica.SIunits.Temperature T_corr;
+ algorithm
+ //Modelica.Utilities.Streams.print("p="+String(p)+" Pa, T="+String(T)+" K (BrineProp.Brine_5salts_noGas.dynamicViscosity_pTX)");
+
+  if T<273.16 then
+     Modelica.Utilities.Streams.print("T="+String(T)+" too low (<0°C), setting to 0°C in PartialBrine_ngas_Newton.quality_pTX()");
+  end if;
+     T_corr:= max(273.16,T);
+    eta := Viscosities.dynamicViscosity_Duan_pTX(
+       p,
+       T_corr,
+       X,
+       MM_vec,
+       Salt_data.saltConstants);
+ end dynamicViscosity_pTX;
   annotation (Documentation(info="<html>
 <p><b>Brine_5salts_nogas</b> is a package that provides properties of one-phase solution of 5 salts (NaCl, KCl, CaCl2, MgCl2, SrCl2).</p>
 <p><h4>Usage</h4></p>

@@ -89,7 +89,6 @@ constant FluidConstants[nS] BrineConstants(
    parameter Real[nX_gas+1] n_g_norm_start = fill(.5,nX_gas+1)
     "start value, all gas in gas phase, all water liquid";
  //  Real[nX_gas+1] n_g_norm;
-   parameter Integer phase=0;
 protected
    MassFraction[nX_salt] X_salt = X[1:nX_salt];
    MassFraction[nX_gas] X_gas = X[nX_salt+1:end-1];
@@ -242,7 +241,7 @@ protected
 
 
  replaceable function density_liquid_pTX "Dichte der flüssigen Phase"
-   input Modelica.SIunits.Pressure p;
+   input Modelica.SIunits.Pressure p "TODO: Rename to density_liq_pTX";
    input Modelica.SIunits.Temp_K T;
    input MassFraction X[nX] "mass fraction m_NaCl/m_Sol";
    input Modelica.SIunits.MolarMass MM[:]
@@ -523,14 +522,14 @@ protected
     p_sat_H2O := saturationPressure_H2O(p,T2,X,MM_vec,nM_vec);
     p_degas := if phase==1 then 0 else sum(saturationPressures(p,T2,X,MM_vec)) + p_sat_H2O;
 
-     if  p_degas< p then
+     if  p_degas < p then
      if debugmode then
       Modelica.Utilities.Streams.print("1Phase-Liquid (PartialBrine_Multi_TwoPhase_ngas.quality_pTX("+String(p)+","+String(T2)+"))");
      end if;
       x:=0;
       p_H2O := p_sat_H2O;
     else
-      assert(max(X[end-nX_gas:end-1])>0,"Phase equilibrium cannot be calculated without dissolved gas ("+String(p/1e5)+" bar, "+String(T2-273.15)+"°C).");
+      assert(max(X[end-nX_gas:end-1])>0,"Phase equilibrium cannot be calculated without dissolved gas at "+String(p/1e5)+" bar, "+String(T2-273.15)+"°C with p_degas="+String(p_degas/1e5)+" bar.");
   //    Modelica.Utilities.Streams.print("2Phase (PartialBrine_Multi_TwoPhase_ngas.quality_pTX)");
   //    Modelica.Utilities.Streams.print("p="+String(p/1e5)+" bar");
 

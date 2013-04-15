@@ -143,19 +143,19 @@ protected
   end if;
   T_corr:= max(273.16,state.T);
 
-  eta := Viscosities.dynamicViscosity_Duan_pTX(
-     state.p,
-     T_corr,
-     state.X_l,
-     MM_vec,
-     Salt_data.saltConstants);
- /*algorithm 
- eta := Partial_Viscosity.dynamicViscosity_Duan_pTX(
+  /*eta := Viscosities.dynamicViscosity_Duan_pTX(
     state.p,
-    state.T,
+    T_corr,
     state.X_l,
     MM_vec,
     Salt_data.saltConstants);*/
+    eta := Viscosities.dynamicViscosity_DuanZhang_pTXd(
+       state.p,
+       T_corr,
+       state.X,
+       state.d,
+       MM_vec,
+       Salt_data.saltConstants);
  end dynamicViscosity_liq;
 
 
