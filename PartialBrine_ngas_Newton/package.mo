@@ -73,8 +73,7 @@ constant FluidConstants[nS] BrineConstants(
 
 
  redeclare model extends BaseProperties "Base properties of medium"
-   MassFraction[nX] X_l(start=cat(1,fill(0,nXi),{1}))
-    "= X cat(1,X_salt/(X[end]*m_l),X[nX_salt+1:end])";
+ //  MassFraction[nX] X_l(start=cat(1,fill(0,nXi),{1}))  "= X cat(1,X_salt/(X[end]*m_l),X[nX_salt+1:end])";
 
    Modelica.SIunits.Density d_l;
    Modelica.SIunits.Density d_g;
@@ -83,7 +82,7 @@ constant FluidConstants[nS] BrineConstants(
    Real x "(start=0) (min=0,max=1) gas phase mass fraction";
    Modelica.SIunits.Pressure p_H2O;
    Modelica.SIunits.Pressure[nX_gas] p_gas;
-   Modelica.SIunits.Pressure p_degas;
+ //  Modelica.SIunits.Pressure p_degas;
  //  Modelica.SIunits.Pressure p_check=sum(p_gas)+p_H2O;
  //  Real k[nX_gas];
    parameter Real[nX_gas+1] n_g_norm_start = fill(.5,nX_gas+1)
@@ -115,7 +114,7 @@ protected
  //  (x,d,d_g,d_l,p_H2O,p_gas,X_l,p_degas,k)= quality_pTX(p_corr,T_corr,X);
 
    state = setState_pTX(p,T,X,phase,n_g_norm_start);
-   X_l=state.X_l;
+ //  X_l=state.X_l;
    GVF=state.GVF;
    x=state.x;
    s=state.s;
@@ -124,7 +123,7 @@ protected
    d=state.d;
    p_H2O=state.p_H2O;
    p_gas=state.p_gas;
-   p_degas=state.p_degas;
+ //  p_degas=state.p_degas;
   /* 
   (x,d,d_g,d_l,p_H2O,p_gas,X_l,p_degas)= quality_pTX(p,T,X,n_g_start);
   s = 0 "specificEntropy_phX(p,h,X) TODO";
@@ -144,9 +143,11 @@ state =  ThermodynamicState( p=p,
  /*                              GVF=GVF,
                               x=GVF*d_g/d,*/
 
-   sat.psat = p_degas;
+   sat.psat = sum(state.p_degas);
    sat.Tsat = T;
    sat.X = X;
+  // sat.p_degas=p_degas;
+
    annotation (Documentation(info="<html></html>"),
                Documentation(revisions="<html>
 
@@ -179,13 +180,12 @@ redeclare record extends ThermodynamicState
   Real x(start=0) "vapor quality on a mass basis [mass vapor/total mass]";
   AbsolutePressure p_H2O;
   AbsolutePressure p_gas[nX_gas];
-  AbsolutePressure p_degas;
-
+  AbsolutePressure[nX_gas + 1] p_degas
+    "should be in SatProp, but is calculated in setState which returns a state";
    annotation (Documentation(info="<html>
 
 </html>"));
 end ThermodynamicState;
-
 
 
   redeclare function extends dewEnthalpy "dew curve specific enthalpy of water"
@@ -299,7 +299,8 @@ end vapourQuality;
   algorithm
   //  assert(T>273.15,"T too low in PartialBrine_ngas_Newton.specificEnthalpy_pTX()");
     if debugmode then
-       Modelica.Utilities.Streams.print("Running specificEnthalpy_pTX("+String(p)+","+String(T)+" K)");
+  //     Modelica.Utilities.Streams.print("Running specificEnthalpy_pTX("+String(p)+","+String(T)+" K)");
+        Modelica.Utilities.Streams.print("Running specificEnthalpy_pTX("+String(p/1e5)+","+String(T-273.15)+"°C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
     end if;
   /* x:=quality_pTX(p,T,X,n_g_start);
  h := x*specificEnthalpy_gas_pTX(p,T,X) + (1-x)*specificEnthalpy_liq_pTX(p,T,X);
@@ -442,7 +443,6 @@ protected
   end saturationPressures;
 
 
-
   redeclare replaceable partial function extends setState_pTX
   "finds the VLE iteratively by varying the normalized quantity of gas in the gasphase, calculates the densities"
   input Real[nX_gas + 1] n_g_norm_start "=fill(.1,nX_gas+1) 
@@ -463,7 +463,7 @@ protected
     Modelica.SIunits.MassFraction[nX_gas+1] X_g;
     Modelica.SIunits.Pressure p_H2O;
     Modelica.SIunits.MassFraction x;
-    Modelica.SIunits.Pressure p_degas;
+    Modelica.SIunits.Pressure[nX_gas + 1] p_degas;
     Modelica.SIunits.Pressure p_sat_H2O
     "= saturationPressure_H2O(p,T2,X,MM_vec,nM_vec)";
     Modelica.SIunits.Pressure p_H2O_0;
@@ -496,7 +496,8 @@ protected
     SpecificHeatCapacity R_gas;
   algorithm
     if debugmode then
-      Modelica.Utilities.Streams.print("Running setState_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+"°C,X)...");
+  //    Modelica.Utilities.Streams.print("Running setState_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+"°C,X)...");
+        Modelica.Utilities.Streams.print("Running setState_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" °C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
     end if;
   //  assert(T-273.15<300,"Moooot!");
 
@@ -510,7 +511,7 @@ protected
   X_l:=X;*/
   //  Modelica.Utilities.Streams.print("quality_pTX("+String(p)+","+String(T)+","+PowerPlant.vector2string(X[1:end],false)+")");
 
-    assert(max(X)<=1 and min(X)>=0, "X out of range [0...1] = "+Modelica.Math.Matrices.toString(transpose([X]))+" (quality_pTX())");
+    assert(max(X)-1<=1e-8 and min(X)>=-1e-8, "X out of range [0...1] = "+Modelica.Math.Matrices.toString(transpose([X]))+" (quality_pTX())");
   //  assert(T>273.15,"T too low in PartialBrine_ngas_Newton.()");
   //    Modelica.Utilities.Streams.print("\nn_g_start=" + PowerPlant.vector2string(n_g_start));
 
@@ -519,17 +520,22 @@ protected
     end if;
     T2:= max(273.16,T);
 
-    p_sat_H2O := saturationPressure_H2O(p,T2,X,MM_vec,nM_vec);
-    p_degas := if phase==1 then 0 else sum(saturationPressures(p,T2,X,MM_vec)) + p_sat_H2O;
+    p_H2O := saturationPressure_H2O(p,T2,X,MM_vec,nM_vec);
 
-     if  p_degas < p then
+  /*
+    p_sat_H2O := saturationPressure_H2O(p,T2,X,MM_vec,nM_vec);
+   p_degas := if phase==1 then 0 else sum(saturationPressures(p,T2,X,MM_vec)) + p_sat_H2O;
+   if  p_degas < p then*/
+     p_degas := cat(1,saturationPressures(p,T2,X,MM_vec), {p_H2O});
+
+     if phase==1 or sum(p_degas) < p then
      if debugmode then
       Modelica.Utilities.Streams.print("1Phase-Liquid (PartialBrine_Multi_TwoPhase_ngas.quality_pTX("+String(p)+","+String(T2)+"))");
      end if;
       x:=0;
       p_H2O := p_sat_H2O;
     else
-      assert(max(X[end-nX_gas:end-1])>0,"Phase equilibrium cannot be calculated without dissolved gas at "+String(p/1e5)+" bar, "+String(T2-273.15)+"°C with p_degas="+String(p_degas/1e5)+" bar.");
+      assert(max(X[end-nX_gas:end-1])>0,"Phase equilibrium cannot be calculated without dissolved gas at "+String(p/1e5)+" bar, "+String(T2-273.15)+"°C with p_degas="+String(sum(p_degas)/1e5)+" bar.");
   //    Modelica.Utilities.Streams.print("2Phase (PartialBrine_Multi_TwoPhase_ngas.quality_pTX)");
   //    Modelica.Utilities.Streams.print("p="+String(p/1e5)+" bar");
 

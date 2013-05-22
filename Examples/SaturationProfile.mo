@@ -13,6 +13,7 @@ model SaturationProfile
   Real ratioGasLiquid_1 = V_l*props_insitu.d_l/1000 "complete degassing";
 
   Real ratioGasLiquid = props_STP.state.GVF/(1-props_STP.state.GVF) "STP";
+  Modelica.SIunits.Density d_l = props_insitu.d_l;
 
   Real val[2];
   Real val_static[2];
@@ -20,6 +21,7 @@ model SaturationProfile
   String csvFilename = "pT_profil.csv";
   Real depth= time;
 //  Real depth=-4100;
+  Real m_g=sum(props_insitu.X_l[6:8]);
 equation
 
 //calculate VLE at in-situ conditions
@@ -45,4 +47,9 @@ equation
 algorithm
 //  Modelica.Utilities.Streams.print("rho="+String(d)+" kg/m³, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));
 //  Modelica.Utilities.Streams.print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
+  annotation (experiment(
+      StartTime=-4257,
+      StopTime=0,
+      NumberOfIntervals=100,
+      Tolerance=0.001), __Dymola_experimentSetupOutput);
 end SaturationProfile;

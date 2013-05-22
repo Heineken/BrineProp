@@ -173,7 +173,6 @@ protected
 
   redeclare function extends saturationPressures
   algorithm
-  //  Modelica.Utilities.Streams.print("saturationPressures("+String(p)+","+String(T)+")");
 
   //  if gasname =="carbondioxide" then
       p_sat[1] := if X[nX_salt+1]>0 then degassingPressure_CO2_Duan2006(p,T,X,MM_vec) else 0
@@ -185,6 +184,9 @@ protected
       p_sat[3] := if X[nX_salt+3]>0 then degassingPressure_CH4_Duan2006(p,T,X,MM_vec) else 0
     "aus Partial_Gas_Data";
   //  end if;
+    if debugmode then
+      Modelica.Utilities.Streams.print("saturationPressures("+String(p)+","+String(T)+")={"+Modelica.Math.Matrices.toString({p_sat})+"}");
+    end if;
   end saturationPressures;
 
 

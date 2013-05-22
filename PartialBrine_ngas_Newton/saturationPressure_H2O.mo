@@ -11,9 +11,12 @@ function saturationPressure_H2O
 protected
    BrineProp.Partial_Units.Molality ionMoleFractions[nX];
 algorithm
-//Modelica.Utilities.Streams.print("p_H2O("+String(T)+")="+String(p_sat/1e5)+" bar (PartialBrine_Multi_TwoPhase_ngas.saturationPressure_H2O)");
+  if debugmode then
+    Modelica.Utilities.Streams.print("Running saturationPressure_H2O("+String(p/1e5)+" bar,"+String(T-273.15)+" °C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
+//    Modelica.Utilities.Streams.print("p_H2O("+String(T)+")="+String(p_sat/1e5)+" bar (PartialBrine_Multi_TwoPhase_ngas.saturationPressure_H2O)");
+  end if;
 //  printVector(nM);
-  assert(max(X)<=1 and min(X)>=0, "X out of range [0...1] = "+Modelica.Math.Matrices.toString(transpose([X]))+" (saturationPressure_H2O())");
+  assert(max(X)-1<=1e-8 and min(X)>=-1e-8, "X ="+String(max(X)-1)+" out of range [0...1] = "+Modelica.Math.Matrices.toString(transpose([X]))+" (saturationPressure_H2O())");
   if X[end]>0 then
     ionMoleFractions:=massFractionsToMoleFractions(X, MM).*nM;
     ionMoleFractions:=ionMoleFractions/sum(ionMoleFractions);

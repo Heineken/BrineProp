@@ -32,13 +32,28 @@ protected
    Molarity_molperliter c;
   Molality b "component molality";
   Real phi "mixing weight";
+protected
+  constant Pressure_bar p_min=1;
+  constant Pressure_bar p_max=1000;
+  constant Modelica.SIunits.Temp_C T_min=0;
+  constant Modelica.SIunits.Temp_C T_max=400;
 algorithm
 //   Modelica.Utilities.Streams.print("X[3]="+String(X[3])+" (Brine.Viscosities.dynamicViscosity_DuanZhuang_pTXd)");
   if debugmode then
     Modelica.Utilities.Streams.print("p="+String(p_Pa)+" Pa, T_K"+String(T_K)+" K (Brine.Viscosities.dynamicViscosity_DuanZhuang_pTXd)");
   end if;
-  assert(T_C>=0 and T_C<=400, "Temperature must be between 10 and 350°C");
-  assert(p_bar>=1 and p_bar<=1000, "Pressure must be between 1 and 500 bar");
+
+   if outOfRangeMode==1 then
+      if not (p_bar>=p_min and p_bar<=p_max) then
+        Modelica.Utilities.Streams.print("Pressure is " + String(p_bar) + " bar, but must be between " + String(p_min) + " bar and " + String(p_max) + " bar (BrineProp.Viscosities.dynamicViscosity_DuanZhang_pTXd)");
+      end if;
+      if not (T_C>=T_min and T_C<=T_max) then
+        Modelica.Utilities.Streams.print("Temperature is "+String(T_C) + "°C, but must be between " + String(T_min) + "°C and " + String(T_max) + "°C (BrineProp.Viscosities.dynamicViscosity_DuanZhang_pTXd)");
+      end if;
+   elseif outOfRangeMode==2 then
+    assert(p_bar>=p_min and p_bar<=p_max, "p="+String(p_bar)+", but must be between "+String(p_min)+" and "+String(p_max)+" bar");
+    assert(T_C>=T_min and T_C<=T_max, "T="+String(T_C)+", but must be between "+String(T_min)+" and "+String(T_max)+"°C");
+   end if;
 
   //viscosity calculation
   state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(p_Pa, T_K, X);
@@ -53,7 +68,12 @@ algorithm
 
   eta:= eta_H2O "^X[end]";
 //  Modelica.Utilities.Streams.print("eta_H2O^X[end]= "+String(eta_H2O)+"^"+String(X[end]) + " -> "+String(eta)+" Pa·s");
-  for i in 1:nX_salt loop
+  if max(X[1:nX_salt]) <= 1e-12 then
+    //pure water -> skip the rest
+    return;
+  end if;
+
+ for i in 1:nX_salt loop
     if X[i]>0 then
       salt := Salt_Constants[i];
       if outOfRangeMode==1 then

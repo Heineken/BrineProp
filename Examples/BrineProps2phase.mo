@@ -14,9 +14,9 @@ package Medium = BrineProp.Brine_5salts_TwoPhase_3gas;
   constant Modelica.SIunits.MassFraction Xi[:]=fill(1,0) 
     "{.225} Mass fractions";
 */
-//  package Medium = Modelica.Media.Water.WaterIF97_ph;
   Medium.BaseProperties props(phase=0,n_g_norm_start=fill(.5,Medium.nX_gas+1));
-
+//  parameter Modelica.SIunits.MassFraction[Medium.nXi] Xi=10*{    0,0,0,0,0, 0,  5e-3, 5e-3}     "fill(0,Medium.nXi)";
+  parameter Modelica.SIunits.Pressure p=400e5;
   Modelica.SIunits.Density d= props.d;  /**/
 
  /* Modelica.SIunits.Temperature T "= props.T";*/
@@ -109,13 +109,13 @@ equation
 //  props.p = 45998589 "5 mol 150°C 450atm+p_H2O";
 //  props.p = 175*1.01325e5+Modelica.Media.Water.WaterIF97_base.saturationPressure(props.T) "1 mol 150°C";
 
-//  props.p = 2E7;
-  props.p = 25e5+time*1e5;
+//  props.p = p;
+  props.p = 250e5 "+time*1e5";
 //  props.h = 560984;
 //  props.p = (445*(1-time)+10)*1.01325e5 "STP";
-props.T = 273.16+25;
+//props.T = 273.16+25;
 // props.T = 395.244;
-// props.T = 408;
+ props.T = 393.15;
 // der(props.h)=10000;
 
 /*
@@ -131,17 +131,18 @@ props.T = 273.16+25;
 //d = Medium.density_liquid_pTX(props.p,props.T,props.X, Medium.MM_vec);
 //T=props.T;
 
+// props.Xi = Xi;
 //  props.Xi = {0.089190167,0.005198142,0.137663206,0.001453819,0.002621571, 7.85e-4,  5.73e-5, 6.98e-5}  "NaCl, KCl, CaCl2, MgCl2, SrCl2, CO2, N2, CH4";
 //  props.Xi = {0*.225+5*Medium.Salt_data.M_NaCl/(1+5*Medium.Salt_data.M_NaCl),0,0,0,0,0,tt*50*0.000218855,(1-tt)*50*0.000125332}     "x mol NaCl";
 //  props.Xi = {0.089190167,0.005198142,0.137663206,0*0.001453819,0*0.002621571, 5.87e-5, 8.04e-4,  7.14e-5}     "Messwerte aus STR04/16 direkt";
 //  f=.978235 "-> 265 g/l";
 //   props.Xi = f*{0.089182812,0.005197713,0.137651853,0.001453699,0.002621355,1.6015e-4,8.07e-4,7.209e-5}     "Entsprechend STR04/16 bei GG mit d_l=1091.37 kg/m³ - X_g stimmt";
-   props.Xi = {    0.081109,   0.0047275,     0.12519,   0*0.0013225,  0*0.0023842,  0.00016889,  0.00073464, 6.5657e-005}
-    "Entsprechend STR04/16 bei GG mit d_l=1199.48 kg/m³ - X_g stimmt";
+//   props.Xi = {    0.081109,   0.0047275,     0.12519,   0*0.0013225,  0*0.0023842,  0*0.00016889,  0*0.00073464, 0*6.5657e-005}     "Entsprechend STR04/16 bei GG mit d_l=1199.48 kg/m³ - X_g stimmt";
 //  props.Xi = {6*SaltData.M_NaCl/(1+6*SaltData.M_NaCl),0,0,0,0, 0,0,0} "NaCl, KCl, CaCl2, MgCl2, SrCl2, CO2, N2, CH4";
 //  props.Xi = {0,SaltData.M_KCl/(1+SaltData.M_KCl),0,0,0,0,0,0} "NaCl, KCl, CaCl2, MgCl2, SrCl2, CO2, N2, CH4";
 //  props.Xi = {0,0,SaltData.M_CaCl2/(1+SaltData.M_CaCl2),0,0,0,0,0} "NaCl, KCl, CaCl2, MgCl2, SrCl2, CO2, N2, CH4";
-
+props.Xi = {     0.08214,   0.0053126,     0.11052,   0*0.0011094,   0*0.0019676,  0.00018083,  0.00074452,  6.661e-005}
+    "Elvira 9/11";
 /*  props.Xi[1:5] = {0.089190167,0.005198142,0.137663206,0*0.001453819,0*0.002621571};
   X_g[6:8]={8.05e-4,  5.87e-5, 7.15e-5}; GEHT NICHT WEIL ER X<0 ausprobiert und das wird in PartialMedium abgefangen
 */
@@ -157,4 +158,5 @@ props.T = 273.16+25;
 algorithm
 //  Modelica.Utilities.Streams.print("rho="+String(d)+" kg/m³, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));
 //  Modelica.Utilities.Streams.print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
+//  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(transpose([props.Xi])));
 end BrineProps2phase;

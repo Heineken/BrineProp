@@ -10,3 +10,7 @@ SaturationProfile
 DensityValidationFluMo
 DensityValidationLabor
 DensityValidationLabor2
+WaterEnthalpyTest
+SaturationProfile_Stripping
+SaturationProfile_Stripping_Transient
+BrineProps2phaseKinetic

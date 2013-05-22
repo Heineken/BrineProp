@@ -29,11 +29,26 @@ protected
   Real x_NaCl "mol fraction";
   Modelica.SIunits.MolarMass M_Solution "[kg/mol]";
 //  Modelica.SIunits.Pressure p_check;
+protected
+  constant Pressure_bar p_min=1;
+  constant Pressure_bar p_max=1000;
+  constant Modelica.SIunits.Temp_C T_min=0;
+  constant Modelica.SIunits.Temp_C T_max=1000;
 algorithm
   p_bar := Modelica.SIunits.Conversions.to_bar(p);
-  assert(T_C>=0 and T_C<=1000, "T="+String(T-273.15)+", but must be between 0 and 1000°C");
-  assert(p_bar>=1 and p_bar<=1000, "P="+String(p/1e5)+" bar, but must be between 1 and 1000 bar");
 //  assert(mola>=.25 and mola<=5, "Molality must be between 0.25 and 5 mol/kg");
+
+   if outOfRangeMode==1 then
+      if not (p_bar>=p_min and p_bar<=p_max) then
+        Modelica.Utilities.Streams.print("Pressure is " + String(p_bar) + " bar, but must be between " + String(p_min) + " bar and " + String(p_max) + " bar (BrineProp.SpecificEnthalpies.T_Scale_h_Driesner)");
+      end if;
+      if not (T_C>=T_min and T_C<=T_max) then
+        Modelica.Utilities.Streams.print("Temperature is "+String(T_C) + "°C, but must be between " + String(T_min) + "°C and " + String(T_max) + "°C (BrineProp.SpecificEnthalpies.T_Scale_h_Driesner)");
+      end if;
+   elseif outOfRangeMode==2 then
+      assert(p_bar>=p_min and p_bar<=p_max, "p="+String(p_bar)+" bar, but must be between " + String(p_min) + " and " + String(p_max) + " bar");
+      assert(T_C>=T_min and T_C<=T_max, "T="+String(T_C)+", but must be between " + String(T_min) + "and " + String(T_max) + "°C");
+   end if;
 
 //Salinity conversion
 //  if X[1]==0 then
