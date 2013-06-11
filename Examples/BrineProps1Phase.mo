@@ -11,7 +11,9 @@ package Medium = Brine_5salts_noGas;
   Modelica.SIunits.ThermalConductivity lambda=Medium.thermalConductivity(props.state);
 //  Modelica.SIunits.DynamicViscosity etaC=BrineProp.Viscosities.dynamicViscosity_Zhang_pTXd(props.p,props.T,props.X,props.d,Medium.MM_vec);
   Modelica.SIunits.SpecificHeatCapacity c_p_brine= Medium.specificHeatCapacityCp(props.state);
-  Modelica.SIunits.SpecificHeatCapacity c_p_brine2=(Medium.specificEnthalpy_pTX(props.p,props.T+.1,props.X)-Medium.specificEnthalpy_pTX(props.p,props.T-.1,props.X))/.2;
+  Modelica.SIunits.SpecificHeatCapacity c_p_brine2=(Medium.specificEnthalpy_pTX(props.p,props.T+0.1,
+                                                                                                   props.X)-Medium.specificEnthalpy_pTX(props.p,props.T-0.1,
+                                                                                                    props.X))/0.2;
 //  Modelica.SIunits.SurfaceTension sigma= Medium.surfaceTension_T(props.T);
 /*  Real n_K=0*2.2846;
   Real n_Ca=0*.05/2;

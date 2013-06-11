@@ -14,7 +14,8 @@ package Medium = BrineProp.Brine_5salts_TwoPhase_3gas;
   constant Modelica.SIunits.MassFraction Xi[:]=fill(1,0) 
     "{.225} Mass fractions";
 */
-  Medium.BaseProperties props(phase=0,n_g_norm_start=fill(.5,Medium.nX_gas+1));
+  Medium.BaseProperties props(phase=0,n_g_norm_start=fill(0.5,
+                                                             Medium.nX_gas+1));
 //  parameter Modelica.SIunits.MassFraction[Medium.nXi] Xi=10*{    0,0,0,0,0, 0,  5e-3, 5e-3}     "fill(0,Medium.nXi)";
   parameter Modelica.SIunits.Pressure p=400e5;
   Modelica.SIunits.Density d= props.d;  /**/
@@ -88,11 +89,12 @@ Real f=1;*/
 //  Real tt=(h_francke-props.h)/h_francke;
 //  Modelica.SIunits.SpecificHeatCapacity c_p_salt= (c_p_brine-4190*props.X[end])/props.X[1];
 //  Modelica.SIunits.SpecificHeatCapacity c_p_Driesner= SpecificEnthalpies.specificHeatCapacity_pTX_Driesner(props.p,props.T,sum(props.X[1:5]));
-//  Modelica.SIunits.SpecificHeatCapacity c_p_brine= Medium.specificHeatCapacityCp(props.state);
+  Modelica.SIunits.SpecificHeatCapacity c_p_brine= Medium.specificHeatCapacityCp(props.state);
 /*  Modelica.SIunits.SpecificHeatCapacity c_p_brine2=(Medium.specificEnthalpy_pTX(props.p,props.T+.1,props.X)-Medium.specificEnthalpy_pTX(props.p,props.T-.1,props.X))/.2;
-  Modelica.SIunits.SpecificHeatCapacity c_p_liq=Medium.specificHeatCapacityCp_liq(props.state);
-  Modelica.SIunits.SpecificHeatCapacity c_p_gas=Medium.specificHeatCapacityCp_gas(props.state);
 */
+    Modelica.SIunits.SpecificHeatCapacity c_p_liq=Medium.specificHeatCapacityCp_liq(props.state);
+  Modelica.SIunits.SpecificHeatCapacity c_p_gas=Medium.specificHeatCapacityCp_gas(props.state);
+
 //Real beta=(props.d-Medium.density_liquid_pTX(props.p,props.T-1,props.X));
 initial equation
 // props.T = 273.16+60;
@@ -110,12 +112,12 @@ equation
 //  props.p = 175*1.01325e5+Modelica.Media.Water.WaterIF97_base.saturationPressure(props.T) "1 mol 150°C";
 
 //  props.p = p;
-  props.p = 250e5 "+time*1e5";
+  props.p = 1.00804*1e5;
 //  props.h = 560984;
 //  props.p = (445*(1-time)+10)*1.01325e5 "STP";
-//props.T = 273.16+25;
+props.T = 76.8346+273.15;
 // props.T = 395.244;
- props.T = 393.15;
+// props.T = 393.15;
 // der(props.h)=10000;
 
 /*
@@ -141,8 +143,9 @@ equation
 //  props.Xi = {6*SaltData.M_NaCl/(1+6*SaltData.M_NaCl),0,0,0,0, 0,0,0} "NaCl, KCl, CaCl2, MgCl2, SrCl2, CO2, N2, CH4";
 //  props.Xi = {0,SaltData.M_KCl/(1+SaltData.M_KCl),0,0,0,0,0,0} "NaCl, KCl, CaCl2, MgCl2, SrCl2, CO2, N2, CH4";
 //  props.Xi = {0,0,SaltData.M_CaCl2/(1+SaltData.M_CaCl2),0,0,0,0,0} "NaCl, KCl, CaCl2, MgCl2, SrCl2, CO2, N2, CH4";
-props.Xi = {     0.08214,   0.0053126,     0.11052,   0*0.0011094,   0*0.0019676,  0.00018083,  0.00074452,  6.661e-005}
-    "Elvira 9/11";
+//props.Xi = {     0.08214,   0.0053126,     0.11052,   0*0.0011094,   0*0.0019676,  0.00018083,  0.00074452,  6.661e-005}     "Elvira 9/11";
+    props.Xi = {0.083945671051201,0.00253479771131107,0.122842299461699,0*0.000612116692496665,0*0.00214041137028575,  0.00016883,  0.00073459, 6.5652e-005}
+    "Elvira 2-2013 1.1775g/ml";
 /*  props.Xi[1:5] = {0.089190167,0.005198142,0.137663206,0*0.001453819,0*0.002621571};
   X_g[6:8]={8.05e-4,  5.87e-5, 7.15e-5}; GEHT NICHT WEIL ER X<0 ausprobiert und das wird in PartialMedium abgefangen
 */

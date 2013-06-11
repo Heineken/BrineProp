@@ -34,31 +34,5 @@ partial package PartialGasData "Molar masses and ion numbers of gases"
     M_CO2,M_N2};*/
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   annotation (Documentation(info=""));
 end PartialGasData;

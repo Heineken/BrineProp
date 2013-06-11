@@ -13,3 +13,4 @@ surfaceTension
 dynamicViscosity_pTX_unused
 specificHeatCapacityCp_liq
 specificHeatCapacityCp_gas
+specificHeatCapacityCp_gas_pTX_unused

@@ -4,7 +4,7 @@ function fugacity_N2_Duan2006 "Nullstellensuche mit EOS aus Duan2006"
   //Shide Mao, Zhenhao Duan:A thermodynamic model for calculating nitrogen solubility, gas phase composition and density of the N2?H2O?NaCl system
   extends partial_fugacity_pTX;
 protected
-  Modelica.SIunits.SpecificVolume V_neu=.024 "Startwert";
+  Modelica.SIunits.SpecificVolume V_neu=0.024 "Startwert";
   Modelica.SIunits.SpecificVolume V=0;
   Real a[:]= {3.75504388E-02,
              -1.08730273E+04,
@@ -37,7 +37,7 @@ protected
   Real Z;
   Real V_m;
   Integer z=0 "only a counter to avoid getting caught in the iteration loop";
-  Real d=.7 "dampening factor 0=no dampening, 1=no progress";
+  Real d=0.7 "dampening factor 0=no dampening, 1=no progress";
 algorithm
 /*  V := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
       function fugacity_N2_Duan2006_res(p=p,T=T,a=a,B=B,C=C,D=D,E=E,F=F),

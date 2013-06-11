@@ -167,7 +167,8 @@ protected
  //eta  := Modelica.Media.Water.IF97_Utilities.dynamicViscosity(state.d_g, state.T, Modelica.Media.Water.IF97_Utilities.BaseIF97.Basic.psat(state.T)-1, state.phase) "Viskosität von gasförmigem Wasser";
  //  eta  := Modelica.Media.Water.IF97_Utilities.dynamicViscosity(state.d_g, state.T, state.p, state.phase) "Viskosität von gasförmigem Wasser";
  //eta  := 0;
-   eta  := Modelica.Media.Air.MoistAir.dynamicViscosity(state);
+ //  eta  := Modelica.Media.Air.MoistAir.dynamicViscosity(state);
+   eta  := BrineGas_3Gas.dynamicViscosity(state);
  end dynamicViscosity_gas;
 
 
@@ -279,11 +280,15 @@ protected
   import SG = Modelica.Media.IdealGases.SingleGases;
   algorithm
     if state.x>0 then
-      cp_vec:= {SG.CO2.specificHeatCapacityCp(state),
-               SG.N2.specificHeatCapacityCp(state),
-               SG.CH4.specificHeatCapacityCp(state),
-               SG.H2O.specificHeatCapacityCp(state)};
-      cp:=X_g[end - nX_gas:end]*cp_vec;
+  /*    cp_vec:= {SG.CO2.specificHeatCapacityCp(state),
+             SG.N2.specificHeatCapacityCp(state),
+             SG.CH4.specificHeatCapacityCp(state),
+             SG.H2O.specificHeatCapacityCp(state)};
+    cp:=X_g[end - nX_gas:end]*cp_vec;*/
+
+  //    cp :=specificHeatCapacityCp_gas_TX(
+      cp :=BrineGas_3Gas.specificHeatCapacityCp_pTX(
+       p=state.p, T=state.T, X=X_g[end - nX_gas:end]);
     else
       cp:=-1;
     end if;

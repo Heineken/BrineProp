@@ -14,14 +14,14 @@ constant String explicitVars = "ph"
 
  extends BrineProp.PartialGasData;
 
- constant Real[:] MM_gas;
+ constant Modelica.SIunits.MolarMass[:] MM_gas;
  constant Integer[:] nM_gas "number of ions per molecule";
 
- constant Real[:] MM_salt;
+ constant Modelica.SIunits.MolarMass[:] MM_salt;
  constant Integer[:] nM_salt "number of ions per molecule";
 
- constant Modelica.SIunits.MolarMass MM_vec = cat(1,MM_salt, MM_gas, {M_H2O});
- constant Modelica.SIunits.MolarMass nM_vec = cat(1,nM_salt, nM_gas, {1});
+ constant Modelica.SIunits.MolarMass[:] MM_vec = cat(1,MM_salt, MM_gas, {M_H2O});
+ constant Modelica.SIunits.MolarMass[:] nM_vec = cat(1,nM_salt, nM_gas, {1});
 
 //TWO-PHASE-STUFF
 constant String saltNames[:]={""};
@@ -82,10 +82,11 @@ constant FluidConstants[nS] BrineConstants(
    Real x "(start=0) (min=0,max=1) gas phase mass fraction";
    Modelica.SIunits.Pressure p_H2O;
    Modelica.SIunits.Pressure[nX_gas] p_gas;
- //  Modelica.SIunits.Pressure p_degas;
+   Modelica.SIunits.Pressure p_degas;
  //  Modelica.SIunits.Pressure p_check=sum(p_gas)+p_H2O;
  //  Real k[nX_gas];
-   parameter Real[nX_gas+1] n_g_norm_start = fill(.5,nX_gas+1)
+   parameter Real[nX_gas+1] n_g_norm_start = fill(0.5,
+                                                     nX_gas+1)
     "start value, all gas in gas phase, all water liquid";
  //  Real[nX_gas+1] n_g_norm;
 protected
@@ -123,7 +124,7 @@ protected
    d=state.d;
    p_H2O=state.p_H2O;
    p_gas=state.p_gas;
- //  p_degas=state.p_degas;
+   p_degas=sum(state.p_degas);
   /* 
   (x,d,d_g,d_l,p_H2O,p_gas,X_l,p_degas)= quality_pTX(p,T,X,n_g_start);
   s = 0 "specificEntropy_phX(p,h,X) TODO";
@@ -186,6 +187,7 @@ redeclare record extends ThermodynamicState
 
 </html>"));
 end ThermodynamicState;
+
 
 
   redeclare function extends dewEnthalpy "dew curve specific enthalpy of water"
@@ -264,7 +266,8 @@ end vapourQuality;
     input Modelica.SIunits.Temp_K T;
     input MassFraction X[:] "mass fraction m_NaCl/m_Sol";
     input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
-    input Real[nX_gas+1] n_g_norm_start=fill(.5,nX_gas+1)
+    input Real[nX_gas+1] n_g_norm_start=fill(0.5,
+                                                nX_gas+1)
     "start value, all gas in gas phase, all water liquid";
     output Modelica.SIunits.SpecificEnthalpy h;
   /*  output Real x "gas mass fraction";
@@ -325,7 +328,8 @@ end vapourQuality;
     input SpecificEnthalpy h "Specific enthalpy";
     input MassFraction X[nX] "Mass fractions";
     input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
-    input Real[nX_gas + 1] n_g_start=fill(.5,nX_gas+1)
+    input Real[nX_gas + 1] n_g_start=fill(0.5,
+                                             nX_gas+1)
     "start value, all gas in gas phase, all water liquid";
     output Temperature T "Temperature";
 protected
@@ -443,6 +447,7 @@ protected
   end saturationPressures;
 
 
+
   redeclare replaceable partial function extends setState_pTX
   "finds the VLE iteratively by varying the normalized quantity of gas in the gasphase, calculates the densities"
   input Real[nX_gas + 1] n_g_norm_start "=fill(.1,nX_gas+1) 
@@ -491,7 +496,7 @@ protected
     constant Integer zmax=1000 "maximum number of iteration";
   //  Integer ju = nX_gas+1;
     Real[nX_gas + 1,nX_gas + 1] Grad_f;
-    Real DeltaC=.001;
+    Real DeltaC=0.001;
     Modelica.SIunits.Temperature T2;
     SpecificHeatCapacity R_gas;
   algorithm
@@ -670,12 +675,13 @@ protected
 
     end if "p_degas< p";
 
-  //  assert(x>=0 and (sum(n_gas_g) + n_H2O_g)>=0 or (not x>=0 and not (sum(n_gas_g) + n_H2O_g)>=0),"WEIRD!");
+  //DENSITY
    X_g:=if x>0 then (X[end-nX_gas:end]-X_l[end-nX_gas:end]*(1-x))/x else fill(0,nX_gas+1);
-    R_gas :=if x > 0 then sum(Modelica.Constants.R*X_g ./ cat(1,MM_gas,{M_H2O})) else -1;
-  //  Modelica.Utilities.Streams.print("R_gas="+String(R_gas)+"(MM="+Modelica.Math.Matrices.toString({cat(1,MM_gas,{M_H2O})})+")");
-    d_g :=if x > 0 then p/(T2*R_gas) else -1;
+  /*Calculation here  R_gas :=if x > 0 then sum(Modelica.Constants.R*X_g ./ cat(1,MM_gas,{M_H2O})) else -1;
+  d_g :=if x > 0 then p/(T2*R_gas) else -1;*/
   //  d_g:= if x>0 then p/(Modelica.Constants.R*T2)*(n_g*cat(1,MM_gas,{M_H2O}))/sum(n_g) else -1;
+    d_g :=if x > 0 then BrineGas_3Gas.density_pTX(p,T, X_g[end - nX_gas:end]) else -1
+    "calculation in MoistAirModel";
 
     d_l:=if not x<1 then -1 else density_liquid_pTX(p,T2,X_l,MM_vec)
     "gases are ignored anyway";
@@ -742,6 +748,9 @@ protected
     Modelica.SIunits.SpecificHeatCapacity cp_gas=specificHeatCapacityCp_gas(state);
   algorithm
     cp:=state.x*cp_gas + (1-state.x)*cp_liq;
+
+  //  assert(cp>0 and cp<5000,"T="+String(state.T-273.15)+"K, p="+String(state.p/1e5)+"bar, x="+String(state.x)+", cp_liq="+String(cp_liq)+"J(kgK), cp_gas="+String(cp_gas)+"J(kgK)");
+
   //  Modelica.Utilities.Streams.print("c_p_liq("+String(state.T)+"°C)="+String(p)+" J/(kg·K)");
       annotation (Documentation(info="<html>
                                 <p>In the two phase region this function returns the interpolated heat capacity between the

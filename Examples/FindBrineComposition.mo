@@ -32,7 +32,7 @@ package Medium = BrineProp.Brine_5salts_TwoPhase_3gas;
 
   Real[:] gasVolumeFractions={0.03825,0.8285,0.12825};
   //Real GVF_measured = .46;
-  Real gasLiquidRatio=.8475 "GVF/(1-GVF)";
+  Real gasLiquidRatio=0.8475 "GVF/(1-GVF)";
   Real gasVolumePerLiquidVolume[:]= gasVolumeFractions*gasLiquidRatio;
   Modelica.SIunits.Density[:] rho_gas = props.p*Medium.MM_gas/(Modelica.Constants.R*props.T);
   Real gasMassPerLiquidMass[:]= gasVolumePerLiquidVolume.*rho_gas/props.state.d_l;

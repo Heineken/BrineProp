@@ -6,7 +6,7 @@ model SolubilityPlot
     Modelica.SIunits.Pressure p_gas=1e5*time;
     Real solu=BrineProp.PartialGasData.solubility_N2_pTX_Duan2006(
                                                           p,T,
-     {0.089190167,0.005198142,0.137663206,0*0.001453819,0*0.002621571, 7.85e-4,  5.73e-5,6.98e-5,.767036}, Medium.MM_vec,
+     {0.089190167,0.005198142,0.137663206,0*0.001453819,0*0.002621571, 7.85e-4,  5.73e-5,6.98e-5,0.767036},Medium.MM_vec,
       p_gas);
 //      Medium.BaseProperties props;
 equation

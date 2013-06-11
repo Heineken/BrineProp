@@ -20,20 +20,6 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
   "0.018015 [kg/mol]";
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   replaceable function massFractionsToMolalities
   "Calculate molalities (mole_i per kg H2O) from mass fractions X"
     extends Modelica.Icons.Function;
@@ -137,4 +123,17 @@ Germany</p></font>
 
 </html>"), version="0.1", versionDate="2012-08-01", uses(Modelica(version="3.2"), MediaTwoPhaseMixture(version="0.2"),
       DataFiles(version="1.0")));
+
+  replaceable function Xi2X "calculates the full mass vector X from Xi"
+    extends Modelica.Icons.Function;
+    input Modelica.SIunits.MassFraction Xi[:] "Mass fractions of mixture";
+    output Modelica.SIunits.MassFraction X[size(Xi,1)+1]
+    "Mass fractions of mixture";
+  algorithm
+    X:=cat(
+      1,
+      Xi,
+      {1 - sum(Xi)});
+
+  end Xi2X;
 end BrineProp;

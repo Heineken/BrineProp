@@ -139,7 +139,8 @@ end ThermodynamicState;
     input AbsolutePressure p "Pressure";
     input SpecificEnthalpy h "Specific enthalpy";
     input MassFraction X[nX] "Mass fractions";
-    input Real[nX_gas + 1] n_g_start=fill(.5,nX_gas+1)
+    input Real[nX_gas + 1] n_g_start=fill(0.5,
+                                             nX_gas+1)
     "start value, all gas in gas phase, all water liquid";
     output Temperature T "Temperature";
 protected

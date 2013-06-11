@@ -12,7 +12,7 @@ function solubility_CH4_pTX_Harting "..."
 protected
   Molality molalities[size(X,1)]=massFractionsToMolalities(X,MM_vec);
   Modelica.SIunits.Temp_C T_C = Modelica.SIunits.Conversions.to_degC(T);
-  Real L_0=.454 "CH4-Löslichkeit in H2O bei 25 atm 75°C";
+  Real L_0=0.454 "CH4-Löslichkeit in H2O bei 25 atm 75°C";
   Real L_rel_p "pressure influence";
   Real L_rel_c "salinity influence";
   Real L_rel_T "Temperature influence";
@@ -33,9 +33,11 @@ algorithm
   end if;
 
 //page 19
-  L_rel_p :=(.4009*p_atm - 7.454e-4*p_atm^2 + 5.985e-7*p_atm^3)/100*10.4537157651017 "CH4";
+  L_rel_p :=(0.4009
+                  *p_atm - 7.454e-4*p_atm^2 + 5.985e-7*p_atm^3)/100*10.4537157651017 "CH4";
 
-  L_rel_c :=exp(-.315*c +.01452 *c^2) "S. 15";
+  L_rel_c :=exp(-0.315
+                     *c +0.01452*c^2) "S. 15";
 
   L_rel_T := -0.0000003493*(T_C-75)^3 + 0.0001054*(T_C-75)^2 - 0.000293*(T_C-75) + 1.01
     "fitted with Excel";

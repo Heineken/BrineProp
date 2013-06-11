@@ -2,7 +2,7 @@ within BrineProp.PartialGasData;
 function fugacity_CH4_Duan1992 "Nullstellensuche mit EOS aus Duan1992"
   extends partial_fugacity_pTX;
 protected
-  Modelica.SIunits.SpecificVolume V_neu=.024 "Startwert";
+  Modelica.SIunits.SpecificVolume V_neu=0.024 "Startwert";
   Modelica.SIunits.SpecificVolume V=0;
   Real a[:]= {8.72553928E-02,
           -7.52599476E-01,
@@ -36,7 +36,7 @@ protected
   Real V_r;
   Real G;
   Integer z=0 "only a counter to avoid getting caught in the iteration loop";
-  Real d=.7 " dampening factor 0=no dampening, 1=no progress";
+  Real d=0.7 " dampening factor 0=no dampening, 1=no progress";
 algorithm
 
 /*  V := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
