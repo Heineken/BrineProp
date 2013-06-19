@@ -10,7 +10,7 @@ function solubility_CH4_pTX_Harting "..."
   output Modelica.SIunits.MassFraction c_gas "gas concentration in kg_gas/kg_H2O";
 */
 protected
-  Molality molalities[size(X,1)]=massFractionsToMolalities(X,MM_vec);
+  Partial_Units.Molality molalities[size(X,1)]=massFractionsToMolalities(X,MM_vec);
   Modelica.SIunits.Temp_C T_C = Modelica.SIunits.Conversions.to_degC(T);
   Real L_0=0.454 "CH4-Löslichkeit in H2O bei 25 atm 75°C";
   Real L_rel_p "pressure influence";
@@ -21,7 +21,7 @@ protected
   Real p_atm = p_gas/101325;
 algorithm
 // Modelica.Utilities.Streams.print("mola_CH4("+String(p_gas)+","+String(T-273.16)+") (solubility_CH4_pTX_Duan2006)");
-
+assert(false,"wo?");
 //  assert(273<=T and T<=400, "T="+String(T)+" K, but N2 solubility calculation is only valid for temperatures between 0 and 127°C");
  if 273>T or  T>400 then
     Modelica.Utilities.Streams.print("T="+String(T)+" K, but N2 solubility calculation is only valid for temperatures between 0 and 127°C (Partial_Gas_Data.solubility_N2_pTX_Duan2006())");

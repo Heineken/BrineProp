@@ -10,7 +10,7 @@ function solubility_N2_pTX_Harting "..."
   output Modelica.SIunits.MassFraction c_gas "gas concentration in kg_gas/kg_H2O";
 */
 protected
-  Molality molalities[size(X,1)]=massFractionsToMolalities(X,MM_vec);
+  Partial_Units.Molality molalities[size(X,1)]=massFractionsToMolalities(X,MM_vec);
   Modelica.SIunits.Temp_C T_C = Modelica.SIunits.Conversions.to_degC(T);
   Real L_0=0.252 "N2-Löslichkeit in H2O bei 25 atm 75°C";
   Real L_rel_p "pressure influence";

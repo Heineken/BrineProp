@@ -75,26 +75,38 @@ constant FluidConstants[nS] BrineConstants(
  redeclare model extends BaseProperties "Base properties of medium"
  //  MassFraction[nX] X_l(start=cat(1,fill(0,nXi),{1}))  "= X cat(1,X_salt/(X[end]*m_l),X[nX_salt+1:end])";
 
-   Modelica.SIunits.Density d_l;
-   Modelica.SIunits.Density d_g;
+   SI.Density d_l;
+   SI.Density d_g;
 
    Real GVF "=x*d/d_ggas void fraction";
    Real x "(start=0) (min=0,max=1) gas phase mass fraction";
-   Modelica.SIunits.Pressure p_H2O;
-   Modelica.SIunits.Pressure[nX_gas] p_gas;
-   Modelica.SIunits.Pressure p_degas;
+   SI.Pressure p_H2O;
+   SI.Pressure[nX_gas+1] p_gas;
+   SI.Pressure p_degas[nX_gas+1];
+   MassFraction[nX_gas+1] X_g;
+   MassFraction[nX] X_l;
+
+   SI.SpecificEnthalpy h_l;
+   SI.SpecificEnthalpy h_g;
+
  //  Modelica.SIunits.Pressure p_check=sum(p_gas)+p_H2O;
  //  Real k[nX_gas];
    parameter Real[nX_gas+1] n_g_norm_start = fill(0.5,
                                                      nX_gas+1)
     "start value, all gas in gas phase, all water liquid";
  //  Real[nX_gas+1] n_g_norm;
-protected
-   MassFraction[nX_salt] X_salt = X[1:nX_salt];
-   MassFraction[nX_gas] X_gas = X[nX_salt+1:end-1];
+   Real y[:]=massFractionsToMoleFractions(X,MM_vec) "mole fractions";
+ //  Real y_g[:]= massFractionsToMoleFractions(X_g,MM_vec[nX_salt+1:nX]) "mole fractions";
+   Real y_g[:]= cat(1,p_gas,{p_H2O})/p "mole fractions in gas phase";
+
+   Real[nX_gas+1] x_vec = if x>0 then X_g*x./X[nX_salt+1:nX] else fill(0,nX_gas+1)
+    "Fractions of gas mass in gas phase";
+
+ //  MassFraction[nX_salt] X_salt = X[1:nX_salt];
+ //  MassFraction[nX_gas] X_gas = X[nX_salt+1:end-1];
  //  Modelica.SIunits.Temperature T_corr = max(273.16,min(400,T)) "TODO";
  //  Modelica.SIunits.Pressure p_corr = max(1e5,min(455e5,p)) "TODO";
-   Real y_vec[:]=massFractionsToMoleFractions(X,MM_vec);
+protected
    Integer pp(start=0)=state.phase
     "just to get rid of initialization problem warning";
  equation
@@ -102,7 +114,7 @@ protected
  //  assert(max(X)<=1 and min(X)>=0, "X out of range [0...1] = "+PowerPlant.vector2string(X)+" (saturationPressure_H2O())");
    u = h - p/d;
  //  MM = (X_salt*MM_salt + X_gas*MM_gas + X[end]*M_H2O);
-   MM = y_vec*MM_vec;
+   MM = y*MM_vec;
    R  = Modelica.Constants.R/MM;
 
  //  (h,x,d,d_g,d_l) = specificEnthalpy_pTX(p,T,X) Leider nicht invertierbar;
@@ -114,17 +126,17 @@ protected
    end if;
  //  (x,d,d_g,d_l,p_H2O,p_gas,X_l,p_degas,k)= quality_pTX(p_corr,T_corr,X);
 
-   state = setState_pTX(p,T,X,phase,n_g_norm_start);
- //  X_l=state.X_l;
-   GVF=state.GVF;
+   (state,X_g,GVF,h_g,h_l,p_gas,p_H2O,p_degas) = setState_pTX(p,T,X,phase,n_g_norm_start);
+   X_l=state.X_l;
+ //  GVF=state.GVF;
    x=state.x;
    s=state.s;
+   d=state.d;
    d_g=state.d_g;
    d_l=state.d_l;
-   d=state.d;
-   p_H2O=state.p_H2O;
-   p_gas=state.p_gas;
-   p_degas=sum(state.p_degas);
+ //  p_gas=state.p_gas;
+  // p_H2O=state.p_H2O;
+ //  p_degas=sum(state.p_degas);
   /* 
   (x,d,d_g,d_l,p_H2O,p_gas,X_l,p_degas)= quality_pTX(p,T,X,n_g_start);
   s = 0 "specificEntropy_phX(p,h,X) TODO";
@@ -144,7 +156,7 @@ state =  ThermodynamicState( p=p,
  /*                              GVF=GVF,
                               x=GVF*d_g/d,*/
 
-   sat.psat = sum(state.p_degas);
+   sat.psat = sum(p_degas);
    sat.Tsat = T;
    sat.X = X;
   // sat.p_degas=p_degas;
@@ -171,23 +183,21 @@ redeclare record extends ThermodynamicState
 /*  AbsolutePressure p "Absolute pressure of medium";
   Temperature T(unit="K") "Temperature of medium";*/
   SpecificEnthalpy h "Specific enthalpy";
-  Modelica.SIunits.SpecificEnthalpy h_g "Specific enthalpy gas phase";
-  Modelica.SIunits.SpecificEnthalpy h_l "Specific enthalpy liquid phase";
+//  Modelica.SIunits.SpecificEnthalpy h_g "Specific enthalpy gas phase";
+//  Modelica.SIunits.SpecificEnthalpy h_l "Specific enthalpy liquid phase";
   SpecificEntropy s "Specific entropy";
   Density d(start=300) "density";
-  Real GVF "Gas Void Fraction";
-  Density d_l(start=300) "density liquid phase";
-  Density d_g(start=300) "density gas phase";
+//  Real GVF "Gas Void Fraction";
+//  Density d_l(start=300) "density liquid phase";
+//  Density d_g(start=300) "density gas phase";
   Real x(start=0) "vapor quality on a mass basis [mass vapor/total mass]";
-  AbsolutePressure p_H2O;
-  AbsolutePressure p_gas[nX_gas];
-  AbsolutePressure[nX_gas + 1] p_degas
-    "should be in SatProp, but is calculated in setState which returns a state";
+//  AbsolutePressure p_H2O;
+//  AbsolutePressure p_gas[nX_gas];
+//  AbsolutePressure[nX_gas + 1] p_degas     "should be in SatProp, but is calculated in setState which returns a state";
    annotation (Documentation(info="<html>
 
 </html>"));
 end ThermodynamicState;
-
 
 
   redeclare function extends dewEnthalpy "dew curve specific enthalpy of water"
@@ -447,7 +457,6 @@ protected
   end saturationPressures;
 
 
-
   redeclare replaceable partial function extends setState_pTX
   "finds the VLE iteratively by varying the normalized quantity of gas in the gasphase, calculates the densities"
   input Real[nX_gas + 1] n_g_norm_start "=fill(.1,nX_gas+1) 
@@ -458,24 +467,25 @@ protected
 //output Real k[nX_gas];
 // Modelica.SIunits.Density d_g_H2O = Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.rhov_p(p) "density of water vapor";
 */
+    output Modelica.SIunits.MassFraction[nX_gas+1] X_g;
+    output Real GVF;
+    output Modelica.SIunits.SpecificEnthalpy h_l;
+    output Modelica.SIunits.SpecificEnthalpy h_g;
+    output Modelica.SIunits.Pressure[nX_gas + 1] p_gas "=fill(0,nX_gas)";
+    output Modelica.SIunits.Pressure p_H2O "water vapour pressure";
+    output Modelica.SIunits.Pressure[nX_gas + 1] p_degas;
 protected
-    Modelica.SIunits.Density d;
-    Modelica.SIunits.Density d_g;
-    Modelica.SIunits.Density d_l;
-    Modelica.SIunits.SpecificEnthalpy h_g;
-    Modelica.SIunits.SpecificEnthalpy h_l;
     Modelica.SIunits.MassFraction[nX] X_l=X "start value";
-    Modelica.SIunits.MassFraction[nX_gas+1] X_g;
-    Modelica.SIunits.Pressure p_H2O;
+    Modelica.SIunits.Density d;
+    Modelica.SIunits.Density d_l;
+    Modelica.SIunits.Density d_g;
     Modelica.SIunits.MassFraction x;
-    Modelica.SIunits.Pressure[nX_gas + 1] p_degas;
     Modelica.SIunits.Pressure p_sat_H2O
     "= saturationPressure_H2O(p,T2,X,MM_vec,nM_vec)";
     Modelica.SIunits.Pressure p_H2O_0;
     Modelica.SIunits.Pressure[nX_gas + 1] f;
     Modelica.SIunits.Pressure[nX_gas + 1] p_sat;
     Modelica.SIunits.Pressure[nX_gas + 1] p_sat_test;
-    Modelica.SIunits.Pressure[nX_gas + 1] p_gas "=fill(0,nX_gas)";
     Modelica.SIunits.MassFraction[nX_gas + 1] Delta_n_g_norm = fill(1e3,nX_gas+1);
   //  Modelica.SIunits.MassFraction[nX_gas + 1] c = {3.16407e-5,0,3.6e-8,.746547} "cat(1,fill(1e-4, nX_gas), {X[end]})fill(0, nX_gas+1)X[nX_salt+1:end]";
     Real k_H2O "Henry coefficient";
@@ -691,24 +701,27 @@ protected
   // X_g:=if x>0 then (X-X_l*(1-x))/x else fill(0,nX);
    h_l:=specificEnthalpy_liq_pTX(p,T,X_l);
    h_g:=specificEnthalpy_gas_pTX(p,T,X_g);
+   GVF:=x*d/d_g;
    state :=ThermodynamicState(
       p=p,
       T=T,
       X=X,
       X_l=X_l,
-      h_g=h_g,
-      h_l=h_l,
       h=x*h_g + (1-x)*h_l,
-      GVF=x*d/d_g,
       x=x,
       s=0,
-      d_g=d_g,
-      d_l=d_l,
       d=d,
-      phase=if x>0 and x<1 then 2 else 1,
-      p_H2O=p_H2O,
-      p_gas=p_gas[1:nX_gas],
-      p_degas=p_degas) "phase_out";
+      d_l=d_l,
+      d_g=d_g,
+      phase=if x>0 and x<1 then 2 else 1) "phase_out";
+  /*    h_g=h_g,
+    h_l=h_l,
+    p_H2O=p_H2O,
+    p_gas=p_gas[1:nX_gas],
+    p_degas=p_degas
+
+*/
+
     annotation (Diagram(graphics={Text(
             extent={{-96,16},{98,-16}},
             lineColor={0,0,255},
