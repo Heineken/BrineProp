@@ -109,6 +109,9 @@ constant FluidConstants[nS] BrineConstants(
 protected
    Integer pp(start=0)=state.phase
     "just to get rid of initialization problem warning";
+ /*  Real T_start=300;
+initial equation 
+  T=T_start;*/
  equation
     //   assert(nX_gas==2,"Wrong number of gas mass fractions specified (2 needed - CO2,N2)");
  //  assert(max(X)<=1 and min(X)>=0, "X out of range [0...1] = "+PowerPlant.vector2string(X)+" (saturationPressure_H2O())");
@@ -126,7 +129,7 @@ protected
    end if;
  //  (x,d,d_g,d_l,p_H2O,p_gas,X_l,p_degas,k)= quality_pTX(p_corr,T_corr,X);
 
-   (state,X_g,GVF,h_g,h_l,p_gas,p_H2O,p_degas) = setState_pTX(p,T,X,phase,n_g_norm_start);
+   (state,X_g,GVF,h_l,h_g,p_gas,p_H2O,p_degas) = setState_pTX(p,T,X,phase,n_g_norm_start);
    X_l=state.X_l;
  //  GVF=state.GVF;
    x=state.x;
@@ -280,44 +283,13 @@ end vapourQuality;
                                                 nX_gas+1)
     "start value, all gas in gas phase, all water liquid";
     output Modelica.SIunits.SpecificEnthalpy h;
-  /*  output Real x "gas mass fraction";
-  output Modelica.SIunits.Density d;
-  output Modelica.SIunits.Density d_g;
-  output Modelica.SIunits.Density d_l;
-  output Modelica.SIunits.Pressure p_H2O;
-  output Modelica.SIunits.Pressure[nX_gas] p_gas;*/
-  //  Real M_CO2 = MM_gas[1];
-  //  Real M_N2 = MM_gas[2];
-  /*  Real x "gas mass fraction";
-  Modelica.SIunits.Density d;
-  Modelica.SIunits.Density d_g;
-  Modelica.SIunits.Density d_l;
-  Modelica.SIunits.Pressure p_H2O;
-  Modelica.SIunits.Pressure[nX_gas] p_gas;
 
-  Modelica.SIunits.MassFraction c_gas[nX_gas] = X[end-nX_gas:end-1] 
-    "mass ratio m_CO2/m_ges";
-  Modelica.SIunits.MassFraction c_H2O = X[end] "mass ratio m_CO2/m_ges";
-  Modelica.SIunits.Density d_H2O_g = Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.rhov_p(p) 
-    "density of water vapor";
-*/
-  //  Real solu[nX_gas]=solubilities_pTX(p=p,T=T,X=X,p_gas) "gas solubilities";
-  /*  Modelica.SIunits.Pressure[nX_gas+1] p_sat=saturationPressures(p,T,X,MM_vec) "= c_CO2/k_H_CO2";
-  Modelica.SIunits.Pressure p_H2O_sat= p_sat[end];*/
-
-  //  Real M_CO2 = Modelica.Media.IdealGases.SingleGases.CO2.data.MM;
-  //  Modelica.SIunits.Density d_gas_g = p/(Modelica.Constants.R/M_CO2*T) "pure gas density in gas phase (ideal gas)";
-  //  Real x "gas mass fraction";
-  //  Integer case;
   algorithm
   //  assert(T>273.15,"T too low in PartialBrine_ngas_Newton.specificEnthalpy_pTX()");
     if debugmode then
   //     Modelica.Utilities.Streams.print("Running specificEnthalpy_pTX("+String(p)+","+String(T)+" K)");
         Modelica.Utilities.Streams.print("Running specificEnthalpy_pTX("+String(p/1e5)+","+String(T-273.15)+"°C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
     end if;
-  /* x:=quality_pTX(p,T,X,n_g_start);
- h := x*specificEnthalpy_gas_pTX(p,T,X) + (1-x)*specificEnthalpy_liq_pTX(p,T,X);
-*/
    h:=specificEnthalpy(setState_pTX(
       p,
       T,
@@ -346,9 +318,8 @@ protected
     Modelica.SIunits.SpecificHeatCapacity c_p;
     Modelica.SIunits.Temperature T_a=273.16;
   //  Modelica.SIunits.Temperature T0_a=273.16;
-    Modelica.SIunits.Temperature T_b=400;
-  //  Modelica.SIunits.Temperature T0_b=400 "limit of N2 solubility";
-  //  Modelica.SIunits.Temperature T_neu;
+    Modelica.SIunits.Temperature T_b=min(400,Modelica.Media.Water.WaterIF97_base.saturationTemperature(p)-1) "400";
+
     Modelica.SIunits.SpecificEnthalpy h_a;
     Modelica.SIunits.SpecificEnthalpy h_b;/**/
     Modelica.SIunits.SpecificEnthalpy h_T;
@@ -361,7 +332,7 @@ protected
     assert(h>specificEnthalpy_pTX(p,T_a,X),"h="+String(h/1e3)+" kJ/kg -> Enthalpy too low (< 0°C) (Brine.PartialBrine_ngas_Newton.temperature_phX)");
     while true loop
       h_T:=specificEnthalpy_pTX(p,T_b,X);
-  //    Modelica.Utilities.Streams.print(String(p)+","+String(T_b)+" K->"+String(h_T)+" J/kg (PartialBrine_ngas_Newton.temperature_phX)");
+      Modelica.Utilities.Streams.print(String(p)+","+String(T_b)+" K->"+String(h_T)+" J/kg (PartialBrine_ngas_Newton.temperature_phX)");
       if h>h_T then
         T_a := T_b;
         T_b := T_b + 50;
