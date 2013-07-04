@@ -84,7 +84,7 @@ protected
 algorithm
   if outOfRangeMode==1 then
     if T<273 or T>533 then
-      Modelica.Utilities.Streams.print("T="+String(T)+"K, but CO2 solubility calculation is only valid for temperatures between 0 and 260°C (Partial_Gas_Data.solubility_CO2_pTX_Duan2003)");
+      Modelica.Utilities.Streams.print("T="+String(T-273.15)+"°C, but CO2 solubility calculation is only valid for temperatures between 0 and 260°C (Partial_Gas_Data.solubility_CO2_pTX_Duan2003)");
     end if;
    if (p<0 or p>2000e5) then
       Modelica.Utilities.Streams.print("p="+String(p/1e5)+" bar, but CO2 fugacity calculation only valid for pressures between 0 and 2000 bar (Partial_Gas_Data.solubility_CO2_pTX_Duan2003)");

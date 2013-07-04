@@ -332,7 +332,7 @@ protected
     assert(h>specificEnthalpy_pTX(p,T_a,X),"h="+String(h/1e3)+" kJ/kg -> Enthalpy too low (< 0°C) (Brine.PartialBrine_ngas_Newton.temperature_phX)");
     while true loop
       h_T:=specificEnthalpy_pTX(p,T_b,X);
-      Modelica.Utilities.Streams.print(String(p)+","+String(T_b)+" K->"+String(h_T)+" J/kg (PartialBrine_ngas_Newton.temperature_phX)");
+      //Modelica.Utilities.Streams.print(String(p)+","+String(T_b)+" K->"+String(h_T)+" J/kg (PartialBrine_ngas_Newton.temperature_phX)");
       if h>h_T then
         T_a := T_b;
         T_b := T_b + 50;
@@ -716,14 +716,6 @@ algorithm
 end setState_phX;
 
 
-  replaceable function dynamicViscosity_pTX_unused "viscosity calculation"
-    input Modelica.SIunits.Pressure p;
-    input Modelica.SIunits.Temp_K T;
-    input MassFraction X[:] "mass fraction m_NaCl/m_Sol";
-    output Modelica.SIunits.DynamicViscosity eta;
-  //  constant Real M_NaCl=0.058443 "molar mass in [kg/mol]";
-  end dynamicViscosity_pTX_unused;
-
 
   redeclare replaceable function extends specificHeatCapacityCp
   "numeric calculation of specific heat capacity at constant pressure"
@@ -779,6 +771,14 @@ protected
        fill(-1,nX);
     Modelica.SIunits.SpecificHeatCapacity cp_vec[nX_gas+1];
   end specificHeatCapacityCp_gas;
+
+  replaceable function dynamicViscosity_pTX_unused "viscosity calculation"
+    input Modelica.SIunits.Pressure p;
+    input Modelica.SIunits.Temp_K T;
+    input MassFraction X[:] "mass fraction m_NaCl/m_Sol";
+    output Modelica.SIunits.DynamicViscosity eta;
+  //  constant Real M_NaCl=0.058443 "molar mass in [kg/mol]";
+  end dynamicViscosity_pTX_unused;
 
 
   annotation (Documentation(info="<html>

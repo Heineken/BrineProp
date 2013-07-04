@@ -29,9 +29,13 @@ package BrineGas_3Gas
 
     y:= X_in./MM_vec;
 
-    y:=cat(1,y[1:nX-1]/(sum(y[1:nX-1]))*(1-y_H2O), {y_H2O})
-      "gases + fixed water fraction";
-
+    if y_H2O<1 and X[end]>0 then
+      y:=cat(1,y[1:nX-1]/(sum(y[1:nX-1]))*(1-y_H2O), {y_H2O})
+        "gases + fixed water fraction";
+    else
+      //only water vapour
+      y:=cat(1,fill(0,nX-1), {y_H2O}) "gases + fixed water fraction";
+    end if;
     X:=y.*MM_vec "convert to mass fractions";
     X:=X/sum(X) "normalize";
 

@@ -156,6 +156,7 @@ protected
        state.d,
        MM_vec,
        Salt_data.saltConstants);
+       assert(eta>0,"Error in liquid viscosity calculation.");
  end dynamicViscosity_liq;
 
 
@@ -169,6 +170,7 @@ protected
  //eta  := 0;
  //  eta  := Modelica.Media.Air.MoistAir.dynamicViscosity(state);
    eta  := BrineGas_3Gas.dynamicViscosity(state);
+   assert(eta>0,"Error in gas viscosity calculation.");
  end dynamicViscosity_gas;
 
 
