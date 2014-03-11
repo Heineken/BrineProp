@@ -7,8 +7,10 @@ function specificHeatCapacity_pTX_Driesner
   output Modelica.SIunits.SpecificHeatCapacity cp;
 protected
   Modelica.SIunits.Temp_K T_Scale_h;
-  Real q2;
+  Real q_2;
 algorithm
-  (T_Scale_h,q2):=T_Scale_h_Driesner(p,T,X_NaCl);
-  cp := Modelica.Media.Water.IF97_Utilities.cp_pT(p,T_Scale_h)*q2;
+  (T_Scale_h,q_2):=T_Scale_h_Driesner(p,T,X_NaCl);
+  cp := Modelica.Media.Water.IF97_Utilities.cp_pT(p,T_Scale_h)*q_2;
+//  Modelica.Utilities.Streams.print("T_Scale_h "+String(T_Scale_h_Driesner(p,T,X_NaCl))+" K. q_2="+String(q_2)+" ->"+String(cp)+" J/kKg");
+
 end specificHeatCapacity_pTX_Driesner;

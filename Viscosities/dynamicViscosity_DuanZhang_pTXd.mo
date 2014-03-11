@@ -61,14 +61,10 @@ algorithm
 //  Modelica.Utilities.Streams.print("eta_H2O= "+String(eta_H2O)+" Pa·s");
 
   //for pure water skip the whole calculation and return water viscosity
-  if max(X[1:nX_salt])<1e-8 then
-    eta:= eta_H2O;
-    return;
-  end if;
 
   eta:= eta_H2O "^X[end]";
 //  Modelica.Utilities.Streams.print("eta_H2O^X[end]= "+String(eta_H2O)+"^"+String(X[end]) + " -> "+String(eta)+" Pa·s");
-  if max(X[1:nX_salt]) <= 1e-12 then
+  if max(X[1:nX_salt]) <= 1e-8 then
     //pure water -> skip the rest
     return;
   end if;

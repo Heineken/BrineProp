@@ -16,3 +16,6 @@ SaturationProfile_Stripping_Transient
 BrineProps2phaseKinetic
 MoistAir
 LiquidSample
+Degassing
+DensityCheckProbeMeasurement
+InitializationTest

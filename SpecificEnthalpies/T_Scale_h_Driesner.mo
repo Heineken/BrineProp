@@ -13,6 +13,10 @@ public
 
 //  Molality mola=X[1]/M_NaCl "molality b (mol_NaCl/kg_sol) הצüצ";
 protected
+  constant Pressure_bar p_min=1;
+  constant Pressure_bar p_max=1000;
+  constant Modelica.SIunits.Temp_C T_min=0;
+  constant Modelica.SIunits.Temp_C T_max=1000;
   Modelica.SIunits.Temp_C T_C = Modelica.SIunits.Conversions.to_degC(T);
 //  Modelica.SIunits.Temp_C T_Scale_h;
   Pressure_bar p_bar=Modelica.SIunits.Conversions.to_bar(p);
@@ -27,15 +31,8 @@ protected
   Real q_1;
 //  Modelica.Media.Water.WaterIF97_base.ThermodynamicState state_H2O;
   Real x_NaCl "mol fraction";
-  Modelica.SIunits.MolarMass M_Solution "[kg/mol]";
-//  Modelica.SIunits.Pressure p_check;
-protected
-  constant Pressure_bar p_min=1;
-  constant Pressure_bar p_max=1000;
-  constant Modelica.SIunits.Temp_C T_min=0;
-  constant Modelica.SIunits.Temp_C T_max=1000;
+//  Modelica.SIunits.MolarMass M_Solution "[kg/mol]";
 algorithm
-  p_bar := Modelica.SIunits.Conversions.to_bar(p);
 //  assert(mola>=.25 and mola<=5, "Molality must be between 0.25 and 5 mol/kg");
 
    if outOfRangeMode==1 then
@@ -58,7 +55,7 @@ algorithm
 //    x_NaCl := 1/(M_NaCl/M_H2O*(1/sum(X[1:5])-1)+1) "mol fraction";
     x_NaCl := 1/(M_NaCl/M_H2O*(1/X_NaCl-1)+1) "mol fraction";
   end if;
-  M_Solution := x_NaCl*M_NaCl + (1-x_NaCl)* M_H2O;
+//  M_Solution := x_NaCl*M_NaCl + (1-x_NaCl)* M_H2O;
 
 //CALCULATION OF EQUIVALENT TEMPERATURE_h
   q_21 := -1.69513-4.52781E-4*p_bar-6.04279E-8*p_bar^2;

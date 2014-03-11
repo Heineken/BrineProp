@@ -67,28 +67,35 @@ protected
     "equ. 4 (gamma_H2O=1";
   Real y_N2 = 1-y_H20 "mole fraction of CO2 in vapor phase";*/
 //  Real y_N2 = p_gas/p "mole fraction of N2 in vapor phase";
-  Real phi_N2 = fugacity_N2_Duan2006(p,T);
-  Real mu_l0_N2_RT = Par_N2_Duan2006(p,T,mu_l0_N2_RT_c);
-  Real lambda_N2_Na = Par_N2_Duan2006(p,T,lambda_N2_Na_c);
-  Real xi_N2_NaCl = Par_N2_Duan2006(p,T,xi_N2_NaCl_c);
+  Real phi_N2;
+  Real mu_l0_N2_RT;
+  Real lambda_N2_Na;
+  Real xi_N2_NaCl;
 algorithm
 // Modelica.Utilities.Streams.print("mola_N2("+String(p_gas)+","+String(T-273.16)+") (solubility_N2_pTX_Duan2006)");
+  if not p_gas>0 then
+    X_gas:=0;
+  else
+   if outOfRangeMode==1 then
+     if not ignoreLimitN2_T and (273>T or T>400) then
+        Modelica.Utilities.Streams.print("T="+String(T)+" K, but N2 solubility calculation is only valid for temperatures between 0 and 127°C (Partial_Gas_Data.solubility_N2_pTX_Duan2006)");
+     end if;
+     if (p<1e5 or p>600e5) then
+        Modelica.Utilities.Streams.print("p="+String(p/1e5)+" bar, but N2 solubility calculation only valid for pressures between 1 and 600 bar (Partial_Gas_Data.solubility_N2_pTX_Duan2006)");
+     end if;
+     if molalities[NaCl]>6 then
+       Modelica.Utilities.Streams.print("mola[NaCl]="+String(molalities[NaCl])+" mol/kg, but N2 solubility calculation only valid for salinities up to 6 mol/kg (Partial_Gas_Data.solubility_N2_pTX_Duan2006)");
+     end if;
+   elseif outOfRangeMode==2 then
+       assert(ignoreLimitN2_T or (273<=T and T<=400), "T="+String(T)+" K, but N2 solubility calculation is only valid for temperatures between 0 and 127°C");
+       assert(ignoreLimitN2_p or p>=1e5 and p<=600e5, "p="+String(p/1e5)+" bar, but N2 solubility calculation only valid for pressures between 1 and 600 bar");
+       assert(molalities[NaCl]<6, "mola[NaCl]="+String(molalities[NaCl])+" mol/kg, but N2 solubility calculation only valid for salinities up to 6 mol/kg");
+   end if;
 
- if outOfRangeMode==1 then
-   if not ignoreLimitN2_T and (273>T or T>400) then
-      Modelica.Utilities.Streams.print("T="+String(T)+" K, but N2 solubility calculation is only valid for temperatures between 0 and 127°C (Partial_Gas_Data.solubility_N2_pTX_Duan2006)");
-   end if;
-   if (p<1e5 or p>600e5) then
-      Modelica.Utilities.Streams.print("p="+String(p/1e5)+" bar, but N2 solubility calculation only valid for pressures between 1 and 600 bar (Partial_Gas_Data.solubility_N2_pTX_Duan2006)");
-   end if;
-   if molalities[NaCl]>6 then
-     Modelica.Utilities.Streams.print("mola[NaCl]="+String(molalities[NaCl])+" mol/kg, but N2 solubility calculation only valid for salinities up to 6 mol/kg (Partial_Gas_Data.solubility_N2_pTX_Duan2006)");
-   end if;
- elseif outOfRangeMode==2 then
-     assert(ignoreLimitN2_T or (273<=T and T<=400), "T="+String(T)+" K, but N2 solubility calculation is only valid for temperatures between 0 and 127°C");
-     assert(ignoreLimitN2_p or p>=1e5 and p<=600e5, "p="+String(p/1e5)+" bar, but N2 solubility calculation only valid for pressures between 1 and 600 bar");
-     assert(molalities[NaCl]<6, "mola[NaCl]="+String(molalities[NaCl])+" mol/kg, but N2 solubility calculation only valid for salinities up to 6 mol/kg");
- end if;
+    phi_N2 :=fugacity_N2_Duan2006(p_gas+p_H2O, T);
+    mu_l0_N2_RT :=Par_N2_Duan2006(p_gas+p_H2O,T,mu_l0_N2_RT_c);
+    lambda_N2_Na :=Par_N2_Duan2006(p_gas+p_H2O,T,lambda_N2_Na_c);
+    xi_N2_NaCl :=Par_N2_Duan2006(p_gas+p_H2O,T,xi_N2_NaCl_c);
 
   //equ. 9
 //    solu := y_N2*p_bar*phi_N2 * exp(-mu_l0_N2_RT - 2*lambda_N2_Na*(m_Na + m_K + 2*m_Ca + 2*m_Mg) - xi_N2_NaCl*(m_Cl+2*m_SO4)*(m_Na + m_K + 2*m_Ca + 2*m_Mg) - 4*0.0371*m_SO4);
@@ -97,8 +104,10 @@ algorithm
 //    solu := max(0, solu) "algorithm can return negative values";
 //  solu := p_H2O;
 //  solu := 0;
-//  c_gas:=solu*M_N2 "kg_gas / kg_H2O";
-  X_gas :=solu*M_N2*X[end];
+    X_gas :=solu*M_N2*X[end];
+  end if;
   //    Modelica.Utilities.Streams.print("mola_N2("+String(p_gas)+","+String(T-273.16)+","+String(X[1])+")="+String(c_gas)+" (solubility_N2_pTX_Duan2006)");
-//    Modelica.Utilities.Streams.print("mola_N2("+String(p_gas)+","+String(T-273.16)+")="+String(c_gas)+"->k="+String(c_gas/max(1,p_gas))+" (solubility_N2_pTX_Duan2006)");
+
+//  c_gas:=solu*M_N2 "kg_gas / kg_H2O";
+//    Modelica.Utilities.Streams.print("mola_N2("+String(p_gas)+","+String(T-273.16)+")="+String(X_gas)+"->k="+String(X_gas/max(1,p_gas))+" (solubility_N2_pTX_Duan2006)");
 end solubility_N2_pTX_Duan2006;

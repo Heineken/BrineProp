@@ -252,4 +252,12 @@ end setState_phX;
     output Modelica.SIunits.DynamicViscosity eta;
   //  constant Real M_NaCl=0.058443 "molar mass in [kg/mol]";
   end dynamicViscosity_pTX;
+
+
+redeclare replaceable function extends isobaricExpansionCoefficient
+  constant Modelica.SIunits.Temperature Delta_T= 1;
+algorithm
+  beta :=state.d*(1/state.d - 1/(density_pTX(state.p,state.T - Delta_T,state.X)))/Delta_T;
+end isobaricExpansionCoefficient;
+
 end PartialBrine_MultiSalt_1Phase;

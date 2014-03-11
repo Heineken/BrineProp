@@ -7,7 +7,7 @@ function specificEnthalpy_pTX_liq_Francke_cp "enthalpy calculation DIY"
   input Modelica.SIunits.MassFraction X[:] "mass fractions m_i/m_Sol";
   output Modelica.SIunits.SpecificEnthalpy h;/**/
 //  constant Real M_NaCl=Salt_Data.M_NaCl "molar mass in [kg/mol]";
-  output Real val2=H_appmol[CaCl2];
+//  output Real val2=H_appmol[CaCl2];
 protected
   Modelica.SIunits.MolarInternalEnergy Delta_h_solution_NaCl = 0
     "HeatOfSolution_NaCl_Sanahuja1986(T) [J/mol_NaCl]";

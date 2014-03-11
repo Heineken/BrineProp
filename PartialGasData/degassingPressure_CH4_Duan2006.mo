@@ -19,7 +19,7 @@ algorithm
         solufun=function solubility_CH4_pTX_Duan2006(),p=p,T=T,X=X,MM_vec=MM_vec,
         c_gas=X[end-1]),
       0,
-      1e10,
+      2000e5,
       1e-8);
 
 //  Modelica.Utilities.Streams.print("p_sat_CH4("+String(X[end-1])+")="+String(p_gas)+" (degassingPressure_CH4_Duan2006)");

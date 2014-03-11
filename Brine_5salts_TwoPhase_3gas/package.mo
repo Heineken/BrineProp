@@ -169,7 +169,8 @@ protected
  //  eta  := Modelica.Media.Water.IF97_Utilities.dynamicViscosity(state.d_g, state.T, state.p, state.phase) "Viskosität von gasförmigem Wasser";
  //eta  := 0;
  //  eta  := Modelica.Media.Air.MoistAir.dynamicViscosity(state);
-   eta  := BrineGas_3Gas.dynamicViscosity(state);
+ //  eta  := BrineGas_3Gas.dynamicViscosity(state);
+   eta  := BrineGas_3Gas.dynamicViscosity(BrineGas_3Gas.ThermodynamicState(state.p,state.T,state.X_g));
    assert(eta>0,"Error in gas viscosity calculation.");
  end dynamicViscosity_gas;
 

@@ -34,3 +34,4 @@ specificHeatCapacityCp_liq
 specificHeatCapacityCp_gas
 dynamicViscosity_unused
 dynamicViscosity_pTX_unused
+isobaricExpansionCoefficient_liq

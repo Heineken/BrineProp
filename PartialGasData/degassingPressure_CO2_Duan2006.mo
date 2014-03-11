@@ -17,7 +17,7 @@ algorithm
         solufun=function solubility_CO2_pTX_Duan2006(),p=p,T=T,X=X,MM_vec=MM_vec,
         c_gas=X[end-3]),
       0,
-      1e10,
+      2000e5,
       1e-8);
 
 //  Modelica.Utilities.Streams.print("p_sat_CO2("+String(X[end-3])+")="+String(p_gas)+" (degassingPressure_CO2_pTX)");

@@ -6,11 +6,7 @@ function density_Duan2008_pTX "Brine density"
   input Modelica.SIunits.MassFraction X[:] "mass fractions m_NaCl/m_Sol";
   input Modelica.SIunits.MolarMass MM_vec[:] "molar masses of components";
 
-//  input saltCoefficients salt;
   output Modelica.SIunits.Density d;
-/*  */
-  //    constant Modelica.SIunits.MolarMass M_NaCl=0.058443 "molar mass in [kg/mol]";
-//  constant Modelica.SIunits.MolarMass M_H2O = 0.018015 "[kg/mol]";
 public
   final constant Real b=1.2;
   final constant Real U[:]={3.4279E2,-5.0866E-3,9.4690E-7,-2.0525,3.1159E3,-1.8289E2,

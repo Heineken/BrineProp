@@ -9,7 +9,7 @@ package BrineGas_3Gas
     final MM_vec = {M_CO2,M_N2,M_CH4, M_H2O},
     final nM_vec = {nM_CO2,nM_N2,nM_CH4, nM_CH4});
 
-  constant Boolean waterSaturated=true;
+  constant Boolean waterSaturated=false "activates water saturation";
 
   replaceable function waterSaturatedComposition_pTX
     "calculates the water saturated mass vector for a given Temperature"
@@ -25,16 +25,17 @@ package BrineGas_3Gas
   algorithm
     if debugmode then
       Modelica.Utilities.Streams.print("Running waterSaturatedComposition_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" °C, X="+Modelica.Math.Matrices.toString(transpose([X_in]))+")");
+  //    Modelica.Utilities.Streams.print("y_H2O"+String(y_H2O)+", X[end]="+String(X_in[end]));
     end if;
 
     y:= X_in./MM_vec;
 
-    if y_H2O<1 and X[end]>0 then
+    if y_H2O<1 and X_in[end]>0 then
+      //Modelica.Utilities.Streams.print(""+String(y_H2O));
       y:=cat(1,y[1:nX-1]/(sum(y[1:nX-1]))*(1-y_H2O), {y_H2O})
         "gases + fixed water fraction";
     else
-      //only water vapour
-      y:=cat(1,fill(0,nX-1), {y_H2O}) "gases + fixed water fraction";
+      y:=cat(1,fill(0,nX-1), {y_H2O}) "only water vapour";
     end if;
     X:=y.*MM_vec "convert to mass fractions";
     X:=X/sum(X) "normalize";
@@ -48,43 +49,57 @@ package BrineGas_3Gas
       p=state.p,
       T=state.T,
       X= if waterSaturated then
-        waterSaturatedComposition_pTX(state.p,state.T,state.X[end - nX+1:end])
-    else state.X[end - nX + 1:end]);
+        waterSaturatedComposition_pTX(state.p,state.T,state.X)
+    else state.X);
+  //  else state.X[end - nX + 1:end]);
+  //      waterSaturatedComposition_pTX(state.p,state.T,state.X[end - nX+1:end])
   //  assert(lambda>0,"lambda="+String(lambda));
   end density;
 
   function extends density_pTX "Density of an ideal mixture of ideal gases"
   protected
       SpecificHeatCapacity R_gas = sum(Modelica.Constants.R*X ./ MM_vec);
-  //  Modelica.Utilities.Streams.print("R_gas="+String(R_gas)+"(MM="+Modelica.Math.Matrices.toString({cat(1,MM_gas,{M_H2O})})+")");
+  //    MassFraction[:] X_=cat(1,fill(nX-1,0),{1});
+  //    MassFraction[size(X,1)] X_=cat(1,fill(size(X,1),0),{1});
   algorithm
+  /*  if not R_gas >0 then
+    Modelica.Utilities.Streams.print("R_gas="+String(R_gas)+", (MM="+Modelica.Math.Matrices.toString({MM_vec})+", X="+Modelica.Math.Matrices.toString({X})+")");
+  end if;*/
+  //  Modelica.Utilities.Streams.print("size(X_,1)="+String(size(X_,1))+",size(X,1)="+String(size(X,1)));
     if debugmode then
       Modelica.Utilities.Streams.print("Running density_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" °C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
     end if;
-
+  // assert(min(X)>0,"Cannot calculate with empty composition.");
+    if not min(X)>0 then
+      Modelica.Utilities.Streams.print("No gas composition, assuming water vapour.(BrineProp.BrineGas_3Gas.density_pTX)");
+  //  else
+  //    X_:=X;
+    end if;
+    R_gas :=sum(Modelica.Constants.R*
+    cat(1,X[1:end-1],{if min(X)>0 then X[end] else 1})
+     ./ MM_vec);
   /*  if waterSaturated then
     R_gas :=sum(Modelica.Constants.R*waterSaturatedComposition_pTX(
         p,
         T,
         X[end - nX + 1:end]) ./ MM_vec);
     d :=p/(T*R_gas);
-  else
-    R_gas :=sum(Modelica.Constants.R*X ./ MM_vec);*/
-      d :=p/(T*R_gas);
+  else*/
+        d :=p/(T*R_gas);
   //  end if;
 
   end density_pTX;
 
   redeclare function extends specificHeatCapacityCp
-    "water-saturated heat capacity"
+    "water-saturated heat capacity of gas phase"
   algorithm
-    //der Aufruf hier funzt seltsamerweise nur mit "BrineGas_3Gas.", bei rho, eta und lambda gehts ohne !?
-      cp := specificHeatCapacityCp_pTX(
+       cp := specificHeatCapacityCp_pTX(
           p=state.p,
           T=state.T,
           X= if waterSaturated then
-        waterSaturatedComposition_pTX(state.p,state.T,state.X[end - nX+1:end])
-    else state.X[end - nX + 1:end]);
+       waterSaturatedComposition_pTX(state.p,state.T,state.X)
+    else state.X);
+  //  else state.X[end - nX + 1:end]);
 
   end specificHeatCapacityCp;
 
@@ -105,10 +120,15 @@ package BrineGas_3Gas
       Modelica.Utilities.Streams.print("Running specificHeatCapacityCp_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" °C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
     end if;
 
+    if not min(X)>0 then
+      Modelica.Utilities.Streams.print("No gas composition, assuming water vapour.(BrineProp.BrineGas_3Gas.specificHeatCapacityCp_pTX)");
+    end if;
+
   /*  if waterSaturated then
     cp := cp_vec * waterSaturatedComposition_pTX(p,T,X[end - nX+1:end]);
   else */
-      cp := cp_vec * X[end - nX+1:end];
+  //    cp := cp_vec * X[end - nX+1:end];
+      cp := cp_vec * cat(1,X[1:end-1],{if min(X)>0 then X[end] else 1});
   //  end if;
 
   end specificHeatCapacityCp_pTX;
@@ -121,8 +141,9 @@ package BrineGas_3Gas
           p=state.p,
           T=state.T,
           X= if waterSaturated then
-        waterSaturatedComposition_pTX(state.p,state.T,state.X[end - nX+1:end])
-    else state.X[end - nX + 1:end]);
+        waterSaturatedComposition_pTX(state.p,state.T,state.X)
+    else state.X);
+  //  else state.X[end - nX + 1:end]);
   //  assert(lambda>0,"lambda="+String(lambda));
   end dynamicViscosity;
 
@@ -149,9 +170,9 @@ package BrineGas_3Gas
           p=state.p,
           T=state.T,
           X= if waterSaturated then
-        waterSaturatedComposition_pTX(state.p,state.T,state.X[end - nX+1:end])
-    else state.X[end - nX + 1:end]);
-
+        waterSaturatedComposition_pTX(state.p,state.T,state.X)
+    else state.X);
+  //  else state.X[end - nX + 1:end]);
   //  assert(lambda>0,"lambda="+String(lambda));
   if lambda<0 then
     Modelica.Utilities.Streams.print("lambda = " + String(lambda) + "W/(m·K)");
