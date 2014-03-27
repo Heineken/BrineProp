@@ -5,11 +5,12 @@ solutions containing Na+,K+,Ca2+,Mg2+,Cl-, and SO4_2-. Marine Chemistry 98:131-1
   fugacity from doi:10.1016/j.marchem.2005.09.001*/
 
   extends partial_solubility_pTX;
-/*  input Modelica.SIunits.Pressure p;
-  input Modelica.SIunits.Temp_K T;
-  input Modelica.SIunits.MassFraction X[:] "mass fractions m_x/m_Sol";
-  input Modelica.SIunits.MolarMass MM[:] "molar masses of components";
-  output Modelica.SIunits.MassFraction c_gas "gas concentration in kg_gas/kg_H2O";*/
+/*  input SI.Pressure p;
+  input SI.Temp_K T;
+  input SI.MassFraction X[:] "mass fractions m_x/m_Sol";
+  input SI.MolarMass MM[:] "molar masses of components";
+  input SI.Pressure p_gas;
+ output SI.MassFraction c_gas "gas concentration in kg_gas/kg_H2O";*/
 protected
   Partial_Units.Molality solu "CO2 solubility in mol_CO2/kg H2O";
   Real[:] mu_l0_CO2_RT_c = { 28.9447706,
@@ -48,29 +49,16 @@ protected
                           0,
                           0};
 
-  Modelica.SIunits.Pressure p_H2O = Modelica.Media.Water.WaterIF97_base.saturationPressure(T);
-//  Modelica.SIunits.Pressure p_H2O = p_sat_H2O_Duan2003(T);
-//  Partial_Units.Pressure_bar p_bar=Modelica.SIunits.Conversions.to_bar(p);
+  SI.Pressure p_H2O = Modelica.Media.Water.WaterIF97_base.saturationPressure(T)
+    "TODO mit übergeben";
+//  SI.Pressure p_H2O = p_sat_H2O_Duan2003(T);
+//  Partial_Units.Pressure_bar p_bar=SI.Conversions.to_bar(p);
 //  Real y = p_gas/p "(p-p_H2O)/p mole fraction of CO2 in vapor phase";
-  Real phi = fugacity_CO2_Duan2006(p,T);
-  Real mu_l0_CO2_RT = Par_CO2_Duan2003(p,T,mu_l0_CO2_RT_c);
-  Real lambda_CO2_Na = Par_CO2_Duan2003(p,T,lambda_CO2_Na_c);
-  Real zeta_CO2_NaCl = Par_CO2_Duan2003(p,T,zeta_CO2_NaCl_c);
+  Real phi;
+  Real mu_l0_CO2_RT;
+  Real lambda_CO2_Na;
+  Real zeta_CO2_NaCl;
 
- /*  constant Modelica.SIunits.MolarMass M_NaCl = 0.058443 "[kg/mol]";
-   constant Modelica.SIunits.MolarMass M_KCl = 0.074551 "[kg/mol]";
-   constant Modelica.SIunits.MolarMass M_CaCl2 = 0.1109840 "[kg/mol]";
-   constant Modelica.SIunits.MolarMass M_MgCl2 = 0.095236 "[kg/mol]";
-   constant Modelica.SIunits.MolarMass M_SrCl2 = 0.158536 "[kg/mol]";
-   constant Modelica.SIunits.MolarMass M_H2O = 0.018015 "[kg/mol]";
-  constant Real[:] MM = {
-    M_NaCl,
-    M_KCl,
-    M_CaCl2,
-    M_MgCl2,
-    M_SrCl2,
-    M_H2O};
-*/
   //constant
   Partial_Units.Molality molalities[size(X,1)]=massFractionsToMolalities(X,MM_vec)
     "TODO neglecting CO2?";
@@ -80,30 +68,44 @@ protected
   Partial_Units.Molality m_Ca = molalities[CaCl2];
   Partial_Units.Molality m_Mg = molalities[MgCl2];
   Partial_Units.Molality m_SO4 = 0;
-
+  String msg="";
 algorithm
-  if outOfRangeMode==1 then
-    if T<273 or T>533 then
-      Modelica.Utilities.Streams.print("T="+String(T-273.15)+"°C, but CO2 solubility calculation is only valid for temperatures between 0 and 260°C (Partial_Gas_Data.solubility_CO2_pTX_Duan2003)");
-    end if;
+//  print("Running solubility_CO2_pTX_Duan2006("+String(p)+","+String(T)+","+String(X[end-3])+","+String(p_gas)+")");
+
+  if not p_gas>0 then
+    X_gas:=0;
+  else
+  // checked in fugacity
+  if T<273 or T>573 then
+      msg :="T=" + String(T) + "K, but CO2 solubility calculation is only valid for temperatures between 0 and 260°C (Partial_Gas_Data.solubility_CO2_pTX_Duan2006)";
+      end if;
    if (p<0 or p>2000e5) then
-      Modelica.Utilities.Streams.print("p="+String(p/1e5)+" bar, but CO2 fugacity calculation only valid for pressures between 0 and 2000 bar (Partial_Gas_Data.solubility_CO2_pTX_Duan2003)");
+      msg :="p=" + String(p/1e5) + " bar, But CO2 fugacity calculation only valid for pressures between 0 and 2000 bar (Partial_Gas_Data.solubility_CO2_pTX_Duan2006)";
    end if;
-  elseif outOfRangeMode==2 then
-    assert(273<=T and T<=533, "T="+String(T)+"K, but CO2 solubility calculation is only valid for temperatures between 0 and 260°C");
-    assert(p<=2000e5, "p="+String(p/1e5)+"bar, but CO2 fugacity calculation only valid for pressures between 0 and 2000 bar");
+  if msg<>"" then
+    if outOfRangeMode==1 then
+      print(msg);
+    elseif outOfRangeMode==2 then
+      assert(false, msg);
+    end if;
   end if;
 
   //equ. 9
 //    solu := y*phi*p_bar* exp(-mu_l0_CO2_RT
-    solu :=  phi*Modelica.SIunits.Conversions.to_bar(p_gas)* exp(-mu_l0_CO2_RT
+    phi :=fugacity_CO2_Duan2006(p_gas+p_H2O, T);
+    mu_l0_CO2_RT :=Par_CO2_Duan2003(p_gas+p_H2O,T,mu_l0_CO2_RT_c);
+    lambda_CO2_Na :=Par_CO2_Duan2003(p_gas+p_H2O,T,lambda_CO2_Na_c);
+    zeta_CO2_NaCl :=Par_CO2_Duan2003(p_gas+p_H2O,T,zeta_CO2_NaCl_c);
+
+    solu :=  phi*SI.Conversions.to_bar(p_gas)* exp(-mu_l0_CO2_RT
             -2*lambda_CO2_Na*(m_Na + m_K + 2*m_Ca + 2*m_Mg)
             -zeta_CO2_NaCl*m_Cl*(m_Na + m_K + m_Mg + m_Ca)
             +0.07*m_SO4*0);
 //    solu := max(0, solu) "algorithm can return negative values";
 //  solu := p_H2O;
+    X_gas :=solu*M_CO2*X[end] "molality->mass fraction";
+  end if;
 //  c_gas:=solu*M_CO2 "kg_gas / kg_H2O";
-  X_gas :=solu*M_CO2*X[end];
-//    Modelica.Utilities.Streams.print("mola_CO2(p_gas="+String(p_gas)+",T="+String(T)+",X_gas="+String(X_gas)+")=->k="+String(X_gas/max(1,p_gas))+" (solubility_CO2_pTX_Duan2003)");
-//    Modelica.Utilities.Streams.print("solu(p="+String(p)+",T="+String(T)+",y="+String(y)+")="+String(solu)+" (solubility_CO2_pTX_Duan2003)");
+//    print("mola_CO2(p_gas="+String(p_gas)+",T="+String(T)+")=X_gas="+String(X_gas)+"->k="+String(X_gas/max(1,p_gas))+" (solubility_CO2_pTX_Duan2003)");
+//    print("solu(p="+String(p)+",T="+String(T)+",y="+String(y)+")="+String(solu)+" (solubility_CO2_pTX_Duan2003)");
 end solubility_CO2_pTX_Duan2006;

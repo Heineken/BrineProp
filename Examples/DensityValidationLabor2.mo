@@ -1,7 +1,7 @@
 within BrineProp.Examples;
 model DensityValidationLabor2 "mit Messungen von Ulrike"
 package Medium = Brine_5salts_noGas;
-//  Modelica.SIunits.Density d= props.d;  /**/
+//  SI.Density d= props.d;  /**/
 
   constant Real data[:,:]=DataFiles.readCSVmatrix("e:\\francke\\Eigene Dateien\\GFZ\\Promotion\\Material\\BrineProperties\\Density\\Messungen\\Validierung Labor Ulrike\\Zusammenfassung_final.csv");
 //  constant Real data[:,:]=DataFiles.readCSVmatrix("e:\\francke\\Eigene Dateien\\GFZ\\Promotion\\Material\\BrineProperties\\Density\\Messungen\\Validierung Labor Ulrike\\Zhang1996.csv");
@@ -11,9 +11,9 @@ package Medium = Brine_5salts_noGas;
 //  String csvFilename = "PowerPlant/pT_profil_static.csv";
   String csvFilename = "pT_profil.csv";
   Real depth= time;
-  Modelica.SIunits.Density[n] d;
-  Modelica.SIunits.DynamicViscosity[n] eta=Medium.dynamicViscosity(props.state);
-  Modelica.SIunits.ThermalConductivity[n] lambda=Medium.thermalConductivity(props.state);
+  SI.Density[n] d;
+  SI.DynamicViscosity[n] eta=Medium.dynamicViscosity(props.state);
+  SI.ThermalConductivity[n] lambda=Medium.thermalConductivity(props.state);
 equation
 
 //calculate VLE at in-situ conditions
@@ -34,6 +34,6 @@ equation
 algorithm
 //  PowerPlant.saveCSV("FluMoCalc",{"rho"},transpose({d}));
   DataFiles.writeCSVmatrix("LabCalc.csv", {"b_NaCl","b_KCl2","b_CaCl2","p","T","eta","rho","lambda"}, cat(2,data[:,1:5],transpose({eta,d,lambda})), ";");
-//  Modelica.Utilities.Streams.print("rho="+String(d)+" kg/m³, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));
-//  Modelica.Utilities.Streams.print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
+//  print("rho="+String(d)+" kg/m³, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));
+//  print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
 end DensityValidationLabor2;

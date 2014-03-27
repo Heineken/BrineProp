@@ -4,7 +4,6 @@ composition and density of the N2?H2O?NaCl system')"
   extends partial_fugacity_pTX;
 
 protected
-  Partial_Units.Pressure_bar P_1;
   Real[:] a = {1.86357885E-03,
                1.17332094E-02,
                7.82682497E-07,

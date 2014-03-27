@@ -3,8 +3,11 @@ partial package PartialBrine_ngas_Newton "Template package for aqueous solutions
   //definition of molar masses
  //constant Integer phase=0;
 
-constant String explicitVars = "ph"
-  "set of variables the model is explicit for, may be set to all combinations of ph or pT, setting pT should speed up the model in pT cases";
+//constant String explicitVars = "ph" "set of variables the model is explicit for, may be set to all combinations of ph or pT, setting pT should speed up the model in pT cases";
+  constant Boolean input_ph=true
+  "activates inversion for state definition by ph, slows calculation down";
+  constant Boolean input_dT=false
+  "activates inversion for state definition by dT, slows calculation down";
 
 
  replaceable package Salt_data = BrineProp.SaltData;
@@ -14,14 +17,14 @@ constant String explicitVars = "ph"
 
  extends BrineProp.PartialGasData;
 
- constant Modelica.SIunits.MolarMass[:] MM_gas;
+ constant SI.MolarMass[:] MM_gas;
  constant Integer[:] nM_gas "number of ions per molecule";
 
- constant Modelica.SIunits.MolarMass[:] MM_salt;
+ constant SI.MolarMass[:] MM_salt;
  constant Integer[:] nM_salt "number of ions per molecule";
 
- constant Modelica.SIunits.MolarMass[:] MM_vec = cat(1,MM_salt, MM_gas, {M_H2O});
- constant Modelica.SIunits.MolarMass[:] nM_vec = cat(1,nM_salt, nM_gas, {1});
+ constant SI.MolarMass[:] MM_vec = cat(1,MM_salt, MM_gas, {M_H2O});
+ constant SI.MolarMass[:] nM_vec = cat(1,nM_salt, nM_gas, {1});
 
 //TWO-PHASE-STUFF
 constant String saltNames[:]={""};
@@ -74,38 +77,40 @@ constant FluidConstants[nS] BrineConstants(
 
  redeclare model extends BaseProperties "Base properties of medium"
  //  MassFraction[nX] X_l(start=cat(1,fill(0,nXi),{1}))  "= X cat(1,X_salt/(X[end]*m_l),X[nX_salt+1:end])";
-
    SI.Density d_l;
    SI.Density d_g;
 
    Real GVF "=x*d/d_ggas void fraction";
    Real x "(start=0) (min=0,max=1) gas phase mass fraction";
    SI.Pressure p_H2O;
-   SI.Pressure[nX_gas+1] p_gas;
-   SI.Pressure p_degas[nX_gas+1];
-   MassFraction[nX_gas+1] X_g;
+   SI.Pressure[nX_gas + 1] p_gas;
+   SI.Pressure p_degas[nX_gas + 1];
+ //  MassFraction[nX_gas+1] X_g;
    MassFraction[nX] X_l;
 
    SI.SpecificEnthalpy h_l;
    SI.SpecificEnthalpy h_g;
 
- //  Modelica.SIunits.Pressure p_check=sum(p_gas)+p_H2O;
+ //  SI.Pressure p_check=sum(p_gas)+p_H2O;
  //  Real k[nX_gas];
-   parameter Real[nX_gas+1] n_g_norm_start = fill(0.5,
-                                                     nX_gas+1)
+   parameter Real[nX_gas + 1] n_g_norm_start = fill(0.5,nX_gas+1)
     "start value, all gas in gas phase, all water liquid";
+ //  Real[nX_gas+1] n_g_norm_start;
+
  //  Real[nX_gas+1] n_g_norm;
    Real y[:]=massFractionsToMoleFractions(X,MM_vec) "mole fractions";
  //  Real y_g[:]= massFractionsToMoleFractions(X_g,MM_vec[nX_salt+1:nX]) "mole fractions";
-   Real y_g[:]= cat(1,p_gas,{p_H2O})/p "mole fractions in gas phase";
+   Real y_g[:]= p_gas/p "mole fractions in gas phase";
 
-   Real[nX_gas+1] x_vec = if x>0 then X_g*x./X[nX_salt+1:nX] else fill(0,nX_gas+1)
+   Real[nX_gas + 1] x_vec = { (if X[nX_salt+i]>0 then state.X_g[i]*x/X[nX_salt+i] else 0) for i in 1:nX_gas+1}
     "Fractions of gas mass in gas phase";
+ //  Real[nX_gas+1] x_vec = if x>0 then state.X_g*x./X[nX_salt+1:nX] else fill(0,nX_gas+1)
 
  //  MassFraction[nX_salt] X_salt = X[1:nX_salt];
  //  MassFraction[nX_gas] X_gas = X[nX_salt+1:end-1];
- //  Modelica.SIunits.Temperature T_corr = max(273.16,min(400,T)) "TODO";
- //  Modelica.SIunits.Pressure p_corr = max(1e5,min(455e5,p)) "TODO";
+ //  SI.Temperature T_corr = max(273.16,min(400,T)) "TODO";
+ //  SI.Pressure p_corr = max(1e5,min(455e5,p)) "TODO";
+   Integer z "Number of iterations in VLE algorithm";
 protected
    Integer pp(start=0)=state.phase
     "just to get rid of initialization problem warning";
@@ -120,48 +125,36 @@ initial equation
    MM = y*MM_vec;
    R  = Modelica.Constants.R/MM;
 
- //  (h,x,d,d_g,d_l) = specificEnthalpy_pTX(p,T,X) Leider nicht invertierbar;
+ //  (h,x,d,d_g,d_l) = specificEnthalpy_pTX(p,T,X) unfortunately, this is not invertable;
 
-   if explicitVars=="pT" or explicitVars=="pT" then
-     h=state.h;
-   else
+   if input_ph then
      h = specificEnthalpy_pTX(p,T,X,phase,n_g_norm_start);
+   else
+     h=state.h;
    end if;
- //  (x,d,d_g,d_l,p_H2O,p_gas,X_l,p_degas,k)= quality_pTX(p_corr,T_corr,X);
 
-   (state,X_g,GVF,h_l,h_g,p_gas,p_H2O,p_degas) = setState_pTX(p,T,X,phase,n_g_norm_start);
+   if input_dT then
+     d = density_pTX(p,T,X,phase,n_g_norm_start);
+   else
+     d=state.d;
+   end if;
+
+   (state,GVF,h_l,h_g,p_gas,p_H2O,p_degas,z) = setState_pTX(p,T,X,phase,n_g_norm_start);
    X_l=state.X_l;
- //  GVF=state.GVF;
    x=state.x;
    s=state.s;
-   d=state.d;
+ //  d=state.d;
    d_g=state.d_g;
    d_l=state.d_l;
- //  p_gas=state.p_gas;
-  // p_H2O=state.p_H2O;
- //  p_degas=sum(state.p_degas);
+
   /* 
   (x,d,d_g,d_l,p_H2O,p_gas,X_l,p_degas)= quality_pTX(p,T,X,n_g_start);
   s = 0 "specificEntropy_phX(p,h,X) TODO";
- 
-state =  ThermodynamicState( p=p,
-                              T=T,
-                              X=X,
-                              X_l=X_l,
-                              h=h,
-                              GVF=x*d/d_g,
-                              x=x,
-                              s=0,
-                              d_g=d_g,
-                              d_l=d_l,
-                              d=d,
-                              phase=0) "phase_out";*/
- /*                              GVF=GVF,
-                              x=GVF*d_g/d,*/
+   */
 
    sat.psat = sum(p_degas);
    sat.Tsat = T;
-   sat.X = X;
+   sat.X = X "TODO";
   // sat.p_degas=p_degas;
 
    annotation (Documentation(info="<html></html>"),
@@ -186,8 +179,8 @@ redeclare record extends ThermodynamicState
 /*  AbsolutePressure p "Absolute pressure of medium";
   Temperature T(unit="K") "Temperature of medium";*/
   SpecificEnthalpy h "Specific enthalpy";
-//  Modelica.SIunits.SpecificEnthalpy h_g "Specific enthalpy gas phase";
-//  Modelica.SIunits.SpecificEnthalpy h_l "Specific enthalpy liquid phase";
+//  SI.SpecificEnthalpy h_g "Specific enthalpy gas phase";
+//  SI.SpecificEnthalpy h_l "Specific enthalpy liquid phase";
   SpecificEntropy s "Specific entropy";
   Density d(start=300) "density";
 //  Real GVF "Gas Void Fraction";
@@ -197,6 +190,7 @@ redeclare record extends ThermodynamicState
 //  AbsolutePressure p_H2O;
 //  AbsolutePressure p_gas[nX_gas];
 //  AbsolutePressure[nX_gas + 1] p_degas     "should be in SatProp, but is calculated in setState which returns a state";
+  MassFraction[nX_gas+1] X_g;
    annotation (Documentation(info="<html>
 
 </html>"));
@@ -223,21 +217,21 @@ end ThermodynamicState;
 
 
   replaceable partial function solutionEnthalpy
-    input Modelica.SIunits.Temp_K T;
-    output Modelica.SIunits.SpecificEnthalpy Delta_h_solution;
+    input SI.Temp_K T;
+    output SI.SpecificEnthalpy Delta_h_solution;
   end solutionEnthalpy;
 
 
   replaceable partial function solubilities_pTX
   "solubility calculation of gas in m_gas/m_H2O"
     //Stoffdaten auslagern
-    input Modelica.SIunits.Pressure p;
-    input Modelica.SIunits.Temp_K T;
-    input Modelica.SIunits.MassFraction X[nX] "mass fractions m_x/m_Sol";
-    input Modelica.SIunits.MassFraction X_l[nX] "mass fractions m_x/m_Sol";
-    input Modelica.SIunits.Pressure[nX_gas] p_gas;
+    input SI.Pressure p;
+    input SI.Temp_K T;
+    input SI.MassFraction X[nX] "mass fractions m_x/m_Sol";
+    input SI.MassFraction X_l[nX] "mass fractions m_x/m_Sol";
+    input SI.Pressure[nX_gas] p_gas;
   //  input String gasname;
-  //  input Modelica.SIunits.MolarMass MM[:] "=fill(0,nX)molar masses of components";
+  //  input SI.MolarMass MM[:] "=fill(0,nX)molar masses of components";
   //  output Molality[nX_gas] solu;
     output MassFraction solu[nX_gas] "gas concentration in kg_gas/kg_fluid";
   end solubilities_pTX;
@@ -245,23 +239,22 @@ end ThermodynamicState;
 
   replaceable function fugacity_pTX
   "Calculation of nitrogen fugacity coefficient extracted from EES"
-    input Modelica.SIunits.Pressure p;
-    input Modelica.SIunits.Temp_K T_K;
+    input SI.Pressure p;
+    input SI.Temp_K T_K;
     input MassFraction X[:]=reference_X "Mass fractions";
     input String substancename;
     output Real phi;
 protected
-    Pressure_bar p_bar=Modelica.SIunits.Conversions.to_bar(p);
+    Pressure_bar p_bar=SI.Conversions.to_bar(p);
   end fugacity_pTX;
 
 
  replaceable function density_liquid_pTX "Dichte der flüssigen Phase"
-   input Modelica.SIunits.Pressure p "TODO: Rename to density_liq_pTX";
-   input Modelica.SIunits.Temp_K T;
+   input SI.Pressure p "TODO: Rename to density_liq_pTX";
+   input SI.Temp_K T;
    input MassFraction X[nX] "mass fraction m_NaCl/m_Sol";
-   input Modelica.SIunits.MolarMass MM[:]
-    "=MM_vec =fill(0,nX) molar masses of components";
-   output Modelica.SIunits.Density d;
+   input SI.MolarMass MM[:] "=MM_vec =fill(0,nX) molar masses of components";
+   output SI.Density d;
  end density_liquid_pTX;
 
 
@@ -274,21 +267,21 @@ x := state.x;
 end vapourQuality;
 
 
-  redeclare function specificEnthalpy_pTX
-    input Modelica.SIunits.Pressure p;
-    input Modelica.SIunits.Temp_K T;
+  redeclare function specificEnthalpy_pTX "wrapper to extract h from state"
+    //necessary for declaration of inverse function T(p,h)
+    input SI.Pressure p;
+    input SI.Temp_K T;
     input MassFraction X[:] "mass fraction m_NaCl/m_Sol";
     input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
-    input Real[nX_gas+1] n_g_norm_start=fill(0.5,
-                                                nX_gas+1)
+    input Real[nX_gas+1] n_g_norm_start=fill(0.5,nX_gas+1)
     "start value, all gas in gas phase, all water liquid";
-    output Modelica.SIunits.SpecificEnthalpy h;
+    output SI.SpecificEnthalpy h;
 
   algorithm
   //  assert(T>273.15,"T too low in PartialBrine_ngas_Newton.specificEnthalpy_pTX()");
     if debugmode then
-  //     Modelica.Utilities.Streams.print("Running specificEnthalpy_pTX("+String(p)+","+String(T)+" K)");
-        Modelica.Utilities.Streams.print("Running specificEnthalpy_pTX("+String(p/1e5)+","+String(T-273.15)+"°C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
+  //     print("Running specificEnthalpy_pTX("+String(p)+","+String(T)+" K)");
+        print("Running specificEnthalpy_pTX("+String(p/1e5)+","+String(T-273.15)+"°C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
     end if;
    h:=specificEnthalpy(setState_pTX(
       p,
@@ -296,11 +289,39 @@ end vapourQuality;
       X,
       phase,n_g_norm_start));
 
-  //Modelica.Utilities.Streams.print(String(p)+","+String(T)+" K->"+String(h)+" J/kg & (PartialBrine_Multi_TwoPhase_ngas.specificEnthalpy_pTX)");
+  //print(String(p)+","+String(T)+" K->"+String(h)+" J/kg & (PartialBrine_Multi_TwoPhase_ngas.specificEnthalpy_pTX)");
    //,p=pressure_ThX(T,h,X);
 
    annotation(LateInline=true,inverse(T=temperature_phX(p,h,X,phase,n_g_norm_start)));
   end specificEnthalpy_pTX;
+
+
+  redeclare function density_pTX "wrapper to extract d from state"
+    //necessary for declaration of inverse function p(T,d)
+    input SI.Pressure p;
+    input SI.Temp_K T;
+    input MassFraction X[:] "mass fraction m_NaCl/m_Sol";
+    input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+    input Real[nX_gas+1] n_g_norm_start=fill(0.5,nX_gas+1)
+    "start value, all gas in gas phase, all water liquid";
+    output SI.Density d;
+
+  algorithm
+  //  assert(T>273.15,"T too low in PartialBrine_ngas_Newton.specificEnthalpy_pTX()");
+    if debugmode then
+        print("Running density_pTX("+String(p/1e5)+","+String(T-273.15)+"°C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
+    end if;
+   d:=density(setState_pTX(
+      p,
+      T,
+      X,
+      phase,n_g_norm_start));
+
+  //print(String(p)+","+String(T)+" K->"+String(h)+" J/kg & (PartialBrine_Multi_TwoPhase_ngas.specificEnthalpy_pTX)");
+   //,p=pressure_ThX(T,h,X);
+
+   annotation(LateInline=true,inverse(p=pressure_dTX(d,T,X,phase,n_g_norm_start)));
+  end density_pTX;
 
 
   redeclare function temperature_phX
@@ -315,24 +336,24 @@ end vapourQuality;
     "start value, all gas in gas phase, all water liquid";
     output Temperature T "Temperature";
 protected
-    Modelica.SIunits.SpecificHeatCapacity c_p;
-    Modelica.SIunits.Temperature T_a=273.16;
-  //  Modelica.SIunits.Temperature T0_a=273.16;
-    Modelica.SIunits.Temperature T_b=min(400,Modelica.Media.Water.WaterIF97_base.saturationTemperature(p)-1) "400";
+    SI.SpecificHeatCapacity c_p;
+    SI.Temperature T_a=273.16;
+  //  SI.Temperature T0_a=273.16;
+    SI.Temperature T_b=min(400,Modelica.Media.Water.WaterIF97_base.saturationTemperature(p)-1) "400";
 
-    Modelica.SIunits.SpecificEnthalpy h_a;
-    Modelica.SIunits.SpecificEnthalpy h_b;/**/
-    Modelica.SIunits.SpecificEnthalpy h_T;
+    SI.SpecificEnthalpy h_a "h at lower limit";
+    SI.SpecificEnthalpy h_b "h at upper limit";
+    SI.SpecificEnthalpy h_T "calculated h";
     Integer z=0 "Loop counter";
   algorithm
     if debugmode then
-       Modelica.Utilities.Streams.print("\ntemperature_phX("+String(p)+","+String(h)+")");
+       print("\ntemperature_phX("+String(p)+","+String(h)+")");
     end if;
     //Find temperature with h above given h ->T_b
     assert(h>specificEnthalpy_pTX(p,T_a,X),"h="+String(h/1e3)+" kJ/kg -> Enthalpy too low (< 0°C) (Brine.PartialBrine_ngas_Newton.temperature_phX)");
     while true loop
       h_T:=specificEnthalpy_pTX(p,T_b,X);
-      //Modelica.Utilities.Streams.print(String(p)+","+String(T_b)+" K->"+String(h_T)+" J/kg (PartialBrine_ngas_Newton.temperature_phX)");
+      //print(String(p)+","+String(T_b)+" K->"+String(h_T)+" J/kg (PartialBrine_ngas_Newton.temperature_phX)");
       if h>h_T then
         T_a := T_b;
         T_b := T_b + 50;
@@ -344,23 +365,23 @@ protected
   //BISECTION - is schneller, braucht 13 Iterationen
     while (T_b-T_a)>1e-2 and abs(h-h_T/h)>1e-5 loop   //stop when temperatures or enthalpy are close
   //  while abs(h-h_T/h)>1e-5 loop
-  //    Modelica.Utilities.Streams.print("T_b-T_a="+String(T_b-T_a)+", abs(h-h_T)/h="+String(abs(h-h_T)/h));
+  //    print("T_b-T_a="+String(T_b-T_a)+", abs(h-h_T)/h="+String(abs(h-h_T)/h));
       T:=(T_a+T_b)/2 "Halbieren";
-  //    Modelica.Utilities.Streams.print("T_neu="+String(T)+"K");
+  //    print("T_neu="+String(T)+"K");
       h_T:=specificEnthalpy_pTX(p,T,X);
       if h_T > h then
         T_b:=T;
-  //      Modelica.Utilities.Streams.print("T_b="+String(T)+"K -> dh="+String(h_T-h));
+  //      print("T_b="+String(T)+"K -> dh="+String(h_T-h));
       else
         T_a:=T;
-  //      Modelica.Utilities.Streams.print("T_a="+String(T)+"K -> dh="+String(h_T-h));
+  //      print("T_a="+String(T)+"K -> dh="+String(h_T-h));
       end if;
       z:=z+1;
-  //    Modelica.Utilities.Streams.print(String(z)+": "+String(T_a)+" K & "+String(T_b)+" K -> "+String((h-h_T)/h)+"(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)\n");
-  //    Modelica.Utilities.Streams.print("h("+String(T_a)+")="+String(h_a-h)+" J/kg & h("+String(T_b)+")="+String(h_b-h)+" J/kg");
+  //    print(String(z)+": "+String(T_a)+" K & "+String(T_b)+" K -> "+String((h-h_T)/h)+"(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)\n");
+  //    print("h("+String(T_a)+")="+String(h_a-h)+" J/kg & h("+String(T_b)+")="+String(h_b-h)+" J/kg");
       assert(z<100,"Maximum number of iteration reached for temperature calculation. Something's wrong here. Cancelling...(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)");
     end while;
-  // Modelica.Utilities.Streams.print("BISECTION " + String(z)+": "+String(T));
+  // print("BISECTION " + String(z)+": "+String(T));
 
   /*
 //REGULA FALSI - is langsamer, braucht 19 Iterationen
@@ -371,37 +392,97 @@ protected
   h_b := specificEnthalpy_pTX(p,T_b,X);
   while abs(T_b-T_a)>1e-2 and abs(h_T-h)/h>1e-5 loop
 //  while abs(T_b-T_a)/T_l>1e-4 loop
-    Modelica.Utilities.Streams.print("h_a("+String(T_a)+")="+String(h_a)+" / h_b("+String(T_b)+")="+String(h_b));
+    print("h_a("+String(T_a)+")="+String(h_a)+" / h_b("+String(T_b)+")="+String(h_b));
     T:=max(T0_a,min(T0_b,T_a-(T_b-T_a)/(h_b-h_a)*(h_a-h))) "Regula falsi";
     h_T:=specificEnthalpy_pTX(p,T,X);
-    Modelica.Utilities.Streams.print("T_neu="+String(T)+"K");
+    print("T_neu="+String(T)+"K");
     if h_T > h then
       T_b:=T;
       h_b:=h_T;
     else
       T_a:=T;
       h_a:=h_T;
-//      Modelica.Utilities.Streams.print("T_a="+String(T)+"K -> h="+String(h_T-h));
+//      print("T_a="+String(T)+"K -> h="+String(h_T-h));
     end if;
     z:=z+1;
-//    Modelica.Utilities.Streams.print(String(z)+": "+String(T_a)+" K & "+String(T_b)+" K -> "+String((h-h_T)/h)+"(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)\n");
-//    Modelica.Utilities.Streams.print("h("+String(T_a)+")="+String(h_a-h)+" J/kg & h("+String(T_b)+")="+String(h_b-h)+" J/kg");
+//    print(String(z)+": "+String(T_a)+" K & "+String(T_b)+" K -> "+String((h-h_T)/h)+"(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)\n");
+//    print("h("+String(T_a)+")="+String(h_a-h)+" J/kg & h("+String(T_b)+")="+String(h_b-h)+" J/kg");
     assert(z<100,"Maximum number of iteration reached for temperature calculation. Something's wrong here. Cancelling...(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)");
   end while;
- Modelica.Utilities.Streams.print("REGULA FALSI " + String(z)+": "+String(T));
 */
+  //   print("REGULA FALSI " + String(z)+": "+String(T));
 
   end temperature_phX;
 
 
+  redeclare function pressure_dTX
+  "iterative inversion of density_pTX by regula falsi"
+    extends Modelica.Icons.Function;
+    input SI.Density d;
+    input SI.Temperature T;
+    input MassFraction X[nX] "Mass fractions";
+    input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
+    input Real[nX_gas + 1] n_g_start=fill(0.5, nX_gas+1)
+    "start value, all gas in gas phase, all water liquid";
+    output SI.Pressure p;
+protected
+    SI.SpecificHeatCapacity c_p;
+    SI.Pressure p_a=1e5 "lower limit";
+    SI.Pressure p_b=999e5 "lower limit";
+
+    SI.Density d_a "density at lower limit";
+    SI.Density d_b "density at upper limit";
+    SI.Density d_p "density calculated for tentative pressure";
+    Integer z=0 "Loop counter";
+
+  algorithm
+    if debugmode then
+       print("\npressure_TdX("+String(T)+","+String(d)+")");
+    end if;
+    //Find temperature with h above given h ->T_b
+    assert(d>density_pTX(p_a,T,X),"d="+String(d)+" kg/m^3 -> density too low (< d(1 bar)) (Brine.PartialBrine_ngas_Newton.pressure_TdX)");
+    while true loop
+      d_p:=density_pTX(p_b,T,X);
+      //print(String(p_b/1e5)+" bar,"+String(T)+" K->"+String(d_p)+" kg/m^3 (PartialBrine_ngas_Newton.pressure_TdX)");
+      if d>d_p then
+        p_a := p_b;
+        p_b := p_b + 100;
+      else
+        break;
+      end if;
+    end while;
+
+  //BISECTION - is schneller, braucht 13 Iterationen
+    while (p_b-p_a)>1e-2 and abs(d-d_p/d)>1e-5 loop   //stop when temperatures or enthalpy are close
+  //  while abs(h-h_T/h)>1e-5 loop
+  //    print("T_b-T_a="+String(T_b-T_a)+", abs(h-h_T)/h="+String(abs(h-h_T)/h));
+      p:=(p_a+p_b)/2 "Halbieren";
+  //    print("T_neu="+String(T)+"K");
+      d_p:=density_pTX(p,T,X);
+      if d_p > d then
+        p_b:=p;
+  //      print("T_b="+String(T)+"K -> dh="+String(h_T-h));
+      else
+        p_a:=p;
+  //      print("T_a="+String(T)+"K -> dh="+String(h_T-h));
+      end if;
+      z:=z+1;
+  //    print(String(z)+": "+String(p_a)+" K & "+String(p_b)+" K -> "+String((h-h_T)/h)+"(PartialBrine_Multi_TwoPhase_ngas.pressure_TdX)\n");
+  //    print("h("+String(p_a)+")="+String(d_a-h)+" J/kg & h("+String(p_b)+")="+String(d_b-d)+" J/kg");
+      assert(z<100,"Maximum number of iteration reached for pressure calculation. Something's wrong here. Cancelling...(PartialBrine_Multi_TwoPhase_ngas.pressure_TdX)");
+    end while;
+  // print("BISECTION " + String(z)+": "+String(T));
+
+  end pressure_dTX;
+
+
  replaceable function specificEnthalpy_liq_pTX
   "Specific enthalpy of liquid phase"
-   input Modelica.SIunits.Pressure p;
-   input Modelica.SIunits.Temp_K T;
+   input SI.Pressure p;
+   input SI.Temp_K T;
    input MassFraction X[nX] "mass fraction m_NaCl/m_Sol";
-   input Modelica.SIunits.MolarMass MM[:]=fill(0,nX)
-    "molar masses of components";
-   output Modelica.SIunits.SpecificEnthalpy h;
+   input SI.MolarMass MM[:]=fill(0,nX) "molar masses of components";
+   output SI.SpecificEnthalpy h;
 protected
    SI.SpecificEnthalpy[nX_salt] h_vec;
  end specificEnthalpy_liq_pTX;
@@ -409,23 +490,25 @@ protected
 
  replaceable function specificEnthalpy_gas_pTX
   "Specific enthalpy of gas in gas phase"
-   input Modelica.SIunits.Pressure p;
-   input Modelica.SIunits.Temp_K T;
- //  input Modelica.SIunits.MolarMass MM[:]=fill(0,nX)     "molar masses of components";
+   input SI.Pressure p;
+   input SI.Temp_K T;
+ //  input SI.MolarMass MM[:]=fill(0,nX)     "molar masses of components";
    input MassFraction X[:] "mass fraction m_NaCl/m_Sol";
-   output Modelica.SIunits.SpecificEnthalpy h;
+   output SI.SpecificEnthalpy h;
  end specificEnthalpy_gas_pTX;
 
 
   replaceable partial function saturationPressures
   "Return saturationPressures for gases and water"
     extends Modelica.Icons.Function;
-    input Modelica.SIunits.Pressure p;
-    input Modelica.SIunits.Temp_K T;
-    input Modelica.SIunits.MassFraction X[:] "mass fractions m_x/m_Sol";
-    input Modelica.SIunits.MolarMass MM[:] "molar masses of components";
-    output Modelica.SIunits.Pressure[nX_gas] p_sat;
+    input SI.Pressure p;
+    input SI.Temp_K T;
+    input SI.MassFraction X[:] "mass fractions m_x/m_Sol";
+    input SI.MolarMass MM[:] "molar masses of components";
+    output SI.Pressure[nX_gas] p_sat;
   end saturationPressures;
+
+
 
 
   redeclare replaceable partial function extends setState_pTX
@@ -433,156 +516,142 @@ protected
   input Real[nX_gas + 1] n_g_norm_start "=fill(.1,nX_gas+1) 
     start value, all gas in gas phase, all water liquid, set in BaseProps";
   /*
-//output Modelica.SIunits.Density d_g= if x>0 then (n_CO2_g*d_g_CO2 + n_N2_g*d_g_N2)/(n_CO2_g + n_H2O_g) else -1;
+//output SI.Density d_g= if x>0 then (n_CO2_g*d_g_CO2 + n_N2_g*d_g_N2)/(n_CO2_g + n_H2O_g) else -1;
 //output Real[nX_gas + 1] n_g_norm;
 //output Real k[nX_gas];
-// Modelica.SIunits.Density d_g_H2O = Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.rhov_p(p) "density of water vapor";
+// SI.Density d_g_H2O = Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.rhov_p(p) "density of water vapor";
 */
-    output Modelica.SIunits.MassFraction[nX_gas+1] X_g;
     output Real GVF;
-    output Modelica.SIunits.SpecificEnthalpy h_l;
-    output Modelica.SIunits.SpecificEnthalpy h_g;
-    output Modelica.SIunits.Pressure[nX_gas + 1] p_gas "=fill(0,nX_gas)";
-    output Modelica.SIunits.Pressure p_H2O "water vapour pressure";
-    output Modelica.SIunits.Pressure[nX_gas + 1] p_degas;
+    output SI.SpecificEnthalpy h_l;
+    output SI.SpecificEnthalpy h_g;
+    output SI.Pressure[nX_gas + 1] p_gas "partial pressures of gases";
+    output SI.Pressure p_H2O "water vapour pressure TODO is in p_gas drin";
+    output SI.Pressure[nX_gas + 1] p_degas;
+    output Integer z "number of iterations";
 protected
-    Modelica.SIunits.MassFraction[nX] X_l=X "start value";
-    Modelica.SIunits.Density d;
-    Modelica.SIunits.Density d_l;
-    Modelica.SIunits.Density d_g;
-    Modelica.SIunits.MassFraction x;
-    Modelica.SIunits.Pressure p_sat_H2O
-    "= saturationPressure_H2O(p,T2,X,MM_vec,nM_vec)";
-    Modelica.SIunits.Pressure p_H2O_0;
-    Modelica.SIunits.Pressure[nX_gas + 1] f;
-    Modelica.SIunits.Pressure[nX_gas + 1] p_sat;
-    Modelica.SIunits.Pressure[nX_gas + 1] p_sat_test;
-    Modelica.SIunits.MassFraction[nX_gas + 1] Delta_n_g_norm = fill(1e3,nX_gas+1);
-  //  Modelica.SIunits.MassFraction[nX_gas + 1] c = {3.16407e-5,0,3.6e-8,.746547} "cat(1,fill(1e-4, nX_gas), {X[end]})fill(0, nX_gas+1)X[nX_salt+1:end]";
-    Real k_H2O "Henry coefficient";
+    SI.MassFraction[nX_gas+1] X_g;
+    SI.MassFraction[nX] X_l=X "start value";
+    SI.Density d;
+    SI.Density d_l;
+    SI.Density d_g;
+    SI.MassFraction x;
+    //SI.Pressure p_sat_H2O "water vapour pressure considering salinity";
+    SI.Pressure p_H2O_0 "pure water vapour pressure";
+    SI.Pressure[nX_gas + 1] f
+    "componentwise pressure disbalance (to become zero)";
+    SI.Pressure[nX_gas + 1] p_sat;
+    SI.MassFraction[nX_gas + 1] Delta_n_g_norm = fill(1e3,nX_gas+1)
+    "large initial value to enter while loop";
+  //  SI.MassFraction[nX_gas + 1] c = {3.16407e-5,0,3.6e-8,.746547} "cat(1,fill(1e-4, nX_gas), {X[end]})fill(0, nX_gas+1)X[nX_salt+1:end]";
+    Real solu[nX_gas];
     Real k[nX_gas];
     Real[nX_gas + 1] n "Total mol numbers";
     Real[nX_gas + 1] n_l "mols in liquid phase per kg fluid";
     Real[nX_gas + 1] n_g "mols in   gas  phase per kg fluid";
     Real[nX_gas + 1] n_g_norm_test;
-  //  Modelica.SIunits.MassFraction[nX] X;
+  //  SI.MassFraction[nX] X;
     Real[nX_gas + 1] n_g_norm
     "= X[end-nX_gas:end-1]./MM_gas fill(0,nX_gas) - start value: all degassed";
     Real dp_gas_dng_norm;
     Real dcdng_norm;
     Real dp_degas_dng_norm;
     Real[nX_gas + 1] dfdn_g_norm;
-    Integer z=0;
     Real sum_n_ion;
-    constant Integer zmax=1000 "maximum number of iteration";
+    constant Integer zmax=1000 "maximum number of iterations";
   //  Integer ju = nX_gas+1;
     Real[nX_gas + 1,nX_gas + 1] Grad_f;
     Real DeltaC=0.001;
-    Modelica.SIunits.Temperature T2;
+    SI.Temperature T2;
     SpecificHeatCapacity R_gas;
   algorithm
     if debugmode then
-  //    Modelica.Utilities.Streams.print("Running setState_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+"°C,X)...");
-        Modelica.Utilities.Streams.print("Running setState_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" °C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
+        print("Running setState_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" °C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
     end if;
-  //  assert(T-273.15<300,"Moooot!");
 
-   assert(p>0,"p="+String(p/1e5)+"bar - Negative pressure is not yet supported ;-) (PartialBrine_ngas_Newton.quality_pTX())");
-  /*  Modelica.Utilities.Streams.print("quality_pTX("+String(p)+","+String(T2)+","+PowerPlant.vector2string(X_l[1:end],false)+")");
-  X[1:nX_salt] = X_[1:nX_salt];
-  for i in nX_salt+1:nX-1 loop
-    X[i]:=max(0,min(1e-3,X_[i]));
-  end for;
-  X[end]=1-sum(X[1:end-1]);
-  X_l:=X;*/
-  //  Modelica.Utilities.Streams.print("quality_pTX("+String(p)+","+String(T)+","+PowerPlant.vector2string(X[1:end],false)+")");
-
-    assert(max(X)-1<=1e-8 and min(X)>=-1e-8, "X out of range [0...1] = "+Modelica.Math.Matrices.toString(transpose([X]))+" (quality_pTX())");
+   assert(p>0,"p="+String(p/1e5)+"bar - Negative pressure is not yet supported ;-) (PartialBrine_ngas_Newton.setState_pTX())");
+   assert(max(X)-1<=1e-8 and min(X)>=-1e-8, "X out of range [0...1] = "+Modelica.Math.Matrices.toString(transpose([X]))+" (setState_pTX())");
   //  assert(T>273.15,"T too low in PartialBrine_ngas_Newton.()");
-  //    Modelica.Utilities.Streams.print("\nn_g_start=" + PowerPlant.vector2string(n_g_start));
 
-      if T<273.15 then
-      Modelica.Utilities.Streams.print("T="+String(T)+" too low (<0°C), setting to 0°C in PartialBrine_ngas_Newton.quality_pTX()");
+    if T<273.15 then
+      print("T="+String(T)+" too low (<0°C), setting to 0°C in PartialBrine_ngas_Newton.setState_pTX()");
     end if;
     T2:= max(273.16,T);
 
     p_H2O := saturationPressure_H2O(p,T2,X,MM_vec,nM_vec);
 
-  /*
-    p_sat_H2O := saturationPressure_H2O(p,T2,X,MM_vec,nM_vec);
-   p_degas := if phase==1 then 0 else sum(saturationPressures(p,T2,X,MM_vec)) + p_sat_H2O;
-   if  p_degas < p then*/
-     p_degas := cat(1,saturationPressures(p,T2,X,MM_vec), {p_H2O});
+  /*     p_degas := cat(1,saturationPressures(p,T2,X,MM_vec), {p_H2O}); 60% slower*/
+      p_gas :=fill(p/(nX_gas + 1), nX_gas + 1);
+      solu :=solubilities_pTX(p,T,X_l,X,p_gas[1:nX_gas]);
+      k :=solu ./ p_gas[1:nX_gas];
+      for i in 1:nX_gas loop
+          p_degas[i] :=X_l[nX_salt + i]/(if k[i] > 0 then k[i] else 1^10)
+      "Degassing pressure";
+      end for;
+      p_degas[nX_gas + 1] :=p_H2O;
 
      if phase==1 or sum(p_degas) < p then
-     if debugmode then
-      Modelica.Utilities.Streams.print("1Phase-Liquid (PartialBrine_Multi_TwoPhase_ngas.quality_pTX("+String(p)+","+String(T2)+"))");
-     end if;
+      if debugmode then
+        print("1Phase-Liquid (PartialBrine_Multi_TwoPhase_ngas.setState_pTX("+String(p)+","+String(T2)+"))");
+      end if;
       x:=0;
-      p_H2O := p_sat_H2O;
+      //p_H2O := p_sat_H2O;
     else
       assert(max(X[end-nX_gas:end-1])>0,"Phase equilibrium cannot be calculated without dissolved gas at "+String(p/1e5)+" bar, "+String(T2-273.15)+"°C with p_degas="+String(sum(p_degas)/1e5)+" bar.");
-  //    Modelica.Utilities.Streams.print("2Phase (PartialBrine_Multi_TwoPhase_ngas.quality_pTX)");
-  //    Modelica.Utilities.Streams.print("p="+String(p/1e5)+" bar");
 
       n:=X[nX_salt + 1:end] ./ MM_vec[nX_salt + 1:nX]
       "total mole numbers per kg brine";
-  //    n_g_norm:=cat(1, fill(1,nX_gas), {0.01})
-  //    n_g:={0.0175164,0.00204528,0.00435, 2.51075};
-  //    n_g_norm :=n_g ./ n;
       n_g_norm:=n_g_norm_start .* sign(X[nX_salt + 1:nX])
       "switch off unused salts";
 
-      while z<1 or max(abs(Delta_n_g_norm))>5e-5 loop
-      //abbrechen wenn Druck-GG gefunden oder sehr geringer Gasanteil
-        z:=z + 1;
-        assert(z<=zmax,"Reached maximum number of iterations ("+String(z)+"/"+String(zmax)+") for solution equilibrium calculation. (quality_pTX("+String(p/1e5)+"bar,"+String(T2-273.16)+"°C))\nDeltaP="+String(max(abs(p_sat-p_gas))));
+      z:=0;
+      while z<1 or max(abs(Delta_n_g_norm))>1e-3 loop
+      //stop iteration when p-equlibrium is found or gas fraction is very low
+        z:=z + 1 "count iterations";
+        assert(z<=zmax,"Reached maximum number of iterations ("+String(z)+"/"+String(zmax)+") for solution equilibrium calculation. (setState_pTX("+String(p/1e5)+"bar,"+String(T2-273.16)+"°C))\nDeltaP="+String(max(abs(p_sat-p_gas))));
 
-  //     Modelica.Utilities.Streams.print("\nn_g_norm=" + PowerPlant.vector2string(n_g_norm));
+  //     print("\nn_g_norm=" + PowerPlant.vector2string(n_g_norm));
         n_g :=n_g_norm .* n;
-  /*      if abs(Delta_n_g_norm[ju])<1e-3 then
-         ju:=if ju == nX_gas+1 then 1 else ju + 1;
-         Modelica.Utilities.Streams.print("Gas "+String(ju)+"!");
-      end if;
-*/
         n_l := n-n_g;
         x := n_g*MM_vec[nX_salt+1:nX];
-  //      Modelica.Utilities.Streams.print("\n"+String(z)+": x="+String(x)+" Delta_n_g="+String(max(abs(Delta_n_g_norm))));
+  //      print("\n"+String(z)+": x="+String(x)+" Delta_n_g="+String(max(abs(Delta_n_g_norm))));
         X_l:=cat(1, X[1:nX_salt], n_l.*MM_vec[nX_salt+1:nX])/(1-x);
-   /*      Modelica.Utilities.Streams.print("n_l=" + PowerPlant.vector2string(n_l));
-      Modelica.Utilities.Streams.print("n_g=" + PowerPlant.vector2string(n_g));
+   /*      print("n_l=" + PowerPlant.vector2string(n_l));
+      print("n_g=" + PowerPlant.vector2string(n_g));
 */
     //PARTIAL PRESSURE
           p_gas := p * n_g/sum(n_g);
-
-    //Concentration for that partial pressure
 
     //DEGASSING PRESSURE
           (p_H2O,p_H2O_0):=saturationPressure_H2O(p,T2,X_l,MM_vec,nM_vec)
         "X_l ändert sich";
       if (p_H2O>p) then
-          Modelica.Utilities.Streams.print("p_H2O(" + String(p/1e5) + "bar," +
+          print("p_H2O(" + String(p/1e5) + "bar," +
             String(T2 - 273.15) + "°C, " + Modelica.Math.Matrices.toString(transpose([X])) + ") = "
-             + String(p_H2O/1e5) + "bar>p ! (PartialBrine_ngas_Newton.quality_pTX)");
+             + String(p_H2O/1e5) + "bar>p ! (PartialBrine_ngas_Newton.setState_pTX)");
         x:=1;
         break;
       end if;
 
-  //       Modelica.Utilities.Streams.print("p_H2O_0=" + String(p_H2O_0));
+   //      print("p_gas[1]=" + String(p_gas[1]));
 
   //        k:=solubilities_pTX(p=p, T=T2, X_l=X_l, X=X, p_gas=fill(p/3,3)) ./ fill(p/3,3);
-  //  Modelica.Utilities.Streams.print("X_l="+PowerPlant.vector2string(X_l[nX_salt+1:end]));
-          k:=solubilities_pTX(p=p, T=T2, X_l=X_l, X=X, p_gas=p_gas[1:nX_gas]) ./ p_gas[1:nX_gas];
-  //    Modelica.Utilities.Streams.print("k="+PowerPlant.vector2string(k)+" (PartialBrine_ngas_Newton.quality_pTX)");p,T,X_l,MM_vec,p_gas[1])
+  //        k:=solubilities_pTX(p=p, T=T2, X_l=X_l, X=X, p_gas=p_gas[1:nX_gas]) ./ p_gas[1:nX_gas];
+          solu:=solubilities_pTX(p=p, T=T2, X_l=X_l, X=X, p_gas=p_gas[1:nX_gas]);
+  //       print("k[1]=" + String(k[1]));
+
           for i in 1:nX_gas loop
-            p_sat[i] := X_l[nX_salt+i]/ (if k[i]>0 then k[i] else 1e10)
-          "Entlösedruck";
+            k[i]:=if p_gas[i] > 0 then solu[i]/p_gas[i] else 1e10;
+  //          p_sat[i] := X_l[nX_salt+i]/ k[i];
+  //          p_sat[i] := X_l[nX_salt+i]/ (if k[i]>0 then k[i] else 1e10)
+  //          p_sat[i] := X_l[nX_salt+i]/ (if p_gas[i]>0 then solu[i]/p_gas[i] else 1e10)           "Degassing pressure";
           end for;
+          p_sat[1:nX_gas] := X_l[nX_salt+1:nX-1]./ k;
           p_sat[nX_gas+1] := p_H2O;
+  //        print("n=" + String(size(k,1)));
 
           f :=  p_gas-p_sat;
-  //       Modelica.Utilities.Streams.print("p_gas=" + PowerPlant.vector2string(p_gas) + "=>" + String(sum(p_gas)));
-  //       Modelica.Utilities.Streams.print("p_sat=" + PowerPlant.vector2string(p_sat));
+  //       print("p_gas=" + PowerPlant.vector2string(p_gas) + "=>" + String(sum(p_gas)));
+  //       print("p_sat=" + PowerPlant.vector2string(p_sat));
 
          sum_n_ion :=cat(1,X[1:nX_salt] ./ MM_vec[1:nX_salt],n_l)*nM_vec;
 
@@ -592,7 +661,7 @@ protected
               dp_gas_dng_norm:=p*n[gamma]* (sum(n_g)-n_g[gamma])/(sum(n_g))^2
           "partial pressure";
               if gamma == nX_gas+1 then
-                dp_degas_dng_norm := p_H2O_0*n[end]*( (if gamma == nX_gas+1 then -sum_n_ion else 0)+(1-n_g_norm[end])*n[gamma]) / sum_n_ion^2;
+                dp_degas_dng_norm := p_H2O_0*n[end]*( -sum_n_ion +(1-n_g_norm[end])*n[gamma]) / sum_n_ion^2;
               else
                   dcdng_norm := n[gamma]*MM_vec[nX_salt+gamma]*( (x-1) +(1 - n_g_norm[gamma])*n[gamma]*MM_vec[nX_salt+gamma])/(1 - x)^2;
                   dp_degas_dng_norm := dcdng_norm / (if k[gamma] > 0 then k[gamma] else 1e-10)
@@ -616,27 +685,27 @@ protected
               else
                 dp_degas_dng_norm := 0 "degassing pressure";
               end if;
-//            Modelica.Utilities.Streams.print("dcdng_norm("+String(alpha)+","+String(gamma)+")=" + String(dcdng_norm));
+//            print("dcdng_norm("+String(alpha)+","+String(gamma)+")=" + String(dcdng_norm));
             end if;
             Grad_f[gamma,alpha] := dp_gas_dng_norm-dp_degas_dng_norm;
 
-/*           Modelica.Utilities.Streams.print("dp_gas_dng_norm("+String(gamma)+","+String(alpha)+")=" + String(dp_gas_dng_norm));
-           Modelica.Utilities.Streams.print("dp_degas_dng_norm("+String(gamma)+","+String(alpha)+")=" + String(dp_degas_dng_norm));
+/*           print("dp_gas_dng_norm("+String(gamma)+","+String(alpha)+")=" + String(dp_gas_dng_norm));
+           print("dp_degas_dng_norm("+String(gamma)+","+String(alpha)+")=" + String(dp_degas_dng_norm));
            * /
 
           end for;
-//         Modelica.Utilities.Streams.print("Grad_f["+String(gamma)+",:] =" + PowerPlant.vector2string(Grad_f[gamma,:]));
+//         print("Grad_f["+String(gamma)+",:] =" + PowerPlant.vector2string(Grad_f[gamma,:]));
         end for;
 */
 
-  //       Modelica.Utilities.Streams.print("k=" + PowerPlant.vector2string(k));/**/
-  //       Modelica.Utilities.Streams.print("dp_gas=" + PowerPlant.vector2string(p_sat - p_gas));
+  //       print("k=" + PowerPlant.vector2string(k));/**/
+  //       print("dp_gas=" + PowerPlant.vector2string(p_sat - p_gas));
 
     //SOLVE NEWTON STEP
   //        Delta_n_g_norm := Modelica.Math.Matrices.solve(Grad_f, -f)         "solve Grad_f*Delta_n_g_norm=-f";
   //        n_g_norm := n_g_norm + Delta_n_g_norm;
 
-  //        Modelica.Utilities.Streams.print("n_g_norm="+Modelica.Math.Matrices.toString({n_g_norm}));
+  //        print("n_g_norm="+Modelica.Math.Matrices.toString({n_g_norm}));
           for alpha in 1 :nX_gas+1 loop
   //        for alpha in ju:ju loop
   //          Delta_n_g_norm[alpha] := -f[alpha]/Grad_f[alpha,alpha];
@@ -647,10 +716,10 @@ protected
           "new concentration limited by all dissolved/none dissolved, 1e-9 to avoid k=NaN";
   //          end if;
           end for;
-  //       Modelica.Utilities.Streams.print("p_sat="+String(p_sat[1])+", solu="+String(solubility_CO2_pTX_Duan2006(p,T2,X_l,MM_vec,p_gas[1]))+", p_gas="+String(p_gas[1]));
-  //         Modelica.Utilities.Streams.print("p="+String(p)+",T2="+String(T2)+",p_gas[1]="+String(p_gas[1]));
-  /*        Modelica.Utilities.Streams.print("X_l="+Modelica.Math.Matrices.toString({X_l}));
-        Modelica.Utilities.Streams.print("MM_vec="+Modelica.Math.Matrices.toString({MM_vec}));
+  //       print("p_sat="+String(p_sat[1])+", solu="+String(solubility_CO2_pTX_Duan2006(p,T2,X_l,MM_vec,p_gas[1]))+", p_gas="+String(p_gas[1]));
+  //         print("p="+String(p)+",T2="+String(T2)+",p_gas[1]="+String(p_gas[1]));
+  /*        print("X_l="+Modelica.Math.Matrices.toString({X_l}));
+        print("MM_vec="+Modelica.Math.Matrices.toString({MM_vec}));
 */
       end while;
 
@@ -661,23 +730,28 @@ protected
   /*Calculation here  R_gas :=if x > 0 then sum(Modelica.Constants.R*X_g ./ cat(1,MM_gas,{M_H2O})) else -1;
   d_g :=if x > 0 then p/(T2*R_gas) else -1;*/
   //  d_g:= if x>0 then p/(Modelica.Constants.R*T2)*(n_g*cat(1,MM_gas,{M_H2O}))/sum(n_g) else -1;
-    d_g :=if x > 0 then BrineGas_3Gas.density_pTX(p,T, X_g[end - nX_gas:end]) else -1
-    "calculation in MoistAirModel";
-
+    if x > 0 then
+      d_g :=BrineGas_3Gas.density_pTX(p,T, X_g);
+      h_g:=specificEnthalpy_gas_pTX(p,T,X_g);
+    else
+      d_g :=-1;
+      h_g:=-1;
+    end if;
     d_l:=if not x<1 then -1 else density_liquid_pTX(p,T2,X_l,MM_vec)
-    "gases are ignored anyway";
+    "no 1-phase gas";
+    h_l:=specificEnthalpy_liq_pTX(p,T,X_l);
+
     d:=1/(x/d_g + (1 - x)/d_l);
-  //  Modelica.Utilities.Streams.print(String(z)+" (p="+String(p_gas[1])+" bar)");
+  //  print(String(z)+" (p="+String(p_gas[1])+" bar)");
 
   // X_g:=if x>0 then (X-X_l*(1-x))/x else fill(0,nX);
-   h_l:=specificEnthalpy_liq_pTX(p,T,X_l);
-   h_g:=specificEnthalpy_gas_pTX(p,T,X_g);
    GVF:=x*d/d_g;
    state :=ThermodynamicState(
       p=p,
       T=T,
       X=X,
       X_l=X_l,
+      X_g=X_g,
       h=x*h_g + (1-x)*h_l,
       x=x,
       s=0,
@@ -707,7 +781,7 @@ redeclare replaceable partial function extends setState_phX
 algorithm
 
   if debugmode then
-    Modelica.Utilities.Streams.print("Running setState_phX("+String(p/1e5)+" bar,"+String(h)+" J/kg,X)...");
+    print("Running setState_phX("+String(p/1e5)+" bar,"+String(h)+" J/kg,X)...");
   end if;
   state := setState_pTX(p,
     temperature_phX(p,h,X,phase),
@@ -716,18 +790,17 @@ algorithm
 end setState_phX;
 
 
-
   redeclare replaceable function extends specificHeatCapacityCp
   "numeric calculation of specific heat capacity at constant pressure"
 protected
-    Modelica.SIunits.SpecificHeatCapacity cp_liq=specificHeatCapacityCp_liq(state);
-    Modelica.SIunits.SpecificHeatCapacity cp_gas=specificHeatCapacityCp_gas(state);
+    SI.SpecificHeatCapacity cp_liq=specificHeatCapacityCp_liq(state);
+    SI.SpecificHeatCapacity cp_gas=specificHeatCapacityCp_gas(state);
   algorithm
     cp:=state.x*cp_gas + (1-state.x)*cp_liq;
 
   //  assert(cp>0 and cp<5000,"T="+String(state.T-273.15)+"K, p="+String(state.p/1e5)+"bar, x="+String(state.x)+", cp_liq="+String(cp_liq)+"J(kgK), cp_gas="+String(cp_gas)+"J(kgK)");
 
-  //  Modelica.Utilities.Streams.print("c_p_liq("+String(state.T)+"°C)="+String(p)+" J/(kg·K)");
+  //  print("c_p_liq("+String(state.T)+"°C)="+String(p)+" J/(kg·K)");
       annotation (Documentation(info="<html>
                                 <p>In the two phase region this function returns the interpolated heat capacity between the
                                 liquid and vapour state heat capacities.</p>
@@ -743,7 +816,7 @@ protected
     "Specific heat capacity at constant pressure";
 
    /*protected 
-  constant Modelica.SIunits.TemperatureDifference dT=.1;
+  constant SI.TemperatureDifference dT=.1;
 algorithm 
 //    cp := Modelica.Media.Water.IF97_Utilities.cp_pT(state.p, state.T) "TODO";
     cp:=(specificEnthalpy_pTX(state.p,state.T+dT,state.X)-state.h)/dT;
@@ -759,26 +832,39 @@ algorithm
     output SpecificHeatCapacity cp
     "Specific heat capacity at constant pressure";
   /*protected 
-  constant Modelica.SIunits.TemperatureDifference dT=.1;
+  constant SI.TemperatureDifference dT=.1;
 algorithm 
 //    cp := Modelica.Media.Water.IF97_Utilities.cp_pT(state.p, state.T) "TODO";
     cp:=(specificEnthalpy_pTX(state.p,state.T+dT,state.X)-state.h)/dT;
     */
 
 protected
-    Modelica.SIunits.MassFraction[nX] X_g=if state.x>0 then (state.X-state.X_l*(1-state.x))/state.x
+    SI.MassFraction[nX] X_g=if state.x>0 then (state.X-state.X_l*(1-state.x))/state.x
    else
        fill(-1,nX);
-    Modelica.SIunits.SpecificHeatCapacity cp_vec[nX_gas+1];
+    SI.SpecificHeatCapacity cp_vec[nX_gas+1];
   end specificHeatCapacityCp_gas;
 
+
+
   replaceable function dynamicViscosity_pTX_unused "viscosity calculation"
-    input Modelica.SIunits.Pressure p;
-    input Modelica.SIunits.Temp_K T;
+    input SI.Pressure p;
+    input SI.Temp_K T;
     input MassFraction X[:] "mass fraction m_NaCl/m_Sol";
-    output Modelica.SIunits.DynamicViscosity eta;
+    output SI.DynamicViscosity eta;
   //  constant Real M_NaCl=0.058443 "molar mass in [kg/mol]";
   end dynamicViscosity_pTX_unused;
+
+
+  replaceable function isobaricExpansionCoefficient_liq
+  //  extends isobaricExpansionCoefficient;
+    input ThermodynamicState state;
+    input SI.Density d_l;
+    constant SI.Temperature Delta_T= 1;
+    output SI.LinearTemperatureCoefficient beta;
+  algorithm
+    beta :=d_l*(1/d_l - 1/(density_liquid_pTX(state.p,state.T - Delta_T,state.X,MM_vec)))/Delta_T;
+  end isobaricExpansionCoefficient_liq;
 
 
   annotation (Documentation(info="<html>

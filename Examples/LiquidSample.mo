@@ -12,7 +12,7 @@ model LiquidSample
   Real ratioGasLiquid_1 = V_l*props_insitu.d_l/1000 "complete degassing";
 
   Real ratioGasLiquid = props_STP.state.GVF/(1-props_STP.state.GVF) "STP";
-  Modelica.SIunits.Density d_l = props_insitu.d_l;
+  SI.Density d_l = props_insitu.d_l;
 
   Real val[2];
   Real val_static[2];
@@ -39,8 +39,8 @@ equation
     props_sample.Xi = props_string.X_l[1:end-1];
 
 algorithm
-//  Modelica.Utilities.Streams.print("rho="+String(d)+" kg/m³, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));
-//  Modelica.Utilities.Streams.print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
+//  print("rho="+String(d)+" kg/m³, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));
+//  print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
   annotation (experiment(
       StartTime=-4257,
       StopTime=0,

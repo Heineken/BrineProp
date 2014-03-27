@@ -4,12 +4,12 @@ package Medium = Brine_5salts_noGas;
   parameter Integer n=1;
   Medium.BaseProperties[n+1] props;
 
-//  Modelica.SIunits.Density d= props.d;
-  Modelica.SIunits.SpecificEnthalpy h[n];
-//  Modelica.SIunits.Temp_C T_C= props.T-273.15;
-  parameter Modelica.SIunits.Mass m=1;
-  parameter Modelica.SIunits.MassFlowRate m_dot=1;
-  parameter Modelica.SIunits.HeatFlowRate Q_dot=1e4;
+//  SI.Density d= props.d;
+  SI.SpecificEnthalpy h[n];
+//  SI.Temp_C T_C= props.T-273.15;
+  parameter SI.Mass m=1;
+  parameter SI.MassFlowRate m_dot=1;
+  parameter SI.HeatFlowRate Q_dot=1e4;
 equation
   props[1].p = 15e5;
   props[1].T = 273.16+99.61;
@@ -36,7 +36,7 @@ for i in 1:n loop
   props[i+1].T = 273.16+60;
 end for;/**/
 equation
-//  Modelica.Utilities.Streams.print("rho="+String(d)+" kg/m³, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));
-//  Modelica.Utilities.Streams.print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
+//  print("rho="+String(d)+" kg/m³, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));
+//  print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
 algorithm
 end BrineProps1Phase_Convect;

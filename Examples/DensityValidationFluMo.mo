@@ -2,7 +2,7 @@ within BrineProp.Examples;
 model DensityValidationFluMo "mit Messwerten von Elvira"
 //Unzahl an Werten wurde verdichtet mit Guidos Prog (BestFitPlane), dann Stützpunkte berechnet
 package Medium = Brine_5salts_noGas;
-//  Modelica.SIunits.Density d= props.d;  /**/
+//  SI.Density d= props.d;  /**/
 
   constant Real data[:,:]=DataFiles.readCSVmatrix("FluMoFit.csv");
   constant Integer n=size(data,1);
@@ -11,7 +11,7 @@ package Medium = Brine_5salts_noGas;
 //  String csvFilename = "PowerPlant/pT_profil_static.csv";
   String csvFilename = "pT_profil.csv";
   Real depth= time;
-  Modelica.SIunits.Density[n] d;
+  SI.Density[n] d;
 equation
 
 //calculate VLE at in-situ conditions
@@ -31,6 +31,6 @@ equation
 algorithm
 //  PowerPlant.saveCSV("FluMoCalc",{"rho"},transpose({d}));
   DataFiles.writeCSVmatrix("FluMoCalc.csv", {"rho"}, transpose({d}), ";");
-//  Modelica.Utilities.Streams.print("rho="+String(d)+" kg/m³, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));
-//  Modelica.Utilities.Streams.print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
+//  print("rho="+String(d)+" kg/m³, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));
+//  print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
 end DensityValidationFluMo;

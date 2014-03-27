@@ -4,15 +4,15 @@ function density_Duan2008_pTX "density calculation of an aqueous salt solution a
   http://www.geochem-model.org/wp-content/uploads/2009/09/55-JCT_40_1046.pdf
   Problems: Brine has the same evaporation temperature as pure water, only different  "
 
-    input Modelica.SIunits.Pressure p;
-    input Modelica.SIunits.Temp_K T;
-    input Modelica.SIunits.MassFraction X[:] "mass fractions m_NaCl/m_Sol";
-    input Modelica.SIunits.MolarMass MM[:] "molar masses of components";
+    input SI.Pressure p;
+    input SI.Temp_K T;
+    input SI.MassFraction X[:] "mass fractions m_NaCl/m_Sol";
+    input SI.MolarMass MM[:] "molar masses of components";
 
   //  input saltCoefficients salt;
-    output Modelica.SIunits.Density d;
-    //    constant Modelica.SIunits.MolarMass M_NaCl=0.058443 "molar mass in [kg/mol]";
-  //  constant Modelica.SIunits.MolarMass M_H2O = 0.018015 "[kg/mol]";
+    output SI.Density d;
+    //    constant SI.MolarMass M_NaCl=0.058443 "molar mass in [kg/mol]";
+  //  constant SI.MolarMass M_H2O = 0.018015 "[kg/mol]";
 public
     final constant Real b = 1.2;
     final constant Real U[:] = {
@@ -38,19 +38,19 @@ public
 protected
     constant Integer nX_salt=5;
     Real mola "molality b (mol_NaCl/kg_sol)";
-    Modelica.SIunits.MassFraction w_salt;
-  //  Modelica.SIunits.Temp_C T_C = Modelica.SIunits.Conversions.to_degC(T);
-    Pressure_bar p_bar=Modelica.SIunits.Conversions.to_bar(p);
+    SI.MassFraction w_salt;
+  //  SI.Temp_C T_C = SI.Conversions.to_degC(T);
+    Pressure_bar p_bar=SI.Conversions.to_bar(p);
     Pressure_MPa p_MPa=p*1e-6;
     Real v;
    // Modelica.Media.Water.WaterIF97_base.ThermodynamicState state_H2O;
-    Modelica.SIunits.Mass m;
+    SI.Mass m;
     Real I;
     Real I_mr;
-    Modelica.SIunits.Density rho_sol_r;
-    Modelica.SIunits.Density rho_H2O;
-    Modelica.SIunits.Density rho_H2O_plus;
-    Modelica.SIunits.Density rho_H2O_minus;
+    SI.Density rho_sol_r;
+    SI.Density rho_H2O;
+    SI.Density rho_H2O_plus;
+    SI.Density rho_H2O_minus;
     Real p_plus_bar;
     Real p_minus_bar;
     Real D_plus;
@@ -82,7 +82,7 @@ protected
     Real v_minus;
     Real[23] c;
 
-    Modelica.SIunits.Density[nX_salt] rho;
+    SI.Density[nX_salt] rho;
     SaltConstants salt;
   //  constant Molality[:] molalities=Partial_Gas_Data.massFractionsToMolalities(X,MM[1:nX_salt])
     constant Molality[:] molalities=PowerPlant.Media.Brine.Partial_Gas_Data.massFractionsToMolalities_(
@@ -91,7 +91,7 @@ protected
   //  constant Molality[nXi] molalities = massFractionsToMolality(X[1:nXi],salt.MM_salt[1:nXi]);
 
 algorithm
-  //  p_bar := Modelica.SIunits.Conversions.to_bar(p_Pa);
+  //  p_bar := SI.Conversions.to_bar(p_Pa);
     //Density of pure water
   /*  state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(p, T, fill(0,0));
   rho_H2O := Modelica.Media.Water.WaterIF97_base.density(state_H2O) * 1e-3 "kg/m³->kg/dm³";*/
@@ -100,13 +100,13 @@ algorithm
     assert(Modelica.Media.Water.WaterIF97_base.saturationPressure(T)<p,"T="+String(T-273.15)+"°C is above evaporation temperature at p="+String(p/1e5)+" bar!");
   /*  if (Modelica.Media.Water.WaterIF97_base.saturationPressure(T)>p) then
     d:=-1 "if above evaporation temperature";
-    Modelica.Utilities.Streams.print("above evaporation temperature!");
+    print("above evaporation temperature!");
     return;
   end if;*/
 
     rho_H2O := Modelica.Media.Water.WaterIF97_base.density_pT(p, T) * 1e-3
     "kg/m³->kg/dm³";
-  //   Modelica.Utilities.Streams.print("rho_H2O=" +String(rho_H2O)+" kg/dm³");
+  //   print("rho_H2O=" +String(rho_H2O)+" kg/dm³");
 
     //for pure water skip the whole calculation and return water density
     if max(X[1:nX_salt]) <= 1e-12 then
@@ -117,9 +117,9 @@ algorithm
       if X[i]>0 then
         salt := saltConstants[i];
 
-  //      Modelica.Utilities.Streams.print(String(X[i])+"");
+  //      print(String(X[i])+"");
 
-        assert(T>=salt.T_min_rho and T<=salt.T_max_rho, "Temperature is "+String(Modelica.SIunits.Conversions.to_degC(T))+"°C, but for "+salt.name+" must be between "+String(Modelica.SIunits.Conversions.to_degC(salt.T_min_rho))+"°C and "+String(Modelica.SIunits.Conversions.to_degC(salt.T_max_rho))+"°C");
+        assert(T>=salt.T_min_rho and T<=salt.T_max_rho, "Temperature is "+String(SI.Conversions.to_degC(T))+"°C, but for "+salt.name+" must be between "+String(SI.Conversions.to_degC(salt.T_min_rho))+"°C and "+String(SI.Conversions.to_degC(salt.T_max_rho))+"°C");
         assert(p>=salt.p_min_rho and p<=salt.p_max_rho, "Pressure is "+String(p_bar)+" bar, but for "+salt.name+" must be between "+String(salt.p_min_rho*1e-5)+" bar and "+String(salt.p_max_rho*1e-5)+" bar");
         assert(molalities[i]>=0 and molalities[i]<=salt.mola_max_rho, "Molality of "+salt.name+" is "+String(molalities[i])+", but must be between 0 and "+String(salt.mola_max_rho)+" mol/kg");
 
@@ -131,7 +131,7 @@ algorithm
         v_minus :=salt.v_minus;
         c :=salt.C;
 
-    //    Modelica.Utilities.Streams.print(salt.name+": "+String(X[i]));
+    //    print(salt.name+": "+String(X[i]));
 
         v := v_plus + v_minus;
 
@@ -188,12 +188,12 @@ algorithm
         D_plus  := D_1000 + Cc*log((Bb + p_plus_bar) /(Bb + 1000));
         D_minus := D_1000 + Cc*log((Bb + p_minus_bar)/(Bb + 1000));
 
-        /*state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(Modelica.SIunits.Conversions.from_bar(p_plus), T, fill(0,0));
+        /*state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(SI.Conversions.from_bar(p_plus), T, fill(0,0));
       rho_H2O_plus := Modelica.Media.Water.WaterIF97_base.density(state_H2O) * 1e-3;*/
         rho_H2O_plus := Modelica.Media.Water.WaterIF97_base.density_pT(p_plus_bar*1e5, T) * 1e-3
         "kg/m³->kg/dm³";
 
-        /*state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(Modelica.SIunits.Conversions.from_bar(p_minus), T, fill(0,0));
+        /*state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(SI.Conversions.from_bar(p_minus), T, fill(0,0));
       rho_H2O_minus := Modelica.Media.Water.WaterIF97_base.density(state_H2O) * 1e-3;*/
         rho_H2O_minus := Modelica.Media.Water.WaterIF97_base.density_pT(p_minus_bar*1e5, T) * 1e-3
         "kg/m³->kg/dm³";
@@ -233,8 +233,8 @@ algorithm
       end if;
     end for;
   //  d := X[1:end-1]*rho/(1-X[end]) "linear mixture (matrix multiplication)";
-  //  Modelica.Utilities.Streams.print("rho: "+String(rho[2]));
+  //  print("rho: "+String(rho[2]));
     d := molalities[1:nX_salt]*rho/(sum(molalities[1:nX_salt]))
     "linear mixture (matrix multiplication)";
-  //  Modelica.Utilities.Streams.print("Density: "+String(d));
+  //  print("Density: "+String(d));
 end density_Duan2008_pTX;

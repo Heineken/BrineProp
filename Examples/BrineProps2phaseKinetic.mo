@@ -4,15 +4,15 @@ package Medium = BrineProp.Brine_5salts_TwoPhase_3gas;
 
   Medium.BaseProperties props(phase=0,n_g_norm_start=fill(0.5,
                                                              Medium.nX_gas+1));
-  parameter Modelica.SIunits.MassFraction[Medium.nXi] Xi={0,0,0,0,0,0,5e-3,5e-3}
+  parameter SI.MassFraction[Medium.nXi] Xi={0,0,0,0,0,0,5e-3,5e-3}
     "fill(0,Medium.nXi)";
-  parameter Modelica.SIunits.Pressure p=400e5;
+  parameter SI.Pressure p=400e5;
   parameter Real w_dg=0.5;
-//  Modelica.SIunits.Density d= props.d;  /**/
-  Modelica.SIunits.MassFraction x(start=0) "actual gas fraction";
-//  Modelica.SIunits.MassFraction[Medium.nXi] Xi_l(start=Xi);
-  Modelica.SIunits.MassFraction[:] Xi_g(start=fill(0,Medium.nXi));
-  Modelica.SIunits.MassFraction[:] Xi_g_VLE(start=fill(0,Medium.nXi));
+//  SI.Density d= props.d;  /**/
+  SI.MassFraction x(start=0) "actual gas fraction";
+//  SI.MassFraction[Medium.nXi] Xi_l(start=Xi);
+  SI.MassFraction[:] Xi_g(start=fill(0,Medium.nXi));
+  SI.MassFraction[:] Xi_g_VLE(start=fill(0,Medium.nXi));
 initial equation
 // props.T = 273.16+60;
   x=0;
@@ -32,7 +32,7 @@ equation
 // der(x) = -sum(der(Xi_l*(1-x)));
  der(x) = (props.state.x-x)*w_dg;
 algorithm
-//  Modelica.Utilities.Streams.print("rho="+String(d)+" kg/m³, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));
-//  Modelica.Utilities.Streams.print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
-//  Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(transpose([props.Xi])));
+//  print("rho="+String(d)+" kg/m³, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));
+//  print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
+//  print(Modelica.Math.Matrices.toString(transpose([props.Xi])));
 end BrineProps2phaseKinetic;

@@ -3,13 +3,13 @@ model DensityValidationLabor "mit Messungen von Ulrike"
   //p:\GEOFLUIDS\Fluidphysics\Daten\Dichte Reihe 8 20°C-80°C.xlsx
 
 package Medium = Brine_5salts_noGas;
-//  Modelica.SIunits.Density d= props.d;  /**/
+//  SI.Density d= props.d;  /**/
 
   Medium.BaseProperties[n_b,n_T] props;
 //  String csvFilename = "PowerPlant/pT_profil_static.csv";
   String csvFilename = "pT_profil.csv";
-  Modelica.SIunits.Density[n_b,n_T] d;
-  constant Modelica.SIunits.Temp_C T[:]=273.16.+{20,25,30,40,50,60,70,80};
+  SI.Density[n_b,n_T] d;
+  constant SI.Temp_C T[:]=273.16.+{20,25,30,40,50,60,70,80};
   constant Integer n_T = size(T,1);
   constant Real b_NaCl[:] = {0,0.381608,0.755841,1.120155,1.471588,1.822351,2.168757};
   constant Integer n_b = size(b_NaCl,1);
@@ -36,6 +36,6 @@ end for;
 
 algorithm
   DataFiles.writeCSVmatrix("LabCalc.csv", cat(1,{"b_NaCl","b_CaCl2"},String(T)), cat(2,transpose({b_NaCl,b_CaCl2}),d), ";");
-//  Modelica.Utilities.Streams.print("rho="+String(d)+" kg/m³, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));
-//  Modelica.Utilities.Streams.print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
+//  print("rho="+String(d)+" kg/m³, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));
+//  print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
 end DensityValidationLabor;

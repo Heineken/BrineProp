@@ -2,26 +2,26 @@ within BrineProp.PartialGasData;
 function solutionEnthalpy_CO2_Duan2003
   "calculation of solution enthalpy of CO2+H2O according to Duan(2003) equ. 8"
   extends partial_solutionEnthalpy;
-/*  input Modelica.SIunits.Temp_K T;
-  output Modelica.SIunits.SpecificEnthalpy Delta_h_solution;
+/*  input SI.Temp_K T;
+  output SI.SpecificEnthalpy Delta_h_solution;
  //TODO: Was passiert wenn weniger CO2 zur Verfügung steht als gelöst werden kann?
 
-  input Modelica.SIunits.Pressure p;
-  input Modelica.SIunits.Temp_K T;
+  input SI.Pressure p;
+  input SI.Temp_K T;
   input MassFraction X[:] "mass fraction m_NaCl/m_Sol";
-  output Modelica.SIunits.SpecificEnthalpy h;
+  output SI.SpecificEnthalpy h;
 
-  output Modelica.SIunits.SpecificEnthalpy Delta_h_solution 
+  output SI.SpecificEnthalpy Delta_h_solution 
     "solution enthalpy per mole";
-  Modelica.SIunits.SpecificEnthalpy h_l;
-  Modelica.SIunits.SpecificEnthalpy h_g;
-  Modelica.SIunits.SpecificEnthalpy h_brine;
-  Modelica.SIunits.SpecificEnthalpy h_CO2_dissoluted;
-  Modelica.SIunits.SpecificEnthalpy h_H2O_g;
-  Modelica.SIunits.SpecificEnthalpy h_CO2_g;
-  Modelica.SIunits.SpecificEnthalpy Delta_h_mix "mixing enthalpy in gas phase";*/
+  SI.SpecificEnthalpy h_l;
+  SI.SpecificEnthalpy h_g;
+  SI.SpecificEnthalpy h_brine;
+  SI.SpecificEnthalpy h_CO2_dissoluted;
+  SI.SpecificEnthalpy h_H2O_g;
+  SI.SpecificEnthalpy h_CO2_g;
+  SI.SpecificEnthalpy Delta_h_mix "mixing enthalpy in gas phase";*/
 protected
-  Modelica.SIunits.Pressure p_H2O;
+  SI.Pressure p_H2O;
 
   Real[:] c = { 28.9447706,
                         -0.0354581768,

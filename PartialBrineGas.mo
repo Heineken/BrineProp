@@ -1,18 +1,17 @@
 within BrineProp;
 package PartialBrineGas "nX_gas gases and Water"
+  //TODO add inverse functions
+  extends BrineProp.PartialGasData;
+  extends Modelica.Media.Interfaces.PartialMixtureMedium(
+  reference_X=cat(1,fill(0,nX-1),{1}));
+//  nX = size(gasNames, 1)
 redeclare record extends ThermodynamicState
     "a selection of variables that uniquely defines the thermodynamic state"
 /*  AbsolutePressure p "Absolute pressure of medium";
   Temperature T(unit="K") "Temperature of medium";
   SpecificEnthalpy h "Specific enthalpy";
-  Modelica.SIunits.SpecificEnthalpy h_g "Specific enthalpy gas phase";
-  Modelica.SIunits.SpecificEnthalpy h_l "Specific enthalpy liquid phase";
   SpecificEntropy s "Specific entropy";
   Density d(start=300) "density";
-  Real GVF "Gas Void Fraction";
-  Density d_l(start=300) "density liquid phase";
-  Density d_g(start=300) "density gas phase";
-  Real x(start=0) "vapor quality on a mass basis [mass vapor/total mass]";
   AbsolutePressure p_H2O;
   AbsolutePressure p_gas[PartialBrine_ngas_Newton.nX_gas];
   AbsolutePressure[PartialBrine_ngas_Newton.nX_gas + 1] p_degas 
@@ -22,13 +21,29 @@ redeclare record extends ThermodynamicState
 </html>"));
 end ThermodynamicState;
 
-  extends BrineProp.PartialGasData;
-  extends Modelica.Media.Interfaces.PartialMixtureMedium(
-  reference_X=cat(1,fill(0,nX-1),{1}),
-  nX = size(gasNames, 1));
+ redeclare model extends BaseProperties "Base properties of medium"
+ //  SI.Pressure p_H2O;
+ equation
+    //   assert(nX_gas==2,"Wrong number of gas mass fractions specified (2 needed - CO2,N2)");
+ //  assert(max(X)<=1 and min(X)>=0, "X out of range [0...1] = "+PowerPlant.vector2string(X)+" (saturationPressure_H2O())");
+ //  MM = (X_salt*MM_salt + X_gas*MM_gas + X[end]*M_H2O);
+   MM = 1 "y*PartialBrine_ngas_Newton.MM_vec";
+ //  R  = Modelica.Constants.R/MM;
+   u = h - p/d;
 
- constant Modelica.SIunits.MolarMass[:] MM_vec;
- constant Modelica.SIunits.MolarMass[:] nM_vec "number of ions per molecule";
+ //  (h,x,d,d_g,d_l) = specificEnthalpy_pTX(p,T,X) unfortunately, this is not invertable;
+
+     h = specificEnthalpy_pTX(p,T,X);
+ //    d=density_pTX(p,T,X);
+     (d,R) = density_pTX(p,T,X);
+     state=ThermodynamicState(p=p,T=T,X=X);
+   annotation (Documentation(info="<html></html>"),
+               Documentation(revisions="<html>
+
+</html>"));
+ end BaseProperties;
+ constant SI.MolarMass[:] MM_vec;
+ constant SI.MolarMass[:] nM_vec "number of ions per molecule";
 
 constant String gasNames[:]={""};
 /*
@@ -78,7 +93,7 @@ constant String gasNames[:]={""};
         state.X[end - nX+1:end]);
   //  assert(lambda>0,"lambda="+String(lambda));
   if lambda<0 then
-    Modelica.Utilities.Streams.print("lambda = " + String(lambda) + "W/(m·K)");
+    print("lambda = " + String(lambda) + "W/(m·K)");
   end if;
 
   end thermalConductivity;
@@ -93,11 +108,14 @@ constant String gasNames[:]={""};
       "Specific heat capacity at constant pressure";
   end specificHeatCapacityCp_pTX;
 
-  redeclare function density_pTX "Density of an mixture of gases"
-    input Modelica.SIunits.Pressure p;
-    input Modelica.SIunits.Temp_K T;
+  redeclare replaceable function density_pTX "Density of a mixture of gases"
+    input SI.Pressure p;
+    input SI.Temp_K T;
     input MassFraction X[nX] "Mass fractions";
-    output Modelica.SIunits.Density d;
+    output SI.Density d;
+    output SpecificHeatCapacity R_gas;
+  //algorithm
+
   end density_pTX;
 
   replaceable function dynamicViscosity_pTX

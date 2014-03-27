@@ -10,17 +10,17 @@ package SaltData_Duan "Coefficients used in Duan density calculation"
     String name;
     //DENSITY
     Real C[23];
-    //    Modelica.SIunits.MolarMass M_salt "Molar Mass in kg/mol";
+    //    SI.MolarMass M_salt "Molar Mass in kg/mol";
     Real m_r "reference molality";
     Integer z_plus "cation charge +";
     Integer z_minus "anion charge -";
     Integer v_plus "moles of cations per mol salt";
     Integer v_minus "moles of anions per mol salt";
     Real mola_max_rho "maximum molality for which density function is valid";
-    Modelica.SIunits.Temperature T_min_rho;
-    Modelica.SIunits.Temperature T_max_rho;
-    Modelica.SIunits.Pressure p_min_rho;
-    Modelica.SIunits.Pressure p_max_rho;
+    SI.Temperature T_min_rho;
+    SI.Temperature T_max_rho;
+    SI.Pressure p_min_rho;
+    SI.Pressure p_max_rho;
    //VISCOSITY
     Real[3] a=fill(0, 3);
     Real[3] b=fill(0, 3);

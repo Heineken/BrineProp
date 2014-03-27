@@ -1,25 +1,25 @@
 within BrineProp;
 partial package PartialGasData "Molar masses and ion numbers of gases"
-
+  //TODO: Limits mit in den Record
   /*replaceable record GasConstants
     extends Modelica.Icons.Record;
-    Modelica.SIunits.MolarMass M_salt "Molar Mass in kg/mol";
+    SI.MolarMass M_salt "Molar Mass in kg/mol";
     annotation(Documentation(info="<html></html>"));
   end GasConstants;*/
 //  constant Real[:] MM_gas;
 
-  constant Modelica.SIunits.MolarMass M_CO2 = Modelica.Media.IdealGases.SingleGases.CO2.data.MM
+  constant SI.MolarMass M_CO2 = Modelica.Media.IdealGases.SingleGases.CO2.data.MM
   "0.0440095 [kg/mol]";
   constant Integer nM_CO2 = 1 "number of ions per molecule";
-   constant Modelica.SIunits.MolarMass M_N2 = Modelica.Media.IdealGases.SingleGases.N2.data.MM
+   constant SI.MolarMass M_N2 = Modelica.Media.IdealGases.SingleGases.N2.data.MM
   "0.0280134 [kg/mol]";
   constant Integer nM_N2 = 1 "number of ions per molecule";
-   constant Modelica.SIunits.MolarMass M_CH4 = Modelica.Media.IdealGases.SingleGases.CH4.data.MM
+   constant SI.MolarMass M_CH4 = Modelica.Media.IdealGases.SingleGases.CH4.data.MM
   "0.01604246 [kg/mol]";
   constant Integer nM_CH4 = 1 "number of ions per molecule";
 
-/*    constant Modelica.SIunits.MolarMass M_CO2 = 0.0440095 "[kg/mol]";
-   constant Modelica.SIunits.MolarMass M_N2 = 0.0280134 "[kg/mol]";
+/*    constant SI.MolarMass M_CO2 = 0.0440095 "[kg/mol]";
+   constant SI.MolarMass M_N2 = 0.0280134 "[kg/mol]";
  */
 //TODO braucht man die Variablen direkt oder nur indirekt via MM(CO2)
 
@@ -32,6 +32,32 @@ partial package PartialGasData "Molar masses and ion numbers of gases"
   
  constant Real[:] MM_gas = {
     M_CO2,M_N2};*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   annotation (Documentation(info=""));

@@ -6,7 +6,6 @@ function fugacity_H2O_Duan2006CH4
   extends partial_fugacity_pTX;
 
 protected
-  Partial_Units.Pressure_bar P_1;
   Real[:] a = {-1.42006707E-02,
                 1.08369910E-02,
                -1.59213160E-06,

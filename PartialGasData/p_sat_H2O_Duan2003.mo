@@ -2,16 +2,16 @@ within BrineProp.PartialGasData;
 function p_sat_H2O_Duan2003
   "calculates saturation pressure of water, with the equation given in Duan2003"
   /*An improved model calculating CO2 solubility in pure water and aqueous NaCl solutions from 273 to 533 K and from 0 to 2000 bar"*/
-  input Modelica.SIunits.Temp_K T;
-  output Modelica.SIunits.Pressure p_sat;
+  input SI.Temp_K T;
+  output SI.Pressure p_sat;
 protected
   Real[:] c={-38.640844,
                5.894842,
               59.876516,
               26.654627,
               10.637097};
-  Modelica.SIunits.Pressure P_c = 220.85e5;
-  Modelica.SIunits.Temperature T_c = 647.29;
+  SI.Pressure P_c = 220.85e5;
+  SI.Temperature T_c = 647.29;
   Real t=(T-T_c)/T_c;
 algorithm
 //  assert(T<305,"Temperature above critical Temperature (304.1 K)");

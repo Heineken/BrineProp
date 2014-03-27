@@ -43,7 +43,7 @@ package Medium = PowerPlant.Media.Brine.Brine_Duan_Multi_TwoPhase_ngas_3;
 
   Medium.BaseProperties[size(b_t,1)] props;
   Real n_CaCl2[size(b_t,1)];
-  Modelica.SIunits.Density d[size(b_t,1)];
+  SI.Density d[size(b_t,1)];
 equation
 
 //  for j in 1:size(f,1) loop
@@ -59,5 +59,5 @@ equation
     end for;
 
 algorithm
-//  Modelica.Utilities.Streams.print("rho="+String(d)+" kg/m³, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));
+//  print("rho="+String(d)+" kg/m³, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));
 end BinarySaltValidation;

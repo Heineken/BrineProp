@@ -3,8 +3,8 @@ function fugacity_CO2_Duan2006
   "Calculation of fugacity coefficient according to (Duan 2006)"
   //doi:10.1016/j.marchem.2005.09.001
   extends partial_fugacity_pTX;
-/*  input Modelica.SIunits.Pressure p;
-  input Modelica.SIunits.Temp_K T;
+/*  input SI.Pressure p;
+  input SI.Temp_K T;
   output Real phi;*/
 
 protected
@@ -13,10 +13,10 @@ protected
 algorithm
   if outOfRangeMode==1 then
     if T<273 or T>573 then
-      Modelica.Utilities.Streams.print("T="+String(T)+"K, but CO2 solubility calculation is only valid for temperatures between 0 and 260°C (Partial_Gas_Data.fugacity_CO2_Duan2006)");
+      print("T="+String(T)+"K, but CO2 solubility calculation is only valid for temperatures between 0 and 260°C (Partial_Gas_Data.fugacity_CO2_Duan2006)");
     end if;
    if (p<0 or p>2000e5) then
-      Modelica.Utilities.Streams.print("p="+String(p/1e5)+" bar, but CO2 fugacity calculation only valid for pressures between 0 and 2000 bar (Partial_Gas_Data.fugacity_CO2_Duan2006)");
+      print("p="+String(p/1e5)+" bar, but CO2 fugacity calculation only valid for pressures between 0 and 2000 bar (Partial_Gas_Data.fugacity_CO2_Duan2006)");
    end if;
   elseif outOfRangeMode==2 then
     assert(T>273 and T<573, "T="+String(T-273.15)+"°C out of range(0...300°C) for CO2 fugacity calculation (fugacity_CO2_Duan2006)");
@@ -24,7 +24,7 @@ algorithm
   end if;
 
     if T<305 then
-      P_1 := Modelica.SIunits.Conversions.to_bar(p_sat_CO2(T));
+      P_1 := SI.Conversions.to_bar(p_sat_CO2(T));
     elseif T<405 then
       P_1 := 75 + (T-305)*1.25;
     else
@@ -141,5 +141,5 @@ algorithm
   end if;
 
   phi := c[1] + (c[2] + c[3]*T + c[4]/T + c[5]/(T-150))*p_bar + (c[6] + c[7]*T + c[8]/T)*p_bar^2 + (c[9] + c[10]*T + c[11]/T)*log(p_bar) +(c[12]+c[13]*T)/p_bar + c[14]/T + c[15]*T^2;
-//   Modelica.Utilities.Streams.print("P1="+String(P_1));
+//   print("P1="+String(P_1));
 end fugacity_CO2_Duan2006;

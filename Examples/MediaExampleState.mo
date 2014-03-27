@@ -5,14 +5,14 @@ package Medium = BrineProp.Brine_5salts_TwoPhase_3gas;
 //  package Medium = Modelica.Media.Water.WaterIF97_ph;
   Medium.ThermodynamicState state;
 
-  Modelica.SIunits.Density d= state.d;  /**/
-  Modelica.SIunits.MassFraction[Medium.nXi] Xi;
-  Modelica.SIunits.MassFraction[:] X=cat(1,Xi,{1-sum(Xi)});
-  Modelica.SIunits.Temperature T;
-  Modelica.SIunits.Pressure p;
+  SI.Density d= state.d;  /**/
+  SI.MassFraction[Medium.nXi] Xi;
+  SI.MassFraction[:] X=cat(1,Xi,{1-sum(Xi)});
+  SI.Temperature T;
+  SI.Pressure p;
 
-  Modelica.SIunits.MassConcentration TDS= sum(state.X_l[1:Medium.nX_salt])*state.d_l;
-  Modelica.SIunits.MassFraction[:] X_g=state.X-state.X_l*(1-state.x);
+  SI.MassConcentration TDS= sum(state.X_l[1:Medium.nX_salt])*state.d_l;
+  SI.MassFraction[:] X_g=state.X-state.X_l*(1-state.x);
   Real[:] y=cat(1,state.p_gas,{state.p_H2O})/state.p
     "volume fraction of gas phase";
 //  Real[:] yy=y[2:3]./fill(1-y[4],2) "volume fraction of gas phase w/o H2O";
@@ -23,8 +23,8 @@ package Medium = BrineProp.Brine_5salts_TwoPhase_3gas;
   Real V_l = sum(state.X_l[6:8]./Medium.MM_gas)*22.4/state.X_l[end]
     "Volume dissolved gas would have at standard conditions";
 //  Real V_l = props.X_l[8]/Medium.MM_gas[3]/22.4*1000/props.X_l[end];/**/
-/*  Modelica.SIunits.MassFraction X_N2(start=1e-5,min=0);
-  Modelica.SIunits.MassFraction X_CH4(start=1e-5,min=0);*/
+/*  SI.MassFraction X_N2(start=1e-5,min=0);
+  SI.MassFraction X_CH4(start=1e-5,min=0);*/
   Real[:] m=y[2:3]./fill(1-y[4],2) "mass fraction of gas in gas phase";
 
   Real m_t = sum(state.X[6:8]) "Total mass fraction of gases in fluid";
@@ -95,6 +95,6 @@ equation
 //  eta = Medium.dynamicViscosity(props.state);
 
 algorithm
-//  Modelica.Utilities.Streams.print("rho="+String(d)+" kg/m³, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));
-//  Modelica.Utilities.Streams.print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
+//  print("rho="+String(d)+" kg/m³, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));
+//  print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
 end MediaExampleState;

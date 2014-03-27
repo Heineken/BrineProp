@@ -32,11 +32,11 @@ partial package PartialBrine_MultiSalt_1Phase "Template for one-phase (liquid) b
 
   import Partial_Units;
 
- constant Real[:] MM_salt;
+ constant Real[:] MM_salt "TODO: redundant with MM_vec";
  constant Integer[:] nM_salt "number of ions per molecule";
 
- constant Modelica.SIunits.MolarMass MM_vec = cat(1,MM_salt, {M_H2O});
- constant Modelica.SIunits.MolarMass nM_vec = cat(1,nM_salt, {1});
+ constant SI.MolarMass MM_vec = cat(1,MM_salt, {M_H2O});
+ constant SI.MolarMass nM_vec = cat(1,nM_salt, {1});
 
  constant String saltNames[:]={""};
 
@@ -69,11 +69,11 @@ end ThermodynamicState;
 
 
   replaceable function dynamicViscosity_pTXd "viscosity calculation"
-    input Modelica.SIunits.Pressure p;
-    input Modelica.SIunits.Temp_K T;
+    input SI.Pressure p;
+    input SI.Temp_K T;
     input MassFraction X[:] "mass fraction m_NaCl/m_Sol";
-    input Modelica.SIunits.Density d "solution density";
-    output Modelica.SIunits.DynamicViscosity eta;
+    input SI.Density d "solution density";
+    output SI.DynamicViscosity eta;
   //  constant Real M_NaCl=0.058443 "molar mass in [kg/mol]";
   end dynamicViscosity_pTXd;
 
@@ -82,8 +82,8 @@ end ThermodynamicState;
 
     //    PowerPlant.Media.TableLookup Table;
     //  protected
-    /*     constant Modelica.SIunits.MolarMass M_H2O = PartialBrine.M_H2O "[kg/mol]";
-     constant Modelica.SIunits.MolarMass M_NaCl = PartialBrine.M_NaCl 
+    /*     constant SI.MolarMass M_H2O = PartialBrine.M_H2O "[kg/mol]";
+     constant SI.MolarMass M_NaCl = PartialBrine.M_NaCl 
         "[kg/mol]";*/
    Real y_vec[:]=massFractionsToMoleFractions(X,MM_vec);
  equation
@@ -115,17 +115,17 @@ end ThermodynamicState;
     input AbsolutePressure p "Pressure";
     input Temperature T "Temperature";
     input MassFraction X[:] "Mass fractions";
-    input Modelica.SIunits.MolarMass MM[:]={1} "molar masses of components";
+    input SI.MolarMass MM[:]={1} "molar masses of components";
     output Density d "Density";
     annotation(Documentation(info="<html></html>"));
   end density_pTX;
 
 
   redeclare replaceable function specificEnthalpy_pTX
-     input Modelica.SIunits.Pressure p;
-    input Modelica.SIunits.Temp_K T;
+     input SI.Pressure p;
+    input SI.Temp_K T;
     input MassFraction X[:] "mass fraction m_NaCl/m_Sol";
-    output Modelica.SIunits.SpecificEnthalpy h;
+    output SI.SpecificEnthalpy h;
 
   /*algorithm 
   h := 4*T;
@@ -144,25 +144,25 @@ end ThermodynamicState;
     "start value, all gas in gas phase, all water liquid";
     output Temperature T "Temperature";
 protected
-    Modelica.SIunits.SpecificHeatCapacity c_p;
-    Modelica.SIunits.Temperature T_a=273.16;
-  //  Modelica.SIunits.Temperature T0_a=273.16;
-    Modelica.SIunits.Temperature T_b=400;
-  //  Modelica.SIunits.Temperature T0_b=400 "limit of N2 solubility";
-  //  Modelica.SIunits.Temperature T_neu;
-    Modelica.SIunits.SpecificEnthalpy h_a;
-    Modelica.SIunits.SpecificEnthalpy h_b;/**/
-    Modelica.SIunits.SpecificEnthalpy h_T;
+    SI.SpecificHeatCapacity c_p;
+    SI.Temperature T_a=273.16;
+  //  SI.Temperature T0_a=273.16;
+    SI.Temperature T_b=400;
+  //  SI.Temperature T0_b=400 "limit of N2 solubility";
+  //  SI.Temperature T_neu;
+    SI.SpecificEnthalpy h_a;
+    SI.SpecificEnthalpy h_b;/**/
+    SI.SpecificEnthalpy h_T;
     Integer z=0 "Loop counter";
   algorithm
     if debugmode then
-       Modelica.Utilities.Streams.print("\ntemperature_phX("+String(p)+","+String(h)+")");
+       print("\ntemperature_phX("+String(p)+","+String(h)+")");
     end if;
     //Find temperature with h above given h ->T_b
     assert(h>specificEnthalpy_pTX(p,T_a,X),"h="+String(h/1e3)+" kJ/kg -> Enthalpy too low (< 0°C) (Brine.PartialBrine_ngas_Newton.temperature_phX)");
     while true loop
       h_T:=specificEnthalpy_pTX(p,T_b,X);
-  // Modelica.Utilities.Streams.print(String(p)+","+String(T_b)+" K->"+String(h_T)+" J/kg (PartialBrine_ngas_Newton.temperature_phX)");
+  // print(String(p)+","+String(T_b)+" K->"+String(h_T)+" J/kg (PartialBrine_ngas_Newton.temperature_phX)");
       if h>h_T then
         T_a := T_b;
         T_b := T_b + 50;
@@ -174,23 +174,23 @@ protected
   //BISECTION - is schneller, braucht 13 Iterationen
     while (T_b-T_a)>1e-2 and abs(h-h_T/h)>1e-5 loop   //stop when temperatures or enthalpy are close
   //  while abs(h-h_T/h)>1e-5 loop
-  //    Modelica.Utilities.Streams.print("T_b-T_a="+String(T_b-T_a)+", abs(h-h_T)/h="+String(abs(h-h_T)/h));
+  //    print("T_b-T_a="+String(T_b-T_a)+", abs(h-h_T)/h="+String(abs(h-h_T)/h));
       T:=(T_a+T_b)/2 "Halbieren";
-  //    Modelica.Utilities.Streams.print("T_neu="+String(T)+"K");
+  //    print("T_neu="+String(T)+"K");
       h_T:=specificEnthalpy_pTX(p,T,X);
       if h_T > h then
         T_b:=T;
-  //      Modelica.Utilities.Streams.print("T_b="+String(T)+"K -> h="+String(h_T-h));
+  //      print("T_b="+String(T)+"K -> h="+String(h_T-h));
       else
         T_a:=T;
-  //      Modelica.Utilities.Streams.print("T_a="+String(T)+"K -> h="+String(h_T-h));
+  //      print("T_a="+String(T)+"K -> h="+String(h_T-h));
       end if;
       z:=z+1;
-  //    Modelica.Utilities.Streams.print(String(z)+": "+String(T_a)+" K & "+String(T_b)+" K -> "+String((h-h_T)/h)+"(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)\n");
-  //    Modelica.Utilities.Streams.print("h("+String(T_a)+")="+String(h_a-h)+" J/kg & h("+String(T_b)+")="+String(h_b-h)+" J/kg");
+  //    print(String(z)+": "+String(T_a)+" K & "+String(T_b)+" K -> "+String((h-h_T)/h)+"(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)\n");
+  //    print("h("+String(T_a)+")="+String(h_a-h)+" J/kg & h("+String(T_b)+")="+String(h_b-h)+" J/kg");
       assert(z<100,"Maximum number of iteration reached for temperature calculation. Something's wrong here. Cancelling...(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)");
     end while;
-  // Modelica.Utilities.Streams.print("BISECTION " + String(z)+": "+String(T));
+  // print("BISECTION " + String(z)+": "+String(T));
 
   /*
 //REGULA FALSI - is langsamer, braucht 19 Iterationen
@@ -201,24 +201,24 @@ protected
   h_b := specificEnthalpy_pTX(p,T_b,X);
   while abs(T_b-T_a)>1e-2 and abs(h_T-h)/h>1e-5 loop
 //  while abs(T_b-T_a)/T_l>1e-4 loop
-    Modelica.Utilities.Streams.print("h_a("+String(T_a)+")="+String(h_a)+" / h_b("+String(T_b)+")="+String(h_b));
+    print("h_a("+String(T_a)+")="+String(h_a)+" / h_b("+String(T_b)+")="+String(h_b));
     T:=max(T0_a,min(T0_b,T_a-(T_b-T_a)/(h_b-h_a)*(h_a-h))) "Regula falsi";
     h_T:=specificEnthalpy_pTX(p,T,X);
-    Modelica.Utilities.Streams.print("T_neu="+String(T)+"K");
+    print("T_neu="+String(T)+"K");
     if h_T > h then
       T_b:=T;
       h_b:=h_T;
     else
       T_a:=T;
       h_a:=h_T;
-//      Modelica.Utilities.Streams.print("T_a="+String(T)+"K -> h="+String(h_T-h));
+//      print("T_a="+String(T)+"K -> h="+String(h_T-h));
     end if;
     z:=z+1;
-//    Modelica.Utilities.Streams.print(String(z)+": "+String(T_a)+" K & "+String(T_b)+" K -> "+String((h-h_T)/h)+"(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)\n");
-//    Modelica.Utilities.Streams.print("h("+String(T_a)+")="+String(h_a-h)+" J/kg & h("+String(T_b)+")="+String(h_b-h)+" J/kg");
+//    print(String(z)+": "+String(T_a)+" K & "+String(T_b)+" K -> "+String((h-h_T)/h)+"(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)\n");
+//    print("h("+String(T_a)+")="+String(h_a-h)+" J/kg & h("+String(T_b)+")="+String(h_b-h)+" J/kg");
     assert(z<100,"Maximum number of iteration reached for temperature calculation. Something's wrong here. Cancelling...(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)");
   end while;
- Modelica.Utilities.Streams.print("REGULA FALSI " + String(z)+": "+String(T));
+ print("REGULA FALSI " + String(z)+": "+String(T));
 */
 
   end temperature_phX;
@@ -229,7 +229,7 @@ redeclare replaceable partial function extends setState_phX
 //      input String fluidnames;
 algorithm
   if debugmode then
-    Modelica.Utilities.Streams.print("Running setState_phX("+String(p/1e5)+" bar,"+String(h)+" J/kg,X)...");
+    print("Running setState_phX("+String(p/1e5)+" bar,"+String(h)+" J/kg,X)...");
   end if;
   state := setState_pTX(p,temperature_phX(p,h,X,phase),X,phase) ",fluidnames)";
 end setState_phX;
@@ -246,10 +246,18 @@ end setState_phX;
 
 
   replaceable function dynamicViscosity_pTX "viscosity calculation"
-    input Modelica.SIunits.Pressure p;
-    input Modelica.SIunits.Temp_K T;
+    input SI.Pressure p;
+    input SI.Temp_K T;
     input MassFraction X[:] "mass fraction m_NaCl/m_Sol";
-    output Modelica.SIunits.DynamicViscosity eta;
+    output SI.DynamicViscosity eta;
   //  constant Real M_NaCl=0.058443 "molar mass in [kg/mol]";
   end dynamicViscosity_pTX;
+
+
+redeclare replaceable function extends isobaricExpansionCoefficient
+  constant SI.Temperature Delta_T= 1;
+algorithm
+  beta :=state.d*(1/state.d - 1/(density_pTX(state.p,state.T - Delta_T,state.X)))/Delta_T;
+end isobaricExpansionCoefficient;
+
 end PartialBrine_MultiSalt_1Phase;

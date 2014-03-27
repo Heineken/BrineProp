@@ -1,11 +1,11 @@
 within BrineProp.PartialGasData;
-function fugacity_N2_Duan2006 "Nullstellensuche mit EOS aus Duan2006"
+function fugacity_N2_Duan2006 "Zero search with EOS from Duan2006"
   //doi:10.1016/j.?uid.2006.07.020
   //Shide Mao, Zhenhao Duan:A thermodynamic model for calculating nitrogen solubility, gas phase composition and density of the N2?H2O?NaCl system
   extends partial_fugacity_pTX;
 protected
-  Modelica.SIunits.SpecificVolume V_neu=0.024 "Startwert";
-  Modelica.SIunits.SpecificVolume V=0;
+  SI.SpecificVolume V_neu=0.024 "Startwert";
+  SI.SpecificVolume V=0;
   Real a[:]= {3.75504388E-02,
              -1.08730273E+04,
               1.10964861E+06,
@@ -23,7 +23,7 @@ protected
 //  Real beta= a[14];
 //  Real gamma = a[15];
   Real sigma=3.63;
-  Modelica.SIunits.Temperature epsilon=101;
+  SI.Temperature epsilon=101;
   Real T_m = 154*T/epsilon;
   Real B = a[1]+a[2]/T_m^2+a[3]/T_m^3;
   Real C = a[4]+a[5]/T_m^2+a[6]/T_m^3;
@@ -52,7 +52,7 @@ while abs(V-V_neu)>1e-8 loop
     V_m :=V*1e6/(1e3*(sigma/3.691)^3);
     Z := 1 + B/V_m + C/V_m^2 + D/V_m^4 + E/V_m^5 + F/V_m^2*(1 + a[14]/V_m^2)*exp(-a[14]/V_m^2);
     V_neu :=Z/p*Modelica.Constants.R*T;
-//    Modelica.Utilities.Streams.print("V("+String(z)+")="+String(V_neu));
+//    print("V("+String(z)+")="+String(V_neu));
     z:=z + 1;
     assert(z<1000," Reached maximum number of iterations for fugacity calculation.(fugacity_N2_Duan2006)");
   end while;
@@ -75,7 +75,7 @@ while abs(V-V_neu)>1e-8 loop
          + (a[7]+a[8]/T_m^2+a[9]/T_m^3)/(4*V_m^4)
          + (a[10]+a[11]/T_m^2+a[12]/T_m^3)/(5*V_m^5)
          + a[13]/(2*T_m^3*a[14])*(2-(2-a[14]/V_m^2)*exp(-a[14]/V_m^2)))/Z;*/
-//  Modelica.Utilities.Streams.print("z="+String(z));
-//  Modelica.Utilities.Streams.print("V="+String(V));
+//  print("z="+String(z));
+//  print("V="+String(V));
 //  PowerPlant.Components.PipeStuff.print_msg(phi,"phi_N2=");
 end fugacity_N2_Duan2006;

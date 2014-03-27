@@ -3,17 +3,17 @@ model SaturationProfile_Stripping
   package Medium = BrineProp.Brine_5salts_TwoPhase_3gas;
   constant Integer n=2;
   Medium.BaseProperties[n] props;
-//  Modelica.SIunits.Density d= props.d;  /**/
+//  SI.Density d= props.d;  /**/
   Real ratio;
 //  Real[n] ratio;
-  Modelica.SIunits.MassFraction[n,Medium.nX] X_g;
+  SI.MassFraction[n,Medium.nX] X_g;
 protected
-  Modelica.SIunits.MassFraction[n] x;
-  Modelica.SIunits.MassFraction[n,Medium.nX] X;
-  Modelica.SIunits.Pressure[n] p=linspace(400e5,10e5,n);
-  Modelica.SIunits.Temperature[n] T=linspace(400,300,n);
+  SI.MassFraction[n] x;
+  SI.MassFraction[n,Medium.nX] X;
+  SI.Pressure[n] p=linspace(400e5,10e5,n);
+  SI.Temperature[n] T=linspace(400,300,n);
   String csvFilename = "pT_profil.csv";
-  Modelica.SIunits.Length depth[:] = linspace(-4100,0,n);
+  SI.Length depth[:] = linspace(-4100,0,n);
   Real val[n,2];
 equation
 //calculate VLE at in-situ conditions
@@ -52,8 +52,8 @@ equation
 
 algorithm
 //  Modelica.Utilitiprops[1].Xi "es.Streams.print("rho="+String(d)+" kg/m³, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));
-//  Modelica.Utilities.Streams.print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
-//Modelica.Utilities.Streams.print(Modelica.Math.Matrices.toString(transpose([(props[1].Xi+X_g[n-1,1:end-1]*props[n-1].state.x)/(1+props[n-1].state.x)])));
+//  print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
+//print(Modelica.Math.Matrices.toString(transpose([(props[1].Xi+X_g[n-1,1:end-1]*props[n-1].state.x)/(1+props[n-1].state.x)])));
   annotation (experiment(
       StartTime=-4257,
       StopTime=0,

@@ -17,3 +17,4 @@ temperature_phX
 setState_phX
 surfaceTension_T
 dynamicViscosity_pTX
+isobaricExpansionCoefficient

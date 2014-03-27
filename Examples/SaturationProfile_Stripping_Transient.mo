@@ -1,27 +1,26 @@
 within BrineProp.Examples;
 model SaturationProfile_Stripping_Transient
   package Medium = BrineProp.Brine_5salts_TwoPhase_3gas;
-  // parameter Modelica.SIunits.MassFraction[Medium.nXi] Xi={0,0,0,0,0,0,5e-3,5e-3};
-  parameter Modelica.SIunits.MassFraction[Medium.nXi] Xi={    0.081109,   0.0047275,     0.12519,   0*0.0013225,  0*0.0023842,  0.00016889,  0.00073464, 6.5657e-005};
+  // parameter SI.MassFraction[Medium.nXi] Xi={0,0,0,0,0,0,5e-3,5e-3};
+  parameter SI.MassFraction[Medium.nXi] Xi={    0.081109,   0.0047275,     0.12519,   0*0.0013225,  0*0.0023842,  0.00016889,  0.00073464, 6.5657e-005};
 
   constant Integer n=2 "number of elements";
-  constant Modelica.SIunits.Velocity u_B=0.2 "bubble velocity";
+  constant SI.Velocity u_B=0.2 "bubble velocity";
 
   Medium.BaseProperties[n] props;
 //  Real ratio= Xi_g[end,7]/max(0.01,Xi_g[end,8]);
   parameter Real w_dg=1 "degassing coefficient";
- Modelica.SIunits.MassFraction[n] x(each start=0) "actual gas fraction";
-  Modelica.SIunits.MassFraction[n,Medium.nXi] Xi_g;
+ SI.MassFraction[n] x(each start=0) "actual gas fraction";
+  SI.MassFraction[n,Medium.nXi] Xi_g;
 
-  Modelica.SIunits.Pressure[n] p=linspace(400e5,10e5,n);
-  Modelica.SIunits.Temperature[n] T=linspace(400,300,n);
+  SI.Pressure[n] p=linspace(400e5,10e5,n);
+  SI.Temperature[n] T=linspace(400,300,n);
 protected
   Real[n,Medium.nXi] der_X_rho;
-  Modelica.SIunits.MassFraction[n,Medium.nXi] Xi_g_VLE;
+  SI.MassFraction[n,Medium.nXi] Xi_g_VLE;
 //  String csvFilename = "pT_profil.csv";
-  constant Modelica.SIunits.Length depth[:] = linspace(-4100,0,n);
-  constant Modelica.SIunits.Length Delta_s=(depth[end]-depth[1])/n
-    "cell length";
+  constant SI.Length depth[:] = linspace(-4100,0,n);
+  constant SI.Length Delta_s=(depth[end]-depth[1])/n "cell length";
 //  Real val[n,2];
 initial equation
       for i in 1:n loop
@@ -71,7 +70,7 @@ equation
     end for;
 
 algorithm
-      Modelica.Utilities.Streams.print("Simulation time: " + String(time) + " s");
+      print("Simulation time: " + String(time) + " s");
   annotation (experiment(StopTime=100, NumberOfIntervals=100),
                         __Dymola_experimentSetupOutput);
 end SaturationProfile_Stripping_Transient;

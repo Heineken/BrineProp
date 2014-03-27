@@ -5,10 +5,10 @@ package Brine_Driesner "NaCl solution using Driesner density and enthalpy functi
 
   redeclare function extends density_pTX
   "density calculation according to Driesner et al: 10-1000°C; 0.1-500MPa; 0.25-5 mol/kg"
-  /*  input Modelica.SIunits.Pressure p;
-  input Modelica.SIunits.Temp_K T;
+  /*  input SI.Pressure p;
+  input SI.Temp_K T;
   input MassFraction X[:] "mass fraction m_NaCl/m_Sol";
-  output Modelica.SIunits.Density d; */
+  output SI.Density d; */
 
   /*  constant Real M_NaCl = 0.058443 "molar mass in [kg/mol]";
   constant Real M_H2O = 0.018015 "molar mass in [kg/mol]";
@@ -21,9 +21,9 @@ public
 
 protected
     Molality mola = X[1]/M_NaCl "molality b (mol_NaCl/kg_sol)";
-    Modelica.SIunits.Temp_C T_C = Modelica.SIunits.Conversions.to_degC(T);
-    Modelica.SIunits.Temp_C T_Scale_V;
-    Pressure_bar p_bar= Modelica.SIunits.Conversions.to_bar(p);
+    SI.Temp_C T_C = SI.Conversions.to_degC(T);
+    SI.Temp_C T_Scale_V;
+    Pressure_bar p_bar= SI.Conversions.to_bar(p);
     Real n_21;
     Real n_22;
     Real n_20;
@@ -44,9 +44,9 @@ protected
     Real n_1;
     Modelica.Media.Water.WaterIF97_base.ThermodynamicState state_H2O;
     Real x_NaCl;
-    Modelica.SIunits.MolarMass M_Solution "[kg/mol]";
+    SI.MolarMass M_Solution "[kg/mol]";
   algorithm
-    p_bar := Modelica.SIunits.Conversions.to_bar(p);
+    p_bar := SI.Conversions.to_bar(p);
     assert(T_C>=0 and T_C<=1000, "Temperature must be between 0 and 1000°C");
     assert(p_bar>=1 and p_bar<=5000, "Pressure must be between 1 and 5000 bar");
   //  assert(mola>=.25 and mola<=5, "Molality must be between 0.25 and 5 mol/kg");
@@ -97,20 +97,20 @@ protected
     T_Scale_V := T_C*n_2 + n_1 + D;
     //END OF CALCULATION OF EQUIVALENT TEMPERATURE
 
-    state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(p, Modelica.SIunits.Conversions.from_degC(T_Scale_V), fill(0,0));
+    state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(p, SI.Conversions.from_degC(T_Scale_V), fill(0,0));
     d := Modelica.Media.Water.WaterIF97_base.density(state_H2O)*M_Solution/M_H2O;
-    Modelica.Utilities.Streams.print("T_Scale_V: "+String(T_Scale_V)+"(density_Driesner_pTX)");
-    Modelica.Utilities.Streams.print("Density: "+String(d)+"(density_Driesner_pTX)");
+    print("T_Scale_V: "+String(T_Scale_V)+"(density_Driesner_pTX)");
+    print("Density: "+String(d)+"(density_Driesner_pTX)");
   end density_pTX;
 
 
   redeclare function extends specificEnthalpy_pTX
   "enthalpy calculation according to Driesner 2007 et al: 0-1000°C; 0.1-500MPa (doi:10.1016/j.gca.2007.05.026)"
   //Pressure limited to 100 MPa by Modelica Water property function
-  /*  input Modelica.SIunits.Pressure p;
-  input Modelica.SIunits.Temp_K T;
+  /*  input SI.Pressure p;
+  input SI.Temp_K T;
   input MassFraction X[:] "mass fraction m_NaCl/m_Sol";
-  output Modelica.SIunits.SpecificEnthalpy h;*/
+  output SI.SpecificEnthalpy h;*/
 
   algorithm
     h := BrineProp.SpecificEnthalpies.specificEnthalpy_pTX_Driesner(
@@ -118,6 +118,6 @@ protected
         T,
         X);
 
-  //  Modelica.Utilities.Streams.print("Brine_Driesner.specificEnthalpy_pTX: "+String(p*1e-5)+"bar."+String(T_Scale_h)+"°C->"+String(h)+" J/kg");
+  //  print("Brine_Driesner.specificEnthalpy_pTX: "+String(p*1e-5)+"bar."+String(T_Scale_h)+"°C->"+String(h)+" J/kg");
   end specificEnthalpy_pTX;
 end Brine_Driesner;

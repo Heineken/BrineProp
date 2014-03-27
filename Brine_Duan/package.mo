@@ -10,12 +10,12 @@ package Brine_Duan "NaCl solution using Duan density"
   redeclare function extends dynamicViscosity_pTX
    //  constant Real M_NaCl=0.058443 "molar mass in [kg/mol]";
     /*  public 
-     constant Modelica.SIunits.MolarMass M_NaCl = salt.M_salt; 
+     constant SI.MolarMass M_NaCl = salt.M_salt; 
       "[kg/mol]";*/
 protected
     Molality mola = X[1]/(salt.M_salt*(1-X[1])) "molality b (mol_NaCl/kg_H2O)";
-    Modelica.SIunits.Temp_C T_C = Modelica.SIunits.Conversions.to_degC(T_K);
-    Pressure_bar p_bar= Modelica.SIunits.Conversions.to_bar(p_Pa);
+    SI.Temp_C T_C = SI.Conversions.to_degC(T_K);
+    Pressure_bar p_bar= SI.Conversions.to_bar(p_Pa);
 
     Real a_0_NaCl = -0.21319213;
     Real a_1_NaCl = +0.13651589E-2;
@@ -34,10 +34,10 @@ protected
 
     Real eta_relative;
 
-    Modelica.SIunits.DynamicViscosity eta_H2O;
+    SI.DynamicViscosity eta_H2O;
     Modelica.Media.Water.WaterIF97_base.ThermodynamicState state_H2O;
   algorithm
-    assert(T_C>=0 and T_C<=300, "Temperature is "+String(Modelica.SIunits.Conversions.to_degC(T_K))+"°C, but must be between 10 and 350°C");
+    assert(T_C>=0 and T_C<=300, "Temperature is "+String(SI.Conversions.to_degC(T_K))+"°C, but must be between 10 and 350°C");
     assert(p_bar>=1 and p_bar<=1000, "Pressure must be between 1 and 500 bar");
     assert(mola>=0 and mola<=6, "Molality must be between 0.25 and 5 mol/kg");
     //factors
@@ -50,9 +50,9 @@ protected
     state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(p_Pa, T_K, X);
     eta_H2O := Modelica.Media.Water.WaterIF97_base.dynamicViscosity(state_H2O);
     eta := eta_relative * eta_H2O;
-  //  Modelica.Utilities.Streams.print("mola: "+String(mola));
-  //  Modelica.Utilities.Streams.print("eta_relative: "+String(eta_relative));
-  //  Modelica.Utilities.Streams.print("eta: "+String(eta));
+  //  print("mola: "+String(mola));
+  //  print("eta_relative: "+String(eta_relative));
+  //  print("eta: "+String(eta));
 
   end dynamicViscosity_pTX;
 

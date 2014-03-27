@@ -1,10 +1,10 @@
 within BrineProp.SpecificEnthalpies;
 partial function PartialCpRatio_KCl_White
 //2D-fit Reproduction of measurements of heat capacity of KCl solution
-//  input Modelica.SIunits.Pressure p;
-  input Modelica.SIunits.Temp_K T;
+//  input SI.Pressure p;
+  input SI.Temp_K T;
   input BrineProp.Partial_Units.Molality mola "n_KCl/m_H2O";
-//  output Modelica.SIunits.SpecificHeatCapacity cp=1 "=cp_by_cpWater*cp_Water";
+//  output SI.SpecificHeatCapacity cp=1 "=cp_by_cpWater*cp_Water";
   //Parameters of MATLAB 2D-Fit
 protected
   Real a=0.8966;
@@ -18,10 +18,10 @@ protected
   Real i=-0.0132;
   BrineProp.Partial_Units.Molality b_mean=1.188;
   BrineProp.Partial_Units.Molality b_std=1.103;
-  Modelica.SIunits.Temp_K T_mean=475.1;
-  Modelica.SIunits.Temp_K T_std=103.5;
+  SI.Temp_K T_mean=475.1;
+  SI.Temp_K T_std=103.5;
 
   Real bn= (mola-b_mean)/b_std "normalized & centered";
   Real Tn= (T-T_mean)/T_std "normalized & centered";
-//  Modelica.SIunits.SpecificHeatCapacity cp_Water =  Modelica.Media.Water.IF97_Utilities.cp_pT(p, T);
+//  SI.SpecificHeatCapacity cp_Water =  Modelica.Media.Water.IF97_Utilities.cp_pT(p, T);
 end PartialCpRatio_KCl_White;

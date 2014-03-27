@@ -5,9 +5,8 @@ package Medium = Modelica.Media.Water.WaterIF97_pT;
   Medium.BaseProperties props1;
   Medium.BaseProperties props2;
 
-  Modelica.SIunits.Density d= props1.d;
-  Modelica.SIunits.Density d2= (props2.p-props1.p)/(props2.h-props1.h)
-    "v=dh/dp";
+  SI.Density d= props1.d;
+  SI.Density d2= (props2.p-props1.p)/(props2.h-props1.h) "v=dh/dp";
 equation
   props1.p = 1.0e5;
   props2.p = 1.1e5;
@@ -18,5 +17,5 @@ equation
 //   props.Xi = {    0,   0,     0,   0,  0};
 
 algorithm
-  Modelica.Utilities.Streams.print(String(d2)+"="+String(d)+"?");
+  print(String(d2)+"="+String(d)+"?");
 end WaterEnthalpyTest;

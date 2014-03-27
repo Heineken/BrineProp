@@ -2,10 +2,10 @@ within BrineProp.SpecificEnthalpies;
 function T_Scale_h_Driesner
   "enthalpy calculation according to Driesner 2007 et al: 0-1000°C; 0.1-500MPa (doi:10.1016/j.gca.2007.05.026)"
 //Pressure limited to 100 MPa by Modelica Water property function
-  input Modelica.SIunits.Pressure p;
-  input Modelica.SIunits.Temp_K T;
-  input Modelica.SIunits.MassFraction X_NaCl "mass fraction m_NaCl/m_Sol";
-  output Modelica.SIunits.Temp_K T_Scale_h;
+  input SI.Pressure p;
+  input SI.Temp_K T;
+  input SI.MassFraction X_NaCl "mass fraction m_NaCl/m_Sol";
+  output SI.Temp_K T_Scale_h;
   output Real q_2;
 public
   constant Real M_NaCl=BrineProp.SaltData.M_NaCl "molar mass in [kg/mol]";
@@ -13,9 +13,13 @@ public
 
 //  Molality mola=X[1]/M_NaCl "molality b (mol_NaCl/kg_sol) äöüö";
 protected
-  Modelica.SIunits.Temp_C T_C = Modelica.SIunits.Conversions.to_degC(T);
-//  Modelica.SIunits.Temp_C T_Scale_h;
-  Pressure_bar p_bar=Modelica.SIunits.Conversions.to_bar(p);
+  constant Pressure_bar p_min=1;
+  constant Pressure_bar p_max=1000;
+  constant SI.Temp_C T_min=0;
+  constant SI.Temp_C T_max=1000;
+  SI.Temp_C T_C = SI.Conversions.to_degC(T);
+//  SI.Temp_C T_Scale_h;
+  Pressure_bar p_bar=SI.Conversions.to_bar(p);
   Real q_21;
   Real q_22;
   Real q_20;
@@ -27,28 +31,30 @@ protected
   Real q_1;
 //  Modelica.Media.Water.WaterIF97_base.ThermodynamicState state_H2O;
   Real x_NaCl "mol fraction";
-  Modelica.SIunits.MolarMass M_Solution "[kg/mol]";
-//  Modelica.SIunits.Pressure p_check;
-protected
-  constant Pressure_bar p_min=1;
-  constant Pressure_bar p_max=1000;
-  constant Modelica.SIunits.Temp_C T_min=0;
-  constant Modelica.SIunits.Temp_C T_max=1000;
+  //  SI.MolarMass M_Solution "[kg/mol]";
+  String msg="";
 algorithm
-  p_bar := Modelica.SIunits.Conversions.to_bar(p);
 //  assert(mola>=.25 and mola<=5, "Molality must be between 0.25 and 5 mol/kg");
 
-   if outOfRangeMode==1 then
-      if not (p_bar>=p_min and p_bar<=p_max) then
-        Modelica.Utilities.Streams.print("Pressure is " + String(p_bar) + " bar, but must be between " + String(p_min) + " bar and " + String(p_max) + " bar (BrineProp.SpecificEnthalpies.T_Scale_h_Driesner)");
+  if outOfRangeMode>0 then
+    if not (p_bar>=p_min and p_bar<=p_max) then
+      msg :="Pressure is " + String(p_bar) + " bar, but must be between " +
+        String(p_min) + " bar and " + String(p_max) +
+        " bar (BrineProp.SpecificEnthalpies.T_Scale_h_Driesner)";
+    end if;
+    if not (T_C>=T_min and T_C<=T_max) then
+      msg :="Temperature is " + String(T_C) + "°C, but must be between " +
+        String(T_min) + "°C and " + String(T_max) +
+        "°C (BrineProp.SpecificEnthalpies.T_Scale_h_Driesner)";
+    end if;
+    if msg<>"" then
+      if outOfRangeMode==1 then
+      print(msg);
+      elseif outOfRangeMode==2 then
+       assert(true, msg);
       end if;
-      if not (T_C>=T_min and T_C<=T_max) then
-        Modelica.Utilities.Streams.print("Temperature is "+String(T_C) + "°C, but must be between " + String(T_min) + "°C and " + String(T_max) + "°C (BrineProp.SpecificEnthalpies.T_Scale_h_Driesner)");
-      end if;
-   elseif outOfRangeMode==2 then
-      assert(p_bar>=p_min and p_bar<=p_max, "p="+String(p_bar)+" bar, but must be between " + String(p_min) + " and " + String(p_max) + " bar");
-      assert(T_C>=T_min and T_C<=T_max, "T="+String(T_C)+", but must be between " + String(T_min) + "and " + String(T_max) + "°C");
-   end if;
+    end if;
+  end if;
 
 //Salinity conversion
 //  if X[1]==0 then
@@ -58,7 +64,7 @@ algorithm
 //    x_NaCl := 1/(M_NaCl/M_H2O*(1/sum(X[1:5])-1)+1) "mol fraction";
     x_NaCl := 1/(M_NaCl/M_H2O*(1/X_NaCl-1)+1) "mol fraction";
   end if;
-  M_Solution := x_NaCl*M_NaCl + (1-x_NaCl)* M_H2O;
+//  M_Solution := x_NaCl*M_NaCl + (1-x_NaCl)* M_H2O;
 
 //CALCULATION OF EQUIVALENT TEMPERATURE_h
   q_21 := -1.69513-4.52781E-4*p_bar-6.04279E-8*p_bar^2;
@@ -77,15 +83,15 @@ algorithm
   //x_NaCl=0 results in q_1=0 / x_NaCl = 1 is pure NaCl
   q_1 := q_10 + q_11*(1-x_NaCl) + q_12*(1-x_NaCl)^2;
 
-  T_Scale_h := Modelica.SIunits.Conversions.from_degC(T_C*q_2 + q_1);
+  T_Scale_h := SI.Conversions.from_degC(T_C*q_2 + q_1);
 
 //  p_check:=max(p, Modelica.Media.Water.WaterIF97_base.saturationPressure(T_Scale_h)) "To make sure its liquid";
 
   //END OF CALCULATION OF EQUIVALENT TEMPERATURE
 
-/*  state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(p, Modelica.SIunits.Conversions.from_degC(T_Scale_h), fill(0,0));
+/*  state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(p, SI.Conversions.from_degC(T_Scale_h), fill(0,0));
   h := Modelica.Media.Water.WaterIF97_base.specificEnthalpy(state_H2O);*/
-//  h := Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p, Modelica.SIunits.Conversions.from_degC(T_Scale_h));
+//  h := Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p, SI.Conversions.from_degC(T_Scale_h));
 
-//  Modelica.Utilities.Streams.print("Brine_Driesner.specificEnthalpy_pTX: "+String(p*1e-5)+"bar."+String(T_Scale_h)+"°C->"+String(h)+" J/kg");
+//  print("Brine_Driesner.specificEnthalpy_pTX: "+String(p*1e-5)+"bar."+String(T_Scale_h)+"°C->"+String(h)+" J/kg");
 end T_Scale_h_Driesner;
