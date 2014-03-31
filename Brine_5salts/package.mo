@@ -142,6 +142,7 @@ protected
        Salt_data.saltConstants);
  end dynamicViscosity_pTX;
 
+
   annotation (Documentation(info="<html>
 <p><b>Brine_5salts_nogas</b> is a package that provides properties of one-phase solution of 5 salts (NaCl, KCl, CaCl2, MgCl2, SrCl2).</p>
 <p><h4>Usage</h4></p>

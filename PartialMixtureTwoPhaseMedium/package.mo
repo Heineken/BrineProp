@@ -9,7 +9,6 @@ constant Boolean onePhase=false
   "true if the (derived) model should never be called with two-phase inputs";
 
 
-
 redeclare replaceable record extends FluidConstants "extended fluid constants"
   /*    Temperature criticalTemperature "critical temperature";
     AbsolutePressure criticalPressure "critical pressure";

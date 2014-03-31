@@ -23,11 +23,13 @@ end ThermodynamicState;
 
  redeclare model extends BaseProperties "Base properties of medium"
  //  SI.Pressure p_H2O;
+   BrineProp.Partial_Units.Molality y_vec[:]=massFractionsToMoleFractions(X,MM_vec);
+
  equation
     //   assert(nX_gas==2,"Wrong number of gas mass fractions specified (2 needed - CO2,N2)");
  //  assert(max(X)<=1 and min(X)>=0, "X out of range [0...1] = "+PowerPlant.vector2string(X)+" (saturationPressure_H2O())");
  //  MM = (X_salt*MM_salt + X_gas*MM_gas + X[end]*M_H2O);
-   MM = 1 "y*PartialBrine_ngas_Newton.MM_vec";
+     MM = y_vec*MM_vec;
  //  R  = Modelica.Constants.R/MM;
    u = h - p/d;
 
@@ -98,7 +100,7 @@ constant String gasNames[:]={""};
 
   end thermalConductivity;
 */
-  function specificHeatCapacityCp_pTX
+  replaceable function specificHeatCapacityCp_pTX
     "calculation of gas specific heat capacity"
   //  import SG = Modelica.Media.IdealGases.SingleGases;
     input SI.Pressure p;
