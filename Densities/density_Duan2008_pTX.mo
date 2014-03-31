@@ -1,6 +1,5 @@
 within BrineProp.Densities;
 function density_Duan2008_pTX "Brine density"
-//extends PartialBrine.density_pTX;
   input SI.Pressure p;
   input SI.Temp_K T;
   input SI.MassFraction X[:] "mass fractions m_NaCl/m_Sol";

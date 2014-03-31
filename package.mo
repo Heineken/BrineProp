@@ -1,7 +1,5 @@
 within ;
 package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solutions of multiple salts and gases"
-  //20.3. added  T-Limits for enthalpy
-  //26.3. removed degassingpressure from setState_ptX
 
  import SI = Modelica.SIunits;
  import Modelica.Utilities.Streams.print;

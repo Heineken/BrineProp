@@ -1,0 +1,13 @@
+# Compiled source #
+###################
+dsin.txt
+dslog.txt
+*.mat
+dsfinal.txt
+buildlog.txt
+dymosim.exe
+dymosim.exp
+dymosim.lib
+dsmodel.c
+*.bak-mo
+*.asv
