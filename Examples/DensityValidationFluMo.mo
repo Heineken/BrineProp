@@ -1,7 +1,7 @@
 within BrineProp.Examples;
 model DensityValidationFluMo "mit Messwerten von Elvira"
 //Unzahl an Werten wurde verdichtet mit Guidos Prog (BestFitPlane), dann Stützpunkte berechnet
-package Medium = Brine_5salts_noGas;
+package Medium = Brine_5salts;
 //  SI.Density d= props.d;  /**/
 
   constant Real data[:,:]=DataFiles.readCSVmatrix("FluMoFit.csv");

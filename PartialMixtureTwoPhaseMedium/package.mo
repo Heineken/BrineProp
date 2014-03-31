@@ -47,7 +47,7 @@ redeclare replaceable record extends FluidConstants "extended fluid constants"
       "Difference between specific enthalpy model (s_m) and f.eq. (s_f) (s_m - s_f)";
       */
   annotation (Documentation(info="<html></html>"));
-  end FluidConstants;
+end FluidConstants;
 
 constant FluidConstants[nS] fluidConstants "constant data for the fluid";
 
@@ -64,7 +64,7 @@ redeclare replaceable record extends ThermodynamicState
   MassFraction X_l[nX] "Mass fraction of NaCl in kg/kg";
   annotation (Documentation(info="<html></html>"));
   //MassFraction X[nX] "Mass fraction of NaCl in kg/kg"
-  end ThermodynamicState;
+end ThermodynamicState;
 
 
 replaceable record SaturationProperties
@@ -74,7 +74,7 @@ replaceable record SaturationProperties
   Temperature Tsat "saturation temperature";
   MassFraction X[nX] "Mass fractions";
   annotation (Documentation(info="<html></html>"));
-  end SaturationProperties;
+end SaturationProperties;
 
 
 redeclare replaceable partial model extends BaseProperties
@@ -85,7 +85,7 @@ redeclare replaceable partial model extends BaseProperties
   parameter Integer phase=0;
 
   annotation (Documentation(info="<html></html>"));
-  end BaseProperties;
+end BaseProperties;
 
 
 replaceable partial function setDewState
@@ -97,7 +97,7 @@ replaceable partial function setDewState
     max=2) = 1 "phase: default is one phase";
   output ThermodynamicState state "complete thermodynamic state info";
   annotation (Documentation(info="<html></html>"));
-  end setDewState;
+end setDewState;
 
 
 replaceable partial function setBubbleState
@@ -109,35 +109,35 @@ replaceable partial function setBubbleState
     max=2) = 1 "phase: default is one phase";
   output ThermodynamicState state "complete thermodynamic state info";
   annotation (Documentation(info="<html></html>"));
-  end setBubbleState;
+end setBubbleState;
 
 
 redeclare replaceable partial function extends setState_dTX
   "Return thermodynamic state as function of d, T and composition X or Xi"
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   annotation (Documentation(info="<html></html>"));
-  end setState_dTX;
+end setState_dTX;
 
 
 redeclare replaceable partial function extends setState_phX
   "Return thermodynamic state as function of p, h and composition X or Xi"
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   annotation (Documentation(info="<html></html>"));
-  end setState_phX;
+end setState_phX;
 
 
 redeclare replaceable partial function extends setState_psX
   "Return thermodynamic state as function of p, s and composition X or Xi"
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   annotation (Documentation(info="<html></html>"));
-  end setState_psX;
+end setState_psX;
 
 
 redeclare replaceable partial function extends setState_pTX
   "Return thermodynamic state as function of p, T and composition X or Xi"
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   annotation (Documentation(info="<html></html>"));
-  end setState_pTX;
+end setState_pTX;
 
 
 replaceable function setSat_TX
@@ -146,12 +146,12 @@ replaceable function setSat_TX
   input Temperature T "temperature";
   input MassFraction X[nX] "Mass fractions";
   output SaturationProperties sat "saturation property record";
-  algorithm
+algorithm
   sat.Tsat := T;
   sat.psat := saturationPressure(T, X);
   sat.X := X;
   annotation (Documentation(info="<html></html>"));
-  end setSat_TX;
+end setSat_TX;
 
 
 replaceable function setSat_pX
@@ -160,12 +160,12 @@ replaceable function setSat_pX
   input AbsolutePressure p "pressure";
   input MassFraction X[nX] "Mass fractions";
   output SaturationProperties sat "saturation property record";
-  algorithm
+algorithm
   sat.psat := p;
   sat.Tsat := saturationTemperature(p, X);
   sat.X := X;
   annotation (Documentation(info="<html></html>"));
-  end setSat_pX;
+end setSat_pX;
 
 
 replaceable partial function bubbleEnthalpy
@@ -174,7 +174,7 @@ replaceable partial function bubbleEnthalpy
   input SaturationProperties sat "saturation property record";
   output Modelica.SIunits.SpecificEnthalpy hl "boiling curve specific enthalpy";
   annotation (Documentation(info="<html></html>"));
-  end bubbleEnthalpy;
+end bubbleEnthalpy;
 
 
 replaceable partial function dewEnthalpy "Return dew point specific enthalpy"
@@ -182,7 +182,7 @@ replaceable partial function dewEnthalpy "Return dew point specific enthalpy"
   input SaturationProperties sat "saturation property record";
   output Modelica.SIunits.SpecificEnthalpy hv "dew curve specific enthalpy";
   annotation (Documentation(info="<html></html>"));
-  end dewEnthalpy;
+end dewEnthalpy;
 
 
 replaceable partial function bubbleEntropy
@@ -191,7 +191,7 @@ replaceable partial function bubbleEntropy
   input SaturationProperties sat "saturation property record";
   output Modelica.SIunits.SpecificEntropy sl "boiling curve specific entropy";
   annotation (Documentation(info="<html></html>"));
-  end bubbleEntropy;
+end bubbleEntropy;
 
 
 replaceable partial function dewEntropy "Return dew point specific entropy"
@@ -199,7 +199,7 @@ replaceable partial function dewEntropy "Return dew point specific entropy"
   input SaturationProperties sat "saturation property record";
   output Modelica.SIunits.SpecificEntropy sv "dew curve specific entropy";
   annotation (Documentation(info="<html></html>"));
-  end dewEntropy;
+end dewEntropy;
 
 
 replaceable partial function bubbleDensity "Return bubble point density"
@@ -207,7 +207,7 @@ replaceable partial function bubbleDensity "Return bubble point density"
   input SaturationProperties sat "saturation property record";
   output Density dl "boiling curve density";
   annotation (Documentation(info="<html></html>"));
-  end bubbleDensity;
+end bubbleDensity;
 
 
 replaceable partial function dewDensity "Return dew point density"
@@ -215,7 +215,7 @@ replaceable partial function dewDensity "Return dew point density"
   input SaturationProperties sat "saturation property record";
   output Density dv "dew curve density";
   annotation (Documentation(info="<html></html>"));
-  end dewDensity;
+end dewDensity;
 
 
 replaceable partial function saturationPressure "Return saturation pressure"
@@ -225,7 +225,7 @@ replaceable partial function saturationPressure "Return saturation pressure"
   output AbsolutePressure p "saturation pressure";
 
   annotation (Documentation(info="<html></html>"));
-  end saturationPressure;
+end saturationPressure;
 
 
 replaceable partial function saturationTemperature
@@ -236,27 +236,27 @@ replaceable partial function saturationTemperature
   output Temperature T "saturation temperature";
 
   annotation (Documentation(info="<html></html>"));
-  end saturationTemperature;
+end saturationTemperature;
 
 
 replaceable function saturationPressure_sat "Return saturation temperature"
   extends Modelica.Icons.Function;
   input SaturationProperties sat "saturation property record";
   output AbsolutePressure p "saturation pressure";
-  algorithm
+algorithm
   p := sat.psat;
   annotation (Documentation(info="<html></html>"));
-  end saturationPressure_sat;
+end saturationPressure_sat;
 
 
 replaceable function saturationTemperature_sat "Return saturation temperature"
   extends Modelica.Icons.Function;
   input SaturationProperties sat "saturation property record";
   output Temperature T "saturation temperature";
-  algorithm
+algorithm
   T := sat.Tsat;
   annotation (Documentation(info="<html></html>"));
-  end saturationTemperature_sat;
+end saturationTemperature_sat;
 
 
 replaceable partial function saturationTemperature_derp
@@ -265,7 +265,7 @@ replaceable partial function saturationTemperature_derp
   input AbsolutePressure p "pressure";
   output Real dTp "derivative of saturation temperature w.r.t. pressure";
   annotation (Documentation(info="<html></html>"));
-  end saturationTemperature_derp;
+end saturationTemperature_derp;
 
 
 replaceable function saturationTemperature_derp_sat
@@ -273,10 +273,10 @@ replaceable function saturationTemperature_derp_sat
   extends Modelica.Icons.Function;
   input SaturationProperties sat "saturation property record";
   output Real dTp "derivative of saturation temperature w.r.t. pressure";
-  algorithm
+algorithm
   dTp := saturationTemperature_derp(sat.psat);
   annotation (Documentation(info="<html></html>"));
-  end saturationTemperature_derp_sat;
+end saturationTemperature_derp_sat;
 
 
 replaceable partial function surfaceTension
@@ -285,7 +285,7 @@ replaceable partial function surfaceTension
   input SaturationProperties sat "saturation property record";
   output SurfaceTension sigma "Surface tension sigma in the two phase region";
   annotation (Documentation(info="<html></html>"));
-  end surfaceTension;
+end surfaceTension;
 
 /*  redeclare replaceable partial function extends molarMass 
     "Return the molar mass of the medium"
@@ -300,7 +300,7 @@ replaceable partial function dBubbleDensity_dPressure
   input SaturationProperties sat "saturation property record";
   output DerDensityByPressure ddldp "boiling curve density derivative";
   annotation (Documentation(info="<html></html>"));
-  end dBubbleDensity_dPressure;
+end dBubbleDensity_dPressure;
 
 
 replaceable partial function dDewDensity_dPressure
@@ -309,7 +309,7 @@ replaceable partial function dDewDensity_dPressure
   input SaturationProperties sat "saturation property record";
   output DerDensityByPressure ddvdp "saturated steam density derivative";
   annotation (Documentation(info="<html></html>"));
-  end dDewDensity_dPressure;
+end dDewDensity_dPressure;
 
 
 replaceable partial function dBubbleEnthalpy_dPressure
@@ -319,7 +319,7 @@ replaceable partial function dBubbleEnthalpy_dPressure
   output DerEnthalpyByPressure dhldp
     "boiling curve specific enthalpy derivative";
   annotation (Documentation(info="<html></html>"));
-  end dBubbleEnthalpy_dPressure;
+end dBubbleEnthalpy_dPressure;
 
 
 replaceable partial function dDewEnthalpy_dPressure
@@ -330,7 +330,7 @@ replaceable partial function dDewEnthalpy_dPressure
   output DerEnthalpyByPressure dhvdp
     "saturated steam specific enthalpy derivative";
   annotation (Documentation(info="<html></html>"));
-  end dDewEnthalpy_dPressure;
+end dDewEnthalpy_dPressure;
 
 
 redeclare replaceable function specificEnthalpy_pTX
@@ -341,14 +341,14 @@ redeclare replaceable function specificEnthalpy_pTX
   input MassFraction X[nX] "Mass fractions";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output SpecificEnthalpy h "Specific enthalpy at p, T, X";
-  algorithm
+algorithm
   h := specificEnthalpy(setState_pTX(
       p,
       T,
       X,
       phase));
   annotation (Documentation(info="<html></html>"));
-  end specificEnthalpy_pTX;
+end specificEnthalpy_pTX;
 
 
 redeclare replaceable function temperature_phX
@@ -359,14 +359,14 @@ redeclare replaceable function temperature_phX
   input MassFraction X[nX] "Mass fractions";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output Temperature T "Temperature";
-  algorithm
+algorithm
   T := temperature(setState_phX(
       p,
       h,
       X,
       phase));
   annotation (Documentation(info="<html></html>"));
-  end temperature_phX;
+end temperature_phX;
 
 
 redeclare replaceable function density_phX
@@ -377,14 +377,14 @@ redeclare replaceable function density_phX
   input MassFraction X[nX] "Mass fractions";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output Density d "density";
-  algorithm
+algorithm
   d := density(setState_phX(
       p,
       h,
       X,
       phase));
   annotation (Documentation(info="<html></html>"));
-  end density_phX;
+end density_phX;
 
 
 redeclare replaceable function temperature_psX
@@ -395,14 +395,14 @@ redeclare replaceable function temperature_psX
   input MassFraction X[nX] "Mass fractions";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output Temperature T "Temperature";
-  algorithm
+algorithm
   T := temperature(setState_psX(
       p,
       s,
       X,
       phase));
   annotation (Documentation(info="<html></html>"));
-  end temperature_psX;
+end temperature_psX;
 
 
 redeclare replaceable function density_psX
@@ -413,14 +413,14 @@ redeclare replaceable function density_psX
   input MassFraction X[nX] "Mass fractions";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output Density d "Density";
-  algorithm
+algorithm
   d := density(setState_psX(
       p,
       s,
       X,
       phase));
   annotation (Documentation(info="<html></html>"));
-  end density_psX;
+end density_psX;
 
 
 redeclare replaceable function specificEnthalpy_psX
@@ -431,14 +431,14 @@ redeclare replaceable function specificEnthalpy_psX
   input MassFraction X[nX] "Mass fractions";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output SpecificEnthalpy h "specific enthalpy";
-  algorithm
+algorithm
   h := specificEnthalpy(setState_psX(
       p,
       s,
       X,
       phase));
   annotation (Documentation(info="<html></html>"));
-  end specificEnthalpy_psX;
+end specificEnthalpy_psX;
 
 
 replaceable function setState_pT "Return thermodynamic state from p and T"
@@ -447,7 +447,7 @@ replaceable function setState_pT "Return thermodynamic state from p and T"
   input Temperature T "Temperature";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output ThermodynamicState state "thermodynamic state record";
-  algorithm
+algorithm
   assert(nX == 1, "This function is not allowed for mixtures.");
   state := setState_pTX(
       p,
@@ -455,7 +455,7 @@ replaceable function setState_pT "Return thermodynamic state from p and T"
       fill(0, 0),
       phase);
   annotation (Documentation(info="<html></html>"));
-  end setState_pT;
+end setState_pT;
 
 
 replaceable function setState_ph "Return thermodynamic state from p and h"
@@ -464,7 +464,7 @@ replaceable function setState_ph "Return thermodynamic state from p and h"
   input SpecificEnthalpy h "Specific enthalpy";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output ThermodynamicState state "thermodynamic state record";
-  algorithm
+algorithm
   assert(nX == 1, "This function is not allowed for mixtures.");
   state := setState_phX(
       p,
@@ -472,7 +472,7 @@ replaceable function setState_ph "Return thermodynamic state from p and h"
       fill(0, 0),
       phase);
   annotation (Documentation(info="<html></html>"));
-  end setState_ph;
+end setState_ph;
 
 
 replaceable function setState_ps "Return thermodynamic state from p and s"
@@ -481,7 +481,7 @@ replaceable function setState_ps "Return thermodynamic state from p and s"
   input SpecificEntropy s "Specific entropy";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output ThermodynamicState state "thermodynamic state record";
-  algorithm
+algorithm
   assert(nX == 1, "This function is not allowed for mixtures.");
   state := setState_psX(
       p,
@@ -489,7 +489,7 @@ replaceable function setState_ps "Return thermodynamic state from p and s"
       fill(0, 0),
       phase);
   annotation (Documentation(info="<html></html>"));
-  end setState_ps;
+end setState_ps;
 
 
 replaceable function setState_dT "Return thermodynamic state from d and T"
@@ -498,7 +498,7 @@ replaceable function setState_dT "Return thermodynamic state from d and T"
   input Temperature T "Temperature";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output ThermodynamicState state "thermodynamic state record";
-  algorithm
+algorithm
   assert(nX == 1, "This function is not allowed for mixtures.");
   state := setState_dTX(
       d,
@@ -506,7 +506,7 @@ replaceable function setState_dT "Return thermodynamic state from d and T"
       fill(0, 0),
       phase);
   annotation (Documentation(info="<html></html>"));
-  end setState_dT;
+end setState_dT;
 
 
 replaceable function setState_px
@@ -514,7 +514,7 @@ replaceable function setState_px
   input AbsolutePressure p "Pressure";
   input MassFraction x "Vapour quality";
   output ThermodynamicState state "Thermodynamic state record";
-  algorithm
+algorithm
   assert(nX == 1, "This function is not allowed for mixtures.");
   state := setState_ph(
       p,
@@ -522,7 +522,7 @@ replaceable function setState_px
        + x*dewEnthalpy(BrineProp.PartialMixtureTwoPhaseMedium.setSat_pX(p)),
       2);
   annotation (Documentation(info="<html></html>"));
-  end setState_px;
+end setState_px;
 
 
 replaceable function setState_Tx
@@ -530,7 +530,7 @@ replaceable function setState_Tx
   input Temperature T "Temperature";
   input MassFraction x "Vapour quality";
   output ThermodynamicState state "thermodynamic state record";
-  algorithm
+algorithm
   assert(nX == 1, "This function is not allowed for mixtures.");
   state := setState_ph(
       saturationPressure_sat(BrineProp.PartialMixtureTwoPhaseMedium.setSat_TX(T)),
@@ -538,7 +538,7 @@ replaceable function setState_Tx
        + x*dewEnthalpy(BrineProp.PartialMixtureTwoPhaseMedium.setSat_TX(T)),
       2);
   annotation (Documentation(info="<html></html>"));
-  end setState_Tx;
+end setState_Tx;
 
 
 replaceable function vapourQuality "Return vapour quality"
@@ -546,12 +546,12 @@ replaceable function vapourQuality "Return vapour quality"
   output MassFraction x "Vapour quality";
 protected
   constant SpecificEnthalpy eps=1e-8;
-  algorithm
+algorithm
   x := min(max((specificEnthalpy(state) - bubbleEnthalpy(setSat_pX(pressure(
     state), state.X)))/(dewEnthalpy(setSat_pX(pressure(state), state.X)) -
     bubbleEnthalpy(setSat_pX(pressure(state), state.X)) + eps), 0), 1);
   annotation (Documentation(info="<html></html>"));
-  end vapourQuality;
+end vapourQuality;
 
 
 replaceable function density_ph "Return density from p and h"
@@ -560,7 +560,7 @@ replaceable function density_ph "Return density from p and h"
   input SpecificEnthalpy h "Specific enthalpy";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output Density d "Density";
-  algorithm
+algorithm
   assert(nX == 1,
     "This function is not allowed for mixtures. Use density_phX() instead!");
   d := density_phX(
@@ -569,7 +569,7 @@ replaceable function density_ph "Return density from p and h"
       fill(0, 0),
       phase);
   annotation (Documentation(info="<html></html>"));
-  end density_ph;
+end density_ph;
 
 
 replaceable function temperature_ph "Return temperature from p and h"
@@ -578,7 +578,7 @@ replaceable function temperature_ph "Return temperature from p and h"
   input SpecificEnthalpy h "Specific enthalpy";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output Temperature T "Temperature";
-  algorithm
+algorithm
   assert(nX == 1,
     "This function is not allowed for mixtures. Use temperature_phX() instead!");
   T := temperature_phX(
@@ -587,7 +587,7 @@ replaceable function temperature_ph "Return temperature from p and h"
       fill(0, 0),
       phase);
   annotation (Documentation(info="<html></html>"));
-  end temperature_ph;
+end temperature_ph;
 
 
 replaceable function pressure_dT "Return pressure from d and T"
@@ -596,7 +596,7 @@ replaceable function pressure_dT "Return pressure from d and T"
   input Temperature T "Temperature";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output AbsolutePressure p "Pressure";
-  algorithm
+algorithm
   assert(nX == 1,
     "This function is not allowed for mixtures. Use pressure_dTX() instead!");
   p := pressure(setState_dTX(
@@ -605,7 +605,7 @@ replaceable function pressure_dT "Return pressure from d and T"
       fill(0, 0),
       phase));
   annotation (Documentation(info="<html></html>"));
-  end pressure_dT;
+end pressure_dT;
 
 
 replaceable function specificEnthalpy_dT
@@ -615,7 +615,7 @@ replaceable function specificEnthalpy_dT
   input Temperature T "Temperature";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output SpecificEnthalpy h "specific enthalpy";
-  algorithm
+algorithm
   assert(nX == 1,
     "This function is not allowed for mixtures. Use specificEnthalpy_dX() instead!");
   h := specificEnthalpy(setState_dTX(
@@ -624,7 +624,7 @@ replaceable function specificEnthalpy_dT
       fill(0, 0),
       phase));
   annotation (Documentation(info="<html></html>"));
-  end specificEnthalpy_dT;
+end specificEnthalpy_dT;
 
 
 replaceable function specificEnthalpy_ps
@@ -634,7 +634,7 @@ replaceable function specificEnthalpy_ps
   input SpecificEntropy s "Specific entropy";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output SpecificEnthalpy h "specific enthalpy";
-  algorithm
+algorithm
   assert(nX == 1,
     "This function is not allowed for mixtures. Use specificEnthalpy_psX() instead!");
   h := specificEnthalpy_psX(
@@ -642,7 +642,7 @@ replaceable function specificEnthalpy_ps
       s,
       reference_X);
   annotation (Documentation(info="<html></html>"));
-  end specificEnthalpy_ps;
+end specificEnthalpy_ps;
 
 
 replaceable function temperature_ps "Return temperature from p and s"
@@ -651,7 +651,7 @@ replaceable function temperature_ps "Return temperature from p and s"
   input SpecificEntropy s "Specific entropy";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output Temperature T "Temperature";
-  algorithm
+algorithm
   assert(nX == 1,
     "This function is not allowed for mixtures. Use temperature_psX() instead!");
   T := temperature_psX(
@@ -660,7 +660,7 @@ replaceable function temperature_ps "Return temperature from p and s"
       fill(0, 0),
       phase);
   annotation (Documentation(info="<html></html>"));
-  end temperature_ps;
+end temperature_ps;
 
 
 replaceable function density_ps "Return density from p and s"
@@ -669,7 +669,7 @@ replaceable function density_ps "Return density from p and s"
   input SpecificEntropy s "Specific entropy";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output Density d "Density";
-  algorithm
+algorithm
   assert(nX == 1,
     "This function is not allowed for mixtures. Use density_psX() instead!");
   d := density_psX(
@@ -678,7 +678,7 @@ replaceable function density_ps "Return density from p and s"
       fill(0, 0),
       phase);
   annotation (Documentation(info="<html></html>"));
-  end density_ps;
+end density_ps;
 
 
 replaceable function specificEnthalpy_pT
@@ -688,7 +688,7 @@ replaceable function specificEnthalpy_pT
   input Temperature T "Temperature";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output SpecificEnthalpy h "specific enthalpy";
-  algorithm
+algorithm
   assert(nX == 1,
     "This function is not allowed for mixtures. Use specificEnthalpy_pTx() instead!");
   h := specificEnthalpy_pTX(
@@ -697,7 +697,7 @@ replaceable function specificEnthalpy_pT
       fill(0, 0),
       phase);
   annotation (Documentation(info="<html></html>"));
-  end specificEnthalpy_pT;
+end specificEnthalpy_pT;
 
 
 replaceable function density_pT "Return density from p and T"
@@ -706,14 +706,14 @@ replaceable function density_pT "Return density from p and T"
   input Temperature T "Temperature";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output Density d "Density";
-  algorithm
+algorithm
   d := density(setState_pTX(
       p,
       T,
       fill(0, 0),
       phase));
   annotation (Documentation(info="<html></html>"));
-  end density_pT;
+end density_pT;
 
 
 replaceable function specificEnthalpy_dTX
@@ -724,7 +724,7 @@ replaceable function specificEnthalpy_dTX
   input MassFraction X[nX] "Mass fractions";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output SpecificEnthalpy h "specific enthalpy";
-  algorithm
+algorithm
   h := specificEnthalpy(setState_dTX(
       d,
       T,
@@ -732,32 +732,32 @@ replaceable function specificEnthalpy_dTX
       phase));
 
   annotation (Documentation(info="<html></html>"));
-  end specificEnthalpy_dTX;
+end specificEnthalpy_dTX;
 
 
 redeclare replaceable function extends pressure
   /*  input ThermodynamicState state "Thermodynamic state record";
   output Modelica.SIunits.Pressure p;
   */
-  algorithm
+algorithm
   p := state.p;
-  end pressure;
+end pressure;
 
 
 redeclare replaceable function specificEnthalpy
   input ThermodynamicState state "Thermodynamic state record";
   output Modelica.SIunits.SpecificEnthalpy h;
-  algorithm
+algorithm
   h := state.h;
-  end specificEnthalpy;
+end specificEnthalpy;
 
 
 replaceable function density_liq
   input ThermodynamicState state "Thermodynamic state record";
   output Modelica.SIunits.Density d_l;
-  algorithm
+algorithm
   d_l := state.d_l;
-  end density_liq;
+end density_liq;
 
 
 replaceable function dynamicViscosity_liq "Viscosity of liquid phase"
@@ -775,7 +775,7 @@ algorithm
 //  eta := Modelica.Media.Water.IF97_Utilities.dynamicViscosity(state.d_l, state.T, p_sat, 1);
 //  Modelica.Utilities.Streams.print(String(p_sat));
 */
-  end dynamicViscosity_liq;
+end dynamicViscosity_liq;
 
 
 replaceable function dynamicViscosity_gas "Viscosity of liquid phase"
@@ -792,20 +792,20 @@ algorithm
   eta := dynamicViscosity(state_g);
   */
   //  eta := Modelica.Media.Water.IF97_Utilities.dynamicViscosity(state.d_g, state.T, p_sat, 1);
-  end dynamicViscosity_gas;
+end dynamicViscosity_gas;
 
 
 redeclare replaceable function extends temperature
   "returns density from state - seems useless, but good for compatibility between PartialMedium and PartialMixedMediumTwoPhase"
-  algorithm
+algorithm
   T := state.T;
-  end temperature;
+end temperature;
 
 
 redeclare function extends density "return density of ideal gas"
-  algorithm
+algorithm
   d := state.d;
-  end density;
+end density;
 
 
 replaceable function pressure_dTX "Return pressure from d, T, and X or Xi"
@@ -815,14 +815,14 @@ replaceable function pressure_dTX "Return pressure from d, T, and X or Xi"
   input MassFraction X[:]=reference_X "mass fraction m_NaCl/m_Sol";
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output Modelica.SIunits.Pressure p;
-  algorithm
+algorithm
   T := temperature(setState_phX(
       p,
       h,
       X,
       phase));
   annotation (Documentation(info="<html></html>"));
-  end pressure_dTX;
+end pressure_dTX;
 
 
 annotation (Documentation(info="<html>

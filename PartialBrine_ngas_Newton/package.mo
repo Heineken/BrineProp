@@ -51,7 +51,7 @@ constant FluidConstants[nS] BrineConstants(
      each dipoleMoment = 1);
 
 
- extends MediaTwoPhaseMixture.PartialMixtureTwoPhaseMedium(
+ extends PartialMixtureTwoPhaseMedium(
    final mediumName="TwoPhaseMixtureMedium",
    final substanceNames=cat(1,saltNames,gasNames,{"water"}),
    final reducedX =  true,

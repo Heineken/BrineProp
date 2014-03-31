@@ -1,4 +1,24 @@
 within BrineProp;
-package Examples 
+package Examples "Usage examples"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 end Examples;

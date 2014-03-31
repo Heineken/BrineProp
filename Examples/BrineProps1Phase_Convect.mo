@@ -1,6 +1,6 @@
 within BrineProp.Examples;
 model BrineProps1Phase_Convect
-package Medium = Brine_5salts_noGas;
+package Medium = Brine_5salts;
   parameter Integer n=1;
   Medium.BaseProperties[n+1] props;
 

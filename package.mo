@@ -43,6 +43,7 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
 
 
 
+
   function massFractionsToMolalities
   "Calculate molalities (mole_i per kg H2O) from mass fractions X"
     extends Modelica.Icons.Function;
@@ -111,45 +112,23 @@ protected
 <p><b>BrineProp</b> is a package that provides properties of a specified brine, i.e. an aqueous solution of salts and gases, with a potential gas phase, therefore including de/gassing and evaporation/condensation. It is based on an extension to and therefore largely compatible to the Modelica.Media library. This necessary extension is PartialMixtureTwoPhaseMedium (not included in this package). This package has been developed and tested in Dymola up to 2012 FD01. </p>
 <p>All files in this library, including the C source files are released under the Modelica License 2. </p>
 <p><b></font><font style=\"font-size: 12pt; \">Installation</b></p>
-<p>The sub-package <code>PartialBrine_ngas_Newton</code> / <code>Brine_Duan_Multi_TwoPhase_ngas_3</code> needs the package <code>MediaTwoPhaseMixture.PartialMixtureTwoPhaseMedium</code> which is not included in this package. It is found in <a href=\"https://github.com/Heineken/REFPROP2Modelica\">REFPROP2Modelica</a>. This provided, the examples under Examples should work right away.</p>
-<!-- <p><h4>Packages</h4></p>
-<dl>
- <dt><pre>Examples</pre></dt><dd>Usage examples</dd>
- <dt><pre>PartialUnits</pre></dt><dd>Definition of additional units used in BrineProp</dd>
- <dt><pre>SaltData</pre></dt><dd>Molar masses and mole numbers of the contained salts</dd>
- <dt><pre>Densities</pre></dt><dd>Density functions</dd>
- <dt><pre>SpecificEnthalpies</pre></dt><dd>Enthalpy functions</dd>
- <dt><pre>Viscosities</pre></dt><dd>Viscosity functions</dd>
- <dt><pre>PartialBrine_MultiSalt_1Phase</pre></dt><dd>Template for one-phase (liquid) brine based on PartialMediaMixtureMedium</dd>
- <dt><pre>SaltData_Duan</pre></dt><dd>Coefficients used in Duan density calculation</dd>
- <dt><pre>Brine_Duan</pre></dt><dd>One-phase (liquid) aqueous NaCl solution using functions by Duan.</dd>
- <dt><pre>Brine_Driesner</pre></dt><dd>One-phase (liquid) aqueous NaCl solution using functions by Driesner</dd>
- <dt><pre>Brine_5salts_nogas</pre></dt><dd>One-phase (liquid) multisalt brine solution</dd>
- <dt><pre>PartialGasData</pre></dt><dd>Molar masses and ion numbers of the contained gases</dd>
- <dt><pre>PartialBrine_ngas_Newton</pre></dt><dd>Template for multisalt-multigas brines with vapor-liquid-equilibrium calculation</dd>
- <dt><pre>Brine_5salts_TwoPhase_3gas</pre></dt><dd>Brine with 5 salts and 3 gases</dd>
-</dl>
--->
-<p><b>Usage</b></p>
-Check the (non-partial) Brine packages or <pre>Examples</pre> for instructions.
+<p>Make sure the package directory is named BrineProp. This provided, the examples under <code>Examples</code> should work right away.</p>
 
+<h4>Usage</h4>
+<p>Check the (non-partial) Brine packages or </p>
+<pre>Examples</pre>
+<p>for instructions. </p>
 <p>All calculated values are returned in SI-Units and are mass based. </p>
-<p><h4>TODO:</h4></p>
-<p><ul>
-<li>Add apparent molar heat capacity for (NaCl,) MgCl2 and SrCl2</li>
-<li>Add multi-salt viscosity </li>
-</ul></p>
-<font style=\"font-size: 10pt; \">
-<p><i>Created by</i><br/>
-Henning Francke<br/>
-Helmholtz Centre Potsdam<br/>
-GFZ German Research Centre for Geosciences<br/>
-Telegrafenberg, D-14473 Potsdam<br/>
-Germany</p></font>
+<p><i></font><font style=\"font-size: 10pt; \">Created by</i></p><p>Henning Francke</p><p>Helmholtz Centre Potsdam</p><p>GFZ German Research Centre for Geosciences</p><p>Telegrafenberg, D-14473 Potsdam</p><p>Germany</p>
 <p><a href=\"mailto:francke@gfz-potsdam.de\">francke@gfz-potsdam.de</a> </p>
-</html>",
- revisions="<html>
+<h4>TODO:</h4>
+<ul>
+<li>Add apparent molar heat capacity/enthalpy for (NaCl,) MgCl2 and SrCl2</li>
+</ul>
+</html>", revisions="<html>
 
-</html>"), version="0.1", versionDate="2012-08-01", uses(Modelica(version="3.2"), MediaTwoPhaseMixture(version="0.2"),
-      DataFiles(version="1.0")));
+</html>"),
+    version="0.1",
+    versionDate="2012-08-01",
+    uses(Modelica(version="3.2")));
 end BrineProp;

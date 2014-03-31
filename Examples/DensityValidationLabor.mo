@@ -2,7 +2,7 @@ within BrineProp.Examples;
 model DensityValidationLabor "mit Messungen von Ulrike"
   //p:\GEOFLUIDS\Fluidphysics\Daten\Dichte Reihe 8 20°C-80°C.xlsx
 
-package Medium = Brine_5salts_noGas;
+package Medium = Brine_5salts;
 //  SI.Density d= props.d;  /**/
 
   Medium.BaseProperties[n_b,n_T] props;

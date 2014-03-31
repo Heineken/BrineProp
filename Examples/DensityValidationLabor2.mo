@@ -1,6 +1,6 @@
 within BrineProp.Examples;
 model DensityValidationLabor2 "mit Messungen von Ulrike"
-package Medium = Brine_5salts_noGas;
+package Medium = Brine_5salts;
 //  SI.Density d= props.d;  /**/
 
   constant Real data[:,:]=DataFiles.readCSVmatrix("e:\\francke\\Eigene Dateien\\GFZ\\Promotion\\Material\\BrineProperties\\Density\\Messungen\\Validierung Labor Ulrike\\Zusammenfassung_final.csv");
