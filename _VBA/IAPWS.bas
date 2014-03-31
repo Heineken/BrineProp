@@ -1,12 +1,16 @@
 Attribute VB_Name = "IAPWS"
 ' IAPWS functions transcoded from MATLAB code of X-Steam
 ' http://www.mathworks.com/matlabcentral/fileexchange/9817-x-steam-thermodynamic-properties-of-water-and-steam
+' and from Modelica Standard Library (http://modelica.github.io/Modelica)
+
+' by Henning Francke francke@gfz-potsdam.de
+' 2014 GFZ Potsdam
 
 ' Added non-private functions with Prefix "Water", that take an return values in SI units (function names as in Modelica.Media.Water.IF97_Utilities.BaseIF97.Basic.psat)
 Option Explicit
 Option Base 1
 
-Private Const r = 0.461526 'kJ/(kg K)
+Private Const R = 0.461526 'kJ/(kg K)
 
 ' COEFFICIENTS FOR REGION 2 ?
 Private Function J0()
@@ -165,7 +169,7 @@ Private Function v1_pT(p, T)
     For i = 1 To 34
         gamma_der_pi = gamma_der_pi - n1(i) * I1(i) * (7.1 - Pi) ^ (I1(i) - 1) * (tau - 1.222) ^ J1(i)
     Next i
-    v1_pT = r * T / p * Pi * gamma_der_pi / 1000
+    v1_pT = R * T / p * Pi * gamma_der_pi / 1000
 End Function
 
 Function v2_pT(p, T)
@@ -180,7 +184,7 @@ Function v2_pT(p, T)
     For i = 1 To 43
         gr_pi = gr_pi + nr(i) * Ir(i) * Pi ^ (Ir(i) - 1) * (tau - 0.5) ^ Jr(i)
     Next i
-    v2_pT = r * T / p * Pi * (g0_pi + gr_pi) / 1000
+    v2_pT = R * T / p * Pi * (g0_pi + gr_pi) / 1000
 End Function
 
 Function v3_ph(p, h)
@@ -233,7 +237,7 @@ Function v5_pT(p, T)
     For i = 1 To 5
         gammar_pi = gammar_pi + nir(i) * Iir(i) * Pi ^ (Iir(i) - 1) * tau ^ Jir(i)
     Next i
-    v5_pT = r * T / p * Pi * (gamma0_pi + gammar_pi) / 1000
+    v5_pT = R * T / p * Pi * (gamma0_pi + gammar_pi) / 1000
 End Function
 
 Public Function dynamicViscosity_pT(p_Pa, T) ' p in MPa, T in K
@@ -317,14 +321,14 @@ Private Function cp1_pT(p As Double, T As Double)
 '    J1 = Array(-2, -1, 0, 1, 2, 3, 4, 5, -9, -7, -1, 0, 1, 3, -3, 0, 1, 3, 17, -4, 0, 6, -5, -2, 10, -8, -11, -6, -29, -31, -38, -39, -40, -41)
 '    n1 = Array(0.14632971213167, -0.84548187169114, -3.756360367204, 3.3855169168385, -0.95791963387872, 0.15772038513228, -0.016616417199501, 8.1214629983568E-04, 2.8319080123804E-04, -6.0706301565874E-04, -0.018990068218419, -0.032529748770505, -0.021841717175414, -5.283835796993E-05, -4.7184321073267E-04, -3.0001780793026E-04, 4.7661393906987E-05, -4.4141845330846E-06, -7.2694996297594E-16, -3.1679644845054E-05, -2.8270797985312E-06, -8.5205128120103E-10, -2.2425281908E-06, -6.5171222895601E-07, -1.4341729937924E-13, -4.0516996860117E-07, -1.2734301741641E-09, -1.7424871230634E-10, -6.8762131295531E-19, 1.4478307828521E-20, 2.6335781662795E-23, -1.1947622640071E-23, 1.8228094581404E-24, -9.3537087292458E-26)
     Dim Pi As Double, tau As Double, gamma_der_tautau As Double, i As Integer
-    Const r = 0.461526 'kJ/(kg K)
+    Const R = 0.461526 'kJ/(kg K)
     Pi = p / 16.53
     tau = 1386 / T
     gamma_der_tautau = 0
     For i = 1 To 34
         gamma_der_tautau = gamma_der_tautau + (n1(i) * (7.1 - Pi) ^ I1(i) * J1(i) * (J1(i) - 1) * (tau - 1.222) ^ (J1(i) - 2))
     Next i
-    cp1_pT = -r * tau ^ 2 * gamma_der_tautau
+    cp1_pT = -R * tau ^ 2 * gamma_der_tautau
 End Function
 
 Function cp2_pT(p, T)
@@ -343,7 +347,7 @@ Dim Pi As Double, tau As Double, g0_tautau As Double, gr_tautau As Double
     For i = 1 To 43
         gr_tautau = gr_tautau + nr(i) * Pi ^ Ir(i) * Jr(i) * (Jr(i) - 1) * (tau - 0.5) ^ (Jr(i) - 2)
     Next i
-    cp2_pT = -r * tau ^ 2 * (g0_tautau + gr_tautau)
+    cp2_pT = -R * tau ^ 2 * (g0_tautau + gr_tautau)
 End Function
 
 Function cp3_rhoT(rho, T)
@@ -374,7 +378,7 @@ Function cp3_rhoT(rho, T)
     Next i
     fidelta = fidelta + ni(1) / Delta
     fideltadelta = fideltadelta - ni(1) / (Delta ^ 2)
-    cp3_rhoT = r * (-tau ^ 2 * fitautau + (Delta * fidelta - Delta * tau * fideltatau) ^ 2 / (2 * Delta * fidelta + Delta ^ 2 * fideltadelta))
+    cp3_rhoT = R * (-tau ^ 2 * fitautau + (Delta * fidelta - Delta * tau * fideltatau) ^ 2 / (2 * Delta * fidelta + Delta ^ 2 * fideltadelta))
 End Function
 
 Function cp5_pT(p As Double, T As Double)
@@ -393,7 +397,7 @@ Function cp5_pT(p As Double, T As Double)
     For i = 1 To 5
         gammar_tautau = gammar_tautau + nir(i) * Pi ^ Iir(i) * Jir(i) * (Jir(i) - 1) * tau ^ (Jir(i) - 2)
     Next i
-    cp5_pT = -r * tau ^ 2 * (gamma0_tautau + gammar_tautau)
+    cp5_pT = -R * tau ^ 2 * (gamma0_tautau + gammar_tautau)
 End Function
 
 Function SpecificEnthalpy_pT(p_Pa, T_K)
@@ -434,7 +438,7 @@ Private Function h1_pT(p, T) As Double ' p in MPa, T in K
         gamma_der_tau = gamma_der_tau + (n1(i) * (7.1 - Pi) ^ I1(i) * J1(i) * (tau - 1.222) ^ (J1(i) - 1))
         'Debug.Print gamma_der_tau
     Next i
-    h1_pT = r * T * tau * gamma_der_tau
+    h1_pT = R * T * tau * gamma_der_tau
 End Function
 
 Private Function h2_pT(p, T) As Double
@@ -462,7 +466,7 @@ Private Function h2_pT(p, T) As Double
     For i = 1 To 43 'CHANGED HERE: reduced by 1, because VBA-Arrays start at 0
         gr_tau = gr_tau + nr(i) * Pi ^ Ir(i) * Jr(i) * (tau - 0.5) ^ (Jr(i) - 1)
     Next i
-    h2_pT = r * T * tau * (g0_tau + gr_tau)
+    h2_pT = R * T * tau * (g0_tau + gr_tau)
 End Function
 
 Private Function h3_pT(p As Double, ByVal T As Double) As Double
@@ -583,7 +587,7 @@ Private Function h5_pT(p, T) As Double
     For i = 1 To 5
         gammar_tau = gammar_tau + nir(i) * Pi ^ Iir(i) * Jir(i) * tau ^ (Jir(i) - 1)
     Next
-    h5_pT = r * T * tau * (gamma0_tau + gammar_tau)
+    h5_pT = R * T * tau * (gamma0_tau + gammar_tau)
 End Function
 
 

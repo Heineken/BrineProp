@@ -1,4 +1,11 @@
 Attribute VB_Name = "Common"
+' Functions used by both phases
+' Functions to provide vector calculation functionality
+' and more
+
+' by Henning Francke francke@gfz-potsdam.de
+' 2014 GFZ Potsdam
+
 Option Explicit
 Option Base 1
 
@@ -22,7 +29,6 @@ Function String2Vector(Xi_string, Optional ByRef n As Integer) 'As Double() Conv
         Xi_vec = Split(Replace(Xi_string, ",", "."), ";")
      End If
         
-    'Dim n As Integer:
     n = UBound(Xi_vec) + 1
     If Len(Xi_vec(n - 1)) = 0 Then 'if last field is empty then crop
         n = n - 1
@@ -45,7 +51,7 @@ End Function
 Function SubArray(sourceArray, Indexfrom As Integer, IndexTo As Integer)
     Dim b() As Double, i As Integer
     Dim n As Integer
-    'sourceArray = ToDouble(sourceArray, n)
+    
     n = Length(sourceArray)
     If Indexfrom < 1 Or IndexTo < 1 Or Indexfrom > n Or IndexTo > n Then
         SubArray = "#Index out of valid range for input array in SubArray"
@@ -303,12 +309,6 @@ Function FullMassVector(Xi, Optional ByRef nX As Integer) 'As Double()
     nX = nXi + 1
     ReDim Preserve X(1 To nX)
   
-'  ReDim X(1 To UBound(Xi) + 1)
-'  Dim j As Integer
-'  For j = LBound(Xi) To UBound(Xi)
-'    X(j) = Xi(j)
-'  Next j
-
     X(nX) = 1 - Application.Sum(Xi)
     If X(nX) > 1 Or X(nX) <= 0 Then
         X(1) = -1

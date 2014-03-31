@@ -1,2 +1,2 @@
 Attribute VB_Name = "Constants"
-Public Const r = 8.314472
+Public Const R = 8.314472

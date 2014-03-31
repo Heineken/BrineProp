@@ -1,4 +1,14 @@
 Attribute VB_Name = "Brine"
+' Calculation of two-phase properties of a brine containing multiple salts and multiple gases
+' parametrized for NaCl,CaCl,KCl,N2,C2,N2
+' developed for PhD project: http://nbn-resolving.de/urn:nbn:de:kobv:83-opus4-47126
+
+' All inputs in SI units, unless otherwise specified
+' mass composition (X) input from worksheet can be either full mass vector (X) or without water (Xi)
+
+' by Henning Francke francke@gfz-potsdam.de
+' 2014 GFZ Potsdam
+
 Option Explicit
 Option Base 1
 
@@ -8,14 +18,7 @@ Type BrineProps
     h   As Double 'Specific enthalpy
     h_g As Double 'Specific enthalpy gas phase
     h_l As Double 'Specific enthalpy liquid phase
-    's 'Specific entropy
-    'd As Double 'density
     X As Double 'gas mass fraction
-    'GVF As Double 'Gas Void Fraction
-    'd_l As Double 'density liquid phase
-    'd_g As Double 'density gas phase
-    'cp   As Double 'Specific heat capacity
-    'cp_g As Double 'Specific heat capacity gas phase
     cp_l As Double 'Specific heat capacity liquid phase
     X_l() As Double '(nX) composition of liquid phase
     X_g() As Double '(nX_gas + 1)  composition of gas phase
@@ -36,8 +39,6 @@ Const ignoreLimitN2_T = True
 Const ignoreLimitN2_p = True
 
 
-'Public Const nX_salt = Brine_liq.nX
-'Public Const nX_gas = Brine_gas.nX
 Public Const nX = nX_salt + nX_gas + 1
 
 Public Const i_NaCl = 1 'reference number
@@ -171,7 +172,6 @@ Function gasVolumeFraction(p As Double, T As Double, Xi, Optional phase As Integ
     If Len(VLEstate.error) > 0 Then
         gasVolumeFraction = VLEstate.error
     Else
-        'gasVolumeFraction = VLEstate.GVF
         Dim d As Double, d_g As Double
         d = density(p, T, Xi, phase = phase, d_g)
         gasVolumeFraction = IIf(VLEstate.X > 0, VLEstate.X * d / d_g, 0)
@@ -188,7 +188,6 @@ Function density(p As Double, T As Double, Xi, Optional phase As Integer = 0, Op
             density = d_l
             Exit Function
         End If
-        'Dim d_g As Double
         If VLEstate.X > 0 Then
             d_g = Brine_gas.density(p, T, VLEstate.X_g) 'gas density
             If VarType(d_g) = vbString Then
@@ -319,8 +318,6 @@ Function dynamicViscosity_gas(p As Double, T As Double, Xi, Optional phase As In
 End Function
 
 Private Function VLE(p As Double, T As Double, Xi, Optional phase As Integer = 0) As BrineProps
-'Function VLE(p As Double, T As Double, Xi, Optional what = "x", Optional phase As Integer = 0) As BrineProps
-    ' Optional ByRef X_liq() As Double, Optional ByRef X_gas() As Double)
     ' VLE algorithm
     ' finds the VLE iteratively by varying the normalized quantity of gas in the gasphase, calculates the densities"
     ' Input: p,T,Xi
@@ -348,8 +345,6 @@ Private Function VLE(p As Double, T As Double, Xi, Optional phase As Integer = 0
         n_g_norm_start(i) = 0.5
     Next i
     Dim p_gas() As Double  'partial pressures of gases
-    ' output Modelica.SIunits.Pressure p_H2O "water vapour pressure considering salinity"
-    ' Dim p_degas '(nX_gas + 1) As Double
     Dim X_l() As Double: X_l = X 'MassFraction start value
     Dim x_ As Double 'gas mass fraction
     Dim p_H2O As Double 'partial pressure of water vapour pressure
@@ -358,27 +353,16 @@ Private Function VLE(p As Double, T As Double, Xi, Optional phase As Integer = 0
     Dim f() As Double 'nX_gas + 1componentwise pressure disbalance (to become zero)
     Dim Delta_n_g_norm() As Double
     Delta_n_g_norm = fill(1000#, nX_gas + 1)
-    ''  Modelica.SIunits.MassFraction(nX_gas + 1) c = {3.16407e-5,0,3.6e-8,.746547} "cat(1,fill(1e-4, nX_gas), {X_(end)})fill(0, nX_gas+1)X_(nX_salt+1:end)"
-    '  Dim k_H2O as Double 'Henry coefficient
     Dim k '() As Double 'nX Henry coefficients
     Dim n '(nX_gas + 1) As Double 'Total mol numbers
     Dim n_l() As Double 'mols in liquid phase per kg fluid
     Dim n_g() As Double 'mols in gas  phase per kg fluid
-    '  Dim n_g_norm_test(nX_gas + 1)  as Double
-    ''  Modelica.SIunits.MassFraction(nX) X_
     Dim n_g_norm '(nX_gas + 1) As Double
-    '    "= X_(end-nX_gas:end-1)./MM_gas fill(0,nX_gas) - start value: all degassed"
     Dim dp_gas_dng_norm  As Double
     Dim dcdng_norm  As Double
     Dim dp_degas_dng_norm As Double
     Dim dfdn_g_norm(nX_gas + 1) As Double
-    '  Integer z=0
     Dim sum_n_ion As Double
-    ''  Dim  Grad_f(nX_gas + 1,nX_gas + 1)  as Double
-    '  Dim R_gas  as Double
-    '
-    '
-    '
     
     If T < 273.15 Then
         VLE.error = "T=" & T & " too low (<0°C) (VLE())"
@@ -386,7 +370,6 @@ Private Function VLE(p As Double, T As Double, Xi, Optional phase As Integer = 0
     
         ' DEGASSING PRESSURE
     p_H2O = saturationPressure_H2O(p, T, X)
-    'p_degas = cat(saturationPressures(p, T, X), p_H2O)
     If (p_H2O > p) Then
         VLE.error = "#p is below water vapour pressure p_H2O(" & p / 10 ^ 5 & "bar," & T - 273.15 & "°C, X) = " & p_H2O / 100000# & " bar (VLE)"
         Exit Function
@@ -411,14 +394,11 @@ Private Function VLE(p As Double, T As Double, Xi, Optional phase As Integer = 0
         If DebugMode Then
             Debug.Print ("1Phase-Liquid (VLE(" & p & "," & T & "))")
         End If
-        'x_ = 0
-        'p_H2O = p_sat_H2O
     Else
         If Not Application.Max(SubArray(X, nX_salt + 1, nX - 1)) > 0 Then
             VLE.error = "#Phase equilibrium cannot be calculated without dissolved gas" ' at "+String(p/1e5)+" bar, "+String(T-273.15)+"°C with p_degas="+String(sum(p_degas)/1e5)+" bar.")
             Exit Function
         End If
-        'n=X(nX_salt + 1:end) ./ MM_vec(nX_salt + 1:nX)
         n = VecDiv(SubArray(X, nX_salt + 1, nX), Brine_gas.MM_vec) 'total mole numbers per kg brine
         n_g_norm = VecProd(n_g_norm_start, VecSgn(SubArray(X, nX_salt + 1, nX))) 'switch off unused salts
         
@@ -434,7 +414,6 @@ Private Function VLE(p As Double, T As Double, Xi, Optional phase As Integer = 0
             n_g = VecProd(n_g_norm, n)
             n_l = VecDiff(n, n_g)
             x_ = ScalProd(n_g, Brine_gas.MM_vec)
-            'X_l:=cat(1, X[1:nX_salt], n_l.*MM_vec[nX_salt+1:nX])/(1-x);
             X_l = VecDiv(cat(SubArray(X, 1, nX_salt), VecProd(n_l, Brine_gas.MM_vec)), (1 - x_))
             ' PARTIAL PRESSURE
             p_gas = VecProd(p / Application.Sum(n_g), n_g)
@@ -544,7 +523,6 @@ Function saturationPressure_H2O(p As Double, T As Double, X, Optional ByRef p_H2
         Exit Function
     End If
     ionMoleFractions = VecDiv(ionMoleFractions, Application.Sum(ionMoleFractions)) 'normalize
-    'Dim p_H2O As Double
     p_H2O = IAPWS.Waterpsat_T(T)
     saturationPressure_H2O = p_H2O * ionMoleFractions(nX)
   Else
@@ -554,10 +532,8 @@ Function saturationPressure_H2O(p As Double, T As Double, X, Optional ByRef p_H2
 End Function
 
 Private Function massFractionsToMoleFractions(X, MM) 'Return mole_i/sum(mole_i) from mass fractions X
-    'MM_vec molar masses of components
     Dim nX As Integer, nM As Integer, i As Integer
     X = ToDouble(X, nX)
-    'MM = ToDouble(MM, nM)
     Dim molefractions() As Double 'Molalities moles/m_H2O
     Dim molalities() As Double 'Molalities moles/m_H2O
     ReDim molefractions(1 To nX)

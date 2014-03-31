@@ -1,12 +1,11 @@
 Attribute VB_Name = "Brine_liq"
-' Calculation of liquid phase (H2O + NaCl + KCl + CaCl) properties
+' Properties of liquid phase (H2O + NaCl + KCl + CaCl) properties
 ' (density, viscosity, specific heat capacity, specific enthalpy)
 ' uses IAPWS pure water properties
 '
-' by Henning Francke 2014 francke@gfz-potsdam.de
-' GFZ Potsdam
-' TODO:
-' -salt props as Collection
+' by Henning Francke francke@gfz-potsdam.de
+' 2014 GFZ Potsdam
+
 Option Explicit
 Option Base 1
 Public Const nX_salt = 3
@@ -20,8 +19,6 @@ Private Const ignoreLimit_h_KCl_Tmin = True 'ignore Tmin in appMolarEnthalpy_KCl
 Private Const ignoreLimit_h_CaCl2_Tmin = True 'ignore Tmin in appMolarEnthalpy_CaCl2_White and appMolarHeatCapacity_CaCl2_White
 
 Public Salts(1 To 3) As SaltProps
-' Public MM_vec(1 To 4) As Double
-'Public Const M_H2O = 0.018015 '[kg/mol]
 
 Private Sub init()
     'DefineSalts
@@ -29,10 +26,6 @@ Private Sub init()
     Salts(2) = KCl
     Salts(3) = CaCl2
     DefineLimits
-'    MM_vec(1) = Salts(1).MM
-'    MM_vec(2) = Salts(2).MM
-'    MM_vec(3) = Salts(3).MM
-'    MM_vec(4) = M_H2O
 End Sub
 
 Private Sub DefineLimits()
@@ -95,12 +88,6 @@ Function specificHeatCapacityCp(p As Double, T As Double, Xin)  'calculation of 
         End If
     End If
     
-'    specificHeatCapacityCp = (X(1) + X(UBound(X))) * CDbl(cp_Driesner)
-'    Dim i As Integer
-'    For i = 2 To nX_salt
-'        specificHeatCapacityCp = specificHeatCapacityCp + X(UBound(X)) * b(i) * Cp_appmol(i)
-'    Next i
-'    specificHeatCapacityCp = (X(i_NaCl) + X(nX)) * cp_Driesner + X(nX) * ScalProd(SubArray(b, 2, 3), Cp_appmol) 'for length(H_appmol)=2
     specificHeatCapacityCp = (X(i_NaCl) + X(nX)) * cp_Driesner + X(nX) * (b(2) * Cp_appmol(2) + b(3) * Cp_appmol(3)) 'for length(H_appmol)=2
 End Function
 
@@ -234,9 +221,6 @@ Private Function T_Scale_h_Driesner(p As Double, T As Double, X_NaCl_ As Double,
       End If
    End If
 
-'  If NaCl.MM = 0 Then
-'    init
-'  End If
 
   If X_NaCl_ = 0 Then
     x_NaCl = 0
@@ -257,8 +241,8 @@ Private Function T_Scale_h_Driesner(p As Double, T As Double, X_NaCl_ As Double,
   q_11 = -32.1724 + 0.0621255 * p_bar
 
   q_12 = -q_10 - q_11
-  'x_NaCl=0 results in q_1=0 / x_NaCl = 1 is pure NaCl
-  q_1 = q_10 + q_11 * (1 - x_NaCl) + q_12 * (1 - x_NaCl) ^ 2
+  
+  q_1 = q_10 + q_11 * (1 - x_NaCl) + q_12 * (1 - x_NaCl) ^ 2 'x_NaCl=0 results in q_1=0 / x_NaCl = 1 is pure NaCl
 
   T_Scale_h_Driesner = T_C * q_2 + q_1 + 273.15 ' K
 End Function
@@ -314,16 +298,9 @@ Function specificEnthalpy(p As Double, T As Double, Xin) 'enthalpy calculation
         End If
     End If
 
-    'h := (X[NaCl]+X[end])*h_Driesner + X[end]*b[2:5]*H_appmol[2:5];
 '    SpecificEnthalpy = (X(i_NaCl) + X(nX)) * h_Driesner + X(nX) * ScalProd(SubArray(b, 2, 3), SubArray(H_appmol, 2, 3))
-'    specificEnthalpy = (X(i_NaCl) + X(nX)) * h_Driesner + X(nX) * ScalProd(SubArray(b, 2, 3), H_appmol) 'for length(H_appmol)=2
     specificEnthalpy = (X(i_NaCl) + X(nX)) * h_Driesner + X(nX) * (b(2) * H_appmol(2) + b(3) * H_appmol(3)) 'for length(H_appmol)=2
 
-'    SpecificEnthalpy = (X(1) + X(nX)) * CDbl(h_Driesner)
-'    Dim i As Integer
-'    For i = 2 To nX_salt
-'        SpecificEnthalpy = SpecificEnthalpy + X(UBound(X)) * b(i) * H_appmol(i)
-'    Next i
 End Function
 
 
@@ -347,8 +324,6 @@ Private Function HeatOfSolution_KCl_Sanahuja1986(T As Double)
 End Function
 
 
-'BELOW GENERIC=============================================================================
-
 Function MM_vec()
  'generates double vector of molar masses
     If Salts(1).MM = 0 Then 'if Salt data not defined
@@ -360,9 +335,6 @@ Function MM_vec()
     For i = 1 To nX_salt
         MM(i) = Salts(i).MM
     Next i
-'    M(1) = NaCl.MM
-'    M(2) = KCl.MM
-'    M(3) = CaCl2.MM
     MM(nX_salt + 1) = M_H2O
     MM_vec = MM
 End Function
@@ -374,12 +346,12 @@ Function nM_vec() As Double()
     For i = 1 To nX_salt
         nM(i) = Salts(i).nM
     Next i
-'    nM(1) = NaCl.nM
-'    nM(2) = KCl.nM
-'    nM(3) = CaCl2.nM
     nM(nX_salt + 1) = H2O.nM
     nM_vec = nM
 End Function
+
+'ABOVE COMPOSITION SPECIFIC
+'BELOW GENERIC=============================================================================
 
 Function dynamicViscosity(p_Pa As Double, T As Double, Xin) 'brine density
   'Multisalt-Version of viscosity calculation according to Duan et al 2009 and Zhang et al 1997: Considers NaCl and KCL, with geometric mixture rule"
@@ -545,7 +517,7 @@ Function density(p As Double, T As Double, Xin) ', p_sat_MPa As Double) 'Brine d
     Dim N_0 As Double: N_0 = 6.0221415E+23    'Avogadro constant in [1/mol]
     Dim E As Double: E = 1.60217733E-19 * 10 * 299792458 'elementary charge in [esu]
     Dim k As Double: k = 1.3806505E-16 'Boltzmann constant in [erg/K]
-    Dim r As Double: r = 8.314472 'Gas constant [J/mol*K]
+    Dim R As Double: R = 8.314472 'Gas constant [J/mol*K]
     Dim p_bar As Double: p_bar = p / 10 ^ 5
     Dim p_MPa As Double: p_MPa = p / 10 ^ 6
     Dim V As Double
@@ -592,10 +564,8 @@ Function density(p As Double, T As Double, Xin) ', p_sat_MPa As Double) 'Brine d
     Dim c() As Double
     ReDim c(1 To 23)
     
-    '  Dim p_sat_MPa As Double: p_sat_MPa = Pressure("water", "Tvap", "SI", T)
     
-    'for pure water skip the whole calculation and return water density
-    If Application.Max(X) <= 0.1 ^ 12 Then
+    If Application.Max(X) <= 0.1 ^ 12 Then 'for pure water skip the whole calculation and return water density
       density = rho_H2O * 1000
       Exit Function
     End If
@@ -606,7 +576,6 @@ Function density(p As Double, T As Double, Xin) ', p_sat_MPa As Double) 'Brine d
 '            Density = "#Salt name not defined."
 '            Exit Function
 '        End If
-        '    Modelica.Utilities.Streams.print(salt.name+': '+String(X[j]))
         If Not X(j) > 0 Then
             M_salt(j) = 1 'To avoid division by zero at the end
         Else
@@ -698,7 +667,6 @@ Function density(p As Double, T As Double, Xin) ', p_sat_MPa As Double) 'Brine d
             D_plus = D_1000 + Cc * Log((Bb + p_plus_bar) / (Bb + 1000))
             D_minus = D_1000 + Cc * Log((Bb + p_minus_bar) / (Bb + 1000))
             
-            'rho_H2O_plus = Density("water", "PT", "SI", Application.Max(p_plus_bar / 10#, p_sat_MPa + 0.1 ^ 6), T) * 0.001 'kg/m³->kg/dm³
             rho_H2O_plus = Density_pT(p_plus_bar * 10 ^ 5, T) / 1000 'kg/m³->kg/dm³
             
             rho_H2O_minus = rho_H2O
@@ -708,17 +676,17 @@ Function density(p As Double, T As Double, Xin) ', p_sat_MPa As Double) 'Brine d
             dA_Phi = (A_Phi_plus - A_Phi_minus)
             
             'DH-slope for apparent molar volume according to Rogers and Pitzer (1982)
-            A_v = 23 * (-4 * r * T * dA_Phi / dp) 'where does the 23 come from??
+            A_v = 23 * (-4 * R * T * dA_Phi / dp) 'where does the 23 come from??
             
             '---------------------------------------------------
             ' Solution 1: using V_o_Phi and V_Phi
             '---------------------------------------------------
             
             'Equation 13: apparent molar Volume at infinite dilution in cm³/mol
-            V_o_Phi = (V_m_r / m_r - 1000 / (m_r * rho_H2O) - V * Abs(z_plus * z_minus) * A_v * h_mr - 2 * v_plus * v_minus * r * T * (B_v * m_r + v_plus * z_plus * C_v * m_r ^ 2))
+            V_o_Phi = (V_m_r / m_r - 1000 / (m_r * rho_H2O) - V * Abs(z_plus * z_minus) * A_v * h_mr - 2 * v_plus * v_minus * R * T * (B_v * m_r + v_plus * z_plus * C_v * m_r ^ 2))
             
                           'Equation 2: apparent molar Volume in cm^3/mol
-            V_Phi(j) = V_o_Phi + V * Abs(z_plus * z_minus) * A_v * h + 2 * v_plus * v_minus * M(j) * r * T * (B_v + v_plus * z_plus * M(j) * C_v)
+            V_Phi(j) = V_o_Phi + V * Abs(z_plus * z_minus) * A_v * h + 2 * v_plus * v_minus * M(j) * R * T * (B_v + v_plus * z_plus * M(j) * C_v)
             
         End If
   Next j

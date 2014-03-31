@@ -1,6 +1,9 @@
 Attribute VB_Name = "Brine_gas"
-' Gas phase properties
-' (density, viscosity, specific heat capacity, specific enthalpy)
+' Properties of gas mixture (density, viscosity, specific heat capacity, specific enthalpy)
+
+' by Henning Francke francke@gfz-potsdam.de
+' 2014 GFZ Potsdam
+
 Option Explicit
 Option Base 1
 
@@ -8,26 +11,10 @@ Public Const nX_gas = 3
 Public Const nX = nX_gas + 1
 Public Const ignoreLimitN2_T = False
 
-Const r = 8.314472
-'Const M_CO2 = 0.0440095 '[kg/mol]
+Const R = 8.314472
 Const nM_CO2 = 1 'number of ions per molecule
-'Const M_N2 = 0.0280134 '[kg/mol]
 Const nM_N2 = 1 'number of ions per molecule
-'Const M_CH4 = 0.01604246 '[kg/mol]
 Const nM_CH4 = 1 'number of ions per molecule
-'Function gas_vec()
-'    gas_vec = Array(M_CO2, M_N2, M_CH4, M_H2O)
-'End Function
-
-'Function MM_vec()
-'' generates variant vector of molar masses
-'    MM_vec = Array(M_CO2, M_N2, M_CH4, M_H2O) '[first index=0 !]
-'    Dim v(1 To 4) As Variant
-'    v(1) = M_CO2
-'    v(2) = M_N2
-'    v(3) = M_CH4
-'    v(4) = M_H2O
-'End Function
 
 Function MM_vec()
  'generates double vector of molar masses
@@ -56,10 +43,10 @@ Function R_gas(Xi)
         R_gas = X
         Exit Function
    End If
-    R_gas = ScalProd(X, Array(CO2.r, N2.r, CH4.r, H2O.r))
-    ' R_gas = Application.SumProduct(X, Array(CO2.R, N2.R, CH4.R, H2O.R)) 'fails for arrays from workbook
+    R_gas = ScalProd(X, Array(CO2.R, N2.R, CH4.R, H2O.R))
 End Function
 
+'ABOVE SPECIFIC TO GAS COMPOSITION
 'BELOW GENERIC PART
 
 Private Function MM_gas(X) As Double
@@ -88,17 +75,13 @@ End Function
 
 Private Function SingleGasNasa_h_T(data As DataRecord, T As Double, Optional exclEnthForm As Boolean = True, Optional ZeroAt0K As Boolean = True, Optional h_off As Double = 0) As Double
     SingleGasNasa_h_T = _
-    IIf(T < data.Tlimit, data.r * ((-data.alow(1) + T * (data.blow(1) + data.alow(2) * Math.Log(T) + T * (1# * data.alow(3) + T * (0.5 * data.alow(4) + T * (1 / 3 * data.alow(5) + T * (0.25 * data.alow(6) + 0.2 * data.alow(7) * T)))))) / T) _
-        , data.r * ((-data.ahigh(1) + T * (data.bhigh(1) + data.ahigh(2) * Math.Log(T) + T * (1# * data.ahigh(3) + T * (0.5 * data.ahigh(4) + T * (1 / 3 * data.ahigh(5) + T * (0.25 * data.ahigh(6) + 0.2 * data.ahigh(7) * T)))))) / T)) _
+    IIf(T < data.Tlimit, data.R * ((-data.alow(1) + T * (data.blow(1) + data.alow(2) * Math.Log(T) + T * (1# * data.alow(3) + T * (0.5 * data.alow(4) + T * (1 / 3 * data.alow(5) + T * (0.25 * data.alow(6) + 0.2 * data.alow(7) * T)))))) / T) _
+        , data.R * ((-data.ahigh(1) + T * (data.bhigh(1) + data.ahigh(2) * Math.Log(T) + T * (1# * data.ahigh(3) + T * (0.5 * data.ahigh(4) + T * (1 / 3 * data.ahigh(5) + T * (0.25 * data.ahigh(6) + 0.2 * data.ahigh(7) * T)))))) / T)) _
     + IIf(exclEnthForm, -data.Hf, 0#) + IIf(ZeroAt0K, data.h0, 0#) + h_off
 End Function
 
 Function specificEnthalpy(p As Double, T As Double, Xin)
     'calculation of specific enthalpy of gas mixture
-    'specificEnthalpy = checkMassVector(X)
-    'If VarType(specificEnthalpy) <> vbBoolean Then
-    '    Exit Function
-    'End If
     
     Dim X
     X = CheckMassVector(Xin, nX)
@@ -132,8 +115,8 @@ End Function
 Private Function SingleGasNasa_cp_T(data As DataRecord, T As Double, Optional exclEnthForm As Boolean = True, Optional ZeroAt0K As Boolean = True, Optional h_off As Double = 0) As Double
     SingleGasNasa_cp_T = _
     IIf(T < data.Tlimit, _
-        data.r * (1 / (T * T) * (data.alow(1) + T * (data.alow(2) + T * (1# * data.alow(3) + T * (data.alow(4) + T * (data.alow(5) + T * (data.alow(6) + data.alow(7) * T))))))) _
-        , data.r * (1 / (T * T) * (data.ahigh(1) + T * (data.ahigh(2) + T * (1# * data.ahigh(3) + T * (data.ahigh(4) + T * (data.ahigh(5) + T * (data.ahigh(6) + data.ahigh(7) * T))))))) _
+        data.R * (1 / (T * T) * (data.alow(1) + T * (data.alow(2) + T * (1# * data.alow(3) + T * (data.alow(4) + T * (data.alow(5) + T * (data.alow(6) + data.alow(7) * T))))))) _
+        , data.R * (1 / (T * T) * (data.ahigh(1) + T * (data.ahigh(2) + T * (1# * data.ahigh(3) + T * (data.ahigh(4) + T * (data.ahigh(5) + T * (data.ahigh(6) + data.ahigh(7) * T))))))) _
     )
 End Function
 

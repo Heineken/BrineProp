@@ -2,6 +2,10 @@ Attribute VB_Name = "GasData"
 ' Ideal gas coefficients from Modelica.Media.IdealGases.GasData
 ' Solubility functions
 ' TODO: Limits mit in den Record
+
+' by Henning Francke francke@gfz-potsdam.de
+' 2014 GFZ Potsdam
+
 Option Explicit
 Option Base 1
 Public Const M_CO2 = 0.0440095 '[kg/mol]
@@ -19,7 +23,7 @@ Type DataRecord 'Coefficient data record for properties of ideal gases based on 
   blow As Variant '(2) 'Low temperature constants b
   ahigh As Variant '(7) 'High temperature coefficients a
   bhigh As Variant '(2) 'High temperature constants b
-  r As Double 'Gas constant
+  R As Double 'Gas constant
   nM As Integer 'number of ions per molecule
 End Type
 
@@ -48,7 +52,7 @@ Function CO2() As DataRecord
         .blow = Array(-45281.9846, -7.04827944)
         .ahigh = Array(117696.2419, -1788.791477, 8.29152319, -0.0000922315678, 4.86367688E-09, -1.891053312E-12, 6.33003659E-16)
         .bhigh = Array(-39083.5059, -26.52669281)
-        .r = 188.924482214067
+        .R = 188.924482214067
         .nM = 1
     End With
 End Function
@@ -64,7 +68,7 @@ Function N2() As DataRecord
         .blow = Array(710.846086, -10.76003744)
         .ahigh = Array(587712.406, -2239.249073, 6.06694922, -0.00061396855, 1.491806679E-07, -1.923105485E-11, 1.061954386E-15)
         .bhigh = Array(12832.10415, -15.86640027)
-        .r = 296.803386950531
+        .R = 296.803386950531
         .nM = 1
     End With
 End Function
@@ -80,7 +84,7 @@ Function CH4() As DataRecord
         .blow = Array(-23313.1436, 89.0432275)
         .ahigh = Array(3730042.76, -13835.01485, 20.49107091, -0.001961974759, 0.000000472731304, -3.72881469E-11, 1.623737207E-15)
         .bhigh = Array(75320.6691, -121.9124889)
-        .r = 518.279116793809
+        .R = 518.279116793809
         .nM = 1
     End With
 End Function
@@ -96,7 +100,7 @@ Function H2O() As DataRecord
         .blow = Array(-33039.7431, 17.24205775)
         .ahigh = Array(1034972.096, -2412.698562, 4.64611078, 0.002291998307, -0.000000683683048, 9.42646893E-11, -4.82238053E-15)
         .bhigh = Array(-13842.86509, -7.97814851)
-        .r = 461.523329085088
+        .R = 461.523329085088
         .nM = 1
     End With
 End Function
@@ -271,7 +275,7 @@ End Function
     v_l_H2O = M_H2O / IAPWS.Density_pT(p, T)
     Dim phi_H2O As Double
     phi_H2O = fugacity_H2O_Duan2006N2(p, T)
-    Const r = 83.14472 'bar.cm3/(mol.K) Molar gas constant"
+    Const R = 83.14472 'bar.cm3/(mol.K) Molar gas constant"
     Dim phi_N2 As Double
     Dim mu_l0_N2_RT As Double
     Dim lambda_N2_Na As Double
@@ -351,7 +355,7 @@ Function fugacity_N2_Duan2006(p As Double, T As Double)  'Zero search with EOS f
         V = IIf(z < 5, V_neu, (1 - d) * V_neu + d * V)
         V_m = V * 1 * 10 ^ 6 / (1000# * (sigma / 3.691) ^ 3)
         z = 1 + b / V_m + c / V_m ^ 2 + d / V_m ^ 4 + E / V_m ^ 5 + f / V_m ^ 2 * (1 + a(14) / V_m ^ 2) * Exp(-a(14) / V_m ^ 2)
-        V_neu = z / p * Constants.r * T
+        V_neu = z / p * Constants.R * T
         '    print("V("&(z)&")="&(V_neu))
         z = z + 1
         
@@ -475,10 +479,10 @@ Function fugacity_CH4_Duan1992(p As Double, T As Double)    'Zero search with EO
     
     While Abs(V - V_neu) > 10 ^ -8
         V = IIf(z_ < 5, V_neu, (1 - d_) * V_neu + d_ * V) 'dampened
-        V_r = V / (Constants.r * T_C / P_c)
+        V_r = V / (Constants.R * T_C / P_c)
         G = f / (2 * gamma) * (beta + 1 - (beta + 1 + gamma / V_r ^ 2) * Exp(-gamma / V_r ^ 2))
         z = 1 + b / V_r + c / V_r ^ 2 + d / V_r ^ 4 + E / V_r ^ 5 + f / V_r ^ 2 * (beta + gamma / V_r ^ 2) * Exp(-gamma / V_r ^ 2)
-        V_neu = z / p * Constants.r * T
+        V_neu = z / p * Constants.R * T
         z_ = z_ + 1
         If z_ >= 1000 Then
             fugacity_CH4_Duan1992 = "#Reached maximum number of iterations for fugacity calculation.(fugacity_CH4_Duan1992)"
