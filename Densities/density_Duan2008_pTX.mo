@@ -6,7 +6,7 @@ function density_Duan2008_pTX "Brine density"
   input SI.MolarMass MM_vec[:] "molar masses of components";
 
   output SI.Density d;
-public
+protected
   final constant Real b=1.2;
   final constant Real U[:]={3.4279E2,-5.0866E-3,9.4690E-7,-2.0525,3.1159E3,-1.8289E2,
       -8.0325E3,4.2142E6,2.1417};
@@ -21,7 +21,6 @@ public
   final constant Real R=Modelica.Constants.R "Gas constant [J/mol*K]";
 /*  constant Integer nX_salt =  size(X,1) 
     "TODO: diese Zeile und alle Verweise au nX_salt entfernen";*/
-protected
   constant Integer nX_salt=5;
   SI.MassFraction w_salt "kg_salt/kg_brine";
 //  SI.Temp_C T_C = SI.Conversions.to_degC(T);

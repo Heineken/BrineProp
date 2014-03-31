@@ -98,7 +98,7 @@ constant FluidConstants[nS] BrineConstants(
  //  Real[nX_gas+1] n_g_norm_start;
 
  //  Real[nX_gas+1] n_g_norm;
-   Real y[:]=massFractionsToMoleFractions(X,MM_vec) "mole fractions";
+   Real y_vec[:]=massFractionsToMoleFractions(X,MM_vec) "mole fractions";
  //  Real y_g[:]= massFractionsToMoleFractions(X_g,MM_vec[nX_salt+1:nX]) "mole fractions";
    Real y_g[:]= p_gas/p "mole fractions in gas phase";
 
@@ -122,7 +122,7 @@ initial equation
  //  assert(max(X)<=1 and min(X)>=0, "X out of range [0...1] = "+PowerPlant.vector2string(X)+" (saturationPressure_H2O())");
    u = h - p/d;
  //  MM = (X_salt*MM_salt + X_gas*MM_gas + X[end]*M_H2O);
-   MM = y*MM_vec;
+   MM = y_vec*MM_vec;
    R  = Modelica.Constants.R/MM;
 
  //  (h,x,d,d_g,d_l) = specificEnthalpy_pTX(p,T,X) unfortunately, this is not invertable;
@@ -509,8 +509,6 @@ protected
   end saturationPressures;
 
 
-
-
   redeclare replaceable partial function extends setState_pTX
   "finds the VLE iteratively by varying the normalized quantity of gas in the gasphase, calculates the densities"
   input Real[nX_gas + 1] n_g_norm_start "=fill(.1,nX_gas+1) 
@@ -844,7 +842,6 @@ protected
        fill(-1,nX);
     SI.SpecificHeatCapacity cp_vec[nX_gas+1];
   end specificHeatCapacityCp_gas;
-
 
 
   replaceable function dynamicViscosity_pTX_unused "viscosity calculation"

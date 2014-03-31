@@ -1,6 +1,6 @@
 within BrineProp.Examples;
 model BinarySaltValidation "Calculation of Values given by Zhang1997"
-package Medium = PowerPlant.Media.Brine.Brine_Duan_Multi_TwoPhase_ngas_3;
+package Medium = Brine_Duan_Multi_TwoPhase_ngas_3;
 
 //NaCl
 /*  Real b_t[:]={0.0805,0.1884,0.1959,0.262,0.4753,0.4912,0.7652,0.8386,1.2958,1.625,1.6953,1.7648,2.0102,3.6734,2.1492,2.2029,2.4938,2.7129,3.3438,3.5449,3.8629,4.0519,4.0913,4.2702,4.7142};

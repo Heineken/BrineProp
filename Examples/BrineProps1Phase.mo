@@ -1,6 +1,6 @@
 within BrineProp.Examples;
 model BrineProps1Phase
-package Medium = Brine_5salts;
+   package Medium = Brine_5salts;
 //package Medium = Modelica.Media.Water.WaterIF97_pT;
   Medium.BaseProperties props;
 

@@ -85,7 +85,7 @@ end ThermodynamicState;
     /*     constant SI.MolarMass M_H2O = PartialBrine.M_H2O "[kg/mol]";
      constant SI.MolarMass M_NaCl = PartialBrine.M_NaCl 
         "[kg/mol]";*/
-   Real y_vec[:]=massFractionsToMoleFractions(X,MM_vec);
+   BrineProp.Partial_Units.Molality y_vec[:]=massFractionsToMoleFractions(X,MM_vec);
  equation
    d = density_pTX(p,T,X);
    h = specificEnthalpy_pTX(p,T,X);
@@ -255,6 +255,7 @@ end setState_phX;
 
 
 redeclare replaceable function extends isobaricExpansionCoefficient
+protected
   constant SI.Temperature Delta_T= 1;
 algorithm
   beta :=state.d*(1/state.d - 1/(density_pTX(state.p,state.T - Delta_T,state.X)))/Delta_T;
