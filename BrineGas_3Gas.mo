@@ -107,16 +107,26 @@ package BrineGas_3Gas
   function extends specificHeatCapacityCp_pTX
     "calculation of specific heat capacities of gas mixture"
     import Modelica.Media.IdealGases.Common.SingleGasNasa;
-    import Modelica.Media.IdealGases.Common.SingleGasesData;
+    import Modelica.Media.IdealGases.SingleGases;
 
     import Modelica.Media.Water;
+
   protected
-    SI.SpecificHeatCapacity cp_vec[:]={
-      SingleGasNasa.cp_T(data=SingleGasesData.CO2,T=T),
-      SingleGasNasa.cp_T(data=SingleGasesData.N2,T=T),
-      SingleGasNasa.cp_T(data=SingleGasesData.CH4,T=T),
-      Water.IF97_Utilities.cp_pT(min(p,Water.IF97_Utilities.BaseIF97.Basic.psat(T)-1),T=T)}
+      SingleGasNasa.ThermodynamicState state=SingleGasNasa.ThermodynamicState(p=0,T=T);
+      SI.SpecificHeatCapacity cp_CO2=SingleGases.CO2.specificHeatCapacityCp(state);
+      SI.SpecificHeatCapacity cp_N2=SingleGases.N2.specificHeatCapacityCp(state);
+      SI.SpecificHeatCapacity cp_CH4=SingleGases.CH4.specificHeatCapacityCp(state);
+      SI.SpecificHeatCapacity cp_H2O=Water.IF97_Utilities.cp_pT(min(p,Water.IF97_Utilities.BaseIF97.Basic.psat(T)-1),T=T)
       "below psat -> gaseous";
+
+      SI.SpecificHeatCapacity cp_vec[:]={cp_CO2,cp_N2,cp_CH4,cp_H2O};
+
+      /*  SI.SpecificHeatCapacity cp_vec[:]={
+    SingleGasNasa.cp_T(data=SingleGasesData.CO2,T=T),
+    SingleGasNasa.cp_T(data=SingleGasesData.N2,T=T),
+    SingleGasNasa.cp_T(data=SingleGasesData.CH4,T=T),
+   Water.IF97_Utilities.cp_pT(min(p,Water.IF97_Utilities.BaseIF97.Basic.psat(T)-1),T=T)} 
+*/
   algorithm
     if debugmode then
       print("Running specificHeatCapacityCp_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" °C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
@@ -215,10 +225,12 @@ package BrineGas_3Gas
     SI.SpecificEnthalpy h_H2O_sat=Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.hv_p(p);
     SI.SpecificEnthalpy h_H2O=max(h_H2O_sat, Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p,T))
       "to make sure it is gaseous";
-  //  SI.SpecificEnthalpy h_CO2=Modelica.Media.IdealGases.SingleGases.CO2.h_T(Modelica.Media.IdealGases.SingleGases.CO2.data,T);
-    SI.SpecificEnthalpy h_CO2=SingleGasNasa.h_T(data=SingleGases.CO2.data,T=T);
-    SI.SpecificEnthalpy h_N2=SingleGasNasa.h_T(data=SingleGases.N2.data,T=T);
-    SI.SpecificEnthalpy h_CH4=SingleGasNasa.h_T(data=SingleGases.CH4.data,T=T);
+
+    SingleGasNasa.ThermodynamicState state=SingleGasNasa.ThermodynamicState(p=0,T=T);
+    SI.SpecificEnthalpy h_CO2=SingleGases.CO2.specificEnthalpy(state);
+    SI.SpecificEnthalpy h_N2=SingleGases.N2.specificEnthalpy(state);
+    SI.SpecificEnthalpy h_CH4=SingleGases.CH4.specificEnthalpy(state);
+
     SI.SpecificEnthalpy[:] h_vec={h_CO2,h_N2,h_CH4,h_H2O};
 
   algorithm
@@ -237,6 +249,7 @@ package BrineGas_3Gas
   print("h_N2: "+String(h_N2)+" J/kg");
   print("h_CH4: "+String(h_CH4)+" J/kg");
   print("h_H2O: "+String(h_H2O)+" J/kg");
+  print("T: "+String(state.T)+" K");
   */
   end specificEnthalpy_pTX;
 

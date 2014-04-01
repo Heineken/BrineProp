@@ -44,8 +44,6 @@ constant FluidConstants[nS] BrineConstants(
      each criticalPressure = 300e5,
      each criticalMolarVolume = 1,
      each acentricFactor = 1,
-     each triplePointTemperature = 273.15,
-     each triplePointPressure = 1e5,
      each meltingPoint = 1,
      each normalBoilingPoint = 1,
      each dipoleMoment = 1);
@@ -245,7 +243,7 @@ end ThermodynamicState;
     input String substancename;
     output Real phi;
 protected
-    Pressure_bar p_bar=SI.Conversions.to_bar(p);
+    BrineProp.Partial_Units.Pressure_bar p_bar=SI.Conversions.to_bar(p);
   end fugacity_pTX;
 
 
@@ -507,6 +505,8 @@ protected
     input SI.MolarMass MM[:] "molar masses of components";
     output SI.Pressure[nX_gas] p_sat;
   end saturationPressures;
+
+
 
 
   redeclare replaceable partial function extends setState_pTX
@@ -842,6 +842,7 @@ protected
        fill(-1,nX);
     SI.SpecificHeatCapacity cp_vec[nX_gas+1];
   end specificHeatCapacityCp_gas;
+
 
 
   replaceable function dynamicViscosity_pTX_unused "viscosity calculation"

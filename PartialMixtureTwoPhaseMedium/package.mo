@@ -8,45 +8,17 @@ extends Modelica.Media.Interfaces.PartialMixtureMedium(ThermoStates=Choices.Inde
 constant Boolean onePhase=false
   "true if the (derived) model should never be called with two-phase inputs";
 
+//redeclare replaceable record SaturationProperties "MSL 3.2.1"
 
-redeclare replaceable record extends FluidConstants "extended fluid constants"
-  /*    Temperature criticalTemperature "critical temperature";
-    AbsolutePressure criticalPressure "critical pressure";
-    MolarVolume criticalMolarVolume "critical molar Volume";
-    Real acentricFactor "Pitzer acentric factor";
-    Temperature triplePointTemperature "triple point temperature";
-    AbsolutePressure triplePointPressure "triple point pressure";
-    Temperature meltingPoint "melting point at 101325 Pa";
-    Temperature normalBoilingPoint "normal boiling point (at 101325 Pa)";
-    DipoleMoment dipoleMoment 
-      "dipole moment of molecule in Debye (1 debye = 3.33564e10-30 C.m)";
-    Boolean hasIdealGasHeatCapacity=false 
-      "true if ideal gas heat capacity is available";
-    Boolean hasCriticalData=false "true if critical data are known";
-    Boolean hasDipoleMoment=false "true if a dipole moment known";
-    Boolean hasFundamentalEquation=false "true if a fundamental equation";
-    Boolean hasLiquidHeatCapacity=false 
-      "true if liquid heat capacity is available";
-    Boolean hasSolidHeatCapacity=false 
-      "true if solid heat capacity is available";
-    Boolean hasAccurateViscosityData=false 
-      "true if accurate data for a viscosity function is available";
-    Boolean hasAccurateConductivityData=false 
-      "true if accurate data for thermal conductivity is available";
-    Boolean hasVapourPressureCurve=false 
-      "true if vapour pressure data, e.g. Antoine coefficents are known";
-    Boolean hasAcentricFactor=false "true if Pitzer accentric factor is known";
-    SpecificEnthalpy HCRIT0=0.0 
-      "Critical specific enthalpy of the fundamental equation";
-    SpecificEntropy SCRIT0=0.0 
-      "Critical specific entropy of the fundamental equation";
-    SpecificEnthalpy deltah=0.0 
-      "Difference between specific enthalpy model (h_m) and f.eq. (h_f) (h_m - h_f)";
-    SpecificEntropy deltas=0.0 
-      "Difference between specific enthalpy model (s_m) and f.eq. (s_f) (s_m - s_f)";
-      */
+replaceable record SaturationProperties
+  "Saturation properties of two phase medium"
+  extends Modelica.Icons.Record;
+  AbsolutePressure psat "saturation pressure";
+  Temperature Tsat "saturation temperature";
+  MassFraction X[nX] "Mass fractions";
   annotation (Documentation(info="<html></html>"));
-end FluidConstants;
+end SaturationProperties;
+
 
 constant FluidConstants[nS] fluidConstants "constant data for the fluid";
 
@@ -64,16 +36,6 @@ redeclare replaceable record extends ThermodynamicState
   annotation (Documentation(info="<html></html>"));
   //MassFraction X[nX] "Mass fraction of NaCl in kg/kg"
 end ThermodynamicState;
-
-
-replaceable record SaturationProperties
-  "Saturation properties of two phase medium"
-  extends Modelica.Icons.Record;
-  AbsolutePressure psat "saturation pressure";
-  Temperature Tsat "saturation temperature";
-  MassFraction X[nX] "Mass fractions";
-  annotation (Documentation(info="<html></html>"));
-end SaturationProperties;
 
 
 redeclare replaceable partial model extends BaseProperties

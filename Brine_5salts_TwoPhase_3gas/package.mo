@@ -1,8 +1,7 @@
 within BrineProp;
 package Brine_5salts_TwoPhase_3gas "Two-phase Aqueous Solution of NaCl, KCl, CaCl2, MgCl2, SrCl2, N2, CO2, CH4"
 
-//  extends PartialBrine_Multi_TwoPhase_ngas(
-//  extends PartialBrine_ngas_model(
+//TODO: use Fluid limits
 
 
   extends BrineProp.PartialBrine_ngas_Newton(
@@ -13,19 +12,6 @@ package Brine_5salts_TwoPhase_3gas "Two-phase Aqueous Solution of NaCl, KCl, CaC
     final nM_gas = {nM_CO2,nM_N2,nM_CH4},
     final MM_salt = Salt_data.MM_salt,
     final nM_salt = Salt_data.nM_salt);
-//    final MM_salt = {Salt_data.M_NaCl, Salt_data.M_KCl, Salt_data.M_CaCl2, Salt_data.M_MgCl2, Salt_data.M_SrCl2});
-
-//    explicitVars="pT"
-
-//  extends Partial_Viscosity;
-
-//  extends Partial_Gas_Data;
-
-/*
-  redeclare function extends massFractionsToMolalities 
-    "is apparently needed so that array arguments in extend-call work"
-  end massFractionsToMolalities;
-*/
 
 
   redeclare function extends fugacity_pTX
@@ -45,6 +31,7 @@ package Brine_5salts_TwoPhase_3gas "Two-phase Aqueous Solution of NaCl, KCl, CaC
                                            p,T,X,MM);
     end if;
   end fugacity_pTX;
+
 
 
   redeclare function extends setState_pTX

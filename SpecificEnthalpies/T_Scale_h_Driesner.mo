@@ -7,12 +7,12 @@ function T_Scale_h_Driesner
   input SI.MassFraction X_NaCl "mass fraction m_NaCl/m_Sol";
   output SI.Temp_K T_Scale_h;
   output Real q_2;
-public
+          //public
+protected
   constant Real M_NaCl=BrineProp.SaltData.M_NaCl "molar mass in [kg/mol]";
 //  constant Real M_H2O =  PartialBrine.M_H2O "molar mass in [kg/mol] TODO";
 
 //  Molality mola=X[1]/M_NaCl "molality b (mol_NaCl/kg_sol) הצüצ";
-protected
   constant Pressure_bar p_min=1;
   constant Pressure_bar p_max=1000;
   constant SI.Temp_C T_min=0;

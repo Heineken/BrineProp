@@ -18,8 +18,6 @@ partial package PartialBrine_MultiSalt_1Phase "Template for one-phase (liquid) b
      each criticalPressure = 300e5,
      each criticalMolarVolume = 1,
      each acentricFactor = 1,
-     each triplePointTemperature = 273.15,
-     each triplePointPressure = 1e5,
      each meltingPoint = 1,
      each normalBoilingPoint = 1,
      each dipoleMoment = 1);
