@@ -28,6 +28,6 @@ Licensed by Henning Francke under the [Modelica License 2](https://www.modelica.
 Copyright © 2009-2014 Helmholtz Centre Potsdam, GFZ German Research Centre for Geosciences
 This Modelica package is free software and the use is completely at your own risk;  
 it can be redistributed and/or modified under the terms of the [Modelica License 2](https://www.modelica.org/licenses/ModelicaLicense2) or newer.  
-For license conditions (including the disclaimer of warranty) visit [https://www.modelica.org/licenses/](https://www.modelica.org/licenses/).
+For license conditions (including the disclaimer of warranty) visit [https://www.modelica.org/licenses/](https://www.modelica.org/licenses).
 
 
