@@ -787,18 +787,15 @@ end pressure_dTX;
 
 
 annotation (Documentation(info="<html>
-  <h1>PartialMixtureTwoPhaseMedium</h1>
-  This is a template for two phase medium of a mixture of substances and is used by REFPROPMedium.<br/>
-  It has been created by merging PartialMixtureMedium and PartialTwoPhaseMedium from Modelica.Media.Interfaces.<br/>  
+<h4>PartialMixtureTwoPhaseMedium</h4>
+<p><br>This is a template for two phase medium of a mixture of substances and is used by REFPROPMedium.</p>
+<p><br>It has been created by merging PartialMixtureMedium and PartialTwoPhaseMedium from Modelica.Media.Interfaces.</p>
 
-<h3> Created by</h3>
-Henning Francke<br/>
-Helmholtz Centre Potsdam<br/>
-GFZ German Research Centre for Geosciences<br/>
+<h5>Created by</h5>
+<div>Henning Francke<br/>
+Helmholtz Centre Potsdam GFZ German Research Centre for Geosciences<br/>
 Telegrafenberg, D-14473 Potsdam<br/>
-Germany
-<p>
-<a href=mailto:info@xrg-simulation.de>francke@gfz-potsdam.de</a>
-  </html>
-"));
+Germany</div>
+<p><a href=\"mailto:info@xrg-simulation.de\">francke@gfz-potsdam.de</a></p>
+</html>"));
 end PartialMixtureTwoPhaseMedium;

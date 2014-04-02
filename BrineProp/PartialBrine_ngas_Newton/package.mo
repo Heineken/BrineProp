@@ -1,5 +1,5 @@
 within BrineProp;
-partial package PartialBrine_ngas_Newton "Template package for aqueous solutions of m Salts and n Gases, VLE solved by Newton's method"
+partial package PartialBrine_ngas_Newton "Template medium for aqueous solutions of m Salts and n Gases, VLE solved by Newton's method"
   //definition of molar masses
  //constant Integer phase=0;
 
@@ -866,31 +866,48 @@ protected
 
 
   annotation (Documentation(info="<html>
-<p><b>PartialBrine_ngas_Newton</b> is template package for aqueous solution of m Salts and n Gases. The vapour-liquid-equilibrium (VLE) is defined by the water vapour pressure and the gas solubilites.</p><p>The VLE is solved by Newton&apos;s method.</p><p>Explicit functions for density and enthalpy of the phases are not specified in this package, as it is just a template.</p>
-<p>The package has to be in one file, because it extends a MSL package (DYMOLA limitiation???).</p>
-<p><b><font style=\"font-size: 12pt; \">Fluid model assumptions</b></p>
-<p><ul>
-<li>The fluid consists of water, Ns salts and Nggases.</li>
-<li>Its total composition is given by vector of mass fractions X.</li>
-<li>There are one or two phases: liquid and, if absolute pressure is low enough, gas.</li>
-<li>The salts are completely dissolved in and limited to the liquid phase.</li>
-<li>The gas phase is formed by water vapour and gases. </li>
-<li>Water and gases are exchanged between the liquid and the gas phase by means of dissolution or evaporation/condensation.</li>
-<li>Mass and energy conservation are fulfilled.</li>
+<ul>
+<li><b>PartialBrine_ngas_Newton</b> is based on <code>PartialMixtureTwoPhaseMedium</code>, an extension to the <code>Modelica.Media</code> library. This extension was necessary because <code>Modelica.Media</code> supports mixtures and two-phase media, but not both combined.</li>
+<li>The vapour-liquid-equilibrium (VLE) is defined by the water vapour pressure and the gas solubilites. It is determined using Newton&apos;s method.</li>
+<li>Explicit material functions are not specified in this package, as it is just a template. They need to be provided in the instantiating package (e.g.<code> BrineProp.Brine_5salts_TwoPhase_3gas</code>).</li>
+<li>The model calculates properties for a thermodynamic state specified by <i>p</i> and <i>T</i>, <i>p</i> and <i>h</i>, <i>T</i> and <i>d</i> or <i>p</i> and <i>d</i>.</li>
+</ul>
+<h4>Fluid model assumptions</h4>
+<ul>
+<li>The fluid consists of water, <i>N<sub>s</sub></i> salts and <i>N<sub>g</sub></i> gases.</li>
+<li>Its total composition is given by a vector of mass fractions X.</li>
+<li>There are one or two phases: liquid and, if absolute pressure is low enough, gas (no solid phase).</li>
+<li>The gas phase is an ideal mixture of water vapour and gases.</li>
+<li>The salts are completely dissolved in and limited to the liquid phase (no precipitation/evaporation). </li>
+<li>Water and gases are exchanged between both phases by degassing/dissolution or evaporation/condensation, taking into account mass and energy conservation.</li>
 <li>Gases dissolve in liquid depending on their respective solubility, which depends on temperature and salt content, but not on the content of other gases.</li>
 <li>The saturation pressure of water is reduced by the salt content.</li>
-<li>Boundary surface enthalpies are neglected. </li>
-</ul></p>
-<p><b>Specific Enthalpy</b></p>
-<pre>h:=x&middot;h_G + (1-x)&middot;h_L</pre>
-<p><b>Density</b></p>
-<p>The total density <i>d</i> of the fluid is calculated by combining the densities of both phases (<i>dg</i> and <i>dl</i>) according to their volume fractions. The gas phase is assumed to be an Density of the gas phase is assumed to be an ideal mixture of ideal gases. </p>
-<pre>d:=1/(x/d_g + (1 - x)/d_l)</pre>
-<p>All files in this library, including the C source files are released under the Modelica License 2. </p>
-<p><b>TODO:</b></p>
-<p><b></font><font style=\"font-size: 10pt; \">Created by</b></p>
-<p>Henning Francke</p><p>Helmholtz Centre Potsdam</p><p>GFZ German Research Centre for Geosciences</p><p>Telegrafenberg, D-14473 Potsdam</p><p>Germany </p>
-<p><a href=\"mailto:francke@gfz-potsdam.de\">francke@gfz-potsdam.de</a> </p>
+<li>Water evaporation and condensation depend on its saturation pressure, which depends on temperature and the salt content according to Raoult&apos;s law.</li>
+<li>In two-phase state degassing pressures equal the respective partial pressures.</li>
+<li>Both phases are assumed to be in thermodynamic equilibrium, i.e. they have the same pressure and temperature. The vapour-liquid equilibrium is instantly reached.</li>
+<li>Boundary surface enthalpies are neglected.</li>
+</ul>
+<p>See <a href=\"http://nbn-resolving.de/urn:nbn:de:kobv:83-opus4-47126\">PhD thesis</a> for more details.</p>
+<h4>Details</h4>
+<p>Brine is a mixture of components and, if gases are involved, potentially has two phases. As this is not possible with the components provided in Modelica.Media a new Medium template had to be created by merging Modelica.Media.Interfaces.PartialMixtureMedium and Modelica.Media.Interfaces.PartialTwoPhaseMedium of the Modelica Standard Library 3.1. </p>
+<p>The model is explicit for p and T, but for h(p,T) the inverse function T(p,h) is defined. T(p,h) is inverts h(p,T) numerically by bisection, stopping at a given tolerance.</p>
+<p>In order to calculate h(p,T), the vapour-liquid-equilibrium (VLE) is determined, i.e. the gas mass fraction q and the compositions of the liquid phases X_l. Only h is returned, due to the limitation of DYMOLA/Modelica not allowing inverse functions of functions that are returning an array. As x (gas mass fraction) and X_l (composition of liquid phase) are of interest themselves and required to calculate density and viscosity, the VLE calculation is conducted one more time, this time with T known. This additiona unnecessary calculation doubles the workload when p,h are given. When p,T are given, however, it adds only one more calculation to the multiple iterations of the bisection algorithm. </p>
+<h4><span style=\"color:#008000\">Usage</span></h4>
+<p>This is a partial medium and cannot be used as is.</p>
+<p>See <code>BrineProp.Examples.BrineProps2phase</code> for usage example.</p>
+<p>See <code><a href=\"Modelica://BrineProp.Examples.BrineProps2phase\">BrineProp.Examples.BrineProps2phase</a></code> or info of <code><a href=\"Modelica://BrineProp.Brine_5salts_TwoPhase_3gas\">BrineProp.Brine_5salts_TwoPhase_3gas</a></code> for more usage examples.</p>
+
+<h5>TODO:</h5>
+<h5>Known Issues:</h5>
+<ul>
+<li>The package is in one file, because it extends a MSL package (DYMOLA limitiation?).</li>
+</ul>
+<h5>Created by</h5>
+<div>Henning Francke<br/>
+Helmholtz Centre Potsdam GFZ German Research Centre for Geosciences<br/>
+Telegrafenberg, D-14473 Potsdam<br/>
+Germany</div>
+<p><a href=\"mailto:info@xrg-simulation.de\">francke@gfz-potsdam.de</a></p>
 </html>",
  revisions="<html>
 

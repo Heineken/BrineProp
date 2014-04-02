@@ -27,23 +27,6 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
   "0.018015 [kg/mol]";
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   function massFractionsToMolalities
   "Calculate molalities (mole_i per kg H2O) from mass fractions X"
     extends Modelica.Icons.Function;
@@ -109,22 +92,28 @@ protected
 
 
   annotation (Documentation(info="<html>
-<p><b>BrineProp</b> is a package that provides properties of a specified brine, i.e. an aqueous solution of salts and gases, with a potential gas phase, therefore including de/gassing and evaporation/condensation. It is based on an extension to and therefore largely compatible to the Modelica.Media library. This necessary extension is PartialMixtureTwoPhaseMedium (not included in this package). This package has been developed and tested in Dymola up to 2012 FD01. </p>
-<p>All files in this library, including the C source files are released under the Modelica License 2. </p>
-<p><b></font><font style=\"font-size: 12pt; \">Installation</b></p>
-<p>Make sure the package directory is named BrineProp. This provided, the examples under <code>Examples</code> should work right away.</p>
-
+<p><b>BrineProp</b> is a modelica package that calculates the thermodynamic properties of a specified brine, i.e. an aqueous solution of salts and gases, with a potential gas phase, including degassing/evaporation and solution/condensation.</p>
+<p>It was developed as a part of a PhD projected, documented in the thesis &QUOT;<a href=\"http://nbn-resolving.de/urn:nbn:de:kobv:83-opus4-47126\">Thermo-hydraulic model of the two-phase flow in the brine circuit of a geothermal power plant</a>&QUOT;. </p>
+<p>This package has been developed and tested in Dymola up to 2014 FD01.</p>
+<p><b>Licensed by the </b>Henning Francke<b> under the Modelica License 2</b></p>
+<p>Copyright &copy; 2009-2014 Helmholtz Centre Potsdam, GFZ German Research Centre for Geosciences.</p>
+<p><br><i>This Modelica package is <u>free</u> software and the use is completely at <u>your own risk</u>; it can be redistributed and/or modified under the terms of the Modelica License 2. For license conditions (including the disclaimer of warranty) see <a href=\"modelica://Modelica.UsersGuide.ModelicaLicense2\">Modelica.UsersGuide.ModelicaLicense2</a> or visit <a href=\"http://www.modelica.org/licenses/ModelicaLicense2\">http://www.modelica.org/licenses/ModelicaLicense2</a>.</i> </p>
+<h4><span style=\"color:#008000\">Installation</span></h4>
+<p>Make sure the package directory is named BrineProp. This provided, the examples under <code>Examples</code> should work right away. </p>
 <h4>Usage</h4>
-<p>Check the (non-partial) Brine packages or </p>
-<pre>Examples</pre>
-<p>for instructions. </p>
+<p>Check the (non-partial) Brine packages or <code>BrineProp/Examples </code>for instructions. </p>
 <p>All calculated values are returned in SI-Units and are mass based. </p>
-<p><i></font><font style=\"font-size: 10pt; \">Created by</i></p><p>Henning Francke</p><p>Helmholtz Centre Potsdam</p><p>GFZ German Research Centre for Geosciences</p><p>Telegrafenberg, D-14473 Potsdam</p><p>Germany</p>
-<p><a href=\"mailto:francke@gfz-potsdam.de\">francke@gfz-potsdam.de</a> </p>
 <h4>TODO:</h4>
 <ul>
 <li>Add apparent molar heat capacity/enthalpy for (NaCl,) MgCl2 and SrCl2</li>
+<li>Make it work in OpenModelica</li>
 </ul>
+<h5>Created by</h5>
+<div>Henning Francke<br/>
+Helmholtz Centre Potsdam GFZ German Research Centre for Geosciences<br/>
+Telegrafenberg, D-14473 Potsdam<br/>
+Germany</div>
+<p><a href=\"mailto:info@xrg-simulation.de\">francke@gfz-potsdam.de</a></p>
 </html>", revisions="<html>
 
 </html>"),

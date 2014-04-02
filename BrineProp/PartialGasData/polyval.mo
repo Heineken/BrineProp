@@ -1,5 +1,5 @@
 within BrineProp.PartialGasData;
-function polyval "Calculates polynomial value"
+function polyval "Calculates polynomial value for given coefficients"
   input Real c[:];
   input Real x;
   output Real y;

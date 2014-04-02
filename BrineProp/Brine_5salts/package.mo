@@ -144,29 +144,23 @@ protected
 
 
   annotation (Documentation(info="<html>
-<p><b>Brine_5salts_nogas</b> is a package that provides properties of one-phase solution of 5 salts (NaCl, KCl, CaCl2, MgCl2, SrCl2).</p>
-<p><h4>Usage</h4></p>
-<p>As it is based on Modelica.Media, the usage is little different from the usage of the two-phase water model:</p>
-<p>Create an Instance of the Medium: </p>
-<pre>  package Medium = Brine_5salts_noGas;</pre>
-<p>Create an Instance of Medium.Baseproperties: </p>
+<p><b>BrineProp.Brine_5salts</b> is a medium package that provides properties of one-phase solution of five salts (NaCl, KCl, CaCl<sub>2</sub>, MgCl<sub>2</sub>, SrCl<sub>2</sub>).</p>
+<h4>Usage</h4>
+<p>It is based on Modelica.Media, the usage is accordingly:</p>
+<p>Create an instance of the Medium: </p>
+<pre>  package Medium = Brine_5salts;</pre>
+<p>Create an instance of Medium.Baseproperties: </p>
 <pre>  Medium.BaseProperties props;</pre>
-<p>You can then use the BaseProperties model to define the actual brine composition(Xi or X), to define the thermodynamic state and calculate the corresponding properties. </p>
+<p>Use the BaseProperties model to define the actual brine composition(Xi or X), to define the thermodynamic state and calculate the corresponding properties. </p>
 <pre>  props.p = 1e5;
   props.T = 300;
   props.Xi = {0.08, 0.004, 0.12, 0.001, 0.002} &QUOT;NaCl, KCl, CaCl2, MgCl2, SrCl2&QUOT;
   d = props.d;</pre>
 <p>Pressure and temperature as well as pressure and specific enthalpy can be used to define a thermodynamic state.</p>
+
 <p>All calculated values are returned in SI-Units and are mass based. </p>
 <p><h4>Details</h4></p>
 <p>The model is explicit for p and T, but for h(p,T) the inverse function T(p,h) is defined. T(p,h) is inverts h(p,T) numerically by bisection, stopping at a given tolerance.</p>
 <p>Density and enthalpy are calculated like the liquid phase properties in <code>BrineProp.Brine_5salts_TwoPhase_3gas</code> .</p>
-<p><h4>Created by</h4><br>
-Henning Francke<br>
-Helmholtz Centre Potsdam<br>
-GFZ German Research Centre for Geosciences<br>
-Telegrafenberg, D-14473 Potsdam<br>
-Germany
-<p><a href=\"mailto:francke@gfz-potsdam.de\">francke@gfz-potsdam.de</a> </p>
 </html>"));
 end Brine_5salts;

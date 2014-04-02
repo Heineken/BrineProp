@@ -81,12 +81,12 @@ equation
   props.p = 20*1.01325e5;
 //  props.p = 435e5;
 
-  props.T = 273.15+20+time*100;
+//  props.T = 273.15+20+time*100;
 // props.T = 273.16+144;
 
-// props.d = 1124.93;
+ props.d = 1124.93;
 
- //  props.h =2e5 "+time*1e4";
+//   props.h =2e5 "+time*1e4";
 //  props.h = (10-time)*1e5;
 
 //DEFINE BRINE COMPOSITION (NaCl, KCl, CaCl2, MgCl2, SrCl2, CO2, N2, CH4)

@@ -1,5 +1,5 @@
 within BrineProp;
-package Brine_5salts_TwoPhase_3gas "Two-phase Aqueous Solution of NaCl, KCl, CaCl2, MgCl2, SrCl2, N2, CO2, CH4"
+package Brine_5salts_TwoPhase_3gas "Two-phase aqueous solution of NaCl, KCl, CaCl2, MgCl2, SrCl2, N2, CO2, CH4"
 
 //TODO: use Fluid limits
 
@@ -31,6 +31,7 @@ package Brine_5salts_TwoPhase_3gas "Two-phase Aqueous Solution of NaCl, KCl, CaC
                                            p,T,X,MM);
     end if;
   end fugacity_pTX;
+
 
 
   redeclare function extends setState_pTX
@@ -271,45 +272,50 @@ protected
 
 
   annotation (Documentation(info="<html>
-<p><b>Brine_Duan_Multi_TwoPhase_ngas_3</b> is a package that, based on Brine.PartialBrine_ngas_Newton, defines a brine property model with five salts (NaCl, KCl, CaCl2, MgCl2, SrCl2) and 3 gases (CO2, N2, CH4), which are the main constituents of the geofluid in Gross Schoenebeck, Germany. </p>
-<p><b></font><font style=\"font-size: 12pt; \">Usage</b></p>
+<p><b>Brine_Duan_Multi_TwoPhase_ngas_3</b> is a medium package that, based on Brine.PartialBrine_ngas_Newton, defines a brine property model with five salts (NaCl, KCl, CaCl<sub>2</sub>, MgCl<sub>2</sub>, SrCl<sub>2</sub>) and 3 gases (CO<sub>2</sub>, N<sub>2</sub>, CH<sub>4</sub>), which are the main constituents of the geofluid in Gross Schoenebeck, Germany.</p>
+<p>It was used for the calculations documented in this <a href=\"http://nbn-resolving.de/urn:nbn:de:kobv:83-opus4-47126\">PhD thesis</a>.</p>
+<h4>Usage</h4>
 <p>As it is based on Modelica.Media, the usage differs little from the usage of the two-phase water model:</p>
 <p>Create an Instance of the Medium: </p>
 <pre>  package Medium = Brine_Duan_Multi_TwoPhase_ngas_3;</pre>
 <p>Create an Instance of Medium.Baseproperties: </p>
 <pre>  Medium.BaseProperties props;</pre>
-<p>You can then use the BaseProperties model to define the actual brine composition(Xi or X), to define the thermodynamic state and calculate the corresponding properties. </p>
+<p>Use the BaseProperties model to define the actual brine composition(Xi or X), to define the thermodynamic state and calculate the corresponding properties. </p>
 <pre>  props.p = 1e5;
   props.T = 300;
   props.Xi = {0.08, 0.004, 0.12, 0.001, 0.002, 1-4, 7e-4, 6e-005} &QUOT;NaCl, KCl, CaCl2, MgCl2, SrCl2, CO2, N2, CH4&QUOT;
-  d = props.d;</pre>
-<p>Pressure and temperature as well as pressure and specific enthalpy can be used to define a thermodynamic state.</p>
-<p>All calculated values are returned in SI-Units and are mass based. </p>
-<p><b></font><font style=\"font-size: 10pt; \">Details</b></p>
-<p>Brine is a mixture of components and, if gases are involved, potentially has two phases. As this is not possible with the components provided in Modelica.Media a new Medium template had to be created by merging Modelica.Media.Interfaces.PartialMixtureMedium and Modelica.Media.Interfaces.PartialTwoPhaseMedium of the Modelica Standard Library 3.1. </p>
-<p>The model is explicit for p and T, but for h(p,T) the inverse function T(p,h) is defined. T(p,h) is inverts h(p,T) numerically by bisection, stopping at a given tolerance.</p>
-<p>In order to calculate h(p,T), the vapour-liquid-equilibrium (VLE) is determined, i.e. the gas mass fraction q and the compositions of the liquid phases X_l. Only h is returned, due to the limitation of DYMOLA/Modelica not allowing inverse functions of functions that are returning an array. As x (gas mass fraction) and X_l (composition of liquid phase) are of interest themselves and required to calculate density and viscosity, the VLE calculation is conducted one more time, this time with T known. This additional calculation doubles the workload when p,h are given. When p,T are given, however, it adds only one more calculation to the multiple iterations of the bisection algorithm. </p>
-<p><b>Specific Enthalpy:</b></p>
-<p>The enthalpy is calculated as a mass fraction weighted average of the enthalpies of the two phases. </p>
-<p><h4>Specific Enthalpy of gas phase:</h4></p>
+  d = props.d;
+</pre>
+
+<p>See <code><a href=\"Modelica://BrineProp.Examples.BrineProps2phase\">BrineProp.Examples.BrineProps2phase</a></code> for more usage examples.</p>
+
+<p>All calculated values are returned in SI units and are mass based.</p>
+
+
+<h4>Specific Enthalpy:</h4>
+<p>The enthalpy is calculated as a mass fraction weighted average of the enthalpies of the two phases.</p>
+<pre align=\"center\">h = x&middot;h_g + (1-x)&middot;h_l</pre>
+<h5>Specific enthalpy of gas phase:</h5>
 <p>Enthalpy of the gas phase is modelled as the enthalpy of an ideal mixture of ideal gases, i.e. it is calculated as the mass weighted average of the individual gas enthalpies including water. </p>
-<p align=\"center\">h&QUOT;=sum(h&QUOT;<sub>i</sub>&middot;X&QUOT;<sub>i</sub>)</p>
-<p>The individual gas enthalpies are calculated using the functions for ideal gases in Modelica.Media.IdealGases.SingleGases .</p>
-<p><b>Specific Enthalpy of liquid phase:</b> </p>
+<p align=\"center\"><code>h_g = sum(h&QUOT;<sub>i</sub>&middot;X&QUOT;<sub>i</sub>)</code></p>
+<p>The individual gas enthalpies are calculated using the functions for ideal gases in Modelica.Media.IdealGases.SingleGases.</p>
+<h5>Specific enthalpy of liquid phase: </h5>
 <p>Enthalpy of the liquid phase is assembled from the enthalpy of a NaCl-solution (Driesner) and the apparent molar enthalpies of the salts multiplied by their respective molalities</p>
-<p align=\"center\">h&apos;=h<sub>Driesner</sub>+sum(H<sub>i</sub><sup>app</sup>&middot;b<sub>i</sub>)</p>
+<p align=\"center\"><code>h_l = h<sub>Driesner</sub>+sum(H<sub>i</sub><sup>app</sup>&middot;b<sub>i</sub>)</code></p>
 <p>The apparent molar enthalpies of KCl and CaCl2 are calculated from apparent molar heat capacities which are calculated from a 2D fit for data from literature. The contributions of MgCl2 and SrCl2 are neglected, due to their small influence in the GrSbk fluid. </p>
-<p><b>Density:</b></p>
-<p>The total density of the fluid is calculated by combining the densities of both phases according to their volume fractions.  Density of the liquid phase is calculated by combining the densities of solutions of single salts, while gas density is calculated using the ideal gas law.</p>
-<p><b>Density of liquid phase:</b> </p>
-<p>The density model by Duan for single salt solutions is adapted for multi-salt solutions, resulting in an approach with apparent molar volumes analogous to the mixing rule for enthalpy.</p>
-<p><h4>Created by</h4><br>
-Henning Francke<br>
-Helmholtz Centre Potsdam<br>
-GFZ German Research Centre for Geosciences<br>
-Telegrafenberg, D-14473 Potsdam<br>
-Germany
-<p><a href=\"mailto:francke@gfz-potsdam.de\">francke@gfz-potsdam.de</a> </p>
+<h4>Density</h4>
+<p>The total density <code>d</code> of the fluid is calculated by combining the densities of both phases (<code>d_g </code>and <code>d_l</code>) according to their volume fractions. The gas phase is assumed to be an Density of the gas phase is assumed to be an ideal mixture of ideal gases. </p>
+<pre align=\"center\">d = 1/(x/d_g + (1 - x)/d_l)</pre>
+<h5>Density of the gas phase:</h5>
+<p>Gas density is calculated using the ideal gas law.</p>
+<h5>Density of liquid phase:</h5>
+<p>Density of the liquid phase is calculated by combining the densities of solutions of single salts. The density model by Duan for single salt solutions is adapted for multi-salt solutions, resulting in an approach with apparent molar volumes analogous to the mixing rule for enthalpy. </p>
+<h5>Created by</h5>
+<div>Henning Francke<br/>
+Helmholtz Centre Potsdam GFZ German Research Centre for Geosciences<br/>
+Telegrafenberg, D-14473 Potsdam<br/>
+Germany</div>
+<p><a href=\"mailto:info@xrg-simulation.de\">francke@gfz-potsdam.de</a></p>
 </html>",
  revisions="<html>
 

@@ -1,25 +1,10 @@
 within BrineProp;
-package PartialBrineGas "nX_gas gases and Water"
+package PartialBrineGas
+  "Medium template for gas mixture of nX_gas gases and water based on PartialMixtureMedium"
   //TODO add inverse functions
   extends BrineProp.PartialGasData;
   extends Modelica.Media.Interfaces.PartialMixtureMedium(
   reference_X=cat(1,fill(0,nX-1),{1}));
-//  nX = size(gasNames, 1)
-redeclare record extends ThermodynamicState
-    "a selection of variables that uniquely defines the thermodynamic state"
-/*  AbsolutePressure p "Absolute pressure of medium";
-  Temperature T(unit="K") "Temperature of medium";
-  SpecificEnthalpy h "Specific enthalpy";
-  SpecificEntropy s "Specific entropy";
-  Density d(start=300) "density";
-  AbsolutePressure p_H2O;
-  AbsolutePressure p_gas[PartialBrine_ngas_Newton.nX_gas];
-  AbsolutePressure[PartialBrine_ngas_Newton.nX_gas + 1] p_degas 
-    "should be in SatProp, but is calculated in setState which returns a state";*/
-   annotation (Documentation(info="<html>
-
-</html>"));
-end ThermodynamicState;
 
  redeclare model extends BaseProperties "Base properties of medium"
  //  SI.Pressure p_H2O;
@@ -28,7 +13,6 @@ end ThermodynamicState;
  equation
     //   assert(nX_gas==2,"Wrong number of gas mass fractions specified (2 needed - CO2,N2)");
  //  assert(max(X)<=1 and min(X)>=0, "X out of range [0...1] = "+PowerPlant.vector2string(X)+" (saturationPressure_H2O())");
- //  MM = (X_salt*MM_salt + X_gas*MM_gas + X[end]*M_H2O);
      MM = y_vec*MM_vec;
  //  R  = Modelica.Constants.R/MM;
    u = h - p/d;
@@ -139,4 +123,9 @@ constant String gasNames[:]={""};
     output SI.ThermalConductivity lambda;
 
   end thermalConductivity_pTX;
+  annotation (Documentation(info="<html>
+<p>Ideal mixture of gases.</p>
+<h5>Usage</h5>
+<p>This partial package cannot be used as is. See <a href=\"Modelica://BrineProp.Examples.BrineGas\">BrineProp.Examples.BrineGas</a> or info of <a href=\"Modelica://BrineProp.BrineGas_3Gas\">BrineProp.BrineGas_3Gas</a> for examples.</p>
+</html>"));
 end PartialBrineGas;

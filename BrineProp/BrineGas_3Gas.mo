@@ -1,10 +1,5 @@
 within BrineProp;
-package BrineGas_3Gas
-  "BrineGas_3Gas - water saturated gas mixture CO2+N2+CH4+H2O"
-  //returns properties for given composition when _pTX functions are called directly
-  //returns properties for given gas composition + saturated water when called via state functions ()e.g. density)
-  //  TODO: Why?
-  //speedup: calculate water saturated composition externally once and pass on
+package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
   extends PartialBrineGas(
     final substanceNames={"carbondioxide","nitrogen","methane","water"},
     final MM_vec = {M_CO2,M_N2,M_CH4, M_H2O},
@@ -265,4 +260,27 @@ package BrineGas_3Gas
   //  else state.X[end - nX + 1:end]);
 
   end specificEnthalpy;
+  annotation (Documentation(info="<html>
+<p><b>BrineGas_3Gas</b> is a medium package that, based on Brine.PartialBrineGas, defines a brine with 3 gases (CO<sub>2</sub>, N<sub>2</sub>, CH<sub>4</sub>), which are the main gases in the geofluid in Gross Schoenebeck, Germany.</p>
+<h4>Usage</h4>
+<p>It is based on Modelica.Media, the usage is accordingly:</p>
+<p>Create an instance of the Medium: </p>
+<pre>  package Medium = BrineGas_3Gas;</pre>
+<p>Create an instance of Medium.Baseproperties: </p>
+<pre>  Medium.BaseProperties props;</pre>
+<p>Use the BaseProperties model to define the actual brine composition(Xi or X), to define the thermodynamic state and calculate the corresponding properties. </p>
+<pre>  props.p = 1e5;
+  props.T = 300;
+  props.Xi = {1-4, 7e-4, 6e-005} &QUOT;CO2, N2, CH4&QUOT;
+  d = props.d;
+</pre>
+
+<p>See <code><a href=\"Modelica://BrineProp.Examples.BrineGas\">BrineProp.Examples.BrineGas</a></code> for more usage examples.</p>
+
+  //returns properties for given composition when _pTX functions are called directly
+  //returns properties for given gas composition + saturated water when called via state functions ()e.g. density)
+  //TODO: Why?
+  //speedup: calculate water saturated composition externally once and pass on
+<p>All calculated values are returned in SI units and are mass based.</p>
+</html>"));
 end BrineGas_3Gas;
