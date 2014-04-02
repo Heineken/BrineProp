@@ -18,7 +18,7 @@ Run models from BrineProp/Examples
 Documentation
 -------------
 * in the package (info annotation)
-* in PhD thesis [Thermo-hydraulic model of the two-phase flow in the brine circuit of a geothermal power plant](http://nbn-resolving.de/urn:nbn:de:kobv:83-opus4-47126)
+* in PhD thesis *[Thermo-hydraulic model of the two-phase flow in the brine circuit of a geothermal power plant](http://nbn-resolving.de/urn:nbn:de:kobv:83-opus4-47126)*
 
 ## Development and contribution
 Feedback/contributions welcome to francke@gfz-potsdam.de or as  pull request.
