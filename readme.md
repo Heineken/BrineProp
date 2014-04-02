@@ -18,7 +18,7 @@ Run models from BrineProp/Examples
 Documentation
 -------------
 * in the package (info annotation)
-* in PhD thesis [Thermo-hydraulic model of the two-phase flow in the brine circuit of a geothermal power plant][1]
+* in PhD thesis [Thermo-hydraulic model of the two-phase flow in the brine circuit of a geothermal power plant](http://nbn-resolving.de/urn:nbn:de:kobv:83-opus4-47126)
 
 ## Development and contribution
 Feedback/contributions welcome to francke@gfz-potsdam.de or as  pull request.
@@ -29,5 +29,3 @@ Copyright © 2009-2014 Helmholtz Centre Potsdam, GFZ German Research Centre for 
 This Modelica package is free software and the use is completely at your own risk;  
 it can be redistributed and/or modified under the terms of the [Modelica License 2](https://www.modelica.org/licenses/ModelicaLicense2) or newer.  
 For license conditions (including the disclaimer of warranty) visit [https://www.modelica.org/licenses/](https://www.modelica.org/licenses).
-
-[1] http://nbn-resolving.de/urn:nbn:de:kobv:83-opus4-47126 "Online Version at Library of TU Berlin"
