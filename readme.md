@@ -1,22 +1,27 @@
 BrineProp
 =========
-BrineProp is a modelica package that provides thermodynamic properties of a specified brine, i.e. an aqueous solution of salts and gases, with a potential gas phase, including de/gassing and evaporation/condensation.
+BrineProp is a modelica package that calculates the thermodynamic properties of a specified brine, i.e. an aqueous solution of salts and gases, with a potential gas phase, including degassing/evaporation and solution/condensation.
 
-An Excel version is available in the download section. Its VBA code can also be found in /VBA.
+An Excel version is available in the download section. Its VBA code can also be found in `/VBA`.
+
+Compatibility
+-------------
+* Works in Dymola with MSL 3.2
+* Works in Dymola with MSL 3.2.1
+* Works via FMU in OpenModelica
+* Works via FMU in JModelica
+
 
 Installation
 ------------
 Download, unzip and open BrineProp/package.mo
 
-* Works in Dymola with MSL 3.2
-* Works in Dymola with MSL 3.2.1 
-
-(you need to first load MSL 3.2.1 first via File>Libraries>MSL, then open package, 
+For use with MSL 3.2.1 you need to load the MSL 3.2.1 first via File>Libraries>MSL, then open package, 
 after conversion make changes marked with "MSL 3.2.1" in PartialMixtureTwoPhaseMedium to get rid of warnings. After the changes the lib will not work in MSL 3.2).
 
 Getting started
 ------
-Run models from BrineProp/Examples
+Run models from `BrineProp/Examples`.
 
 Documentation
 -------------
