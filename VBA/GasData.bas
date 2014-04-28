@@ -261,7 +261,7 @@ End Function
         Exit Function
     End If
     Dim m_Cl As Double, m_Na As Double, m_K As Double, m_Ca As Double, m_Mg As Double, m_SO4 As Double
-    m_Cl = molalities(i_NaCl) + molalities(i_KCl) + 2 * molalities(i_MgCl2) + 2 * molalities(i_CaCl2)
+    m_Cl = molalities(i_NaCl) + molalities(i_KCl) + 2 * molalities(i_CaCl2) ' + 2 * molalities(i_MgCl2)
     m_Na = molalities(i_NaCl)
     m_K = molalities(i_KCl)
     m_Ca = molalities(i_CaCl2)
@@ -432,7 +432,7 @@ Function solubility_CH4_pTX_Duan2006(p As Double, T As Double, X, p_gas) 'Duan Z
         Dim molalities '(nX)
         molalities = massFractionsToMolalities(X, Brine.MM_vec)
         Dim m_Cl As Double, m_Na As Double, m_K As Double, m_Ca As Double, m_Mg As Double, m_SO4 As Double                 'Molality
-        m_Cl = molalities(i_NaCl) + molalities(i_KCl) + 2 * molalities(i_MgCl2) + 2 * molalities(i_CaCl2)
+        m_Cl = molalities(i_NaCl) + molalities(i_KCl) + 2 * molalities(i_CaCl2)  '+ 2 * molalities(i_MgCl2)
         m_Na = molalities(i_NaCl)
         m_K = molalities(i_KCl)
         m_Ca = molalities(i_CaCl2)

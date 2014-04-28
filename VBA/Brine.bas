@@ -44,17 +44,63 @@ Public Const nX = nX_salt + nX_gas + 1
 Public Const i_NaCl = 1 'reference number
 Public Const i_KCl = 2 'reference number
 Public Const i_CaCl2 = 3 'reference number
-Public Const i_MgCl2 = 4 'reference number
-Public Const i_SrCl2 = 5 'reference number
+'Public Const i_MgCl2 = 4 'reference number
+'Public Const i_SrCl2 = 5 'reference number
 
 
-Private Function saturationPressures(p As Double, T As Double, X)
-    p_sat(1) = IIf(X(nX_salt + 1) > 0, degassingPressure_CO2_Duan2006(p, T, X), 0)
-    p_sat(2) = IIf(X(nX_salt + 2) > 0, degassingPressure_N2_Duan2006(p, T, X), 0)
-    p_sat(3) = IIf(X(nX_salt + 3) > 0, degassingPressure_CH4_Duan2006(p, T, X), 0)
-    If DebugMode Then
-        Debug.Print "saturationPressures(" & p & "," & T & ")={" & Jioin(p_sat) & "}"
+Private Function saturationPressures(p As Double, T As Double, X_l_in, Xin)
+    
+    Dim X: X = CheckMassVector(Xin, nX)
+    If VarType(X) = vbString Then
+        saturationPressures = X & " (Brine.saturationPressures)"
+        Exit Function
     End If
+    
+    Dim X_l: X_l = CheckMassVector(X_l_in, nX)
+    If VarType(X_l) = vbString Then
+        saturationPressures = X_l & " (Brine.saturationPressures)"
+        Exit Function
+    End If
+    
+    Dim k '() As Double 'nX Henry coefficients
+    Dim i As Integer
+    Dim p_H2O As Double: p_H2O = saturationPressure_H2O(p, T, X) 'partial pressure of water vapour pressure
+    Dim p_sat(1 To nX_gas + 1) As Double 'vector of degassing pressures
+    Dim p_gas() As Double  'partial pressures of gases
+
+    If (p_H2O > p) Then
+        saturationPressures = "#p is below water vapour pressure p_H2O(" & p / 10 ^ 5 & "bar," & T - 273.15 & "°C, X) = " & p_H2O / 100000# & " bar (VLE)"
+        Exit Function
+    End If
+    
+    p_gas = fill(p / (nX_gas + 1), nX_gas + 1)
+    
+    Dim solu: solu = solubilities_pTX(p, T, X_l, X, SubArray(p_gas, 1, nX_gas))
+    If VarType(solu) = vbString Then
+        saturationPressures = solu
+        Exit Function
+    End If
+    k = VecDiv(solu, SubArray(p_gas, 1, nX_gas))
+    
+    For i = 1 To nX_gas
+        p_sat(i) = X_l(nX_salt + i) / IIf(k(i) > 0, k(i), 1 ^ 10) 'Degassing pressure
+    Next i
+    p_sat(nX_gas + 1) = p_H2O
+
+
+    If DebugMode Then
+        Debug.Print "saturationPressures(" & p & "," & T & ")={" & Join(p_sat) & "}"
+    End If
+    saturationPressures = p_sat
+End Function
+
+Function psat_T(p As Double, T As Double, X)
+    Dim p_sat: p_sat = saturationPressures(p, T, X, X) 'vector of degassing pressures
+    If VarType(p_sat) = vbString Then
+        psat_T = p_sat
+        Exit Function
+    End If
+    psat_T = Application.Sum(saturationPressures(p, T, X, X))
 End Function
 
 Private Function solubilities_pTX(p As Double, T As Double, X_l, X, p_gas)
@@ -328,7 +374,7 @@ Private Function VLE(p As Double, T As Double, Xi, Optional phase As Integer = 0
     If VarType(Xi) = vbString Then
         X = FullMassVector(String2Vector(Xi), nX_) 'make sure first index is 1
     Else
-        X = FullMassVector(Xi, nX_) 'make sure first index is 1
+        X = FullMassVector(Xi, nX_) 'make sure first index is 1 //TODO: das kann weg, oder?
     End If
     If VarType(X) = vbString Or VarType(X) = vbError Then
         VLE.error = X

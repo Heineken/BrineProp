@@ -298,7 +298,6 @@ Function fill(val, n) As Double()
 End Function
 
 Function FullMassVector(Xi, Optional ByRef nX As Integer) 'As Double()
-'Function FullMassVector(Xi() As Double) As Double()
     Dim nXi As Integer
     Dim X '() As Double
     X = ToDouble(Xi, nXi)

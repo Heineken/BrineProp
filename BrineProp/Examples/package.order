@@ -1,6 +1,8 @@
-BrineProps1Phase
+BrineProps1PhaseMinimal
+BrineProps1PhaseFull
 BrineGas
-BrineProps2phase
+BrineProps2PhaseMinimal
+BrineProps2phaseFull
 BinarySaltValidation
 FindBrineComposition
 SolubilityPlot

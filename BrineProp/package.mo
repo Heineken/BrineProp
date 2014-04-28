@@ -105,14 +105,13 @@ protected
 <p>All calculated values are returned in SI-Units and are mass based. </p>
 <h4>TODO:</h4>
 <ul>
+<li>Add differentials</li>
+<li>make 1phase-transient calculation work</li>
 <li>Add apparent molar heat capacity/enthalpy for (NaCl,) MgCl2 and SrCl2</li>
-<li>Make it work in OpenModelica</li>
+<li>Make it work in JModelica/OpenModelica </li>
 </ul>
 <h5>Created by</h5>
-<div>Henning Francke<br/>
-Helmholtz Centre Potsdam GFZ German Research Centre for Geosciences<br/>
-Telegrafenberg, D-14473 Potsdam<br/>
-Germany</div>
+<p>Henning Francke</p><p>Helmholtz Centre Potsdam GFZ German Research Centre for Geosciences</p><p>Telegrafenberg, D-14473 Potsdam</p><p>Germany</p>
 <p><a href=\"mailto:info@xrg-simulation.de\">francke@gfz-potsdam.de</a></p>
 </html>", revisions="<html>
 

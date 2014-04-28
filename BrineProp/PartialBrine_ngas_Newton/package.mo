@@ -507,8 +507,6 @@ protected
   end saturationPressures;
 
 
-
-
   redeclare replaceable partial function extends setState_pTX
   "finds the VLE iteratively by varying the normalized quantity of gas in the gasphase, calculates the densities"
   input Real[nX_gas + 1] n_g_norm_start "=fill(.1,nX_gas+1) 
@@ -842,7 +840,6 @@ protected
        fill(-1,nX);
     SI.SpecificHeatCapacity cp_vec[nX_gas+1];
   end specificHeatCapacityCp_gas;
-
 
 
   replaceable function dynamicViscosity_pTX_unused "viscosity calculation"

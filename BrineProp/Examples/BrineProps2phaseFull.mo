@@ -1,5 +1,5 @@
 within BrineProp.Examples;
-model BrineProps2phase
+model BrineProps2phaseFull
 
   //package Medium = BrineProp.Brine_5salts_TwoPhase_3gas;
     package Medium = BrineProp.Brine_5salts_TwoPhase_3gas(input_dT=true);
@@ -76,21 +76,26 @@ model BrineProps2phase
 */
 Real g=1 "gas content multiplier";
 
+  parameter SI.Pressure p_set=20*1.01325e5;
+  parameter SI.Temperature T_set=273.15+30;
 equation
   //DEFINE STATE (define 2 variables pT, ph or Td)
-  props.p = 20*1.01325e5;
-//  props.p = 435e5;
+  //pT transient
+  props.p = p_set "20*1.01325e5";
+  props.T = T_set "273.15+20+time*100";
 
-//  props.T = 273.15+20+time*100;
-// props.T = 273.16+144;
+/*  //ph  
+  props.p = 435e5;
+  props.h =2e5 "+time*1e4";
+*/
 
+/*  //Td
+ props.T = 273.16+144;
  props.d = 1124.93;
-
-//   props.h =2e5 "+time*1e4";
-//  props.h = (10-time)*1e5;
+*/
 
 //DEFINE BRINE COMPOSITION (NaCl, KCl, CaCl2, MgCl2, SrCl2, CO2, N2, CH4)
-  // props.Xi = fill(0,8) "pure water";
+   props.Xi = fill(0,8) "pure water";
   //  props.Xi = {1*SaltData.M_NaCl/(1+1*SaltData.M_NaCl),0,0,0,0, 0*1.035e-3,0*5e-4,0}  "1-molar KCl solution";
   //  props.Xi = {0,SaltData.M_KCl/(1+SaltData.M_KCl),0,0,0,0,0,0} "1-molar KCl solution";
 //  props.Xi = {0,0,SaltData.M_CaCl2/(1+SaltData.M_CaCl2),0,0,0,0,0};
@@ -101,8 +106,7 @@ equation
 */
 //props.Xi = {     0.08214,   0.0053126,     0.11052,   0*0.0011094,   0*0.0019676,  0.00018083,  0.00074452,  6.661e-005}     "Elvira 9/11";
 //    props.Xi = {0.083945671051201,0.00253479771131107,0.122842299461699,0*0.000612116692496665,0*0.00214041137028575,  0.00016883,  0.00073459, 6.5652e-005}     "Elvira 2-2013 1.1775g/ml";
-    props.Xi = {0.0839077010751,0.00253365118988,0.122786737978,0,0,g*7.2426359111e-05,g*0.000689505657647,g*6.14906384726e-05}
-    "Elvira 2-2013 1.1775g/ml V2";
+//    props.Xi = {0.0839077010751,0.00253365118988,0.122786737978,0,0,g*7.2426359111e-05,g*0.000689505657647,g*6.14906384726e-05} "Elvira 2-2013 1.1775g/ml V2";
 
   //SET DIFFERENT INITIAL VALUE FOR VLE ALGORITHM (componentwise mass distribution, default=0.5)
   //props.n_g_norm_start={.1,.1,.1,time};
@@ -115,4 +119,4 @@ algorithm
 //  print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
 //  print(Modelica.Math.Matrices.toString(transpose([props.Xi])));
 //  print("k="+Modelica.Math.Matrices.toString(transpose([Brine_5salts_TwoPhase_3gas.solubilities_pTX(props.p, props.T, props.X_l, props.X, props.p_gas[1:3]) ./ props.p_gas[1:3]])));
-end BrineProps2phase;
+end BrineProps2phaseFull;
