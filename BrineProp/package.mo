@@ -118,5 +118,5 @@ protected
 </html>"),
     version="0.2.0",
     versionDate="2014-04-02",
-    uses(Modelica(version="3.2")));
+    uses(Modelica(version="3.2"), MediaTwoPhaseMixture(version="0.2")));
 end BrineProp;
