@@ -88,26 +88,16 @@ algorithm
     m_Mg :=molalities[MgCl2];
     m_SO4 :=0 "TODO";
 
-  /*  y_H20 :=(1 - 2*molefractions[NaCl])*p_H2O/(phi_H2O*p)*exp(v_l_H2O*(p -
-      p_H2O)/(Modelica.Constants.R*T)) "equ. 5 (x_H2O=1-2x_NaCl)";
-    y_CH4 :=1 - y_H20 "mole fraction of CH4 in vapor phase"; Das ist wie im Paper*/
-    //y_CH4 = (p-p_H2O)/p "mole fraction of CH4 in vapor phase TODO:neglecting other phases?" Das ist wie CO2_Duan2003;
-
-    phi_CH4 :=fugacity_CH4_Duan1992(p_gas+p_H2O, T)
-      "TODO: Hier p_H2O hinzugefügt so wie bei N2 und CO2. Is das richtig?";
+    phi_CH4 :=fugacity_CH4_Duan1992(p_gas+p_H2O, T);
     mu_l0_CH4_RT :=Par_CH4_Duan2006(p_gas+p_H2O,T,mu_l0_CH4_RT_c);
     lambda_CH4_Na :=Par_CH4_Duan2006(p_gas+p_H2O,T,lambda_CH4_Na_c);
     xi_CH4_NaCl :=Par_CH4_Duan2006(p_gas+p_H2O,T,xi_CH4_NaCl_c);
 
     //equ. 10
   //    solu := y_CH4*phi_CH4*p_bar*exp(-mu_l0_CH4_RT - 2*lambda_CH4_Na*(m_Na + m_K + 2*m_Ca + 2*m_Mg) - xi_CH4_NaCl*(m_Na + m_K + 2*m_Ca + 2*m_Mg)*(m_Cl + 2*m_SO4) - 4*0.0332*m_SO4);
-      solu := SI.Conversions.to_bar(p_gas)*phi_CH4*exp(-mu_l0_CH4_RT - 2*lambda_CH4_Na*(m_Na + m_K + 2*m_Ca + 2*m_Mg) - xi_CH4_NaCl*(m_Na + m_K + 2*m_Ca + 2*m_Mg)*(m_Cl + 2*m_SO4) - 4*0.0332*m_SO4);
+    solu := SI.Conversions.to_bar(p_gas)*phi_CH4*exp(-mu_l0_CH4_RT - 2*lambda_CH4_Na*(m_Na + m_K + 2*m_Ca + 2*m_Mg) - xi_CH4_NaCl*(m_Na + m_K + 2*m_Ca + 2*m_Mg)*(m_Cl + 2*m_SO4) - 4*0.0332*m_SO4);
+//    print("solu: "+String(solu));
 
-  //  solu := max(0, solu) "algorithm can return negative values";
-  //  solu := p_H2O;
-  //  solu := 0;
     X_gas :=solu*M_CH4*X[end] "molality->mass fraction";
   end if;
-//  c_gas:=solu*M_CH4 "kg_gas / kg_H2O";
-//      print("mola_CH4("+String(p_gas)+","+String(T-273.16)+")="+String(X_gas)+"->k="+String(X_gas/max(1,p_gas))+" (solubility_CH4_pTX_Duan2006)");
 end solubility_CH4_pTX_Duan2006;

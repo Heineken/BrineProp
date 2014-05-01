@@ -345,71 +345,79 @@ protected
     Integer z=0 "Loop counter";
   algorithm
     if debugmode then
-       print("\ntemperature_phX("+String(p)+","+String(h)+")");
+       print("temperature_phX("+String(p)+","+String(h)+")");
     end if;
-    //Find temperature with h above given h ->T_b
-    assert(h>specificEnthalpy_pTX(p,T_a,X),"h="+String(h/1e3)+" kJ/kg -> Enthalpy too low (< 0°C) (Brine.PartialBrine_ngas_Newton.temperature_phX)");
-    while true loop
-      h_T:=specificEnthalpy_pTX(p,T_b,X);
-      //print(String(p)+","+String(T_b)+" K->"+String(h_T)+" J/kg (PartialBrine_ngas_Newton.temperature_phX)");
-      if h>h_T then
-        T_a := T_b;
-        T_b := T_b + 50;
-      else
-        break;
-      end if;
-    end while;
 
-  //BISECTION - is schneller, braucht 13 Iterationen
-    while (T_b-T_a)>1e-2 and abs(h-h_T/h)>1e-5 loop   //stop when temperatures or enthalpy are close
-  //  while abs(h-h_T/h)>1e-5 loop
-  //    print("T_b-T_a="+String(T_b-T_a)+", abs(h-h_T)/h="+String(abs(h-h_T)/h));
-      T:=(T_a+T_b)/2 "Halbieren";
-  //    print("T_neu="+String(T)+"K");
+    if not max(X[1:end-1])>0 then
+      if debugmode then
+        print("2Phase water (temperature_phX("+String(p)+","+String(h)+"))");
+      end if;
+      Modelica.Media.Water.WaterIF97_base.temperature_ph(p,h);
+    else
+
+      //Find temperature with h above given h ->T_b
+      assert(h>specificEnthalpy_pTX(p,T_a,X),"h="+String(h/1e3)+" kJ/kg -> Enthalpy too low (< 0°C) (Brine.PartialBrine_ngas_Newton.temperature_phX)");
+      while true loop
+        h_T:=specificEnthalpy_pTX(p,T_b,X);
+        //print(String(p)+","+String(T_b)+" K->"+String(h_T)+" J/kg (PartialBrine_ngas_Newton.temperature_phX)");
+        if h>h_T then
+          T_a := T_b;
+          T_b := T_b + 50;
+        else
+          break;
+        end if;
+      end while;
+
+    //BISECTION - is schneller, braucht 13 Iterationen
+      while (T_b-T_a)>1e-2 and abs(h-h_T/h)>1e-5 loop   //stop when temperatures or enthalpy are close
+    //  while abs(h-h_T/h)>1e-5 loop
+    //    print("T_b-T_a="+String(T_b-T_a)+", abs(h-h_T)/h="+String(abs(h-h_T)/h));
+        T:=(T_a+T_b)/2 "Halbieren";
+    //    print("T_neu="+String(T)+"K");
+        h_T:=specificEnthalpy_pTX(p,T,X);
+        if h_T > h then
+          T_b:=T;
+    //      print("T_b="+String(T)+"K -> dh="+String(h_T-h));
+        else
+          T_a:=T;
+    //      print("T_a="+String(T)+"K -> dh="+String(h_T-h));
+        end if;
+        z:=z+1;
+    //    print(String(z)+": "+String(T_a)+" K & "+String(T_b)+" K -> "+String((h-h_T)/h)+"(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)\n");
+    //    print("h("+String(T_a)+")="+String(h_a-h)+" J/kg & h("+String(T_b)+")="+String(h_b-h)+" J/kg");
+        assert(z<100,"Maximum number of iteration reached for temperature calculation. Something's wrong here. Cancelling...(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)");
+      end while;
+    // print("BISECTION " + String(z)+": "+String(T));
+
+    /*
+  //REGULA FALSI - is langsamer, braucht 19 Iterationen
+    z:=0;
+    T_a:=T0_a;
+    T_b:=T0_b "limit of N2 solubility";
+    h_a := specificEnthalpy_pTX(p,T_a,X);
+    h_b := specificEnthalpy_pTX(p,T_b,X);
+    while abs(T_b-T_a)>1e-2 and abs(h_T-h)/h>1e-5 loop
+  //  while abs(T_b-T_a)/T_l>1e-4 loop
+      print("h_a("+String(T_a)+")="+String(h_a)+" / h_b("+String(T_b)+")="+String(h_b));
+      T:=max(T0_a,min(T0_b,T_a-(T_b-T_a)/(h_b-h_a)*(h_a-h))) "Regula falsi";
       h_T:=specificEnthalpy_pTX(p,T,X);
+      print("T_neu="+String(T)+"K");
       if h_T > h then
         T_b:=T;
-  //      print("T_b="+String(T)+"K -> dh="+String(h_T-h));
+        h_b:=h_T;
       else
         T_a:=T;
-  //      print("T_a="+String(T)+"K -> dh="+String(h_T-h));
+        h_a:=h_T;
+  //      print("T_a="+String(T)+"K -> h="+String(h_T-h));
       end if;
       z:=z+1;
   //    print(String(z)+": "+String(T_a)+" K & "+String(T_b)+" K -> "+String((h-h_T)/h)+"(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)\n");
   //    print("h("+String(T_a)+")="+String(h_a-h)+" J/kg & h("+String(T_b)+")="+String(h_b-h)+" J/kg");
       assert(z<100,"Maximum number of iteration reached for temperature calculation. Something's wrong here. Cancelling...(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)");
     end while;
-  // print("BISECTION " + String(z)+": "+String(T));
-
-  /*
-//REGULA FALSI - is langsamer, braucht 19 Iterationen
-  z:=0;
-  T_a:=T0_a;
-  T_b:=T0_b "limit of N2 solubility";
-  h_a := specificEnthalpy_pTX(p,T_a,X);
-  h_b := specificEnthalpy_pTX(p,T_b,X);
-  while abs(T_b-T_a)>1e-2 and abs(h_T-h)/h>1e-5 loop
-//  while abs(T_b-T_a)/T_l>1e-4 loop
-    print("h_a("+String(T_a)+")="+String(h_a)+" / h_b("+String(T_b)+")="+String(h_b));
-    T:=max(T0_a,min(T0_b,T_a-(T_b-T_a)/(h_b-h_a)*(h_a-h))) "Regula falsi";
-    h_T:=specificEnthalpy_pTX(p,T,X);
-    print("T_neu="+String(T)+"K");
-    if h_T > h then
-      T_b:=T;
-      h_b:=h_T;
-    else
-      T_a:=T;
-      h_a:=h_T;
-//      print("T_a="+String(T)+"K -> h="+String(h_T-h));
+  */
+    //   print("REGULA FALSI " + String(z)+": "+String(T));
     end if;
-    z:=z+1;
-//    print(String(z)+": "+String(T_a)+" K & "+String(T_b)+" K -> "+String((h-h_T)/h)+"(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)\n");
-//    print("h("+String(T_a)+")="+String(h_a-h)+" J/kg & h("+String(T_b)+")="+String(h_b-h)+" J/kg");
-    assert(z<100,"Maximum number of iteration reached for temperature calculation. Something's wrong here. Cancelling...(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)");
-  end while;
-*/
-  //   print("REGULA FALSI " + String(z)+": "+String(T));
-
   end temperature_phX;
 
 
@@ -509,8 +517,8 @@ protected
 
   redeclare replaceable partial function extends setState_pTX
   "finds the VLE iteratively by varying the normalized quantity of gas in the gasphase, calculates the densities"
-  input Real[nX_gas + 1] n_g_norm_start "=fill(.1,nX_gas+1) 
-    start value, all gas in gas phase, all water liquid, set in BaseProps";
+  input Real[nX_gas + 1] n_g_norm_start= fill(0.1,nX_gas+1)
+    "start value, all gas in gas phase, all water liquid, set in BaseProps";
   /*
 //output SI.Density d_g= if x>0 then (n_CO2_g*d_g_CO2 + n_N2_g*d_g_N2)/(n_CO2_g + n_H2O_g) else -1;
 //output Real[nX_gas + 1] n_g_norm;
@@ -559,6 +567,7 @@ protected
     Real DeltaC=0.001;
     SI.Temperature T2;
     SpecificHeatCapacity R_gas;
+    Boolean isTwoPhaseWater=false;
   algorithm
     if debugmode then
         print("Running setState_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" °C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
@@ -578,6 +587,7 @@ protected
   /*     p_degas := cat(1,saturationPressures(p,T2,X,MM_vec), {p_H2O}); 60% slower*/
       p_gas :=fill(p/(nX_gas + 1), nX_gas + 1);
       solu :=solubilities_pTX(p,T,X_l,X,p_gas[1:nX_gas]);
+
       k :=solu ./ p_gas[1:nX_gas];
       for i in 1:nX_gas loop
           p_degas[i] :=X_l[nX_salt + i]/(if k[i] > 0 then k[i] else 1^10)
@@ -587,11 +597,24 @@ protected
 
      if phase==1 or sum(p_degas) < p then
       if debugmode then
-        print("1Phase-Liquid (PartialBrine_Multi_TwoPhase_ngas.setState_pTX("+String(p)+","+String(T2)+"))");
+        print("1Phase-Liquid (setState_pTX("+String(p)+","+String(T2)+"))");
       end if;
       x:=0;
       //p_H2O := p_sat_H2O;
-    else
+     elseif not max(X[1:end-1])>0 then
+      isTwoPhaseWater:=true;
+        if debugmode then
+          print("2Phase water (PartialBrine_Multi_TwoPhase_ngas.setState_pTX("+String(p)+","+String(T2)+"))");
+        end if;
+        X_l:=X_l;
+     // h:=Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p, T);
+      h_l :=Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.hl_p(p);
+      h_g :=Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.hv_p(p);
+      x :=min(max((Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p, T) - h_l)/(h_g - h_l + 1e-18), 0), 1);
+      d_l :=Modelica.Media.Water.IF97_Utilities.rhol_T(T);
+      d_g :=Modelica.Media.Water.IF97_Utilities.rhov_T(T);
+
+     else
       assert(max(X[end-nX_gas:end-1])>0,"Phase equilibrium cannot be calculated without dissolved gas at "+String(p/1e5)+" bar, "+String(T2-273.15)+"°C with p_degas="+String(sum(p_degas)/1e5)+" bar.");
 
       n:=X[nX_salt + 1:end] ./ MM_vec[nX_salt + 1:nX]
@@ -721,21 +744,23 @@ protected
 
     end if "p_degas< p";
 
+    if not isTwoPhaseWater then
   //DENSITY
-   X_g:=if x>0 then (X[end-nX_gas:end]-X_l[end-nX_gas:end]*(1-x))/x else fill(0,nX_gas+1);
-  /*Calculation here  R_gas :=if x > 0 then sum(Modelica.Constants.R*X_g ./ cat(1,MM_gas,{M_H2O})) else -1;
-  d_g :=if x > 0 then p/(T2*R_gas) else -1;*/
-  //  d_g:= if x>0 then p/(Modelica.Constants.R*T2)*(n_g*cat(1,MM_gas,{M_H2O}))/sum(n_g) else -1;
-    if x > 0 then
-      d_g :=BrineGas_3Gas.density_pTX(p,T, X_g);
-      h_g:=specificEnthalpy_gas_pTX(p,T,X_g);
-    else
-      d_g :=-1;
-      h_g:=-1;
-    end if;
-    d_l:=if not x<1 then -1 else density_liquid_pTX(p,T2,X_l,MM_vec)
-    "no 1-phase gas";
-    h_l:=specificEnthalpy_liq_pTX(p,T,X_l);
+     X_g:=if x>0 then (X[end-nX_gas:end]-X_l[end-nX_gas:end]*(1-x))/x else fill(0,nX_gas+1);
+    /*Calculation here  R_gas :=if x > 0 then sum(Modelica.Constants.R*X_g ./ cat(1,MM_gas,{M_H2O})) else -1;
+    d_g :=if x > 0 then p/(T2*R_gas) else -1;*/
+    //  d_g:= if x>0 then p/(Modelica.Constants.R*T2)*(n_g*cat(1,MM_gas,{M_H2O}))/sum(n_g) else -1;
+      if x > 0 then
+        d_g :=BrineGas_3Gas.density_pTX(p,T, X_g);
+        h_g:=specificEnthalpy_gas_pTX(p,T,X_g);
+      else
+        d_g :=-1;
+        h_g:=-1;
+      end if;
+      d_l:=if not x<1 then -1 else density_liquid_pTX(p,T2,X_l,MM_vec)
+      "no 1-phase gas";
+      h_l:=specificEnthalpy_liq_pTX(p,T,X_l);
+    end if "TwoPhaseWater";
 
     d:=1/(x/d_g + (1 - x)/d_l);
   //  print(String(z)+" (p="+String(p_gas[1])+" bar)");
@@ -774,15 +799,47 @@ protected
 redeclare replaceable partial function extends setState_phX
   "Calculates medium properties from p,h,X"
 //      input String fluidnames;
+protected
+  SI.SpecificEnthalpy h_l;
+  SI.SpecificEnthalpy h_v;
+  SI.Density d_l;
+  SI.Density d_g;
+  Real x;
+  constant SI.SpecificEnthalpy eps = 1e-8;
 algorithm
 
   if debugmode then
     print("Running setState_phX("+String(p/1e5)+" bar,"+String(h)+" J/kg,X)...");
   end if;
-  state := setState_pTX(p,
-    temperature_phX(p,h,X,phase),
-    X,
-    phase) ",fluidnames)";
+
+  if not max(X[1:end-1])>0 then
+    if debugmode then
+      print("2Phase water (setState_phX("+String(p)+","+String(h)+"))");
+    end if;
+  h_l :=Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.hl_p(p);
+  h_v:=Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.hv_p(p);
+  d_l:=Modelica.Media.Water.IF97_Utilities.rhol_p(p);
+  d_g:=Modelica.Media.Water.IF97_Utilities.rhov_p(p);
+  x:=min(max((h - h_l)/(h_v - h_l + 1e-18), 0), 1);
+  state := ThermodynamicState(
+    d=1/(x/d_g + (1 - x)/d_l),
+    T=temperature_phX(p,h,X),
+    phase=0,
+    h=h,
+    p=p,
+    X=X,
+    X_l=X,
+    X_g=fill(0,nX_gas+1),
+    s=0,
+    x=x,
+    d_l=  d_l,
+    d_g=  d_g);
+  else
+    state := setState_pTX(p,
+      temperature_phX(p,h,X,phase),
+      X,
+      phase) ",fluidnames)";
+  end if;
 end setState_phX;
 
 

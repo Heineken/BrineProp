@@ -40,10 +40,8 @@ package Brine_5salts_TwoPhase_3gas "Two-phase aqueous solution of NaCl, KCl, CaC
 
   redeclare function extends solubilities_pTX
   "solubility calculation of CO2 in seawater Duan, Sun(2003), returns gas concentration in kg/kg H2O"
-  //  SI.Temperature T_corr = T "max(273.16,min(400,T)) TODO";
-  //  SI.MassFraction c_min=1e-5;
-  //  SI.MassFraction[:] X_l_corr=cat(1,X_l[1:nX_salt],{max(X_l[nX_salt+1],c_min),max(X_l[nX_salt+2],c_min), max(X_l[nX_salt+3],c_min), X_l[end]});
   algorithm
+  //  print("p="+String(p)+" bar, T=("+String(T)+") (solubilities_pTX)");
   //  if gasname =="carbondioxide" then
       solu[1] := if X[nX_salt+1]>0 then solubility_CO2_pTX_Duan2006(p,T,X_l,MM_vec,p_gas[1]) else -1
     "aus Partial_Gas_Data, mol/kg_H2O -> kg_CO2/kg_H2O";
@@ -57,15 +55,10 @@ package Brine_5salts_TwoPhase_3gas "Two-phase aqueous solution of NaCl, KCl, CaC
   //    solu[3] := if X[nX_salt+3]>0 then solubility_CH4_pTX_Harting(p,T,X_l,MM_vec,p_gas[3]) else -1
   //  end if;
 
-  //  print("X_l="+vector2string(X_l[nX_salt+1:end]));
-  //  print("p="+String(p)+" bar, T=("+String(T)+") (solubilities_pTX)");
-  //  print("solu[2]("+String(X[1])+")="+String(solu[2]/M_N2)+", k[1]="+String(solu[2]/p_gas[2])+"} (solubilities_pTX)");
   //  print("p_gas={"+String(p_gas[1])+", "+String(p_gas[2])+", "+String(p_gas[3])+"} (solubilities_pTX)");
-  //  print("c={"+String(X_l[1])+", "+String(X_l[nX_salt+2])+", "+String(X_l[nX_salt+3])+"} (solubilities_pTX)");
-  //  print("c={"+String(X_l_corr[nX_salt+1])+", "+String(X_l_corr[nX_salt+2])+", "+String(X_l_corr[nX_salt+3])+"} (solubilities_pTX)");
   //  print("k={"+String(solu[1]/p_gas[1])+", "+String(solu[2]/p_gas[2])+", "+String(solu[3]/p_gas[3])+"}(solubilities_pTX)");
   //  print("solu={"+String(solu[1])+", "+String(solu[2])+", "+String(solu[3])+"}(solubilities_pTX)");
-  //  solu:={2.03527e-008, 4.23495e-011, 6.42528e-011};
+  //  print(Modelica.Math.Matrices.toString({MM_vec}));
   end solubilities_pTX;
 
 
