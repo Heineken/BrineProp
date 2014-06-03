@@ -1,6 +1,8 @@
 BrineProps1PhaseMinimal
 BrineProps1PhaseFull
 BrineGas
+PureWaterMinimal
+PureWaterFlashing
 BrineProps2PhaseMinimal
 BrineProps2phaseFull
 BinarySaltValidation
@@ -21,4 +23,3 @@ Degassing
 DensityCheckProbeMeasurement
 InitializationTest
 BrineProps1Phase_Convect
-PureWaterFlashing

@@ -7,6 +7,7 @@ package PartialBrineGas
   reference_X=cat(1,fill(0,nX-1),{1}));
 
  redeclare model extends BaseProperties "Base properties of medium"
+
  //  SI.Pressure p_H2O;
    BrineProp.Partial_Units.Molality y_vec[:]=massFractionsToMoleFractions(X,MM_vec);
 

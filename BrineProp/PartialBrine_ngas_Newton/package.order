@@ -11,7 +11,6 @@ saltNames
 gasNames
 nX_salt
 nX_gas
-BrineConstants
 BaseProperties
 ThermodynamicState
 dewEnthalpy
@@ -36,6 +35,4 @@ setState_phX
 specificHeatCapacityCp
 specificHeatCapacityCp_liq
 specificHeatCapacityCp_gas
-dynamicViscosity_unused
-dynamicViscosity_pTX_unused
 isobaricExpansionCoefficient_liq

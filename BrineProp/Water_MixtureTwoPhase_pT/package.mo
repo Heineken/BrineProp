@@ -109,7 +109,7 @@ constant Integer nX_gas = 0;
     input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
     output Modelica.SIunits.SpecificEnthalpy h=Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p,T);
   algorithm
-    Modelica.Utilities.Streams.print("specificEnthalpy_pTX("+String(p)+","+String(T)+")");
+  //  Modelica.Utilities.Streams.print("specificEnthalpy_pTX("+String(p)+","+String(T)+")");
     annotation(LateInline=true,inverse(T = temperature_phX(p=p,h=h,X=X,phase=phase)));
   end specificEnthalpy_pTX;
 
@@ -407,6 +407,7 @@ end setState_phX;
   //  x := state.x;
     annotation(Documentation(info="<html></html>"));
   end vapourQuality;
+
 
  annotation (Documentation(info="<html>
   <h1>Water_MixtureTwoPhase_pT</h1>

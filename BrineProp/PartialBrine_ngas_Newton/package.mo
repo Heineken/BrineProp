@@ -34,20 +34,6 @@ constant Integer nX_salt = size(saltNames, 1) "Number of salt components"   anno
 constant Integer nX_gas = size(gasNames, 1) "Number of gas components" annotation(Evaluate=true);
 //TWO-PHASE-STUFF
 
-constant FluidConstants[nS] BrineConstants(
-     each chemicalFormula = "H2O+NaCl+KCl+CaCl2+MgCl2+SrCl2+CO2+N2+CH4",
-     each structureFormula="H2O+NaCl+KCl+CaCl2+MgCl2+SrCl2+CO2+N2+CH4",
-     each casRegistryNumber="007",
-     each iupacName="Geothermal Brine",
-     each molarMass=0.1,
-     each criticalTemperature = 600,
-     each criticalPressure = 300e5,
-     each criticalMolarVolume = 1,
-     each acentricFactor = 1,
-     each meltingPoint = 1,
-     each normalBoilingPoint = 1,
-     each dipoleMoment = 1);
-
 
  extends PartialMixtureTwoPhaseMedium(
    final mediumName="TwoPhaseMixtureMedium",
@@ -55,8 +41,7 @@ constant FluidConstants[nS] BrineConstants(
    final reducedX =  true,
    final singleState=false,
    reference_X=cat(1,fill(0,nX-1),{1}),
-   fluidConstants = BrineConstants);
-//   final extraPropertiesNames={"gas enthalpy","liquid enthalpy"},
+   fluidConstants = BrineProp.BrineConstants);
 
 /*
 ,
@@ -515,6 +500,8 @@ protected
   end saturationPressures;
 
 
+
+
   redeclare replaceable partial function extends setState_pTX
   "finds the VLE iteratively by varying the normalized quantity of gas in the gasphase, calculates the densities"
   input Real[nX_gas + 1] n_g_norm_start= fill(0.1,nX_gas+1)
@@ -897,15 +884,6 @@ protected
        fill(-1,nX);
     SI.SpecificHeatCapacity cp_vec[nX_gas+1];
   end specificHeatCapacityCp_gas;
-
-
-  replaceable function dynamicViscosity_pTX_unused "viscosity calculation"
-    input SI.Pressure p;
-    input SI.Temp_K T;
-    input MassFraction X[:] "mass fraction m_NaCl/m_Sol";
-    output SI.DynamicViscosity eta;
-  //  constant Real M_NaCl=0.058443 "molar mass in [kg/mol]";
-  end dynamicViscosity_pTX_unused;
 
 
   replaceable function isobaricExpansionCoefficient_liq

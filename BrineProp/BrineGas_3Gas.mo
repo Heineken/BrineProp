@@ -7,6 +7,9 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
 
   constant Boolean waterSaturated=false "activates water saturation";
 
+ redeclare record extends ThermodynamicState
+ end ThermodynamicState;
+
   replaceable function waterSaturatedComposition_pTX
     "calculates the water saturated mass vector for a given Temperature"
   //saturates the mixture with water
