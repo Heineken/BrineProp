@@ -1,5 +1,6 @@
 # Compiled source #
 ###################
+*.exe
 dsin.txt
 dslog.txt
 *.mat
@@ -8,6 +9,10 @@ buildlog.txt
 dymosim.exe
 dymosim.exp
 dymosim.lib
-dsmodel.c
+dsmodel*.c
 *.bak-mo
 *.asv
+request
+status
+stop
+*.obj

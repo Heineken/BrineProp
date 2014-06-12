@@ -1,5 +1,5 @@
 within BrineProp;
-partial package PartialBrine_ngas_Newton "Template medium for aqueous solutions of m Salts and n Gases, VLE solved by Newton's method"
+partial package PartialBrine_MultiSalt_2Phase_MultiGas "Template medium for aqueous solutions of m Salts and n Gases, VLE solved by Newton's method"
   //definition of molar masses
 
 //constant String explicitVars = "ph" "set of variables the model is explicit for, may be set to all combinations of ph or pT, setting pT should speed up the model in pT cases";
@@ -927,4 +927,4 @@ Germany</div>
  revisions="<html>
 
 </html>"));
-end PartialBrine_ngas_Newton;
+end PartialBrine_MultiSalt_2Phase_MultiGas;

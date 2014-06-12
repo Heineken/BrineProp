@@ -4,7 +4,7 @@ package Brine_5salts_TwoPhase_3gas "Two-phase aqueous solution of NaCl, KCl, CaC
 //TODO: use Fluid limits
 
 
-  extends BrineProp.PartialBrine_ngas_Newton(
+  extends BrineProp.PartialBrine_MultiSalt_2Phase_MultiGas(
     redeclare package Salt_data = BrineProp.SaltData_Duan,
     final gasNames = {"carbondioxide","nitrogen","methane"},
     final saltNames = {"sodium chloride","potassium chloride","calcium chloride","magnesium chloride","strontium chloride"},
