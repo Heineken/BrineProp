@@ -29,7 +29,6 @@ specificEnthalpy_liq_pTX
 specificEnthalpy_gas_pTX
 saturationPressures
 saturationPressure_H2O
-setState_pTX_cEQ
 setState_pTX
 setState_phX
 specificHeatCapacityCp
