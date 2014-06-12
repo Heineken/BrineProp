@@ -6,11 +6,10 @@ An Excel version is available in the download section. Its VBA code can also be 
 
 Compatibility
 -------------
-* Works in Dymola with MSL 3.2
-* Works in Dymola with MSL 3.2.1
+* Works in Dymola 2014 FD01 with MSL 3.2
+* Works in Dymola 2014 FD01 with MSL 3.2.1
 * Works via FMU in OpenModelica
 * Works via FMU in JModelica
-
 
 Installation
 ------------
