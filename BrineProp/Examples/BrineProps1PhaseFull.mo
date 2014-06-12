@@ -16,28 +16,30 @@ model BrineProps1PhaseFull
     "thermal conductivity";
   SI.SpecificHeatCapacity c_p_brine= Medium.specificHeatCapacityCp(props.state)
     "specific heat capacity";
-  SI.SpecificHeatCapacity dh_dT_p=(Medium.specificEnthalpy_pTX(props.p,props.T+0.1,props.X)
-                                     -Medium.specificEnthalpy_pTX(props.p,props.T-0.1,props.X))
-                                      /0.2
+  SI.TemperatureDifference dT= 0.1
+    "temperature intervall for differential quotient";
+  SI.SpecificHeatCapacity c_p_brine2=(Medium.specificEnthalpy_pTX(props.p,props.T+dT/2,props.X)
+                                     -Medium.specificEnthalpy_pTX(props.p,props.T-dT/2,props.X))/dT
     "specific heat capacity from enthalpy derivative";
-  Real isothermalThrottlingCoefficient=(Medium.specificEnthalpy_pTX(props.p+10,props.T,props.X)
-                                       -Medium.specificEnthalpy_pTX(props.p-10,props.T,props.X))/20
+
+  SI.Pressure dp= 0.1e5 "temperature intervall for differential quotient";
+  Real isothermalThrottlingCoefficient=(Medium.specificEnthalpy_pTX(props.p+dp/2,props.T,props.X)
+                                       -Medium.specificEnthalpy_pTX(props.p-dp/2,props.T,props.X))/dp
     "isothermalThrottlingCoefficient";
 
   Real beta=Medium.isobaricExpansionCoefficient(props.state)
     "isobaric expansion coefficient";
-  Real beta2=props.d*(1/props.d-1/Medium.density_pTX(props.p,props.T-1,props.X))
-    "isobaric expansion coefficient from density";
+    //  Real beta2=props.d*(1/props.d-1/Medium.density_pTX(props.p,props.T-1,props.X)) "isobaric expansion coefficient from density - as calculated in model";
+  SI.LinearTemperatureCoefficient beta2=(1-props.d/Medium.density_pTX(props.p,props.T-1,props.X))
+    "isobaric expansion coefficient from density - central differential coefficient";
 
   Real dtdp_s = beta/c_p_brine*props.T/props.d "?";
-//  SI.SurfaceTension sigma= Medium.surfaceTension_T(props.T);
+  //  SI.SurfaceTension sigma= Medium.surfaceTension_T(props.T);
+
   Real region = Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.region_pT(props.p, props.T)
     "IAPWS region";
 
   SI.MassConcentration TDS= sum(props.Xi) * props.d "total dissolved solids";
-    parameter Real n_K=1 "potassium molality";
-    parameter Real n_Ca=2 "calcium molality";
-    parameter Real n_Na=2 "natrium molality";
 equation
 //SPECIFY MEDIUM COMPOSITION {NaCl, KCl, CaCl2, MgCl2, SrCl2}
 //   props.Xi = {    0,   0,   0,   0,  0} "pure water";
@@ -48,7 +50,6 @@ equation
 
 //SPECIFY THERMODYNAMIC STATE
   props.p = 10e5;
- props.T = 273.15+50 "+time";
-// props.T = 273.15+50+time "transient";
-
+ props.T = 273.15+50;
+ // props.T = 273.15+50+time "transient - DOES NOT WORK";
 end BrineProps1PhaseFull;

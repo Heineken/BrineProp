@@ -37,6 +37,7 @@ protected
   constant Pressure_bar p_max=1000;
   constant SI.Temp_C T_min=0;
   constant SI.Temp_C T_max=400;
+  String msg;
 algorithm
 //   print("X[3]="+String(X[3])+" (Brine.Viscosities.dynamicViscosity_DuanZhuang_pTXd)");
   if debugmode then
@@ -55,7 +56,7 @@ algorithm
     assert(T_C>=T_min and T_C<=T_max, "T="+String(T_C)+", but must be between "+String(T_min)+" and "+String(T_max)+"°C");
    end if;
 
-  //viscosity calculation
+ //viscosity calculation
   state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(p_Pa, T_K, X);
   eta_H2O := Modelica.Media.Water.WaterIF97_base.dynamicViscosity(state_H2O);
 //  print("eta_H2O= "+String(eta_H2O)+" Pa·s");
@@ -72,29 +73,26 @@ algorithm
  for i in 1:nX_salt loop
     if X[i]>0 then
       salt := Salt_Constants[i];
-      if outOfRangeMode==1 then
-        if molalities[i]>salt.mola_max_eta then
-          print(salt.name+" content exceeds limit in Viscosities.dynamicViscosity_Duan_pTX");
-//          molalities[i]=min(molalities[i],salt.mola_max_eta);
-        end if;
-      elseif outOfRangeMode==2 then
-          assert(ignoreLimitSalt_visc[i] or (molalities[i]>=0 and molalities[i]<=salt.mola_max_eta), "Molality of "+salt.name+" is "+String(molalities[i])+"(X="+String(X[i])+"), but must be between 0 and "+String(salt.mola_max_eta)+" mol/kg");
+      if not (ignoreLimitSalt_b[i] or (molalities[i]>=0 and molalities[i]<=salt.mola_max_eta)) then
+        msg :="Molality of " + salt.name + " is " + String(molalities[i]) + "(X="
+           + String(X[i]) + "), but must be between 0 and " + String(salt.mola_max_eta)
+           + " mol/kg (dynamicViscosity_DuanZhang_pTXd)";
       end if;
-
-      //print(salt.name+" content = "+String(molalities[i])+" (Viscosities.dynamicViscosity_Duan_pTX)");
-//      if salt.name <> "NaCl" then
       //factors
       //MIXING WEIGHT
     //  phi:=X[i]/sum(X[1:nX_salt]) "geometric mean mixture rule weighted with mass fraction (as in Laliberté)";
       phi:=molalities[i]/sum(molalities[1:nX_salt])
         "geometric mean mixture rule weighted with mass fraction (as in Laliberté)";
 
-        if i==3 then
+      if i==3 then
         //Zhang (available for NaCl, KCl and CaCl)
          c :=X[i]/MM[i]*d/1000/phi "component molarity";
          eta_relative := 1 + salt.Zh_A*c^0.5 + salt.Zh_B*c + salt.Zh_D*c^2 + 1e-4*salt.Zh_E*c^3.5 + 1e-5*salt.Zh_F*c^7;
       else
         //Duan (available for NaCl and KCl)
+        if max(cat(1,salt.a,salt.b,salt.c))==0 then
+          msg :="No coefficients for " + salt.name + " in dynamicViscosity_DuanZhang_pTXd";
+        end if;
         b:=molalities[i]/phi;
         A := salt.a[1] + salt.a[2]*T_K + salt.a[3]*T_K^2;
         B := salt.b[1] + salt.b[2]*T_K + salt.b[3]*T_K^2;
@@ -115,6 +113,13 @@ algorithm
 
 //      print("Viscosity "+salt.name+" phi="+String(phi)+": "+String(eta_relative)+"->"+String(eta)+" Pa·s (BrineProp.Viscosities.dynamicViscosity_Duan_pTX)");
 
+      if msg<>"" then
+        if outOfRangeMode==1 then
+          print(msg);
+        elseif outOfRangeMode==2 then
+          assert(false,msg);
+        end if;
+      end if;
     end if;
 //    eta := eta + etas[i]*molalities[i];
   end for;

@@ -10,5 +10,5 @@ equation
 
   //specify brine composition
   props.Xi = {0.0839077010751,0.00253365118988,0.122786737978,0,0}
-    "Elvira 2-2013 1.1775g/ml V2";
+    "Feldbusch 2-2013 1.1775g/ml V2";
 end BrineProps1PhaseMinimal;

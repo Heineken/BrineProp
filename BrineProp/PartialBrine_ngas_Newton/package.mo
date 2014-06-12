@@ -1,7 +1,6 @@
 within BrineProp;
 partial package PartialBrine_ngas_Newton "Template medium for aqueous solutions of m Salts and n Gases, VLE solved by Newton's method"
   //definition of molar masses
- //constant Integer phase=0;
 
 //constant String explicitVars = "ph" "set of variables the model is explicit for, may be set to all combinations of ph or pT, setting pT should speed up the model in pT cases";
   constant Boolean input_ph=true
@@ -60,55 +59,43 @@ constant Integer nX_gas = size(gasNames, 1) "Number of gas components" annotatio
 
  redeclare model extends BaseProperties "Base properties of medium"
  //  MassFraction[nX] X_l(start=cat(1,fill(0,nXi),{1}))  "= X cat(1,X_salt/(X[end]*m_l),X[nX_salt+1:end])";
-   SI.Density d_l;
-   SI.Density d_g;
+   SI.Density d_l "density of liquid phase";
+   SI.Density d_g "density of gas phase";
 
-   Real GVF "=x*d/d_ggas void fraction";
-   Real x "(start=0) (min=0,max=1) gas phase mass fraction";
+   Real GVF "gas void fraction";
+   Real x "gas phase mass fraction";
    SI.Pressure p_H2O;
-   SI.Pressure[nX_gas + 1] p_gas;
-   SI.Pressure p_degas[nX_gas + 1];
- //  MassFraction[nX_gas+1] X_g;
-   MassFraction[nX] X_l;
+   SI.Pressure[nX_gas + 1] p_gas "partial gas pressures in gas phase";
+   SI.Pressure p_degas[nX_gas + 1] "degassing pressure in liquid phase";
+   //  MassFraction[nX_gas+1] X_g "mass fractions in gas phase";
+   MassFraction[nX] X_l "mass fractions in liquid phase";
 
-   SI.SpecificEnthalpy h_l;
-   SI.SpecificEnthalpy h_g;
+   SI.SpecificEnthalpy h_l "specific enthalpy of liquid phase";
+   SI.SpecificEnthalpy h_g "specific enthalpy of gas phase";
 
- //  SI.Pressure p_check=sum(p_gas)+p_H2O;
- //  Real k[nX_gas];
    parameter Real[nX_gas + 1] n_g_norm_start = fill(0.5,nX_gas+1)
     "start value, all gas in gas phase, all water liquid";
- //  Real[nX_gas+1] n_g_norm_start;
+ //  Real[nX_gas+1] n_g_norm_start "uncomment for Examples.InitializationTest";
 
- //  Real[nX_gas+1] n_g_norm;
    Real y_vec[:]=massFractionsToMoleFractions(X,MM_vec) "mole fractions";
- //  Real y_g[:]= massFractionsToMoleFractions(X_g,MM_vec[nX_salt+1:nX]) "mole fractions";
    Real y_g[:]= p_gas/p "mole fractions in gas phase";
 
    Real[nX_gas + 1] x_vec = { (if X[nX_salt+i]>0 then state.X_g[i]*x/X[nX_salt+i] else 0) for i in 1:nX_gas+1}
     "Fractions of gas mass in gas phase";
- //  Real[nX_gas+1] x_vec = if x>0 then state.X_g*x./X[nX_salt+1:nX] else fill(0,nX_gas+1)
 
- //  MassFraction[nX_salt] X_salt = X[1:nX_salt];
- //  MassFraction[nX_gas] X_gas = X[nX_salt+1:end-1];
- //  SI.Temperature T_corr = max(273.16,min(400,T)) "TODO";
- //  SI.Pressure p_corr = max(1e5,min(455e5,p)) "TODO";
-   Integer z "Number of iterations in VLE algorithm";
+ //  Real[nX_gas+1] n_g_norm;
+ //  Integer z "Number of iterations in VLE algorithm";
 protected
    Integer pp(start=0)=state.phase
     "just to get rid of initialization problem warning";
- /*  Real T_start=300;
-initial equation 
-  T=T_start;*/
  equation
-    //   assert(nX_gas==2,"Wrong number of gas mass fractions specified (2 needed - CO2,N2)");
+ //   assert(nX_gas==2,"Wrong number of gas mass fractions specified (2 needed - CO2,N2)");
  //  assert(max(X)<=1 and min(X)>=0, "X out of range [0...1] = "+PowerPlant.vector2string(X)+" (saturationPressure_H2O())");
+
    u = h - p/d;
  //  MM = (X_salt*MM_salt + X_gas*MM_gas + X[end]*M_H2O);
    MM = y_vec*MM_vec;
    R  = Modelica.Constants.R/MM;
-
- //  (h,x,d,d_g,d_l) = specificEnthalpy_pTX(p,T,X) unfortunately, this is not invertable;
 
    if input_ph then
      h = specificEnthalpy_pTX(p,T,X,phase,n_g_norm_start);
@@ -122,23 +109,17 @@ initial equation
      d=state.d;
    end if;
 
-   (state,GVF,h_l,h_g,p_gas,p_H2O,p_degas,z) = setState_pTX(p,T,X,phase,n_g_norm_start);
+ //  (state,GVF,h_l,h_g,p_gas,p_H2O,p_degas,z,n_g_norm) = setState_pTX(p,T,X,phase,n_g_norm_start);
+   (state,GVF,h_l,h_g,p_gas,p_H2O,p_degas) = setState_pTX(p,T,X,phase,n_g_norm_start);
    X_l=state.X_l;
    x=state.x;
    s=state.s;
- //  d=state.d;
    d_g=state.d_g;
    d_l=state.d_l;
 
-  /* 
-  (x,d,d_g,d_l,p_H2O,p_gas,X_l,p_degas)= quality_pTX(p,T,X,n_g_start);
-  s = 0 "specificEntropy_phX(p,h,X) TODO";
-   */
-
    sat.psat = sum(p_degas);
    sat.Tsat = T;
-   sat.X = X "TODO";
-  // sat.p_degas=p_degas;
+   sat.X = X_l;
 
    annotation (Documentation(info="<html></html>"),
                Documentation(revisions="<html>
@@ -518,8 +499,9 @@ protected
     output SI.Pressure[nX_gas + 1] p_gas "partial pressures of gases";
     output SI.Pressure p_H2O "water vapour pressure TODO is in p_gas drin";
     output SI.Pressure[nX_gas + 1] p_degas;
-    output Integer z "number of iterations";
+  //  output Integer z "number of iterations";
 protected
+    Integer z "number of iterations";
     SI.MassFraction[nX_gas+1] X_g;
     SI.MassFraction[nX] X_l=X "start value";
     SI.Density d;
@@ -560,7 +542,7 @@ protected
         print("Running setState_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" °C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
     end if;
 
-   assert(p>0,"p="+String(p/1e5)+"bar - Negative pressure is not yet supported ;-) (PartialBrine_ngas_Newton.setState_pTX())");
+   assert(p>0,"p="+String(p/1e5)+" bar - Negative pressure is not yet supported ;-) (PartialBrine_ngas_Newton.setState_pTX())");
    assert(max(X)-1<=1e-8 and min(X)>=-1e-8, "X out of range [0...1] = "+Modelica.Math.Matrices.toString(transpose([X]))+" (setState_pTX())");
   //  assert(T>273.15,"T too low in PartialBrine_ngas_Newton.()");
 
@@ -629,11 +611,11 @@ protected
 
     //DEGASSING PRESSURE
           (p_H2O,p_H2O_0):=saturationPressure_H2O(p,T2,X_l,MM_vec,nM_vec)
-        "X_l ändert sich";
+        "X_l changes";
       if (p_H2O>p) then
-          print("p_H2O(" + String(p/1e5) + "bar," +
+          print("p_H2O(" + String(p/1e5) + " bar," +
             String(T2 - 273.15) + "°C, " + Modelica.Math.Matrices.toString(transpose([X])) + ") = "
-             + String(p_H2O/1e5) + "bar>p ! (PartialBrine_ngas_Newton.setState_pTX)");
+             + String(p_H2O/1e5) + " bar>p ! (PartialBrine_ngas_Newton.setState_pTX)");
         x:=1;
         break;
       end if;
@@ -893,7 +875,8 @@ protected
     constant SI.Temperature Delta_T= 1;
     output SI.LinearTemperatureCoefficient beta;
   algorithm
-    beta :=d_l*(1/d_l - 1/(density_liquid_pTX(state.p,state.T - Delta_T,state.X,MM_vec)))/Delta_T;
+  //  beta :=d_l*(1/d_l - 1/(density_liquid_pTX(state.p,state.T - Delta_T,state.X,MM_vec)))/Delta_T;
+    beta :=(1 - d_l/(density_liquid_pTX(state.p,state.T - Delta_T,state.X,MM_vec)))/Delta_T;
   end isobaricExpansionCoefficient_liq;
 
 

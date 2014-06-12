@@ -6,6 +6,7 @@ function solubility_N2_pTX_Duan2006 "solubility calculation of N2 in seawater Ma
   http://www.geochem-model.org/wp-content/uploads/2009/09/46-FPE_248_103.pdf"
 //redeclare function extends solubility_N2_pTX
   extends partial_solubility_pTX;
+  extends BrineProp.SaltData_Duan.defineSaltOrder;
 
 /*  input SI.Pressure p;
   input SI.Temp_K T;

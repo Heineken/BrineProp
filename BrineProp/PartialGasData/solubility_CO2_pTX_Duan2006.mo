@@ -3,7 +3,7 @@ function solubility_CO2_pTX_Duan2006 "CO2 solubility in aqueous saltsolutions"
 /*  Zhenhao Duan et al. (2006) An improved model for the calculation of CO2 solubility in aqueous
 solutions containing Na+,K+,Ca2+,Mg2+,Cl-, and SO4_2-. Marine Chemistry 98:131-139. 
   fugacity from doi:10.1016/j.marchem.2005.09.001*/
-
+  extends BrineProp.SaltData_Duan.defineSaltOrder;
   extends partial_solubility_pTX;
 /*  input SI.Pressure p;
   input SI.Temp_K T;

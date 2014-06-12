@@ -1,41 +1,54 @@
 within BrineProp.Examples;
 model BrineProps2phaseFull
 
-  //package Medium = BrineProp.Brine_5salts_TwoPhase_3gas;
-    package Medium = BrineProp.Brine_5salts_TwoPhase_3gas(input_dT=true);
-  //package Medium = BrineProp.Brine_5salts_TwoPhase_3gas(explicitVars="pT");
-  //package Medium = MediaTwoPhaseMixture.Water_MixtureTwoPhase_pT;
+//SPECIFY MEDIUM
+  package Medium = Brine_5salts_TwoPhase_3gas;
+  //package Medium = Brine_5salts_TwoPhase_3gas(input_dT=true) "also take dT input";
+  //package Medium = Brine_5salts_TwoPhase_3gas(input_ph=false) "no ph input expected -> save time";
 
-  Medium.BaseProperties props(phase=0,n_g_norm_start=fill(0.5,Medium.nX_gas+1));
+//INSTANTIATE PROPERTY MODEL
+  Medium.BaseProperties props;
+  //  Medium.BaseProperties props(n_g_norm_start=fill(0.5,Medium.nX_gas+1)) "change start vector for VLE algorithm (componentwise mass distribution, default=0.5)";
+    //Medium.BaseProperties props(phase=1) "deactivate VLE calculation";
 
-// SI.Temperature T = props.T;
-//  SI.SpecificEnthalpy h = props.h;
-  SI.Density d= props.d;
-  //SI.Density d = Medium.density_liquid_pTX(props.p,props.T,props.X_l, Medium.MM_vec);
-
+//EXTRACT CALCULATED PROPERTIES
+  SI.Density d= props.d "effective density";
+  //SI.Density 2 = Medium.density_liquid_pTX(props.p,props.T,props.X_l, Medium.MM_vec) "direct density calculation";
+  SI.Density GVF= props.GVF "gas volume fraction";
+  SI.SpecificEnthalpy h = props.h "effective specific enthalpy";
+//CALCULATE ADDITIONAL PROPERTIES
 // VISCOSITY
   SI.DynamicViscosity eta_l = Medium.dynamicViscosity_liq(props.state)
-    "liquid viscosity";
+    "liquid phase viscosity";
   SI.DynamicViscosity eta_g = Medium.dynamicViscosity_gas(props.state)
-    "gas viscosity";
+    "gas phase viscosity";
 
 //SPECIFIC HEAT CAPACITY
   SI.SpecificHeatCapacity c_p_brine= Medium.specificHeatCapacityCp(props.state);
-//  SI.SpecificHeatCapacity c_p_brine2=(Medium.specificEnthalpy_pTX(props.p,props.T+.1,props.X)-Medium.specificEnthalpy_pTX(props.p,props.T-.1,props.X))/.2;
-//  SI.SpecificEnthalpy h_Driesner= BrineProp.SpecificEnthalpies.specificEnthalpy_pTX_Driesner(props.p,props.T,sum(props.X[1:5]));
-//  SI.SpecificHeatCapacity c_p_Driesner= SpecificEnthalpies.specificHeatCapacity_pTX_Driesner(props.p,props.T,sum(props.X[1:5]));
-//    SI.SpecificHeatCapacity c_p_liq=Medium.specificHeatCapacityCp_liq(props.state);
-//  SI.SpecificHeatCapacity c_p_gas=Medium.specificHeatCapacityCp_gas(props.state);
+
+  SI.Temperature dT= 0.1 "temperature intervall for differential quotient";
+  SI.SpecificHeatCapacity c_p_brine2=(Medium.specificEnthalpy_pTX(props.p,props.T+dT/2,props.X)
+                                     -Medium.specificEnthalpy_pTX(props.p,props.T-dT/2,props.X))/dT
+    "by differentiation from enthalpy";
+  SI.SpecificHeatCapacity c_p_liq=Medium.specificHeatCapacityCp_liq(props.state);
+  SI.SpecificHeatCapacity c_p_gas=Medium.specificHeatCapacityCp_gas(props.state);
+  SI.SpecificEnthalpy h_Driesner= BrineProp.SpecificEnthalpies.specificEnthalpy_pTX_Driesner(props.p,props.T,sum(props.X[1:5]))
+    "NaCl solution enthalpy acc to Driesner";
+  SI.SpecificHeatCapacity c_p_Driesner= SpecificEnthalpies.specificHeatCapacity_pTX_Driesner(props.p,props.T,sum(props.X[1:5]))
+    "NaCl heat capacity acc to Driesner";
 
 //THERMAL EXPANSION COEFFICIENT
-  //Real beta=(props.d-Medium.density_liquid_pTX(props.p,props.T-1,props.X));
-  //Real beta=Medium.isobaricExpansionCoefficient_liq(props.state,props.d_l);
+  SI.LinearTemperatureCoefficient beta=Medium.isobaricExpansionCoefficient_liq(props.state,props.d_l);
+  //  SI.LinearTemperatureCoefficient beta2=props.d*(1/Medium.density_pTX(props.p,props.T+dT/2,props.X)-1/Medium.density_pTX(props.p,props.T-dT/2,props.X))/dT "isobaric expansion coefficient from density - as calculated in model";
+  SI.LinearTemperatureCoefficient beta2=(1-props.d/Medium.density_pTX(props.p,props.T-1,props.X))
+    "isobaric expansion coefficient from density - central differential coefficient";
 
   //EXTRACT MOLAR WEIGHTS
  constant Real MM[:] = Medium.MM_vec;
 
    //RATIO GAS-LIQUID
- Real ratioGasLiquid = props.GVF/(1-props.GVF) "at given conditions";
+ Real ratioGasLiquid = props.GVF/(1-props.GVF) "gas-liquid volume ratio";
+
  /*
    Real V_l = sum(props.X_l[6:8]./Medium.MM_gas)*22.4/props.X_l[end] 
     "Liter of dissolved gas per kg_brine would have after complete degassing at standard conditions";
@@ -74,15 +87,16 @@ model BrineProps2phaseFull
 //  Real b = props.X[1]/Medium.MM_salt[1]/props.X[end];
   Partial_Units.Molality[:] b_l=massFractionsToMolalities(props.X_l, Medium.MM_vec);
 */
+
 Real g=1 "gas content multiplier";
 
-  parameter SI.Pressure p_set=20*1.01325e5;
-  parameter SI.Temperature T_set=273.15+30;
+/*  parameter SI.Pressure p_set=20*1.01325e5;
+  parameter SI.Temperature T_set=273.15+30;*/
 equation
   //DEFINE STATE (define 2 variables pT, ph or Td)
   //pT transient
-  props.p = p_set "20*1.01325e5";
-  props.T = T_set "273.15+20+time*100";
+  props.p = 10*1.01325e5;
+  props.T = 273.15+50 "+time";
 
 /*  //ph  
   props.p = 435e5;
@@ -95,7 +109,7 @@ equation
 */
 
 //DEFINE BRINE COMPOSITION (NaCl, KCl, CaCl2, MgCl2, SrCl2, CO2, N2, CH4)
-   props.Xi = fill(0,8) "pure water";
+//   props.Xi = fill(0,8) "pure water";
   //  props.Xi = {1*SaltData.M_NaCl/(1+1*SaltData.M_NaCl),0,0,0,0, 0*1.035e-3,0*5e-4,0}  "1-molar KCl solution";
   //  props.Xi = {0,SaltData.M_KCl/(1+SaltData.M_KCl),0,0,0,0,0,0} "1-molar KCl solution";
 //  props.Xi = {0,0,SaltData.M_CaCl2/(1+SaltData.M_CaCl2),0,0,0,0,0};
@@ -104,12 +118,10 @@ equation
 /*  props.Xi[1:5] = {0.089190167,0.005198142,0.137663206,0*0.001453819,0*0.002621571};
   X_g[6:8]={8.05e-4,  5.87e-5, 7.15e-5}; GEHT NICHT, WEIL ER X<0 ausprobiert und das wird in PartialMedium abgefangen
 */
-//props.Xi = {     0.08214,   0.0053126,     0.11052,   0*0.0011094,   0*0.0019676,  0.00018083,  0.00074452,  6.661e-005}     "Elvira 9/11";
-//    props.Xi = {0.083945671051201,0.00253479771131107,0.122842299461699,0*0.000612116692496665,0*0.00214041137028575,  0.00016883,  0.00073459, 6.5652e-005}     "Elvira 2-2013 1.1775g/ml";
-//    props.Xi = {0.0839077010751,0.00253365118988,0.122786737978,0,0,g*7.2426359111e-05,g*0.000689505657647,g*6.14906384726e-05} "Elvira 2-2013 1.1775g/ml V2";
-
-  //SET DIFFERENT INITIAL VALUE FOR VLE ALGORITHM (componentwise mass distribution, default=0.5)
-  //props.n_g_norm_start={.1,.1,.1,time};
+//props.Xi = {     0.08214,   0.0053126,     0.11052,   0*0.0011094,   0*0.0019676,  0.00018083,  0.00074452,  6.661e-005}     "Feldbusch 9/11";
+    props.Xi = {0.083945671051201,0.00253479771131107,0.122842299461699,0*0.000612116692496665,0*0.00214041137028575,  0.00016883,  0.00073459, 6.5652e-005}
+    "Feldbusch 2-2013 1.1775g/ml";
+//    props.Xi = {0.0839077010751,0.00253365118988,0.122786737978,0,0,g*7.2426359111e-05,g*0.000689505657647,g*6.14906384726e-05} "Feldbusch 2-2013 1.1775g/ml V2";
 
 //  mola_gas=Medium.solubility_N2_pTX_Duan2006(props.p,props.T,props.X,Medium.MM_vec,p_gas);
 //  mola[:] = Medium.solubilities_pTX(props.p,props.T,props.X);
@@ -119,4 +131,7 @@ algorithm
 //  print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
 //  print(Modelica.Math.Matrices.toString(transpose([props.Xi])));
 //  print("k="+Modelica.Math.Matrices.toString(transpose([Brine_5salts_TwoPhase_3gas.solubilities_pTX(props.p, props.T, props.X_l, props.X, props.p_gas[1:3]) ./ props.p_gas[1:3]])));
+
+  annotation (experiment(StopTime=100, __Dymola_NumberOfIntervals=100),
+      __Dymola_experimentSetupOutput);
 end BrineProps2phaseFull;

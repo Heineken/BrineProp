@@ -64,13 +64,10 @@ package Brine_5salts_TwoPhase_3gas "Two-phase aqueous solution of NaCl, KCl, CaC
 
   redeclare function extends density_liquid_pTX
   //  PowerPlant.Media.Brine.Salt_Data_Duan.density_Duan2008_pTX;
-
+protected
+    parameter Integer[:] liqIndex=cat(1,1:nX_salt,{nX});
   algorithm
-  //    print("MM:"+String(size(MM,1))+" "+String(MM[1]));
-    d := Densities.density_Duan2008_pTX(p,T,X,MM) "Defined in Salt_Data_Duan";
-  //  d := Brine_Driesner.density_pTX(p,T,X[1:nX_salt],MM_salt);
-  //  d := Modelica.Media.Water.WaterIF97_pT.density_pT(p,T)  "*(1+sum(X[1:nX_salt]))/X[end]";
-
+    d := Densities.density_Duan2008_pTX(p,T,X[liqIndex],MM[liqIndex]);
   //   print("density_liquid_pTX: "+String(p*1e-5)+" bar,"+String(T)+" K->"+String(d)+"kg/m³");
   end density_liquid_pTX;
 
@@ -197,6 +194,7 @@ protected
 
   redeclare function extends specificHeatCapacityCp_liq
   "calculation of liquid specific heat capacity from apparent molar heat capacities"
+    extends BrineProp.SaltData_Duan.defineSaltOrder;
 
 protected
     SI.MolarMass MM_vec_salt[:]=BrineProp.SaltData.MM_salt[1:5];

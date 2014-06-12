@@ -1,5 +1,12 @@
 within BrineProp.Densities;
-function density_Duan2008_pTX "Brine density"
+function density_Duan2008_pTX
+  "density calculation of an aqueous salt solution according to Shide Mao and Zhenhao Duan (2008) 0-300°C; 0.1-100MPa; 0-6 mol/kg"
+  /*
+  Mixing rule acc. to Laliberte&Cooper2004
+  http://dx.doi.org/10.1016/j.jct.2008.03.005
+  http://www.geochem-model.org/wp-content/uploads/2009/09/55-JCT_40_1046.pdf
+  Problems: Brine has the same evaporation temperature as pure water, only different  "
+*/
   input SI.Pressure p;
   input SI.Temp_K T;
   input SI.MassFraction X[:] "mass fractions m_NaCl/m_Sol";
@@ -7,10 +14,19 @@ function density_Duan2008_pTX "Brine density"
 
   output SI.Density d;
 protected
+ parameter Integer nX_salt=size(X,1)-1;
+
   final constant Real b=1.2;
-  final constant Real U[:]={3.4279E2,-5.0866E-3,9.4690E-7,-2.0525,3.1159E3,-1.8289E2,
-      -8.0325E3,4.2142E6,2.1417};
-             //dielectric constant D of pure water according to Bradley and Pitzer (1979)
+    final constant Real U[:] = {
+       3.4279E2,
+      -5.0866E-3,
+       9.4690E-7,
+      -2.0525,
+       3.1159E3,
+      -1.8289E2,
+      -8.0325E3,
+       4.2142E6,
+     2.1417};  //dielectric constant D of pure water according to Bradley and Pitzer (1979)
   final constant Real N_0(final unit="1/mol") = Modelica.Constants.N_A
     "Avogadro constant in [1/mol]";
 //  e := 1.60217733E-19 [C] "elementary charge in Coulomb";
@@ -19,16 +35,10 @@ protected
 //k := 1.3806505E-23 "Boltzmann constant in [J/K]";
   final constant Real k=1.3806505E-16 "Boltzmann constant in [erg/K]";
   final constant Real R=Modelica.Constants.R "Gas constant [J/mol*K]";
-/*  constant Integer nX_salt =  size(X,1) 
-    "TODO: diese Zeile und alle Verweise au nX_salt entfernen";*/
-  constant Integer nX_salt=5;
   SI.MassFraction w_salt "kg_salt/kg_brine";
-//  SI.Temp_C T_C = SI.Conversions.to_degC(T);
   Pressure_bar p_bar=SI.Conversions.to_bar(p);
   Pressure_MPa p_MPa=p*1e-6;
   Real v;
- // Modelica.Media.Water.WaterIF97_base.ThermodynamicState state_H2O;
-//  Molality m[nX_salt] "molality (mol_salt/kg_sol)";
   Real I;
   Real I_mr;
   SI.Density rho_sol_r;
@@ -66,33 +76,21 @@ protected
   Real v_minus;
   Real[23] c;
 
-//  SI.Density[nX_salt] rho;
   BrineProp.SaltData_Duan.SaltConstants salt;
   constant Molality[:] m=massFractionsToMolalities(X, MM_vec);
   SI.Pressure p_sat=Modelica.Media.Water.IF97_Utilities.BaseIF97.Basic.psat(T);
   String msg;
+//  constant Boolean debugmode = true;
 algorithm
   if debugmode then
       print("Running density_Duan2008_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" °C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
   end if;
 
-  //Density of pure water
-/*  state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(p, T, fill(0,0));
-  rho_H2O := Modelica.Media.Water.WaterIF97_base.density(state_H2O) * 1e-3 "kg/m³->kg/dm³";*/
-//  rho_H2O := Modelica.Media.Water.WaterIF97_base.density(Modelica.Media.Water.WaterIF97_base.setState_pTX(p, T, fill(0,0))) * 1e-3 "kg/m³->kg/dm³";
-
-//  assert(Modelica.Media.Water.WaterIF97_base.saturationPressure(T)<p,"T="+String(T-273.15)+"°C is above evaporation temperature at p="+String(p/1e5)+" bar!");
-/*  if (Modelica.Media.Water.WaterIF97_base.saturationPressure(T)>p) then
-    d:=-1 "if above evaporation temperature";
-    print("above evaporation temperature!");
-    return;
-  end if;*/
-
-//  rho_H2O := Modelica.Media.Water.WaterIF97_base.density_pT(p, T) * 1e-3
-//  SI.Density rho2= max(Modelica.Media.Water.WaterIF97_base.density_pT(p,T),Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.rhol_T(T));
   rho_H2O := Modelica.Media.Water.WaterIF97_base.density_pT(max(p, p_sat + 1), T)*1e-3
     "kg/m³->kg/dm³";
-//   print("rho_H2O=" +String(rho_H2O)+" kg/dm³");
+  if debugmode then
+    print("rho_H2O=" +String(rho_H2O)+" kg/dm³");
+  end if;
 
   //for pure water skip the whole calculation and return water density
   if max(X[1:nX_salt]) <= 1e-12 then
@@ -100,13 +98,15 @@ algorithm
     return;
   end if;
   for i in 1:nX_salt loop
-  //    print(salt.name+": "+String(X[i]));
     if not X[i] > 0 then
       M_salt[i] := 1;
     else
       salt :=BrineProp.SaltData_Duan.saltConstants[i];
+      if debugmode then
+        print(salt.name+": "+String(X[i]));
+      end if;
 
-      if not (m[i] >= 0 and m[i] <= salt.mola_max_rho) then
+      if not (ignoreLimitSalt_b[i] or (m[i] >= 0 and m[i] <= salt.mola_max_rho)) then
         msg:="Molality of " + salt.name + " is " + String(m[i]) +
           ", but must be between 0 and " + String(salt.mola_max_rho) +
           " mol/kg (BrineProp.Densities.density_Duan2008_pTX)";
@@ -241,16 +241,20 @@ algorithm
                     //density of the solution
                     Density_Duan = (1000 + m*M_salt)/V_m
                     */
+      if debugmode then
+        print("V_Phi["+String(i)+"]= "+String(V_Phi[i])+"");
+      end if;
     end if;
   end for;
 //  d := m[1:nX_salt]*rho/(1-X[end]) "mass fraction weighted linear mixture (matrix multiplication)";
 //   d := m[1:nX_salt]*rho/(sum(m[1:nX_salt])) "molality weighted linear mixture (matrix multiplication)";
 
 // d := ((1 + m[1:end-1]*MM_vec[1:end-1])*1000*rho_H2O)/(1000 + m[1:nX_salt]*V_Phi*rho_H2O)*1000     "Mixing rule frei nach Duan";
+
   d :=  1/(X[end]/(rho_H2O*1000) + X[1:nX_salt]*( V_Phi/1e6 ./ (M_salt/1000)))
     "Mixing rule Laliberte&Cooper2004 equ. 5&6";
 
-//  print("m: "+String((1000 + m[1:nX_salt]*M_salt)*rho_H2O)+"="+ String(1/X[end]));
+  //  print("m: "+String((1000 + m[1:nX_salt]*M_salt)*rho_H2O)+"="+ String(1/X[end]));
 
   annotation (Documentation(info="<html>
 <p><h4><font color=\"#008000\">density calculation of an aqueous salt solution</font></h4></p>

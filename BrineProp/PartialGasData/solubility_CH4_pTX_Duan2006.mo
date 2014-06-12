@@ -4,6 +4,7 @@ function solubility_CH4_pTX_Duan2006 "Duan ZH, Mao SD. (2006) A thermodynamic mo
   http://dx.doi.org/10.1016/j.gca.2006.03.018TODO Umrechnung andere Salz in NaCl"
   extends partial_solubility_pTX;
 //  output SI.MassFraction c_gas "gas concentration in kg_gas/kg_H2O";
+  extends BrineProp.SaltData_Duan.defineSaltOrder;
 
 protected
   Real[:] mu_l0_CH4_RT_c = { 0.83143711E+01,

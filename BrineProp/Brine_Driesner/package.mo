@@ -1,6 +1,10 @@
 within BrineProp;
 package Brine_Driesner "NaCl solution using Driesner density and enthalpy function"
-  extends BrineProp.PartialBrine_MultiSalt_1Phase;
+  extends BrineProp.PartialBrine_MultiSalt_1Phase(
+      redeclare package Salt_data = BrineProp.SaltData_Duan,
+      final saltNames = {"sodium chloride"},
+      final MM_salt = {Salt_data.M_NaCl},
+      final nM_salt = {Salt_data.nM_NaCl});
 
 
   redeclare function extends density_pTX
@@ -14,16 +18,14 @@ package Brine_Driesner "NaCl solution using Driesner density and enthalpy functi
   constant Real M_H2O = 0.018015 "molar mass in [kg/mol]";
 */
 public
-    constant Real M_NaCl=PowerPlant.Media.Brine.Salt_Data.M_NaCl
-    "molar mass in [kg/mol] TODO";
-    constant Real M_H2O=BrineProp.PartialBrine_MultiSalt_2Phase_unused.M_H2O
-    "molar mass in [kg/mol] TODO";
+    constant Real M_NaCl=BrineProp.SaltData.M_NaCl "molar mass in [kg/mol]";
+  //  constant Real M_H2O= BrineProp.M_H2O "molar mass in [kg/mol] TODO";
 
 protected
-    Molality mola = X[1]/M_NaCl "molality b (mol_NaCl/kg_sol)";
+    Partial_Units.Molality mola = X[1]/M_NaCl "molality b (mol_NaCl/kg_sol)";
     SI.Temp_C T_C = SI.Conversions.to_degC(T);
     SI.Temp_C T_Scale_V;
-    Pressure_bar p_bar= SI.Conversions.to_bar(p);
+    Partial_Units.Pressure_bar p_bar= SI.Conversions.to_bar(p);
     Real n_21;
     Real n_22;
     Real n_20;
@@ -99,8 +101,8 @@ protected
 
     state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(p, SI.Conversions.from_degC(T_Scale_V), fill(0,0));
     d := Modelica.Media.Water.WaterIF97_base.density(state_H2O)*M_Solution/M_H2O;
-    print("T_Scale_V: "+String(T_Scale_V)+"(density_Driesner_pTX)");
-    print("Density: "+String(d)+"(density_Driesner_pTX)");
+  //  print("T_Scale_V: "+String(T_Scale_V)+"(density_Driesner_pTX)");
+  //  print("Density: "+String(d)+"(density_Driesner_pTX)");
   end density_pTX;
 
 
@@ -113,10 +115,7 @@ protected
   output SI.SpecificEnthalpy h;*/
 
   algorithm
-    h := BrineProp.SpecificEnthalpies.specificEnthalpy_pTX_Driesner(
-        p,
-        T,
-        X);
+    h := BrineProp.SpecificEnthalpies.specificEnthalpy_pTX_Driesner(p,T,X[1]);
 
   //  print("Brine_Driesner.specificEnthalpy_pTX: "+String(p*1e-5)+"bar."+String(T_Scale_h)+"°C->"+String(h)+" J/kg");
   end specificEnthalpy_pTX;

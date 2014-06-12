@@ -8,8 +8,8 @@ package Brine_5salts "One-phase (liquid) multisalt brine solution"
 
 
   redeclare function extends density_pTX
-  //  PowerPlant.Media.Brine.Salt_Data_Duan.density_Duan2008_pTX;
-
+  /*redeclare function density_pTX
+  extends Densities.density_Duan2008_pTX;*/
   algorithm
   //    print("MM:"+String(size(MM,1))+" "+String(MM[1]));
     d := Densities.density_Duan2008_pTX(p,T,X,MM_vec)
@@ -18,6 +18,7 @@ package Brine_5salts "One-phase (liquid) multisalt brine solution"
   //  d := Modelica.Media.Water.WaterIF97_pT.density_pT(p,T)  "*(1+sum(X[1:nX_salt]))/X[end]";
 
   //   print("density_liquid_pTX: "+String(p*1e-5)+" bar,"+String(T)+" K->"+String(d)+"kg/m³");
+
   end density_pTX;
 
 
@@ -36,8 +37,7 @@ package Brine_5salts "One-phase (liquid) multisalt brine solution"
 */
 
  //    h := SpecificEnthalpies.specificEnthalpy_pTX_Driesner(p,T,X);
-     h := BrineProp.SpecificEnthalpies.specificEnthalpy_pTX_liq_Francke_cp(
-                                                             p,T,X);
+     h := BrineProp.SpecificEnthalpies.specificEnthalpy_pTX_liq_Francke_cp(p,T,X);
 
  //  print(String(p*1e-5)+" bar,"+String(T)+" K->"+String(h)+" J/kg (Brine_Duan_Multi_TwoPhase_ngas_3.specificEnthalpy_liq_pTX)");
  //print("h="+String(X[1])+"*"+String(h_vec[1])+"="+String(X[1:nX_salt]*h_vec));
@@ -67,7 +67,7 @@ protected
 
   redeclare function extends specificHeatCapacityCp
   "calculation of liquid specific heat capacity from apparent molar heat capacities"
-
+    extends BrineProp.SaltData_Duan.defineSaltOrder;
 protected
     SI.MolarMass MM_vec_salt[:]=BrineProp.SaltData.MM_salt[1:5];
     SI.Pressure p=state.p;

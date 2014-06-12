@@ -5,27 +5,24 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
  import Modelica.Utilities.Streams.print;
 
  constant Boolean debugmode = false "print messages in functions";
+ constant Integer outOfRangeMode=2
+  "when out of validity range: 0-do nothing, 1-show warnings, 2-throw error";
  constant Boolean ignoreLimitN2_T=true;
  constant Boolean ignoreLimitN2_p=true;
  constant Boolean ignoreLimit_h_KCl_Tmin=true
   "ignore Tmin in appMolarEnthalpy_KCl_White and appMolarHeatCapacity_KCl_White";
  constant Boolean ignoreLimit_h_CaCl2_Tmin=true
   "ignore Tmin in appMolarEnthalpy_CaCl2_White and appMolarHeatCapacity_CaCl2_White";
- constant Boolean[5] ignoreLimitSalt_p={false,true,true,false,false};
- constant Boolean[5] ignoreLimitSalt_T={false,false,false,false,false};
- constant Boolean[5] ignoreLimitSalt_visc={false,false,true,false,false};
- constant Integer outOfRangeMode=2
-  "when out of validity range: 0-do nothing, 1-show warnings, 2-throw error";
-
-  constant Integer NaCl=1 "reference number TODO: does not belong here";
-  constant Integer KCl=2 "reference number";
-  constant Integer CaCl2=3 "reference number";
-  constant Integer MgCl2=4 "reference number";
-  constant Integer SrCl2=5 "reference number";
+ constant Boolean[5] ignoreLimitSalt_p={false,false,false,false,false}
+  "ignore pressure limits";
+ constant Boolean[5] ignoreLimitSalt_T={false,false,false,false,false}
+  "ignore temperature limits";
+ constant Boolean[5] ignoreLimitSalt_b={false,false,false,false,false}
+  "ignore salinity limits";
+// constant Boolean[5] ignoreLimitSalt_visc={false,false,false,false,false};
 
   constant SI.MolarMass M_H2O = Modelica.Media.Water.waterConstants[1].molarMass
   "0.018015 [kg/mol]";
-
 
 
 
@@ -55,6 +52,7 @@ constant Modelica.Media.Interfaces.PartialTwoPhaseMedium.FluidConstants[nS] Brin
      each meltingPoint = 1,
      each normalBoilingPoint = 1,
      each dipoleMoment = 1);
+
 
 
 
@@ -125,29 +123,37 @@ protected
   annotation (Documentation(info="<html>
 <p><b>BrineProp</b> is a modelica package that calculates the thermodynamic properties of a specified brine, i.e. an aqueous solution of salts and gases, with a potential gas phase, including degassing/evaporation and solution/condensation.</p>
 <p>It was developed as a part of a PhD projected, documented in the thesis &QUOT;<a href=\"http://nbn-resolving.de/urn:nbn:de:kobv:83-opus4-47126\">Thermo-hydraulic model of the two-phase flow in the brine circuit of a geothermal power plant</a>&QUOT;. </p>
+<p>This package contains an extension of the Modelica.Media interfaces for two-phase mixtures (<a href=\"BrineProp.PartialMixtureTwoPhaseMedium\">PartialMixtureTwoPhaseMedium</a>), the generic brine template with the vapour-liquid-equilibrium calculation (<a href=\"BrineProp.PartialBrine_ngas_Newton\">PartialBrine_ngas_Newton</a>), as well specific brine models for NaCl, KCl, CaCl2, [MgCl2, SrCl2 partially supported] (1-phase: <a href=\"BrineProp.Brine_5salts\">Brine_5salts</a>) and CO2, N2 and CH4 (2-phase: <a href=\"BrineProp.Brine_5salts_TwoPhase_3gas\">Brine_5salts_TwoPhase_3gas</a>).</p>
 <p>This package has been developed and tested in Dymola up to 2014 FD01.</p>
 <p><b>Licensed by the </b>Henning Francke<b> under the Modelica License 2</b></p>
 <p>Copyright &copy; 2009-2014 Helmholtz Centre Potsdam, GFZ German Research Centre for Geosciences.</p>
 <p><br><i>This Modelica package is <u>free</u> software and the use is completely at <u>your own risk</u>; it can be redistributed and/or modified under the terms of the Modelica License 2. For license conditions (including the disclaimer of warranty) see <a href=\"modelica://Modelica.UsersGuide.ModelicaLicense2\">Modelica.UsersGuide.ModelicaLicense2</a> or visit <a href=\"http://www.modelica.org/licenses/ModelicaLicense2\">http://www.modelica.org/licenses/ModelicaLicense2</a>.</i> </p>
-<h4><span style=\"color:#008000\">Installation</span></h4>
-<p>Make sure the package directory is named BrineProp. This provided, the examples under <code>Examples</code> should work right away. </p>
 <h4>Usage</h4>
-<p>Check the (non-partial) Brine packages or <code>BrineProp/Examples </code>for instructions. </p>
+<p>Check the (non-partial) Brine packages (<a href=\"BrineProp.Brine_5salts\">Brine_5salts</a>, <a href=\"BrineProp.BrineGas_3Gas\">BrineGas_3Gas</a> or <a href=\"BrineProp.Brine_5salts_TwoPhase_3gas\">Brine_5salts_TwoPhase_3gas</a>) for instructions or run models from <code>BrineProp/Examples</code>. </p>
 <p>All calculated values are returned in SI-Units and are mass based. </p>
+<h4>Known issues:</h4>
+<ul>
+<li>no differentials implemented</li>
+<li>1phase-transient calculation does not compile, supposedly due to missing derivatives</li>
+<li>Does not compile in JModelica/OpenModelica</li>
+</ul>
 <h4>TODO:</h4>
 <ul>
-<li>Add differentials</li>
-<li>make 1phase-transient calculation work</li>
+<li>implement differentials</li>
+<li>remove <font style=\"color: #006400; \">argument <code>MM_vec</font></code> in property functions</li>
+<li>implement limit ignore switches consistently (preferrably as parameter in the Medium package to be changed on declaration)</li>
 <li>Add apparent molar heat capacity/enthalpy for (NaCl,) MgCl2 and SrCl2</li>
-<li>Make it work in JModelica/OpenModelica </li>
 </ul>
 <h5>Created by</h5>
-<p>Henning Francke</p><p>Helmholtz Centre Potsdam GFZ German Research Centre for Geosciences</p><p>Telegrafenberg, D-14473 Potsdam</p><p>Germany</p>
+<p>Henning Francke</p>
+<p>Helmholtz Centre Potsdam GFZ German Research Centre for Geosciences</p>
+<p>Telegrafenberg, D-14473 Potsdam</p>
+<p>Germany</p>
 <p><a href=\"mailto:info@xrg-simulation.de\">francke@gfz-potsdam.de</a></p>
 </html>", revisions="<html>
 
 </html>"),
     version="0.3.0",
     versionDate="2014-04-02",
-    uses(Modelica(version="3.2")));
+    uses(Modelica(version="3.2"), DataFiles(version="1.0")));
 end BrineProp;

@@ -104,7 +104,7 @@ end ThermodynamicState;
     input AbsolutePressure p "Pressure";
     input Temperature T "Temperature";
     input MassFraction X[:] "Mass fractions";
-    input SI.MolarMass MM[:]={1} "molar masses of components";
+  //  input SI.MolarMass MM[:]={1} "molar masses of components";
     output Density d "Density";
     annotation(Documentation(info="<html></html>"));
   end density_pTX;
@@ -247,7 +247,8 @@ redeclare replaceable function extends isobaricExpansionCoefficient
 protected
   constant SI.Temperature Delta_T= 1;
 algorithm
-  beta :=state.d*(1/state.d - 1/(density_pTX(state.p,state.T - Delta_T,state.X)))/Delta_T;
+//  beta :=state.d*(1/state.d - 1/(density_pTX(state.p,state.T - Delta_T,state.X)))/Delta_T;
+  beta :=(1 - state.d/(density_pTX(state.p,state.T - Delta_T,state.X)))/Delta_T;
 end isobaricExpansionCoefficient;
 
 
