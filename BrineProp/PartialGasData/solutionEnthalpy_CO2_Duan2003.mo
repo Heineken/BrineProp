@@ -4,7 +4,6 @@ function solutionEnthalpy_CO2_Duan2003
   extends partial_solutionEnthalpy;
 /*  input SI.Temp_K T;
   output SI.SpecificEnthalpy Delta_h_solution;
- //TODO: Was passiert wenn weniger CO2 zur Verfügung steht als gelöst werden kann?
 
   input SI.Pressure p;
   input SI.Temp_K T;

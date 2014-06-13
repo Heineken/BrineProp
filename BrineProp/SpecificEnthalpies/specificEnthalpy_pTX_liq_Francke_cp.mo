@@ -48,5 +48,5 @@ algorithm
 //  print("int_cp_by_cpWater:"+Modelica.Math.Matrices.toString({int_cp_by_cpWater}));
 //  print("H_appmol         :"+PowerPlant.vector2string(H_appmol));
 
-//  print("Brine.specificEnthalpy_pTX_Francke: "+String(p*1e-5)+"bar. "+String(T)+"°C->"+String(h)+" J/kg");
+//  print("Brine.specificEnthalpy_pTX_Francke: "+String(p*1e-5)+"bar. "+String(T)+"degC->"+String(h)+" J/kg");
 end specificEnthalpy_pTX_liq_Francke_cp;

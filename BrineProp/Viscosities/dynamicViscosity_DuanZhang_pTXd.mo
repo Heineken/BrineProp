@@ -28,7 +28,7 @@ protected
 
   SaltData_Duan.SaltConstants salt;
   constant Molality[:] molalities=massFractionsToMolalities(X,MM);
- // constant Partial_Units.Molality[:] molalities=X[1:nX_salt] ./ MM[1:nX_salt]/      X[end];
+ // constant Partial_Units.Molality[:] molalities=X[1:nX_salt] ./ MM[1:nX_salt]/X[end];
    Molarity_molperliter c;
   Molality b "component molality";
   Real phi "mixing weight";
@@ -49,22 +49,22 @@ algorithm
         print("Pressure is " + String(p_bar) + " bar, but must be between " + String(p_min) + " bar and " + String(p_max) + " bar (BrineProp.Viscosities.dynamicViscosity_DuanZhang_pTXd)");
       end if;
       if not (T_C>=T_min and T_C<=T_max) then
-        print("Temperature is "+String(T_C) + "°C, but must be between " + String(T_min) + "°C and " + String(T_max) + "°C (BrineProp.Viscosities.dynamicViscosity_DuanZhang_pTXd)");
+        print("Temperature is "+String(T_C) + "degC, but must be between " + String(T_min) + "degC and " + String(T_max) + "degC (BrineProp.Viscosities.dynamicViscosity_DuanZhang_pTXd)");
       end if;
    elseif outOfRangeMode==2 then
     assert(p_bar>=p_min and p_bar<=p_max, "p="+String(p_bar)+", but must be between "+String(p_min)+" and "+String(p_max)+" bar");
-    assert(T_C>=T_min and T_C<=T_max, "T="+String(T_C)+", but must be between "+String(T_min)+" and "+String(T_max)+"°C");
+    assert(T_C>=T_min and T_C<=T_max, "T="+String(T_C)+", but must be between "+String(T_min)+" and "+String(T_max)+"degC");
    end if;
 
  //viscosity calculation
   state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(p_Pa, T_K, X);
   eta_H2O := Modelica.Media.Water.WaterIF97_base.dynamicViscosity(state_H2O);
-//  print("eta_H2O= "+String(eta_H2O)+" Pa·s");
+//  print("eta_H2O= "+String(eta_H2O)+" Pa.s");
 
   //for pure water skip the whole calculation and return water viscosity
 
   eta:= eta_H2O "^X[end]";
-//  print("eta_H2O^X[end]= "+String(eta_H2O)+"^"+String(X[end]) + " -> "+String(eta)+" Pa·s");
+//  print("eta_H2O^X[end]= "+String(eta_H2O)+"^"+String(X[end]) + " -> "+String(eta)+" Pa.s");
   if max(X[1:nX_salt]) <= 1e-8 then
     //pure water -> skip the rest
     return;
@@ -80,9 +80,9 @@ algorithm
       end if;
       //factors
       //MIXING WEIGHT
-    //  phi:=X[i]/sum(X[1:nX_salt]) "geometric mean mixture rule weighted with mass fraction (as in Laliberté)";
+    //  phi:=X[i]/sum(X[1:nX_salt]) "geometric mean mixture rule weighted with mass fraction (as in Laliberte)";
       phi:=molalities[i]/sum(molalities[1:nX_salt])
-        "geometric mean mixture rule weighted with mass fraction (as in Laliberté)";
+        "geometric mean mixture rule weighted with mass fraction (as in Laliberte)";
 
       if i==3 then
         //Zhang (available for NaCl, KCl and CaCl)
@@ -108,10 +108,10 @@ algorithm
 //    print("eta_relative: "+String(eta_relative));
 //    print("etas["+String(i)+"]: "+String(etas[i]));
 
-//      eta:= eta*etas[i] ^X[i] "geometric mean mixture rule (as in Laliberté)";
+//      eta:= eta*etas[i] ^X[i] "geometric mean mixture rule (as in Laliberte)";
       eta:= eta*eta_relative^phi;
 
-//      print("Viscosity "+salt.name+" phi="+String(phi)+": "+String(eta_relative)+"->"+String(eta)+" Pa·s (BrineProp.Viscosities.dynamicViscosity_Duan_pTX)");
+//      print("Viscosity "+salt.name+" phi="+String(phi)+": "+String(eta_relative)+"->"+String(eta)+" Pa.s (BrineProp.Viscosities.dynamicViscosity_Duan_pTX)");
 
       if msg<>"" then
         if outOfRangeMode==1 then
@@ -125,7 +125,7 @@ algorithm
   end for;
 //  eta := eta * (1+ sum(etas)) "additive mixing rule (Zhang 1997)";
 //  eta := etas*molalities[1:nX_salt]/(sum(molalities[1:nX_salt])) "linear mixing rule molality weighted (as in Duan2009)";
-//  eta := prod(cat(1,{eta_H2O},etas).^X[1:nX_salt]) "geometric mean mixture rule (as in Laliberté)";
+//  eta := prod(cat(1,{eta_H2O},etas).^X[1:nX_salt]) "geometric mean mixture rule (as in Laliberte)";
 
-//  print("Viscosity("+String(p_Pa)+","+String(T_K)+"): "+String(eta)+" Pa·s (Partial_Viscosity_Phillips.dynamicViscosity_Duan_pTX)");
+//  print("Viscosity("+String(p_Pa)+","+String(T_K)+"): "+String(eta)+" Pa.s (Partial_Viscosity_Phillips.dynamicViscosity_Duan_pTX)");
 end dynamicViscosity_DuanZhang_pTXd;

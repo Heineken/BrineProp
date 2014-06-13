@@ -23,7 +23,7 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
       Real y[nX] "mole fractions";
   algorithm
     if debugmode then
-      print("Running waterSaturatedComposition_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" °C, X="+Modelica.Math.Matrices.toString(transpose([X_in]))+")");
+      print("Running waterSaturatedComposition_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X_in]))+")");
   //    print("y_H2O"+String(y_H2O)+", X[end]="+String(X_in[end]));
     end if;
 
@@ -66,7 +66,7 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
   end if;*/
   //  print("size(X_,1)="+String(size(X_,1))+",size(X,1)="+String(size(X,1)));
     if debugmode then
-      print("Running density_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" °C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
+      print("Running density_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
     end if;
   // assert(min(X)>0,"Cannot calculate with empty composition.");
     if not min(X)>0 then
@@ -86,7 +86,7 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
   else*/
         d :=p/(T*R_gas);
   //  end if;
-  //  print("d="+String(d)+" kg/m³");
+  //  print("d="+String(d)+" kg/m^3");
   end density_pTX;
 
   redeclare function extends specificHeatCapacityCp
@@ -127,7 +127,7 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
 */
   algorithm
     if debugmode then
-      print("Running specificHeatCapacityCp_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" °C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
+      print("Running specificHeatCapacityCp_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
     end if;
 
     if not min(X)>0 then
@@ -190,7 +190,7 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
   //  else state.X[end - nX + 1:end]);
   //  assert(lambda>0,"lambda="+String(lambda));
   if lambda<0 then
-    print("lambda = " + String(lambda) + "W/(m·K)");
+    print("lambda = " + String(lambda) + "W/(m.K)");
   end if;
 
   end thermalConductivity;
@@ -233,7 +233,7 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
 
   algorithm
     if debugmode then
-      print("Running specificEnthalpy_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" °C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
+      print("Running specificEnthalpy_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
     end if;
 
     if not min(X)>0 then

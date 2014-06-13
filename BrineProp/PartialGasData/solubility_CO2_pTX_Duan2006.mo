@@ -50,7 +50,7 @@ protected
                           0};
 
   SI.Pressure p_H2O = Modelica.Media.Water.WaterIF97_base.saturationPressure(T)
-    "TODO mit übergeben";
+    "SPEEDUP: get from outside";
 //  SI.Pressure p_H2O = p_sat_H2O_Duan2003(T);
 //  Partial_Units.Pressure_bar p_bar=SI.Conversions.to_bar(p);
 //  Real y = p_gas/p "(p-p_H2O)/p mole fraction of CO2 in vapor phase";
@@ -77,7 +77,7 @@ algorithm
   else
   // checked in fugacity
   if T<273 or T>573 then
-      msg :="T=" + String(T) + "K, but CO2 solubility calculation is only valid for temperatures between 0 and 260°C (Partial_Gas_Data.solubility_CO2_pTX_Duan2006)";
+      msg :="T=" + String(T) + "K, but CO2 solubility calculation is only valid for temperatures between 0 and 260degC (Partial_Gas_Data.solubility_CO2_pTX_Duan2006)";
       end if;
    if (p<0 or p>2000e5) then
       msg :="p=" + String(p/1e5) + " bar, But CO2 fugacity calculation only valid for pressures between 0 and 2000 bar (Partial_Gas_Data.solubility_CO2_pTX_Duan2006)";

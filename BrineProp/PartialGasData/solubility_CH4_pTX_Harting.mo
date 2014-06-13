@@ -12,7 +12,7 @@ function solubility_CH4_pTX_Harting "..."
 protected
   Partial_Units.Molality molalities[size(X,1)]=massFractionsToMolalities(X,MM_vec);
   SI.Temp_C T_C = SI.Conversions.to_degC(T);
-  Real L_0=0.454 "CH4-Löslichkeit in H2O bei 25 atm 75°C";
+  Real L_0=0.454 "CH4 solubility in H2O at 25, 75degC";
   Real L_rel_p "pressure influence";
   Real L_rel_c "salinity influence";
   Real L_rel_T "Temperature influence";
@@ -22,9 +22,9 @@ protected
 algorithm
 // print("mola_CH4("+String(p_gas)+","+String(T-273.16)+") (solubility_CH4_pTX_Duan2006)");
 assert(false,"wo?");
-//  assert(273<=T and T<=400, "T="+String(T)+" K, but N2 solubility calculation is only valid for temperatures between 0 and 127°C");
+//  assert(273<=T and T<=400, "T="+String(T)+" K, but N2 solubility calculation is only valid for temperatures between 0 and 127degC");
  if 273>T or  T>400 then
-    print("T="+String(T)+" K, but N2 solubility calculation is only valid for temperatures between 0 and 127°C (Partial_Gas_Data.solubility_N2_pTX_Duan2006())");
+    print("T="+String(T)+" K, but N2 solubility calculation is only valid for temperatures between 0 and 127degC (Partial_Gas_Data.solubility_N2_pTX_Duan2006())");
   end if; /**/
   assert(p>=1e5 and p<=600e5, "p="+String(p/1e5)+" bar, but N2 solubility calculation only valid for pressures between 1 and 600 bar");
 //  assert(molalities[NaCl]<6, "mola[NaCl]="+String(molalities[NaCl])+" mol/kg, but N2 solubility calculation only valid for salinities up to 6 mol/kg");

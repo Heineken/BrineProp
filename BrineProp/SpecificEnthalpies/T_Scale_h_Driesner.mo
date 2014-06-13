@@ -1,6 +1,6 @@
 within BrineProp.SpecificEnthalpies;
 function T_Scale_h_Driesner
-  "enthalpy calculation according to Driesner 2007 et al: 0-1000°C; 0.1-500MPa (doi:10.1016/j.gca.2007.05.026)"
+  "enthalpy calculation according to Driesner 2007 et al: 0-1000degC; 0.1-500MPa (doi:10.1016/j.gca.2007.05.026)"
 //Pressure limited to 100 MPa by Modelica Water property function
   input SI.Pressure p;
   input SI.Temp_K T;
@@ -12,7 +12,6 @@ protected
   constant Real M_NaCl=BrineProp.SaltData.M_NaCl "molar mass in [kg/mol]";
 //  constant Real M_H2O =  PartialBrine.M_H2O "molar mass in [kg/mol] TODO";
 
-//  Molality mola=X[1]/M_NaCl "molality b (mol_NaCl/kg_sol) äöüö";
   constant Pressure_bar p_min=1;
   constant Pressure_bar p_max=1000;
   constant SI.Temp_C T_min=0;
@@ -43,9 +42,9 @@ algorithm
         " bar (BrineProp.SpecificEnthalpies.T_Scale_h_Driesner)";
     end if;
     if not (T_C>=T_min and T_C<=T_max) then
-      msg :="Temperature is " + String(T_C) + "°C, but must be between " +
-        String(T_min) + "°C and " + String(T_max) +
-        "°C (BrineProp.SpecificEnthalpies.T_Scale_h_Driesner)";
+      msg :="Temperature is " + String(T_C) + "degC, but must be between " +
+        String(T_min) + "degC and " + String(T_max) +
+        "degC (BrineProp.SpecificEnthalpies.T_Scale_h_Driesner)";
     end if;
     if msg<>"" then
       if outOfRangeMode==1 then
@@ -93,5 +92,5 @@ algorithm
   h := Modelica.Media.Water.WaterIF97_base.specificEnthalpy(state_H2O);*/
 //  h := Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p, SI.Conversions.from_degC(T_Scale_h));
 
-//  print("Brine_Driesner.specificEnthalpy_pTX: "+String(p*1e-5)+"bar."+String(T_Scale_h)+"°C->"+String(h)+" J/kg");
+//  print("Brine_Driesner.specificEnthalpy_pTX: "+String(p*1e-5)+"bar."+String(T_Scale_h)+"degC->"+String(h)+" J/kg");
 end T_Scale_h_Driesner;

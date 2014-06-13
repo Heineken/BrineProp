@@ -22,7 +22,7 @@ model ConvertBrineComposition
   SI.Density[:] rho_gas = props.p*Medium.MM_gas/(Modelica.Constants.R*props.T);
   Real gasMassPerLiquidMass[:]= gasVolumePerLiquidVolume.*rho_gas/props.state.d_l;
   SI.MassConcentration[:] X_g_gas(each start=0)= gasMassPerLiquidMass/(1+sum(gasMassPerLiquidMass))
-    "X_g·q gas mass in gas phase per fluid mass";
+    "X_g.q gas mass in gas phase per fluid mass";
   // SI.MassConcentration[:] X_g_gas(each start=0)={max(0,g/(1+sum(g)))  for  g in  gasMassPerLiquidMass};
   SI.Pressure[:] PartialPressures(each start=1e4)=(props.p-props.p_H2O)*gasVolumeFractions;
   SI.MassConcentration[:] X_l_gas(each start=0)= {
@@ -51,7 +51,7 @@ equation
   props.Xi = cat(1,c/d_l/0.999190406582784,X_g_gas+X_l_gas) "props.state.d_l";
 
 algorithm
-  print("rho_l="+String(props.state.d_l)+" kg/m³, TDS = " + String(TDS) + " g/l");
+  print("rho_l="+String(props.state.d_l)+" kg/m^3, TDS = " + String(TDS) + " g/l");
   print("X=" + Modelica.Math.Matrices.toString({props.X}) + " ");
 
 //  print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");

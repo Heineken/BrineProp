@@ -76,7 +76,7 @@ algorithm
 
  if outOfRangeMode==1 then
    if not ignoreLimitN2_T and (273>T or T>400) then
-      Modelica.Utilities.Streams.print("T="+String(T)+" K, but N2 solubility calculation is only valid for temperatures between 0 and 127°C (Partial_Gas_Data.solubility_N2_pTX_Duan2006)");
+      Modelica.Utilities.Streams.print("T="+String(T)+" K, but N2 solubility calculation is only valid for temperatures between 0 and 127degC (Partial_Gas_Data.solubility_N2_pTX_Duan2006)");
    end if;
    if (p<1e5 or p>600e5) then
       Modelica.Utilities.Streams.print("p="+String(p/1e5)+" bar, but N2 solubility calculation only valid for pressures between 1 and 600 bar (Partial_Gas_Data.solubility_N2_pTX_Duan2006)");
@@ -85,7 +85,7 @@ algorithm
      Modelica.Utilities.Streams.print("mola[NaCl]="+String(molalities[NaCl])+" mol/kg, but N2 solubility calculation only valid for salinities up to 6 mol/kg (Partial_Gas_Data.solubility_N2_pTX_Duan2006)");
    end if;
  elseif outOfRangeMode==2 then
-     assert(ignoreLimitN2_T or (273<=T and T<=400), "T="+String(T)+" K, but N2 solubility calculation is only valid for temperatures between 0 and 127°C");
+     assert(ignoreLimitN2_T or (273<=T and T<=400), "T="+String(T)+" K, but N2 solubility calculation is only valid for temperatures between 0 and 127degC");
      assert(p>=1e5 and p<=600e5, "p="+String(p/1e5)+" bar, but N2 solubility calculation only valid for pressures between 1 and 600 bar");
      assert(molalities[NaCl]<6, "mola[NaCl]="+String(molalities[NaCl])+" mol/kg, but N2 solubility calculation only valid for salinities up to 6 mol/kg");
  end if;

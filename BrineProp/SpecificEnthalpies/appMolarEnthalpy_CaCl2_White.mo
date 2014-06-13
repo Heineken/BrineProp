@@ -11,8 +11,8 @@ protected
 algorithm
   if outOfRangeMode>0 then
     if not ( (ignoreLimit_h_CaCl2_Tmin or T>=T_min) and T<=T_max) then
-      msg :="Temperature is " + String(T-273.15) + "°C, but must be between " +
-        String(T_min-273.15) + "°C and " + String(T_max-273.15) + "°C (BrineProp.SpecificEnthalpies.appMolarEnthalpy_CaCl2_White)";
+      msg :="Temperature is " + String(T-273.15) + "degC, but must be between " +
+        String(T_min-273.15) + "degC and " + String(T_max-273.15) + "degC (BrineProp.SpecificEnthalpies.appMolarEnthalpy_CaCl2_White)";
       if outOfRangeMode==1 then
       print(msg);
       elseif outOfRangeMode==2 then

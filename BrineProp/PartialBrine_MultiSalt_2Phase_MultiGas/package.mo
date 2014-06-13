@@ -213,7 +213,7 @@ protected
   end fugacity_pTX;
 
 
- replaceable function density_liquid_pTX "Dichte der flüssigen Phase"
+ replaceable function density_liquid_pTX "Density of the liquid phase"
    input SI.Pressure p "TODO: Rename to density_liq_pTX";
    input SI.Temp_K T;
    input MassFraction X[nX] "mass fraction m_NaCl/m_Sol";
@@ -245,7 +245,7 @@ end vapourQuality;
   //  assert(T>273.15,"T too low in PartialBrine_ngas_Newton.specificEnthalpy_pTX()");
     if debugmode then
   //     print("Running specificEnthalpy_pTX("+String(p)+","+String(T)+" K)");
-        print("Running specificEnthalpy_pTX("+String(p/1e5)+","+String(T-273.15)+"°C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
+        print("Running specificEnthalpy_pTX("+String(p/1e5)+","+String(T-273.15)+"degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
     end if;
    h:=specificEnthalpy(setState_pTX(
       p,
@@ -273,7 +273,7 @@ end vapourQuality;
   algorithm
   //  assert(T>273.15,"T too low in PartialBrine_ngas_Newton.specificEnthalpy_pTX()");
     if debugmode then
-        print("Running density_pTX("+String(p/1e5)+","+String(T-273.15)+"°C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
+        print("Running density_pTX("+String(p/1e5)+","+String(T-273.15)+"degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
     end if;
    d:=density(setState_pTX(
       p,
@@ -322,7 +322,7 @@ protected
     else
 
       //Find temperature with h above given h ->T_b
-      assert(h>specificEnthalpy_pTX(p,T_a,X),"h="+String(h/1e3)+" kJ/kg -> Enthalpy too low (< 0°C) (Brine.PartialBrine_ngas_Newton.temperature_phX)");
+      assert(h>specificEnthalpy_pTX(p,T_a,X),"h="+String(h/1e3)+" kJ/kg -> Enthalpy too low (< 0degC) (Brine.PartialBrine_ngas_Newton.temperature_phX)");
       while true loop
         h_T:=specificEnthalpy_pTX(p,T_b,X);
         //print(String(p)+","+String(T_b)+" K->"+String(h_T)+" J/kg (PartialBrine_ngas_Newton.temperature_phX)");
@@ -539,7 +539,7 @@ protected
     Boolean isTwoPhaseWater=false;
   algorithm
     if debugmode then
-        print("Running setState_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" °C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
+        print("Running setState_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
     end if;
 
    assert(p>0,"p="+String(p/1e5)+" bar - Negative pressure is not yet supported ;-) (PartialBrine_ngas_Newton.setState_pTX())");
@@ -547,7 +547,7 @@ protected
   //  assert(T>273.15,"T too low in PartialBrine_ngas_Newton.()");
 
     if T<273.15 then
-      print("T="+String(T)+" too low (<0°C), setting to 0°C in PartialBrine_ngas_Newton.setState_pTX()");
+      print("T="+String(T)+" too low (<0degC), setting to 0degC in PartialBrine_ngas_Newton.setState_pTX()");
     end if;
     T2:= max(273.16,T);
 
@@ -584,7 +584,7 @@ protected
       d_g :=Modelica.Media.Water.IF97_Utilities.rhov_T(T);
 
      else
-      assert(max(X[end-nX_gas:end-1])>0,"Phase equilibrium cannot be calculated without dissolved gas at "+String(p/1e5)+" bar, "+String(T2-273.15)+"°C with p_degas="+String(sum(p_degas)/1e5)+" bar.");
+      assert(max(X[end-nX_gas:end-1])>0,"Phase equilibrium cannot be calculated without dissolved gas at "+String(p/1e5)+" bar, "+String(T2-273.15)+"degC with p_degas="+String(sum(p_degas)/1e5)+" bar.");
 
       n:=X[nX_salt + 1:end] ./ MM_vec[nX_salt + 1:nX]
       "total mole numbers per kg brine";
@@ -595,7 +595,7 @@ protected
       while z<1 or max(abs(Delta_n_g_norm))>1e-3 loop
       //stop iteration when p-equlibrium is found or gas fraction is very low
         z:=z + 1 "count iterations";
-        assert(z<=zmax,"Reached maximum number of iterations ("+String(z)+"/"+String(zmax)+") for solution equilibrium calculation. (setState_pTX("+String(p/1e5)+"bar,"+String(T2-273.16)+"°C))\nDeltaP="+String(max(abs(p_sat-p_gas))));
+        assert(z<=zmax,"Reached maximum number of iterations ("+String(z)+"/"+String(zmax)+") for solution equilibrium calculation. (setState_pTX("+String(p/1e5)+"bar,"+String(T2-273.16)+"degC))\nDeltaP="+String(max(abs(p_sat-p_gas))));
 
   //     print("\nn_g_norm=" + PowerPlant.vector2string(n_g_norm));
         n_g :=n_g_norm .* n;
@@ -614,7 +614,7 @@ protected
         "X_l changes";
       if (p_H2O>p) then
           print("p_H2O(" + String(p/1e5) + " bar," +
-            String(T2 - 273.15) + "°C, " + Modelica.Math.Matrices.toString(transpose([X])) + ") = "
+            String(T2 - 273.15) + "degC, " + Modelica.Math.Matrices.toString(transpose([X])) + ") = "
              + String(p_H2O/1e5) + " bar>p ! (PartialBrine_ngas_Newton.setState_pTX)");
         x:=1;
         break;
@@ -822,7 +822,7 @@ protected
 
   //  assert(cp>0 and cp<5000,"T="+String(state.T-273.15)+"K, p="+String(state.p/1e5)+"bar, x="+String(state.x)+", cp_liq="+String(cp_liq)+"J(kgK), cp_gas="+String(cp_gas)+"J(kgK)");
 
-  //  print("c_p_liq("+String(state.T)+"°C)="+String(p)+" J/(kg·K)");
+  //  print("c_p_liq("+String(state.T)+"degC)="+String(p)+" J/(kg.K)");
       annotation (Documentation(info="<html>
                                 <p>In the two phase region this function returns the interpolated heat capacity between the
                                 liquid and vapour state heat capacities.</p>

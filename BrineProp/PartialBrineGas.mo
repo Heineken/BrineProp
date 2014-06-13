@@ -80,7 +80,7 @@ constant String gasNames[:]={""};
         state.X[end - nX+1:end]);
   //  assert(lambda>0,"lambda="+String(lambda));
   if lambda<0 then
-    print("lambda = " + String(lambda) + "W/(m·K)");
+    print("lambda = " + String(lambda) + "W/(m.K)");
   end if;
 
   end thermalConductivity;

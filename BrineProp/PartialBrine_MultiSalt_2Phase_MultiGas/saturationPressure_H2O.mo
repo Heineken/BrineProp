@@ -12,7 +12,7 @@ protected
    BrineProp.Partial_Units.Molality ionMoleFractions[nX];
 algorithm
   if debugmode then
-    print("Running saturationPressure_H2O("+String(p/1e5)+" bar,"+String(T-273.15)+" °C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
+    print("Running saturationPressure_H2O("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
 //    print("p_H2O("+String(T)+")="+String(p_sat/1e5)+" bar (PartialBrine_Multi_TwoPhase_ngas.saturationPressure_H2O)");
   end if;
 //  printVector(nM);

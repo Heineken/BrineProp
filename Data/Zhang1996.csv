@@ -1,4 +1,4 @@
-Molalität_NaCl;Molalität_KCl;Molalität_CaCl2;Druck in bar;Temperatur in K;dyn. Viskosität eta  in mPa·s;rho in g/cm³;therm._LF in W/m/K
+Molalitity_NaCl;Molalitity_KCl;Molalitity_CaCl2;pressure in bar;temperature in K;dyn. viscosity eta  in mPa.s;rho in g/cm^3;therm. cond. in W/m/K
 0.0234;0;0;1;298.15;0.8928;0.998;0
 0.0275;0;0;1;298.15;0.8931;0.9982;0
 0.0525;0;0;1;298.15;0.8954;0.9992;0

@@ -52,7 +52,7 @@ protected
 //  Real X_NaCl = molalities[NaCl]*M_H2O "mole fraction of NaCl in liquid phase";
 
 //  SI.Pressure p_H2O = Modelica.Media.Water.WaterIF97_base.saturationPressure(T);
-  SI.Pressure p_H2O = p_sat_H2O_Duan2003(T) "TODO mit übergeben";
+  SI.Pressure p_H2O = p_sat_H2O_Duan2003(T) "SPEEDUP: get from outside";
 //  Partial_Units.Pressure_bar p_bar=SI.Conversions.to_bar(p);
   SI.MolarVolume v_l_H2O=M_H2O/Modelica.Media.Water.WaterIF97_base.density_pT(p,T);
   Real phi_H2O = fugacity_H2O_Duan2006CH4(p,T);
@@ -68,13 +68,13 @@ algorithm
   else
    if outOfRangeMode==1 then
      if (273>T or T>273+250) then
-        print("T="+String(T)+" K, but  CH4 solubility  calculation is only valid for temperatures between 0 and 250°C (Partial_Gas_Data.solubility_CH4_pTX_Duan1992)");
+        print("T="+String(T)+" K, but  CH4 solubility  calculation is only valid for temperatures between 0 and 250degC (Partial_Gas_Data.solubility_CH4_pTX_Duan1992)");
      end if;
      if (p<1e5 or p>2000e5) then
         print("p="+String(p/1e5)+" bar, but CH4 fugacity calculation only valid for pressures between 1 and 1600 bar (Partial_Gas_Data.solubility_CH4_pTX_Duan1992)");
      end if;
    elseif outOfRangeMode==2 then
-     assert(273.15<=T and T<=273+250, "T="+String(T-273.15)+"°C, but CH4 solubility calculation is only valid for temperatures between 0 and 250°C (solubility_CH4_pTX_Duan1992)");
+     assert(273.15<=T and T<=273+250, "T="+String(T-273.15)+"degC, but CH4 solubility calculation is only valid for temperatures between 0 and 250degC (solubility_CH4_pTX_Duan1992)");
      assert(p<=1600e5, "p="+String(p/1e5)+"bar, but CH4 fugacity calculation only valid for pressures up to 1600 bar (solubility_CH4_pTX_Duan1992)");
    end if;
 

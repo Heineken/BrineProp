@@ -57,7 +57,7 @@ while abs(V-V_neu)>1e-8 loop
     assert(z<1000," Reached maximum number of iterations for fugacity calculation.(fugacity_N2_Duan2006)");
   end while;
 
-  V_m := 1e3*V/(sigma/3.691)^3 "m³/mol -> dm³/mol";
+  V_m := 1e3*V/(sigma/3.691)^3 "m^3/mol -> dm^3/mol";
 //  V_m := V/(Modelica.Constants.R*T_c/P_c);
 //  Z := 1 + B/V_m + C/V_m^2 + D/V_m^4 + E/V_m^5 + F/V_m^2*(1 + a[14]/V_m^2)*exp(-a[14]/V_m^2);
   Z := 1 + (a[1]+a[2]/T_m^2+a[3]/T_m^3)/V_m

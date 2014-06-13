@@ -68,7 +68,7 @@ protected
     parameter Integer[:] liqIndex=cat(1,1:nX_salt,{nX});
   algorithm
     d := Densities.density_Duan2008_pTX(p,T,X[liqIndex],MM[liqIndex]);
-  //   print("density_liquid_pTX: "+String(p*1e-5)+" bar,"+String(T)+" K->"+String(d)+"kg/m³");
+  //   print("density_liquid_pTX: "+String(p*1e-5)+" bar,"+String(T)+" K->"+String(d)+"kg/m^3");
   end density_liquid_pTX;
 
 
@@ -97,7 +97,7 @@ protected
  redeclare function extends specificEnthalpy_gas_pTX
  /*  SI.SpecificEnthalpy h_H2O_sat=Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.hv_p(p);
   SI.SpecificEnthalpy h_H2O=max(h_H2O_sat, Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p,T)) 
-    "damit es auch wirklich dampfförmig ist";
+    "make sure it's gaseous";
   SI.SpecificEnthalpy h_CO2=Modelica.Media.IdealGases.SingleGases.CO2.h_T(Modelica.Media.IdealGases.SingleGases.CO2.data,T);
   SI.SpecificEnthalpy h_N2=Modelica.Media.IdealGases.SingleGases.N2.h_T(Modelica.Media.IdealGases.SingleGases.N2.data,T);
   SI.SpecificEnthalpy h_CH4=Modelica.Media.IdealGases.SingleGases.CH4.h_T(Modelica.Media.IdealGases.SingleGases.CH4.data,T);
@@ -114,7 +114,7 @@ protected
    SI.Temperature T_corr;
  algorithm
   if state.T<273.16 then
-     print("T="+String(state.T)+" too low (<0°C), setting to 0°C in dynamicViscosity_liq");
+     print("T="+String(state.T)+" too low (<0degC), setting to 0degC in dynamicViscosity_liq");
   end if;
   T_corr:= max(273.16,state.T);
 
@@ -136,15 +136,7 @@ protected
 
 
  redeclare function extends dynamicViscosity_gas
- //TODO: andere Gase berücksichtigen, nicht nur Wasserdampf
  algorithm
- //  eta  := dynamicViscosity_Phillips_pTX(p,T,X,MM_vec,Salt_data.saltConstants);
- //  eta  := Modelica.Media.Water.WaterIF97_base.dynamicViscosity(state);
- //eta  := Modelica.Media.Water.IF97_Utilities.dynamicViscosity(state.d_g, state.T, Modelica.Media.Water.IF97_Utilities.BaseIF97.Basic.psat(state.T)-1, state.phase) "Viskosität von gasförmigem Wasser";
- //  eta  := Modelica.Media.Water.IF97_Utilities.dynamicViscosity(state.d_g, state.T, state.p, state.phase) "Viskosität von gasförmigem Wasser";
- //eta  := 0;
- //  eta  := Modelica.Media.Air.MoistAir.dynamicViscosity(state);
- //  eta  := BrineGas_3Gas.dynamicViscosity(state);
    eta  := BrineGas_3Gas.dynamicViscosity(BrineGas_3Gas.ThermodynamicState(state.p,state.T,state.X_g));
    assert(eta>0,"Error in gas viscosity calculation.");
  end dynamicViscosity_gas;
@@ -155,7 +147,7 @@ protected
 
   //  if gasname =="carbondioxide" then
       p_sat[1] := if X[nX_salt+1]>0 then degassingPressure_CO2_Duan2006(p,T,X,MM_vec) else 0
-    "aus Partial_Gas_Data TODO: i_CO2 einführen";
+    "aus Partial_Gas_Data TODO: use numeral";
   //  elseif gasname =="nitrogen" then
       p_sat[2] := if X[nX_salt+2]>0 then degassingPressure_N2_Duan2006(p,T,X,MM_vec) else 0
     "aus Partial_Gas_Data";
@@ -170,18 +162,17 @@ protected
 
 
   redeclare function extends thermalConductivity
-  "Thermal conductivity of water TODO"
+  "Thermal conductivity of water"
   algorithm
     lambda := Modelica.Media.Water.IF97_Utilities.thermalConductivity(
         state.d,
         state.T,
         state.p,
         state.phase);
-  //  assert(lambda>0,"lambda="+String(lambda));
-  if lambda<0 then
-    print("lambda = " + String(lambda) + "W/(m·K)");
-  end if;
-
+  assert(lambda>0,"lambda = " + String(lambda) + "W/(m.K)");
+  /*if lambda<0 then
+    print("lambda = " + String(lambda) + "W/(m.K)");
+  end if;*/
   end thermalConductivity;
 
 
@@ -227,7 +218,7 @@ protected
   //  cp:=(specificEnthalpy_pTX(state.p,state.T+.1,state.X)-state.h)/.1;
   //  cp := Modelica.Media.Water.IF97_Utilities.cp_pT(state.p, state.T)+mola[1:size(MM_vec_salt,1)];
   //  print("Cp_appmol: "+PowerPlant.vector2string(Cp_appmol)+" J/kg/K");
-  //  print("cp_Driesner("+String(cp_Driesner)+")= J/(kg·K)");
+  //  print("cp_Driesner("+String(cp_Driesner)+")= J/(kg.K)");
 
       annotation (Documentation(info="<html>
                                 <p>In the two phase region this function returns the interpolated heat capacity between the

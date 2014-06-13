@@ -114,7 +114,7 @@ equation
   //  props.Xi = {0,SaltData.M_KCl/(1+SaltData.M_KCl),0,0,0,0,0,0} "1-molar KCl solution";
 //  props.Xi = {0,0,SaltData.M_CaCl2/(1+SaltData.M_CaCl2),0,0,0,0,0};
   //  props.Xi = {0.089190167,0.005198142,0.137663206,0*0.001453819,0*0.002621571, 5.87e-5, 8.04e-4,  7.14e-5}     "Messwerte aus STR04/16 direkt";
-  //  props.Xi = {    0.081109,   0.0047275,     0.12519,   0*0.0013225,  0*0.0023842,  0*0.00016889,  0*0.00073464, 0*6.5657e-005}     "Entsprechend STR04/16 bei GG mit d_l=1199.48 kg/m³ - X_g stimmt";
+  //  props.Xi = {    0.081109,   0.0047275,     0.12519,   0*0.0013225,  0*0.0023842,  0*0.00016889,  0*0.00073464, 0*6.5657e-005}     "Entsprechend STR04/16 bei GG mit d_l=1199.48 kg/m^3 - X_g stimmt";
 /*  props.Xi[1:5] = {0.089190167,0.005198142,0.137663206,0*0.001453819,0*0.002621571};
   X_g[6:8]={8.05e-4,  5.87e-5, 7.15e-5}; GEHT NICHT, WEIL ER X<0 ausprobiert und das wird in PartialMedium abgefangen
 */
@@ -127,7 +127,7 @@ equation
 //  mola[:] = Medium.solubilities_pTX(props.p,props.T,props.X);
 
 algorithm
-//  print("rho="+String(d)+" kg/m³, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));
+//  print("rho="+String(d)+" kg/m^3, TDS = " + String(TDS) + " g/l -> "+ String(f*265/TDS));
 //  print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
 //  print(Modelica.Math.Matrices.toString(transpose([props.Xi])));
 //  print("k="+Modelica.Math.Matrices.toString(transpose([Brine_5salts_TwoPhase_3gas.solubilities_pTX(props.p, props.T, props.X_l, props.X, props.p_gas[1:3]) ./ props.p_gas[1:3]])));

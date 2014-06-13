@@ -8,5 +8,5 @@ function HeatCapacityRatio_CaCl2_White
 algorithm
 cp_by_cpWater :=a + b*bn + c*Tn + d*bn^2 + e*bn*Tn + f*Tn^2 + g*bn^2*Tn + h*bn*Tn^2 + i*Tn^3;
 //cp = cp_by_cpWater*cp_Water;
-//print("Brine.specificEnthalpy_pTX_Francke: "+String(p*1e-5)+"bar."+String(T)+"°C->"+String(h)+" J/kg");
+//print("Brine.specificEnthalpy_pTX_Francke: "+String(p*1e-5)+"bar."+String(T)+"degC->"+String(h)+" J/kg");
 end HeatCapacityRatio_CaCl2_White;

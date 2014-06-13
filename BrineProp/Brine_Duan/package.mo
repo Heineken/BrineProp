@@ -37,7 +37,7 @@ protected
     SI.DynamicViscosity eta_H2O;
     Modelica.Media.Water.WaterIF97_base.ThermodynamicState state_H2O;
   algorithm
-    assert(T_C>=0 and T_C<=300, "Temperature is "+String(SI.Conversions.to_degC(T_K))+"°C, but must be between 10 and 350°C");
+    assert(T_C>=0 and T_C<=300, "Temperature is "+String(SI.Conversions.to_degC(T_K))+"degC, but must be between 10 and 350degC");
     assert(p_bar>=1 and p_bar<=1000, "Pressure must be between 1 and 500 bar");
     assert(mola>=0 and mola<=6, "Molality must be between 0.25 and 5 mol/kg");
     //factors
@@ -58,7 +58,7 @@ protected
 
 
   redeclare function extends specificEnthalpy_pTX
-  "enthalpy calculation according to Driesner et al: 0-1000°C; 0.1-500MPa"
+  "enthalpy calculation according to Driesner et al: 0-1000degC; 0.1-500MPa"
   algorithm
     h :=Brine_Driesner.specificEnthalpy_pTX(p,T,X);
   end specificEnthalpy_pTX;

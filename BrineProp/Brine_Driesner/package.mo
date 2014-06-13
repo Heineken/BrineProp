@@ -8,7 +8,7 @@ package Brine_Driesner "NaCl solution using Driesner density and enthalpy functi
 
 
   redeclare function extends density_pTX
-  "density calculation according to Driesner et al: 10-1000°C; 0.1-500MPa; 0.25-5 mol/kg"
+  "density calculation according to Driesner et al: 10-1000degC; 0.1-500MPa; 0.25-5 mol/kg"
   /*  input SI.Pressure p;
   input SI.Temp_K T;
   input MassFraction X[:] "mass fraction m_NaCl/m_Sol";
@@ -49,7 +49,7 @@ protected
     SI.MolarMass M_Solution "[kg/mol]";
   algorithm
     p_bar := SI.Conversions.to_bar(p);
-    assert(T_C>=0 and T_C<=1000, "Temperature must be between 0 and 1000°C");
+    assert(T_C>=0 and T_C<=1000, "Temperature must be between 0 and 1000degC");
     assert(p_bar>=1 and p_bar<=5000, "Pressure must be between 1 and 5000 bar");
   //  assert(mola>=.25 and mola<=5, "Molality must be between 0.25 and 5 mol/kg");
 
@@ -107,7 +107,7 @@ protected
 
 
   redeclare function extends specificEnthalpy_pTX
-  "enthalpy calculation according to Driesner 2007 et al: 0-1000°C; 0.1-500MPa (doi:10.1016/j.gca.2007.05.026)"
+  "enthalpy calculation according to Driesner 2007 et al: 0-1000degC; 0.1-500MPa (doi:10.1016/j.gca.2007.05.026)"
   //Pressure limited to 100 MPa by Modelica Water property function
   /*  input SI.Pressure p;
   input SI.Temp_K T;
@@ -117,6 +117,6 @@ protected
   algorithm
     h := BrineProp.SpecificEnthalpies.specificEnthalpy_pTX_Driesner(p,T,X[1]);
 
-  //  print("Brine_Driesner.specificEnthalpy_pTX: "+String(p*1e-5)+"bar."+String(T_Scale_h)+"°C->"+String(h)+" J/kg");
+  //  print("Brine_Driesner.specificEnthalpy_pTX: "+String(p*1e-5)+"bar."+String(T_Scale_h)+"degC->"+String(h)+" J/kg");
   end specificEnthalpy_pTX;
 end Brine_Driesner;

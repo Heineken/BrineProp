@@ -32,13 +32,13 @@ algorithm
   if debugmode then
     print("p="+String(p_Pa)+" Pa, T_K"+String(T_K)+" K (Brine.Viscosities.dynamicViscosity_Duan_pTX)");
   end if;
-  assert(T_C>=0 and T_C<=400, "Temperature must be between 10 and 350°C");
+  assert(T_C>=0 and T_C<=400, "Temperature must be between 10 and 350degC");
   assert(p_bar>=1 and p_bar<=1000, "Pressure must be between 1 and 500 bar");
 
   //viscosity calculation
   state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(p_Pa, T_K, X);
   eta_H2O := Modelica.Media.Water.WaterIF97_base.dynamicViscosity(state_H2O);
-//  print("eta_H2O= "+String(eta_H2O)+" Pa·s");
+//  print("eta_H2O= "+String(eta_H2O)+" Pa.s");
 
   //for pure water skip the whole calculation and return water viscosity
   if max(X[1:nX_salt])<1e-8 then
@@ -47,7 +47,7 @@ algorithm
   end if;
 
   eta:= eta_H2O "^X[end]";
-//  print("eta_H2O^X[end]= "+String(eta_H2O)+"^"+String(X[end]) + " -> "+String(eta)+" Pa·s");
+//  print("eta_H2O^X[end]= "+String(eta_H2O)+"^"+String(X[end]) + " -> "+String(eta)+" Pa.s");
   for i in 1:nX_salt loop
     if X[i]>0 then
       salt := Salt_Constants[i];
@@ -71,16 +71,16 @@ algorithm
 //      print(salt.name+" content = "+String(molalities[i])+" (Viscosities.dynamicViscosity_Duan_pTX)");
       //factors
       phi:=molalities[i]/sum(molalities[1:nX_salt])
-        "geometric mean mixture rule weighted with mass fraction (as in Laliberté)";
+        "geometric mean mixture rule weighted with mass fraction (as in Laliberte)";
       b:=molalities[i]/phi;
       A := salt.a[1] + salt.a[2]*T_K + salt.a[3]*T_K^2;
       B := salt.b[1] + salt.b[2]*T_K + salt.b[3]*T_K^2;
       C := salt.c[1] + salt.c[2]*T_K;
       eta_relative := exp(A*b + B*b^2 + C*b^3)
         "Mixture is composed of binary solutions of the same molality";
-//      print("Viscosity: "+String(etas[i])+"->"+String(eta)+" Pa·s (BrineProp.Viscosities.dynamicViscosity_Duan_pTX)");
+//      print("Viscosity: "+String(etas[i])+"->"+String(eta)+" Pa.s (BrineProp.Viscosities.dynamicViscosity_Duan_pTX)");
     end if;
       eta:= eta*eta_relative^phi;
   end for;
-//  print("Viscosity("+String(p_Pa)+","+String(T_K)+"): "+String(eta)+" Pa·s (Partial_Viscosity_Phillips.dynamicViscosity_Duan_pTX)");
+//  print("Viscosity("+String(p_Pa)+","+String(T_K)+"): "+String(eta)+" Pa.s (Partial_Viscosity_Phillips.dynamicViscosity_Duan_pTX)");
 end dynamicViscosity_Duan_pTX;

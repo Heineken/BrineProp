@@ -1,6 +1,6 @@
 within BrineProp.SpecificEnthalpies;
 function apparentMolarEnthalpy_KCl_Holmes1983
-  "enthalpy calculation according to H. F. Holmes, R. E. Mesmer 1983: 0-250°C; <6mol/kg (doi:10.1021/j100230a030)"
+  "enthalpy calculation according to H. F. Holmes, R. E. Mesmer 1983: 0-250degC; <6mol/kg (doi:10.1021/j100230a030)"
 //  input SI.Pressure p;
   input SI.Temp_K T;
 //  input MassFraction X[:] "mass fraction m_NaCl/m_Sol";
@@ -11,8 +11,8 @@ protected
 algorithm
   if outOfRangeMode>0 then
     if not (T>=273.15 and T<=250+273.15) then
-      msg :="Temperature is " + String(T_C) + "°C, but must be between " +
-        String(T_min) + "°C and " + String(T_max) + "°C (BrineProp.SpecificEnthalpies.T_Scale_h_Driesner)";
+      msg :="Temperature is " + String(T_C) + "degC, but must be between " +
+        String(T_min) + "degC and " + String(T_max) + "degC (BrineProp.SpecificEnthalpies.T_Scale_h_Driesner)";
     end if;
     if msg<>"" then
       if outOfRangeMode==1 then
@@ -25,5 +25,5 @@ algorithm
 
   h_app := q[1] + q[2]*T + q[3]*T^2 + q[4]*T^3 + q[5] * ln(T-270);
 
-//  print("Brine_Driesner.specificEnthalpy_pTX: "+String(p*1e-5)+"bar."+String(T_Scale_h)+"°C->"+String(h)+" J/kg");
+//  print("Brine_Driesner.specificEnthalpy_pTX: "+String(p*1e-5)+"bar."+String(T_Scale_h)+"degC->"+String(h)+" J/kg");
 end apparentMolarEnthalpy_KCl_Holmes1983;

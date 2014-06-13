@@ -1,6 +1,6 @@
 within BrineProp.SpecificEnthalpies;
 function specificHeatCapacity_pTX_Driesner
-  "cp calculation according to Driesner 2007 et al: 0-1000°C; 0.1-500MPa (doi:10.1016/j.gca.2007.05.026)"
+  "cp calculation according to Driesner 2007 et al: 0-1000degC; 0.1-500MPa (doi:10.1016/j.gca.2007.05.026)"
   input SI.Pressure p;
   input SI.Temp_K T;
   input SI.MassFraction X_NaCl "mass fraction m_NaCl/m_Sol";

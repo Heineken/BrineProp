@@ -4,8 +4,7 @@ function solutionEnthalpy_CO2_Duan2003
   extends partial_solutionEnthalpy;
 /*  input Modelica.SIunits.Temp_K T;
   output Modelica.SIunits.SpecificEnthalpy Delta_h_solution;
- //TODO: Was passiert wenn weniger CO2 zur Verfügung steht als gelöst werden kann?
-
+ 
   input Modelica.SIunits.Pressure p;
   input Modelica.SIunits.Temp_K T;
   input MassFraction X[:] "mass fraction m_NaCl/m_Sol";

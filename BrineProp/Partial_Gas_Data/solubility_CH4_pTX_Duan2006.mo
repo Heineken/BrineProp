@@ -65,13 +65,13 @@ algorithm
 
  if outOfRangeMode==1 then
    if (273>T or T>273+250) then
-      Modelica.Utilities.Streams.print("T="+String(T)+" K, but  CH4 solubility  calculation is only valid for temperatures between 0 and 250°C (Partial_Gas_Data.solubility_CH4_pTX_Duan1992)");
+      Modelica.Utilities.Streams.print("T="+String(T)+" K, but  CH4 solubility  calculation is only valid for temperatures between 0 and 250degC (Partial_Gas_Data.solubility_CH4_pTX_Duan1992)");
    end if;
    if (p>1600e5) then
       Modelica.Utilities.Streams.print("p="+String(p/1e5)+" bar, but CH4 fugacity calculation only valid for pressures between 1 and 1600 bar (Partial_Gas_Data.solubility_CH4_pTX_Duan1992)");
    end if;
  elseif outOfRangeMode==2 then
-   assert(273.15<=T and T<=273+250, "T="+String(T-273.15)+"°C, but CH4 solubility calculation is only valid for temperatures between 0 and 250°C (solubility_CH4_pTX_Duan1992)");
+   assert(273.15<=T and T<=273+250, "T="+String(T-273.15)+"degC, but CH4 solubility calculation is only valid for temperatures between 0 and 250degC (solubility_CH4_pTX_Duan1992)");
    assert(p<=1600e5, "p="+String(p/1e5)+"bar, but CH4 fugacity calculation only valid for pressures up to 1600 bar (solubility_CH4_pTX_Duan1992)");
  end if;
 

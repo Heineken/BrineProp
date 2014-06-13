@@ -10,16 +10,16 @@ function specificEnthalpy_pTX_Francke_hsol
 protected
   SI.MolarMass MM_vec_salt[:]=BrineProp.SaltData.MM_salt[1:5];
 
-//   constant SI.SpecificHeatCapacity cp_NaCl = 50.5/M_NaCl "[J/(kg·K)] http://hyperphysics.phy-astr.gsu.edu/hbase/tables/therprop.html";
-//   constant SI.SpecificHeatCapacity cp_NaCl = 36.79/MM_vec_salt[NaCl] "[J/(kg·K)] http://en.wikipedia.org/wiki/Sodium_chloride";
+//   constant SI.SpecificHeatCapacity cp_NaCl = 50.5/M_NaCl "[J/(kg.K)] http://hyperphysics.phy-astr.gsu.edu/hbase/tables/therprop.html";
+//   constant SI.SpecificHeatCapacity cp_NaCl = 36.79/MM_vec_salt[NaCl] "[J/(kg.K)] http://en.wikipedia.org/wiki/Sodium_chloride";
    constant SI.SpecificHeatCapacity cp_NaCl = 892.2568
-    "[J/(kg·K)] aus Driesner 6molar 0...100°C";
+    "[J/(kg.K)] aus Driesner 6molar 0...100degC";
    constant SI.SpecificHeatCapacity cp_KCl = 690
-    "[J/(kg·K)] http://www.korth.de/index.php/material-detailansicht/items/16.html";
+    "[J/(kg.K)] http://www.korth.de/index.php/material-detailansicht/items/16.html";
    constant SI.SpecificHeatCapacity cp_CaCl2 = 72.59/MM_vec_salt[CaCl2]
-    "[J/(kg·K)] http://hyperphysics.phy-astr.gsu.edu/hbase/tables/therprop.html";
-   constant SI.SpecificHeatCapacity cp_MgCl2 = 0 "[J/(kg·K)]";
-   constant SI.SpecificHeatCapacity cp_SrCl2 = 0 "[J/(kg·K)]";
+    "[J/(kg.K)] http://hyperphysics.phy-astr.gsu.edu/hbase/tables/therprop.html";
+   constant SI.SpecificHeatCapacity cp_MgCl2 = 0 "[J/(kg.K)]";
+   constant SI.SpecificHeatCapacity cp_SrCl2 = 0 "[J/(kg.K)]";
   constant SI.SpecificHeatCapacity[:] cp_salt = {
     cp_NaCl,
     cp_KCl,
@@ -66,7 +66,7 @@ print("h_salt: "+String(h_salt[1]) +" J/kg");
 //print("mola_salt[NaCl]: "+String(mola_salt[NaCl])+" J/kg");
 
 //  p_bar := SI.Conversions.to_bar(p);
-//  assert(T_C>=0 and T_C<=1000, "T="+String(T-273.15)+", but must be between 0 and 1000°C");
+//  assert(T_C>=0 and T_C<=1000, "T="+String(T-273.15)+", but must be between 0 and 1000degC");
 //  assert(p_bar>=1 and p_bar<=1000, "P="+String(p/1e5)+" bar, but must be between 1 and 1000 bar");
 //  assert(mola>=.25 and mola<=5, "Molality must be between 0.25 and 5 mol/kg");
 
@@ -85,5 +85,5 @@ print("h_salt: "+String(h_salt[1]) +" J/kg");
   h := X[end]*(h_H2O+Delta_h_solution*mola_salt) +X[1:5]*h_salt;
 //  h := h_H2O;
 
-  print("Brine.specificEnthalpy_pTX_Francke: "+String(p*1e-5)+"bar."+String(T)+"°C->"+String(h)+" J/kg");
+  print("Brine.specificEnthalpy_pTX_Francke: "+String(p*1e-5)+"bar."+String(T)+"degC->"+String(h)+" J/kg");
 end specificEnthalpy_pTX_Francke_hsol;

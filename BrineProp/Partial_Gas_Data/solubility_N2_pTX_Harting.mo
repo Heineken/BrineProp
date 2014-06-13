@@ -12,7 +12,7 @@ function solubility_N2_pTX_Harting "..."
 protected
   Molality molalities[size(X,1)]=massFractionsToMolalities(X,MM_vec);
   Modelica.SIunits.Temp_C T_C = Modelica.SIunits.Conversions.to_degC(T);
-  Real L_0=.252 "N2-Löslichkeit in H2O bei 25 atm 75°C";
+  Real L_0=.252 "N2-solubility in H2O at 25 atm, 75degC";
   Real L_rel_p "pressure influence";
   Real L_rel_c "salinity influence";
   Real L_rel_T "Temperature influence";
@@ -22,9 +22,9 @@ protected
 algorithm
 // Modelica.Utilities.Streams.print("mola_N2("+String(p_gas)+","+String(T-273.16)+") (solubility_N2_pTX_Duan2006)");
 
-//  assert(273<=T and T<=400, "T="+String(T)+" K, but N2 solubility calculation is only valid for temperatures between 0 and 127°C");
+//  assert(273<=T and T<=400, "T="+String(T)+" K, but N2 solubility calculation is only valid for temperatures between 0 and 127degC");
  if 273>T or  T>400 then
-    Modelica.Utilities.Streams.print("T="+String(T)+" K, but N2 solubility calculation is only valid for temperatures between 0 and 127°C (Partial_Gas_Data.solubility_N2_pTX_Duan2006())");
+    Modelica.Utilities.Streams.print("T="+String(T)+" K, but N2 solubility calculation is only valid for temperatures between 0 and 127degC (Partial_Gas_Data.solubility_N2_pTX_Duan2006())");
   end if; /**/
   assert(p>=1e5 and p<=600e5, "p="+String(p/1e5)+" bar, but N2 solubility calculation only valid for pressures between 1 and 600 bar");
 //  assert(molalities[NaCl]<6, "mola[NaCl]="+String(molalities[NaCl])+" mol/kg, but N2 solubility calculation only valid for salinities up to 6 mol/kg");
@@ -42,6 +42,6 @@ algorithm
   solu :=L_0*L_rel_p*L_rel_c*L_rel_T "l/kg_H2O";
 
   X_gas :=solu/22.4*M_N2*X[end];
-//      Modelica.Utilities.Streams.print("mola_N2("+String(p_gas)+"Pa,"+String(T-273.16)+"°C,"+String(molalities[1])+")="+String(solu)+" (solubility_N2_pTX_Harting)");
+//      Modelica.Utilities.Streams.print("mola_N2("+String(p_gas)+"Pa,"+String(T-273.16)+"degC,"+String(molalities[1])+")="+String(solu)+" (solubility_N2_pTX_Harting)");
 //    Modelica.Utilities.Streams.print("mola_N2("+String(p_gas)+","+String(T-273.16)+")="+String(c_gas)+"->k="+String(c_gas/max(1,p_gas))+" (solubility_N2_pTX_Duan2006)");
 end solubility_N2_pTX_Harting;

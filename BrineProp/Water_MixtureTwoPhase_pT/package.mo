@@ -58,8 +58,7 @@ constant Integer nX_gas = 0;
     h_H2O_g = Modelica.Media.Water.WaterIF97_base.dewEnthalpy(Modelica.Media.Water.WaterIF97_base.setSat_p(p));
   end if;
   h_gas_dissolved = 0;
-  Delta_h_solution = solutionEnthalpy(T) 
-      "TODO: gilt nur bei gesättigter Lösung";
+  Delta_h_solution = solutionEnthalpy(T) ""only valid for saturated solution";
 */
  //assert(abs(((1-q)*h_l + q*h_g-h)/h) < 1e-3,"Enthalpie stimmt nicht! h_calc="+String((1-q)*h_l + q*h_g)+"<>h="+String(h));
  //End ENTHALPY

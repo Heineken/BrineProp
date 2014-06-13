@@ -17,7 +17,7 @@ package Brine_5salts "One-phase (liquid) multisalt brine solution"
   //  d := Brine_Driesner.density_pTX(p,T,X[1:nX_salt],MM_salt);
   //  d := Modelica.Media.Water.WaterIF97_pT.density_pT(p,T)  "*(1+sum(X[1:nX_salt]))/X[end]";
 
-  //   print("density_liquid_pTX: "+String(p*1e-5)+" bar,"+String(T)+" K->"+String(d)+"kg/m³");
+  //   print("density_liquid_pTX: "+String(p*1e-5)+" bar,"+String(T)+" K->"+String(d)+"kg/m^3");
 
   end density_pTX;
 
@@ -51,7 +51,7 @@ protected
  //print("p="+String(p)+" Pa, T="+String(T)+" K (BrineProp.Brine_5salts_noGas.dynamicViscosity_pTX)");
 
   if T<273.16 then
-     print("T="+String(T)+" too low (<0°C), setting to 0°C in PartialBrine_ngas_Newton.quality_pTX()");
+     print("T="+String(T)+" too low (<0 degC), setting to 0 degC in PartialBrine_ngas_Newton.quality_pTX()");
   end if;
      T_corr:= max(273.16,T);
 
@@ -97,7 +97,7 @@ protected
   //  cp:=(specificEnthalpy_pTX(state.p,state.T+.1,state.X)-state.h)/.1;
   //  cp := Modelica.Media.Water.IF97_Utilities.cp_pT(state.p, state.T)+mola[1:size(MM_vec_salt,1)];
   //  print("Cp_appmol: "+PowerPlant.vector2string(Cp_appmol)+" J/kg/K");
-  //  print("cp_Driesner("+String(cp_Driesner)+")= J/(kg·K)");
+  //  print("cp_Driesner("+String(cp_Driesner)+")= J/(kg.K)");
 
       annotation (Documentation(info="<html>
                                 <p>In the two phase region this function returns the interpolated heat capacity between the
@@ -131,7 +131,7 @@ protected
  //print("p="+String(p)+" Pa, T="+String(T)+" K (BrineProp.Brine_5salts_noGas.dynamicViscosity_pTX)");
 
   if T<273.16 then
-     print("T="+String(T)+" too low (<0°C), setting to 0°C in PartialBrine_ngas_Newton.quality_pTX()");
+     print("T="+String(T)+" too low (<0 degC), setting to 0 degC in PartialBrine_ngas_Newton.quality_pTX()");
   end if;
      T_corr:= max(273.16,T);
     eta := Viscosities.dynamicViscosity_Duan_pTX(

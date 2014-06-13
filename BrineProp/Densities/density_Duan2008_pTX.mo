@@ -1,6 +1,6 @@
 within BrineProp.Densities;
 function density_Duan2008_pTX
-  "density calculation of an aqueous salt solution according to Shide Mao and Zhenhao Duan (2008) 0-300°C; 0.1-100MPa; 0-6 mol/kg"
+  "density calculation of an aqueous salt solution according to Shide Mao and Zhenhao Duan (2008) 0-300degC; 0.1-100MPa; 0-6 mol/kg"
   /*
   Mixing rule acc. to Laliberte&Cooper2004
   http://dx.doi.org/10.1016/j.jct.2008.03.005
@@ -83,13 +83,13 @@ protected
 //  constant Boolean debugmode = true;
 algorithm
   if debugmode then
-      print("Running density_Duan2008_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" °C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
+      print("Running density_Duan2008_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
   end if;
 
   rho_H2O := Modelica.Media.Water.WaterIF97_base.density_pT(max(p, p_sat + 1), T)*1e-3
-    "kg/m³->kg/dm³";
+    "kg/m^3->kg/dm^3";
   if debugmode then
-    print("rho_H2O=" +String(rho_H2O)+" kg/dm³");
+    print("rho_H2O=" +String(rho_H2O)+" kg/dm^3");
   end if;
 
   //for pure water skip the whole calculation and return water density
@@ -119,10 +119,10 @@ algorithm
       end if;
       if not (ignoreLimitSalt_T[i] or (T >= salt.T_min_rho and T <= salt.T_max_rho)) then
         msg:="Temperature is " + String(SI.Conversions.to_degC(T)) +
-          "°C, but for " + salt.name + " must be between " + String(
-          SI.Conversions.to_degC(salt.T_min_rho)) + "°C and " + String(
+          "degC, but for " + salt.name + " must be between " + String(
+          SI.Conversions.to_degC(salt.T_min_rho)) + "degC and " + String(
           SI.Conversions.to_degC(salt.T_max_rho)) +
-          "°C (Brine.Salt_Data_Duan.density_Duan2008_pTX())";
+          "degC (Brine.Salt_Data_Duan.density_Duan2008_pTX())";
       end if;
       if msg<>"" then
         if outOfRangeMode==1 then
@@ -130,7 +130,7 @@ algorithm
         elseif outOfRangeMode==2 then
           assert(false,msg);
         /*assert(m[i] >= 0 and m[i] <= salt.mola_max_rho, "Molality of "+salt.name+" is "+String(m[i]) + ", but must be between 0 and "+ String(salt.mola_max_rho) + " mol/kg");
-          assert(ignoreLimitSalt_T[i] or (T >= salt.T_min_rho and T <= salt.T_max_rho), "Temperature is "+String(SI.Conversions.to_degC(T)) + "°C, but for " + salt.name + " must be between " + String(SI.Conversions.to_degC(salt.T_min_rho)) + "°C and " + String(SI.Conversions.to_degC(salt.T_max_rho)) + "°C");
+          assert(ignoreLimitSalt_T[i] or (T >= salt.T_min_rho and T <= salt.T_max_rho), "Temperature is "+String(SI.Conversions.to_degC(T)) + "degC, but for " + salt.name + " must be between " + String(SI.Conversions.to_degC(salt.T_min_rho)) + "degC and " + String(SI.Conversions.to_degC(salt.T_max_rho)) + "degC");
           assert(ignoreLimitSalt_p[i] or (p >= salt.p_min_rho and p <= salt.p_max_rho), "Pressure is " + String(p_bar) + " bar, but for "+salt.name + " must be between " + String(salt.p_min_rho*1e-5) + " bar and " + String(salt.p_max_rho*1e-5) + " bar");
         */
         end if;
@@ -181,7 +181,7 @@ algorithm
       C_v := c[19]/(T - 227) + c[20] + c[21]*T + c[22]*T^2 + c[23]/(647 - T);
 
     //---------------------------------------------------
-    // Appendix A: Debye-Hückel limiting law slopes"
+    // Appendix A: Debye-Hueckel limiting law slopes"
     //---------------------------------------------------
 
       Bb := U[07] + U[08]/T + U[09]*T;
@@ -201,10 +201,10 @@ algorithm
 
 //      rho_H2O_plus := Modelica.Media.Water.WaterIF97_base.density_pT(p_plus_bar*1e5, T) * 1e-3
       rho_H2O_plus := Modelica.Media.Water.WaterIF97_base.density_pT(max(p_plus_bar*1e5, p_sat + 1), T)*
-        1e-3 "kg/m³->kg/dm³";
+        1e-3 "kg/m^3->kg/dm^3";
 
       rho_H2O_minus := rho_H2O
-        "Modelica.Media.Water.WaterIF97_base.density_pT(p_minus_bar*1e5, T) * 1e-3 kg/m³->kg/dm³";
+        "Modelica.Media.Water.WaterIF97_base.density_pT(p_minus_bar*1e5, T) * 1e-3 kg/m^3->kg/dm^3";
       A_Phi_plus := 1/3*(2*Modelica.Constants.pi*N_0*rho_H2O_plus/1000)^(1/2)*(
         e^2/(D_plus*k*T))^(3/2);
       A_Phi_minus := 1/3*(2*Modelica.Constants.pi*N_0*rho_H2O_minus/1000)^(1/2)*
@@ -218,7 +218,7 @@ algorithm
     // Solution 1: using V_o_Phi and V_Phi
     //---------------------------------------------------
 
-    //Equation 13: apparent molar Volume at infinite dilution in cm³/mol
+    //Equation 13: apparent molar Volume at infinite dilution in cm^3/mol
       V_o_Phi := (V_m_r/m_r - 1000/(m_r*rho_H2O) - v*abs(z_plus*z_minus)*A_v*h_mr - 2*v_plus*
         v_minus*R*T*(B_v*m_r + v_plus*z_plus*C_v*m_r^2));
 

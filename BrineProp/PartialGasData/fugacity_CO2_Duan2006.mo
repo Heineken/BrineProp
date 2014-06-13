@@ -13,13 +13,13 @@ protected
 algorithm
   if outOfRangeMode==1 then
     if T<273 or T>573 then
-      print("T="+String(T)+"K, but CO2 solubility calculation is only valid for temperatures between 0 and 260°C (Partial_Gas_Data.fugacity_CO2_Duan2006)");
+      print("T="+String(T)+"K, but CO2 solubility calculation is only valid for temperatures between 0 and 260degC (Partial_Gas_Data.fugacity_CO2_Duan2006)");
     end if;
    if (p<0 or p>2000e5) then
       print("p="+String(p/1e5)+" bar, but CO2 fugacity calculation only valid for pressures between 0 and 2000 bar (Partial_Gas_Data.fugacity_CO2_Duan2006)");
    end if;
   elseif outOfRangeMode==2 then
-    assert(T>273 and T<573, "T="+String(T-273.15)+"°C out of range(0...300°C) for CO2 fugacity calculation (fugacity_CO2_Duan2006)");
+    assert(T>273 and T<573, "T="+String(T-273.15)+"degC out of range(0...300degC) for CO2 fugacity calculation (fugacity_CO2_Duan2006)");
     assert(p<2000e5, "p="+String(p/1e5)+" bar out of range for CO2 fugacity calculation (fugacity_CO2_Duan2006)");
   end if;
 
