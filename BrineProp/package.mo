@@ -24,21 +24,6 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
   constant SI.MolarMass M_H2O = Modelica.Media.Water.waterConstants[1].molarMass
   "0.018015 [kg/mol]";
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 constant Modelica.Media.Interfaces.PartialTwoPhaseMedium.FluidConstants[nS] BrineConstants(
      each chemicalFormula = "H2O+NaCl+KCl+CaCl2+MgCl2+SrCl2+CO2+N2+CH4",
      each structureFormula="H2O+NaCl+KCl+CaCl2+MgCl2+SrCl2+CO2+N2+CH4",
@@ -52,8 +37,6 @@ constant Modelica.Media.Interfaces.PartialTwoPhaseMedium.FluidConstants[nS] Brin
      each meltingPoint = 1,
      each normalBoilingPoint = 1,
      each dipoleMoment = 1);
-
-
 
 
   function massFractionsToMolalities
@@ -125,26 +108,26 @@ protected
 <p>It was developed as a part of a PhD projected, documented in the thesis &QUOT;<a href=\"http://nbn-resolving.de/urn:nbn:de:kobv:83-opus4-47126\">Thermo-hydraulic model of the two-phase flow in the brine circuit of a geothermal power plant</a>&QUOT;. </p>
 <p>This package contains an extension of the Modelica.Media interfaces for two-phase mixtures (<a href=\"BrineProp.PartialMixtureTwoPhaseMedium\">PartialMixtureTwoPhaseMedium</a>), the generic brine template with the vapour-liquid-equilibrium calculation (<a href=\"BrineProp.PartialBrine_ngas_Newton\">PartialBrine_ngas_Newton</a>), as well specific brine models for NaCl, KCl, CaCl2, [MgCl2, SrCl2 partially supported] (1-phase: <a href=\"BrineProp.Brine_5salts\">Brine_5salts</a>) and CO2, N2 and CH4 (2-phase: <a href=\"BrineProp.Brine_5salts_TwoPhase_3gas\">Brine_5salts_TwoPhase_3gas</a>).</p>
 <p>This package has been developed and tested in Dymola up to 2014 FD01.</p>
-<p><b>Licensed by the </b>Henning Francke<b> under the Modelica License 2</b></p>
-<p>Copyright &copy; 2009-2014 Helmholtz Centre Potsdam, GFZ German Research Centre for Geosciences.</p>
-<p><br><i>This Modelica package is <u>free</u> software and the use is completely at <u>your own risk</u>; it can be redistributed and/or modified under the terms of the Modelica License 2. For license conditions (including the disclaimer of warranty) see <a href=\"modelica://Modelica.UsersGuide.ModelicaLicense2\">Modelica.UsersGuide.ModelicaLicense2</a> or visit <a href=\"http://www.modelica.org/licenses/ModelicaLicense2\">http://www.modelica.org/licenses/ModelicaLicense2</a>.</i> </p>
-<h4>Usage</h4>
+<p><b>Licensed by the </b>Helmholtz Centre Potsdam, GFZ German Research Centre for Geosciences<b> under the Modelica License 2</b></p>
+<p>Copyright &copy; 2009-2014 Henning Francke.</p>
+<p><br/><i>This Modelica package is <u>free</u> software and the use is completely at <u>your own risk</u>; it can be redistributed and/or modified under the terms of the Modelica License 2. For license conditions (including the disclaimer of warranty) see <a href=\"modelica://Modelica.UsersGuide.ModelicaLicense2\">Modelica.UsersGuide.ModelicaLicense2</a> or visit <a href=\"http://www.modelica.org/licenses/ModelicaLicense2\">http://www.modelica.org/licenses/ModelicaLicense2</a>.</i> </p>
+<p><h4>Usage</h4></p>
 <p>Check the (non-partial) Brine packages (<a href=\"BrineProp.Brine_5salts\">Brine_5salts</a>, <a href=\"BrineProp.BrineGas_3Gas\">BrineGas_3Gas</a> or <a href=\"BrineProp.Brine_5salts_TwoPhase_3gas\">Brine_5salts_TwoPhase_3gas</a>) for instructions or run models from <code>BrineProp/Examples</code>. </p>
 <p>All calculated values are returned in SI-Units and are mass based. </p>
-<h4>Known issues:</h4>
-<ul>
+<p><h4>Known issues:</h4></p>
+<p><ul>
 <li>no differentials implemented</li>
 <li>1phase-transient calculation does not compile, supposedly due to missing derivatives</li>
 <li>Does not compile in JModelica/OpenModelica</li>
-</ul>
-<h4>TODO:</h4>
-<ul>
+</ul></p>
+<p><h4>TODO:</h4></p>
+<p><ul>
 <li>implement differentials</li>
 <li>remove <font style=\"color: #006400; \">argument <code>MM_vec</font></code> in property functions</li>
 <li>implement limit ignore switches consistently (preferrably as parameter in the Medium package to be changed on declaration)</li>
 <li>Add apparent molar heat capacity/enthalpy for (NaCl,) MgCl2 and SrCl2</li>
-</ul>
-<h5>Created by</h5>
+</ul></p>
+<p><h5>Created by</h5></p>
 <p>Henning Francke</p>
 <p>Helmholtz Centre Potsdam GFZ German Research Centre for Geosciences</p>
 <p>Telegrafenberg, D-14473 Potsdam</p>

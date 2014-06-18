@@ -5,7 +5,7 @@ model ValidationFluMoDensity "Validation with density measured by Flumo"
   //see 6.1.2 in PhD-Thesis (http://nbn-resolving.de/urn:nbn:de:kobv:83-opus4-47126)
 package Medium = Brine_5salts;
 
-  constant Real data[:,:]=DataFiles.readCSVmatrix("Data\FluMoFit.csv");
+  constant Real data[:,:]=DataFiles.readCSVmatrix("Data/FluMoFit.csv");
   constant Integer n=size(data,1);
   Medium.BaseProperties[n] props;
   Real depth= time;

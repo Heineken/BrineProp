@@ -17,7 +17,8 @@ protected
   Real B;
   Real C;
 
-  Real phi,b;
+  Real phi;
+  Real b;
   Real eta_relative;
 
   Integer nX_salt = size(Salt_Constants,1);
