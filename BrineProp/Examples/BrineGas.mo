@@ -1,6 +1,6 @@
 within BrineProp.Examples;
 model BrineGas
-package Medium = BrineProp.BrineGas_3Gas;
+package Medium = BrineProp.BrineGas_3Gas(ignoreNoCompositionInBrineGas=true);
 //package Medium = Modelica.Media.Air.SimpleAir;
 //package Medium = PartialBrineGas;
   Medium.BaseProperties props;
@@ -51,7 +51,7 @@ MoistAir.ThermodynamicState st=MoistAir.ThermodynamicState(props.p,props.T,props
 equation
   props.p = 10*1e5;
   props.T = 293.15;
-  props.Xi={0.1,0.1,0.1};
+  props.Xi=0*{0.1,0.1,0.1};
 //  gasprops.h = 2e6;
 /*  props.p = 2.00138*1e5;
   props.T = 352.089;

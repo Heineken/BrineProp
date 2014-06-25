@@ -6,6 +6,8 @@ package PartialBrineGas
   extends Modelica.Media.Interfaces.PartialMixtureMedium(
   reference_X=cat(1,fill(0,nX-1),{1}));
 
+ constant Boolean ignoreNoCompositionInBrineGas=false;
+
  redeclare model extends BaseProperties "Base properties of medium"
 
  //  SI.Pressure p_H2O;

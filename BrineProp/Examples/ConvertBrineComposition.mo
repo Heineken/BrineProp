@@ -1,19 +1,42 @@
 within BrineProp.Examples;
 model ConvertBrineComposition
-  "convert volume related composition into mass fractionFinds brine composition as mass fraction from infos in g/l by iterative density calculation"
+  "convert volume related composition into mass fraction g/l -> kg/kg"
+//  Finds brine composition as mass fraction from infos in g/l by iterative density calculation
 
   package Medium = BrineProp.Brine_5salts_TwoPhase_3gas;
 
-// Chloride concentrations in g per litre:
-//  SI.MassConcentration  c[:]={97.331,5.673,150.229,1.587,2.861} "STR04/16";
-  constant SI.MassConcentration  c[:]={98.84925634,2.984821797,144.6515323,0*0.720790948,0*2.520416712}
+  constant SI.MolarMass M_cation[:] = {22.98977,39.0983,40.078,24.305,87.62}/1000 "kg/mol";
+  constant SI.MolarMass M_Cl = 35.453/1000;
+  constant Integer n_cation[:] = {1,1,2,2,2} "chlorine ions per cation";
+/*
+  // From cation molarities mmol/l Na+,K+,Ca2+,Mg2+,Sr2+
+  constant SI.Concentration b_cation[:]={1691.386,40.037,1303.355,0*7.570,0*15.899} 
     "Feldbusch 02/2013";
+  constant SI.MassConcentration  c_cation[:]=b_cation.*M_cation;
+  constant SI.MassConcentration  c[:]= c_cation+M_Cl*b_cation.*n_cation 
+    "g/l NaCl,KCl,CaCl2,MgCl2,SrCl2";
+*/
 
-  //volume fractions of gas phase
-//  Real[:] gasVolumeFractions={0.03825,0.8285,0.12825};
-  Real[:] gasVolumeFractions={0.0935,78.5,13.5};
-  Real gasLiquidRatio=0.8475 "GVF/(1-GVF) at STP";
-  //Real gasLiquidRatio=0.690/464.41 "GVF/(1-GVF)";
+// From cation concentrations g/l Na+,K+,Ca2+,Mg2+,Sr2+
+//  constant SI.MassConcentration  c_cation[:]={38.88456464,1.565384615,52.23585483,0*0.184,0*1.393076923} "Feldbusch 02/2013";
+  constant SI.MassConcentration  c_cation[:]={112,16.8,13.2,0*4.98,0*0.419}/1000
+    "GTN 02/2013";
+  constant SI.MassConcentration  c[:]= c_cation+M_Cl*c_cation./M_cation.*n_cation
+    "g/l NaCl,KCl,CaCl2,MgCl2,SrCl2";
+
+/*
+//From Chloride concentrations g/l NaCl,KCl,CaCl2,MgCl2,SrCl2
+//  SI.MassConcentration  c[:]={97.331,5.673,150.229,1.587,2.861} "STR04/16";
+    constant SI.MassConcentration c[:]={98.84925634,2.984821797,144.6515323,0*0.720790948,0*2.520416712} "Feldbusch 02/2013";
+*/
+
+  //volume fractions of gas phase CO2,N2,CH4
+  //  Real[:] gasVolumeFractions={0.03825,0.8285,0.12825} "STR04/16";
+/*  Real[:] gasVolumeFractions={0.0935,78.5,13.5} "Feldbusch 02/2013";
+Real gasLiquidRatio=0.8475 "GVF/(1-GVF) at STP";*/
+
+  Real[:] gasVolumeFractions={0.418,0.202,0.326} "GTN";
+  Real gasLiquidRatio=1 "GVF/(1-GVF) at STP GTN";
 
   Medium.BaseProperties props;
   SI.Density d_l(start=1200)= props.state.d_l;

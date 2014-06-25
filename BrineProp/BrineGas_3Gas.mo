@@ -69,7 +69,7 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
       print("Running density_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
     end if;
   // assert(min(X)>0,"Cannot calculate with empty composition.");
-    if not min(X)>0 then
+    if not min(X)>0 and not ignoreNoCompositionInBrineGas then
       print("No gas composition, assuming water vapour.(BrineProp.BrineGas_3Gas.density_pTX)");
   //  else
   //    X_:=X;
@@ -130,7 +130,7 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
       print("Running specificHeatCapacityCp_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
     end if;
 
-    if not min(X)>0 then
+    if not min(X)>0 and not ignoreNoCompositionInBrineGas then
       print("No gas composition, assuming water vapour.(BrineProp.BrineGas_3Gas.specificHeatCapacityCp_pTX)");
     end if;
 
@@ -236,7 +236,7 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
       print("Running specificEnthalpy_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
     end if;
 
-    if not min(X)>0 then
+    if not min(X)>0 and not ignoreNoCompositionInBrineGas then
       print("No gas composition, assuming water vapour.(BrineProp.BrineGas_3Gas.specificEnthalpy_pTX)");
     end if;
 
