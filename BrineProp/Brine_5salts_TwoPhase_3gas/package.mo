@@ -33,7 +33,6 @@ package Brine_5salts_TwoPhase_3gas "Two-phase aqueous solution of NaCl, KCl, CaC
   end fugacity_pTX;
 
 
-
   redeclare function extends setState_pTX
   "is apparently needed so that array arguments work"
   end setState_pTX;

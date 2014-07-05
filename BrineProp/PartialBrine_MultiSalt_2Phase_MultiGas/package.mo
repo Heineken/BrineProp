@@ -318,7 +318,8 @@ protected
       if debugmode then
         print("2Phase water (temperature_phX("+String(p)+","+String(h)+"))");
       end if;
-      Modelica.Media.Water.WaterIF97_base.temperature_ph(p,h);
+        T :=Modelica.Media.Water.WaterIF97_base.temperature_ph(p, h);
+        //T = Modelica.Media.Water.IF97_Utilities.T_ph(p,h);
     else
 
       //Find temperature with h above given h ->T_b
@@ -479,7 +480,6 @@ protected
     input SI.MolarMass MM[:] "molar masses of components";
     output SI.Pressure[nX_gas] p_sat;
   end saturationPressures;
-
 
 
   redeclare replaceable partial function extends setState_pTX
