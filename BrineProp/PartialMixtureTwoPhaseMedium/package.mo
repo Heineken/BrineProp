@@ -1,15 +1,6 @@
 within BrineProp;
 partial package PartialMixtureTwoPhaseMedium "Template class for two phase medium of a mixture of substances "
-
-
-extends Modelica.Media.Interfaces.PartialMixtureMedium(ThermoStates=Choices.IndependentVariables.pTX);
-//ThermoStates was added for compatibility with Modelica.Fluid, don't really know what it does
-//  constant Boolean smoothModel "true if the (derived) model should not generate state events";
-constant Boolean onePhase=false
-  "true if the (derived) model should never be called with two-phase inputs";
-
-//redeclare replaceable record SaturationProperties "MSL 3.2.1"
-
+// Uncomment this for MSL 3.2
 
 replaceable record SaturationProperties
   "Saturation properties of two phase medium"
@@ -19,6 +10,20 @@ replaceable record SaturationProperties
   MassFraction X[nX] "Mass fractions";
   annotation (Documentation(info="<html></html>"));
 end SaturationProperties;
+
+//END MSL 3.2 Part
+
+/*
+//MSL 3.2.1 Part
+redeclare replaceable record SaturationProperties "MSL 3.2.1"
+*/
+
+
+extends Modelica.Media.Interfaces.PartialMixtureMedium(ThermoStates=Choices.IndependentVariables.pTX);
+//ThermoStates was added for compatibility with Modelica.Fluid, don't really know what it does
+//  constant Boolean smoothModel "true if the (derived) model should not generate state events";
+constant Boolean onePhase=false
+  "true if the (derived) model should never be called with two-phase inputs";
 
 constant FluidConstants[nS] fluidConstants "constant data for the fluid";
 

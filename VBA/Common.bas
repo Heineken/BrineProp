@@ -299,26 +299,26 @@ End Function
 
 Function FullMassVector(Xi, Optional ByRef nX As Integer) 'As Double()
     Dim nXi As Integer
-    Dim X '() As Double
-    X = ToDouble(Xi, nXi)
-    If VarType(X) = vbString Or VarType(X) = vbError Or IsEmpty(X) Then
-        FullMassVector = X
+    Dim x '() As Double
+    x = ToDouble(Xi, nXi)
+    If VarType(x) = vbString Or VarType(x) = vbError Or IsEmpty(x) Then
+        FullMassVector = x
         Exit Function
     End If
     nX = nXi + 1
-    ReDim Preserve X(1 To nX)
+    ReDim Preserve x(1 To nX)
   
-    X(nX) = 1 - Application.Sum(Xi)
-    If X(nX) > 1 Or X(nX) <= 0 Then
-        X(1) = -1
+    x(nX) = 1 - Application.Sum(Xi)
+    If x(nX) > 1 Or x(nX) <= 0 Then
+        x(1) = -1
         ' MsgBox "Mass vector is wrong"
     End If
-    FullMassVector = X
+    FullMassVector = x
 End Function
 
-Function massFractionsToMolalities(X, MM) 'Calculate molalities (mole_i per kg H2O) from mass fractions X
+Function massFractionsToMolalities(x, MM) 'Calculate molalities (mole_i per kg H2O) from mass fractions X
   Dim molalities, nX As Integer, nM As Integer
-  nX = Length(X)
+  nX = Length(x)
   nM = Length(MM)
   ReDim molalities(1 To nX) 'Molalities moles/m_H2O
     If nX <> nM Then
@@ -327,9 +327,9 @@ Function massFractionsToMolalities(X, MM) 'Calculate molalities (mole_i per kg H
 
     Dim i As Integer
     For i = 1 To nX
-        If X(nX) > 0 Then
-            If X(i) > 10 ^ -6 Then
-                molalities(i) = X(i) / (MM(i) * X(nX)) 'numerical errors my create X[i]>0, this prevents it
+        If x(nX) > 0 Then
+            If x(i) > 10 ^ -6 Then
+                molalities(i) = x(i) / (MM(i) * x(nX)) 'numerical errors my create X[i]>0, this prevents it
            'Else
            '    molalities(i) = 0
             End If
@@ -340,12 +340,12 @@ Function massFractionsToMolalities(X, MM) 'Calculate molalities (mole_i per kg H
   massFractionsToMolalities = molalities
 End Function
 
-Function massFractionToMolality(X, X_H2O, MM) 'Calculate molalities (mole_i per kg H2O) from mass fractions X
-  Dim nX As Integer: nX = Length(X)
+Function massFractionToMolality(x, X_H2O, MM) 'Calculate molalities (mole_i per kg H2O) from mass fractions X
+  Dim nX As Integer: nX = Length(x)
 
     If X_H2O > 0 Then
-        If X > 10 ^ -6 Then
-            massFractionToMolality = X / (MM * X_H2O) 'numerical errors my create X[i]>0, this prevents it
+        If x > 10 ^ -6 Then
+            massFractionToMolality = x / (MM * X_H2O) 'numerical errors my create X[i]>0, this prevents it
        'Else
        '    molalities(i) = 0
         End If
@@ -355,18 +355,18 @@ Function massFractionToMolality(X, X_H2O, MM) 'Calculate molalities (mole_i per 
 End Function
 
 
-Function CheckMassVector(X, nX_must) As Variant
+Function CheckMassVector(x, nX_must) As Variant
     Dim nX As Integer, msg As String
     Dim Xout, s2v As Boolean
-    If VarType(X) = vbString Then
-        Xout = String2Vector(X, nX) 'make sure first index is 1
+    If VarType(x) = vbString Then
+        Xout = String2Vector(x, nX) 'make sure first index is 1
         s2v = True 'stupid flag to avoid having to recheck or copy Xout=X
     Else
-        nX = Length(X)
+        nX = Length(x)
         s2v = False
     End If
     If nX = nX_must - 1 Then 'without water
-        Xout = FullMassVector(IIf(s2v, Xout, X), nX) 'make sure first index is 1
+        Xout = FullMassVector(IIf(s2v, Xout, x), nX) 'make sure first index is 1
         If VarType(Xout) = vbString Then
             msg = Xout
         End If
@@ -378,10 +378,10 @@ Function CheckMassVector(X, nX_must) As Variant
         End If
         CheckMassVector = Xout
     ElseIf nX = nX_salt + 1 Then 'Full mass vector with water
-        If Abs(Application.Sum(X) - 1) > 10 ^ -8 Then
+        If Abs(Application.Sum(x) - 1) > 10 ^ -8 Then
             msg = "#Mass vector does not add up to 1"
         End If
-        CheckMassVector = ToDouble(X) 'to prevent adding a dimension
+        CheckMassVector = ToDouble(x) 'to prevent adding a dimension
     Else
         msg = "#Mass vector is wrong"
     End If

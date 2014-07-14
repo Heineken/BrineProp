@@ -49,21 +49,21 @@ Function specificHeatCapacityCp(p As Double, T As Double, Xin)  'calculation of 
         init
     End If
     
-    Dim X
-    X = CheckMassVector(Xin, nX)
-    If VarType(X) = vbString Then
-        specificHeatCapacityCp = X & " (Brine_liq.specificHeatCapacityCp)"
+    Dim x
+    x = CheckMassVector(Xin, nX)
+    If VarType(x) = vbString Then
+        specificHeatCapacityCp = x & " (Brine_liq.specificHeatCapacityCp)"
         Exit Function
     End If
     
-    Dim b: b = massFractionsToMolalities(X, MM_vec)
+    Dim b: b = massFractionsToMolalities(x, MM_vec)
     If b(1) = -1 Then
       specificHeatCapacityCp = "#Error in massFractionsToMolalities"
       Exit Function
     End If
     
     Dim cp_Driesner
-    cp_Driesner = specificHeatCapacity_pTX_Driesner(p, T, X(1) / (X(1) + X(nX_salt + 1)))
+    cp_Driesner = specificHeatCapacity_pTX_Driesner(p, T, x(1) / (x(1) + x(nX_salt + 1)))
     If VarType(cp_Driesner) = vbString Then
           specificHeatCapacityCp = cp_Driesner
           Exit Function
@@ -88,7 +88,7 @@ Function specificHeatCapacityCp(p As Double, T As Double, Xin)  'calculation of 
         End If
     End If
     
-    specificHeatCapacityCp = (X(i_NaCl) + X(nX)) * cp_Driesner + X(nX) * (b(2) * Cp_appmol(2) + b(3) * Cp_appmol(3)) 'for length(H_appmol)=2
+    specificHeatCapacityCp = (x(i_NaCl) + x(nX)) * cp_Driesner + x(nX) * (b(2) * Cp_appmol(2) + b(3) * Cp_appmol(3)) 'for length(H_appmol)=2
 End Function
 
 
@@ -257,22 +257,22 @@ Function specificEnthalpy(p As Double, T As Double, Xin) 'enthalpy calculation
     If Salts(1).MM = 0 Then 'if Salt data not defined
       init
     End If
-    Dim X
-    X = CheckMassVector(Xin, nX)
-    If VarType(X) = vbString Then
-        specificEnthalpy = X & " (Brine_liq.specificEnthalpy)"
+    Dim x
+    x = CheckMassVector(Xin, nX)
+    If VarType(x) = vbString Then
+        specificEnthalpy = x & " (Brine_liq.specificEnthalpy)"
         Exit Function
     End If
     
     Dim b '() As Double:
-    b = massFractionsToMolalities(X, MM_vec)
+    b = massFractionsToMolalities(x, MM_vec)
     If b(1) = -1 Then
       specificEnthalpy = "#Error in massFractionsToMolalities"
       Exit Function
     End If
     
     
-    Dim h_Driesner: h_Driesner = SpecificEnthalpy_Driesner(p, T, X(1) / (X(1) + X(nX)))
+    Dim h_Driesner: h_Driesner = SpecificEnthalpy_Driesner(p, T, x(1) / (x(1) + x(nX)))
     
     If VarType(h_Driesner) = vbString Then
         specificEnthalpy = h_Driesner
@@ -299,7 +299,7 @@ Function specificEnthalpy(p As Double, T As Double, Xin) 'enthalpy calculation
     End If
 
 '    SpecificEnthalpy = (X(i_NaCl) + X(nX)) * h_Driesner + X(nX) * ScalProd(SubArray(b, 2, 3), SubArray(H_appmol, 2, 3))
-    specificEnthalpy = (X(i_NaCl) + X(nX)) * h_Driesner + X(nX) * (b(2) * H_appmol(2) + b(3) * H_appmol(3)) 'for length(H_appmol)=2
+    specificEnthalpy = (x(i_NaCl) + x(nX)) * h_Driesner + x(nX) * (b(2) * H_appmol(2) + b(3) * H_appmol(3)) 'for length(H_appmol)=2
 
 End Function
 
@@ -367,14 +367,14 @@ Function dynamicViscosity(p_Pa As Double, T As Double, Xin) 'brine density
     Dim T_C As Double: T_C = T - 273.15
     Dim p_bar As Double: p_bar = p_Pa / 10 ^ 5
     
-    Dim X
-    X = CheckMassVector(Xin, nX)
-    If VarType(X) = vbString Then
-        dynamicViscosity = X & " (Brine_liq.dynamicViscosity)"
+    Dim x
+    x = CheckMassVector(Xin, nX)
+    If VarType(x) = vbString Then
+        dynamicViscosity = x & " (Brine_liq.dynamicViscosity)"
         Exit Function
     End If
     
-    Dim molalities: molalities = massFractionsToMolalities(X, MM_vec)
+    Dim molalities: molalities = massFractionsToMolalities(x, MM_vec)
     If molalities(1) = -1 Then
       dynamicViscosity = "#Error in massFractionsToMolalities"
       Exit Function
@@ -385,7 +385,7 @@ Function dynamicViscosity(p_Pa As Double, T As Double, Xin) 'brine density
     
      'for pure water skip the whole calculation and return water viscosity
      Dim eta As Double: eta = eta_H2O
-     If Application.Max(SubArray(X, 1, nX_salt)) <= 0.1 ^ 8 Then
+     If Application.Max(SubArray(x, 1, nX_salt)) <= 0.1 ^ 8 Then
        dynamicViscosity = eta_H2O
        Exit Function 'pure water -> skip the rest
      End If
@@ -420,7 +420,7 @@ Function dynamicViscosity(p_Pa As Double, T As Double, Xin) 'brine density
     
     Dim i As Integer
     For i = 1 To nX_salt
-       If X(i) > 0 Then
+       If x(i) > 0 Then
          If outOfRangeMode > 0 Then
            If molalities(i) > Salts(i).mola_max_eta Then
                MsgTxt = (Salts(i).name + " content exceeds limit in Viscosities.dynamicViscosity_Duan_pTX")
@@ -438,7 +438,7 @@ Function dynamicViscosity(p_Pa As Double, T As Double, Xin) 'brine density
     Dim A_ As Double
     Dim B_ As Double
     Dim C_ As Double
-    Dim rho: rho = density(p_Pa, T, X)
+    Dim rho: rho = density(p_Pa, T, x)
     If VarType(rho) = vbString Then
        dynamicViscosity = rho
        Exit Function
@@ -450,7 +450,7 @@ Function dynamicViscosity(p_Pa As Double, T As Double, Xin) 'brine density
          phi = molalities(i) / (Application.Sum(molalities) - molalities(UBound(molalities))) 'geometric mean mixture rule weighted with mass fraction (as in Laliberté)
            If i = 3 Then
            'Zhang (available for NaCl, KCl and CaCl)
-          c = X(i) / Salts(i).MM * CDbl(rho) / 1000 / phi 'component molarity (molperliter)
+          c = x(i) / Salts(i).MM * CDbl(rho) / 1000 / phi 'component molarity (molperliter)
             eta_relative = 1 + Salts(i).Zh_A * c ^ 0.5 + Salts(i).Zh_B * c + Salts(i).Zh_D * c ^ 2 + 0.0001 * Salts(i).Zh_E * c ^ 3.5 + 0.00001 * Salts(i).Zh_F * c ^ 7
          Else
            'Duan (available for NaCl and KCl)
@@ -488,14 +488,14 @@ Function density(p As Double, T As Double, Xin) ', p_sat_MPa As Double) 'Brine d
       Exit Function
     End If
     
-    Dim X
-    X = CheckMassVector(Xin, nX)
-    If VarType(X) = vbString Then
-        density = X & " (Brine_liq.density)"
+    Dim x
+    x = CheckMassVector(Xin, nX)
+    If VarType(x) = vbString Then
+        density = x & " (Brine_liq.density)"
         Exit Function
     End If
     
-    Dim M: M = massFractionsToMolalities(X, MM_vec) 'Molality
+    Dim M: M = massFractionsToMolalities(x, MM_vec) 'Molality
     If M(1) = -1 Then
       density = "#Error in massFractionsToMolalities"
       Exit Function
@@ -565,7 +565,7 @@ Function density(p As Double, T As Double, Xin) ', p_sat_MPa As Double) 'Brine d
     ReDim c(1 To 23)
     
     
-    If Application.Max(X) <= 0.1 ^ 12 Then 'for pure water skip the whole calculation and return water density
+    If Application.Max(x) <= 0.1 ^ 12 Then 'for pure water skip the whole calculation and return water density
       density = rho_H2O * 1000
       Exit Function
     End If
@@ -576,7 +576,7 @@ Function density(p As Double, T As Double, Xin) ', p_sat_MPa As Double) 'Brine d
 '            Density = "#Salt name not defined."
 '            Exit Function
 '        End If
-        If Not X(j) > 0 Then
+        If Not x(j) > 0 Then
             M_salt(j) = 1 'To avoid division by zero at the end
         Else
             If outOfRangeMode > 0 Then
@@ -691,9 +691,9 @@ Function density(p As Double, T As Double, Xin) ', p_sat_MPa As Double) 'Brine d
         End If
   Next j
   
-        v_ = X(UBound(X)) / (rho_H2O * 1000)
+        v_ = x(UBound(x)) / (rho_H2O * 1000)
     For j = 1 To nX - 1
-        v_ = v_ + X(j) * (V_Phi(j) / 10 ^ 6 / (M_salt(j) / 1000)) 'Mixing rule Laliberte&Cooper2004 equ. 5&6
+        v_ = v_ + x(j) * (V_Phi(j) / 10 ^ 6 / (M_salt(j) / 1000)) 'Mixing rule Laliberte&Cooper2004 equ. 5&6
     Next j
     density = 1 / v_
 End Function

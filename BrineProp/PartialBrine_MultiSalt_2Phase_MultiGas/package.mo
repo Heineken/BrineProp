@@ -719,15 +719,15 @@ protected
     d_g :=if x > 0 then p/(T2*R_gas) else -1;*/
     //  d_g:= if x>0 then p/(Modelica.Constants.R*T2)*(n_g*cat(1,MM_gas,{M_H2O}))/sum(n_g) else -1;
       if x > 0 then
-        d_g :=BrineGas_3Gas.density_pTX(p,T, X_g);
-        h_g:=specificEnthalpy_gas_pTX(p,T,X_g);
+        d_g := BrineGas_3Gas.density_pTX(p,T,X_g);
+        h_g := specificEnthalpy_gas_pTX(p,T,X_g);
       else
-        d_g :=-1;
-        h_g:=-1;
+        d_g := -1;
+        h_g := -1;
       end if;
-      d_l:=if not x<1 then -1 else density_liquid_pTX(p,T2,X_l,MM_vec)
+      d_l := if not x<1 then -1 else density_liquid_pTX(p,T2,X_l,MM_vec)
       "no 1-phase gas";
-      h_l:=specificEnthalpy_liq_pTX(p,T,X_l);
+      h_l := specificEnthalpy_liq_pTX(p,T,X_l);
     end if "TwoPhaseWater";
 
     d:=1/(x/d_g + (1 - x)/d_l);

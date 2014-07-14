@@ -105,7 +105,7 @@ Function H2O() As DataRecord
     End With
 End Function
 
-Function solubility_CO2_pTX_Duan2006(p As Double, T As Double, X, p_gas) 'CO2 solubility in aqueous saltsolutions
+Function solubility_CO2_pTX_Duan2006(p As Double, T As Double, x, p_gas) 'CO2 solubility in aqueous saltsolutions
 '' Zhenhao Duan et al. (2006) An improved model for the calculation of CO2 solubility in aqueous
 '' solutions containing Na+,K+,Ca2+,Mg2+,Cl-, and SO4_2-. Marine Chemistry 98131-139.
 '' fugacity from doi10.1016/j.marchem.2005.09.001
@@ -127,7 +127,7 @@ Function solubility_CO2_pTX_Duan2006(p As Double, T As Double, X, p_gas) 'CO2 so
 
  'constant
  Dim molalities '() As Double ReDim molalities(nX)
- molalities = massFractionsToMolalities(X, Brine.MM_vec)
+ molalities = massFractionsToMolalities(x, Brine.MM_vec)
  Dim m_Cl As Double, m_Na As Double, m_K As Double, m_Ca As Double, m_Mg As Double, m_SO4 As Double
  m_Cl = molalities(i_NaCl) + molalities(i_KCl) + 2 * molalities(i_CaCl2)
  m_Na = molalities(i_NaCl)
@@ -160,7 +160,7 @@ Function solubility_CO2_pTX_Duan2006(p As Double, T As Double, X, p_gas) 'CO2 so
      zeta_CO2_NaCl = Par_CO2_Duan2003(p_gas + p_H2O, T, zeta_CO2_NaCl_c)
     
      solu = phi * p_gas / 10 ^ 5 * Exp(-mu_l0_CO2_RT - 2 * lambda_CO2_Na * (m_Na + m_K + 2 * m_Ca + 2 * m_Mg) - zeta_CO2_NaCl * m_Cl * (m_Na + m_K + m_Mg + m_Ca) + 0.07 * m_SO4 * 0)
-     solubility_CO2_pTX_Duan2006 = solu * M_CO2 * X(Brine.nX) 'molality->mass fraction
+     solubility_CO2_pTX_Duan2006 = solu * M_CO2 * x(Brine.nX) 'molality->mass fraction
  End If
 End Function
 
@@ -247,7 +247,7 @@ End Function
     End If
   End Function
 
- Function solubility_N2_pTX_Duan2006(p As Double, T As Double, X, p_gas) 'solubility calculation of N2 in seawater Mao&Duan(2006)
+ Function solubility_N2_pTX_Duan2006(p As Double, T As Double, x, p_gas) 'solubility calculation of N2 in seawater Mao&Duan(2006)
     ' Shide Mao and Zhenhao Duan (2006) A thermodynamic model for calculating nitrogen solubility, gas phase composition and density of the H2O-N2-NaCl system. Fluid Phase Equilibria, 248 (2): 103-114
     ' 273-400 K, 1-600 bar and 0-6 mol/kg
     ' http://dx.doi.org/10.1016/j.fluid.2006.07.020
@@ -255,7 +255,7 @@ End Function
     
     'Dim M_H2O As Double:M_H2O = H2O.MM
     Dim molalities
-    molalities = ToDouble(massFractionsToMolalities(X, Brine.MM_vec))
+    molalities = ToDouble(massFractionsToMolalities(x, Brine.MM_vec))
     If VarType(molalities) = vbString Then
         solubility_N2_pTX_Duan2006 = molalities
         Exit Function
@@ -276,7 +276,7 @@ End Function
     Dim phi_H2O As Double
     phi_H2O = fugacity_H2O_Duan2006N2(p, T)
     Const R = 83.14472 'bar.cm3/(mol.K) Molar gas constant"
-    Dim phi_N2 As Double
+    Dim phi_N2
     Dim mu_l0_N2_RT As Double
     Dim lambda_N2_Na As Double
     Dim xi_N2_NaCl As Double
@@ -311,14 +311,33 @@ End Function
     xi_N2_NaCl_c = Array(-0.0058071053, 0, 0, 0, 0, 0, 0, 0, 0)
       
       phi_N2 = fugacity_N2_Duan2006(p_gas + p_H2O, T)
+      If VarType(phi_N2) = vbString Then
+        solubility_N2_pTX_Duan2006 = phi_N2
+        Exit Function
+      End If
+      
       mu_l0_N2_RT = Par_N2_Duan2006(p_gas + p_H2O, T, mu_l0_N2_RT_c)
+      If VarType(mu_l0_N2_RT) = vbString Then
+        solubility_N2_pTX_Duan2006 = mu_l0_N2_RT
+        Exit Function
+      End If
+      
       lambda_N2_Na = Par_N2_Duan2006(p_gas + p_H2O, T, lambda_N2_Na_c)
+      If VarType(lambda_N2_Na) = vbString Then
+        solubility_N2_pTX_Duan2006 = lambda_N2_Na
+        Exit Function
+      End If
+      
       xi_N2_NaCl = Par_N2_Duan2006(p_gas + p_H2O, T, xi_N2_NaCl_c)
+      If VarType(xi_N2_NaCl) = vbString Then
+        solubility_N2_pTX_Duan2006 = xi_N2_NaCl
+        Exit Function
+      End If
 
     'equ. 9
       Dim solu As Double
       solu = p_gas / 10 ^ 5 * phi_N2 * Exp(-mu_l0_N2_RT - 2 * lambda_N2_Na * (m_Na + m_K + 2 * m_Ca + 2 * m_Mg) - xi_N2_NaCl * (m_Cl + 2 * m_SO4) * (m_Na + m_K + 2 * m_Ca + 2 * m_Mg) - 4 * 0.0371 * m_SO4)
-      solubility_N2_pTX_Duan2006 = solu * M_N2 * X(Brine.nX) 'molality->mass fraction
+      solubility_N2_pTX_Duan2006 = solu * M_N2 * x(Brine.nX) 'molality->mass fraction
     End If
 End Function
 
@@ -344,35 +363,35 @@ Function fugacity_N2_Duan2006(p As Double, T As Double)  'Zero search with EOS f
     E = a(10) + a(11) / T_m ^ 2 + a(12) / T_m ^ 3
     f = a(13) / T_m ^ 3
     
-    Dim P_m As Double, G As Double, ln_phi As Double, V_m As Double
+    Dim P_m As Double, G As Double, ln_phi As Double, V_m As Double, Z As Double
     P_m = 3.0626 * sigma ^ 3 * p_bar / epsilon
-    Dim z As Integer
+    Dim z_ As Integer
     Dim d_ As Double 'only a counter to avoid getting caught in the iteration loop
     d_ = 0.7 'dampening factor 0=no dampening, 1=no progress
     
     'iterative solution
     While Abs(V - V_neu) > 10 ^ -8
-        V = IIf(z < 5, V_neu, (1 - d) * V_neu + d * V)
-        V_m = V * 1 * 10 ^ 6 / (1000# * (sigma / 3.691) ^ 3)
-        z = 1 + b / V_m + c / V_m ^ 2 + d / V_m ^ 4 + E / V_m ^ 5 + f / V_m ^ 2 * (1 + a(14) / V_m ^ 2) * Exp(-a(14) / V_m ^ 2)
-        V_neu = z / p * Constants.R * T
+        V = IIf(z_ < 5, V_neu, (1 - d_) * V_neu + d_ * V)
+        V_m = V * 10 ^ 6 / (1000# * (sigma / 3.691) ^ 3)
+        Z = 1 + b / V_m + c / V_m ^ 2 + d / V_m ^ 4 + E / V_m ^ 5 + f / V_m ^ 2 * (1 + a(14) / V_m ^ 2) * Exp(-a(14) / V_m ^ 2)
+        V_neu = Z / p * Constants.R * T
         '    print("V("&(z)&")="&(V_neu))
-        z = z + 1
+        z_ = z_ + 1
         
-        If z >= 1000 Then
+        If z_ >= 1000 Then
             fugacity_N2_Duan2006 = "#Reached maximum number of iterations for fugacity calculation.(fugacity_N2_Duan2006)"
             Exit Function
         End If
     Wend
     
     V_m = 1000# * V / (sigma / 3.691) ^ 3 'm³/mol -> dm³/mol"
-    z = 1 + (a(1) + a(2) / T_m ^ 2 + a(3) / T_m ^ 3) / V_m _
+    Z = 1 + (a(1) + a(2) / T_m ^ 2 + a(3) / T_m ^ 3) / V_m _
         + (a(4) + a(5) / T_m ^ 2 + a(6) / T_m ^ 3) / V_m ^ 2 _
         + (a(7) + a(8) / T_m ^ 2 + a(9) / T_m ^ 3) / V_m ^ 4 _
         + (a(10) + a(11) / T_m ^ 2 + a(12) / T_m ^ 3) / V_m ^ 5 _
         + a(13) / T_m ^ 3 / V_m ^ 2 * (1 + a(14) / V_m ^ 2) * Exp(-a(14) / V_m ^ 2)
     G = a(13) / T_m ^ 3 / (2 * a(14)) * (2 - (2 + a(14) / V_m ^ 2) * Exp(-a(14) / V_m ^ 2))
-    fugacity_N2_Duan2006 = Exp(z - 1 + b / V_m + c / (2 * V_m ^ 2) + d / (4 * V_m ^ 4) + E / (5 * V_m ^ 5) + G) / z 'fugacity coefficient
+    fugacity_N2_Duan2006 = Exp(Z - 1 + b / V_m + c / (2 * V_m ^ 2) + d / (4 * V_m ^ 4) + E / (5 * V_m ^ 5) + G) / Z 'fugacity coefficient
 End Function
   
 Function Par_N2_Duan2006(p As Double, T As Double, c) 'Mao,Duan(2006)
@@ -391,7 +410,7 @@ End Function
  End Function
 
 
-Function solubility_CH4_pTX_Duan2006(p As Double, T As Double, X, p_gas) 'Duan ZH, Mao SD. (2006) A thermodynamic model for calculating methane solubility, density and gas phase composition of methane-bearing aqueous fluids from 273 to 523 K and from 1 to 2000 bar. Geochimica et Cosmochimica Acta, 70 (13): 3369-3386.
+Function solubility_CH4_pTX_Duan2006(p As Double, T As Double, x, p_gas) 'Duan ZH, Mao SD. (2006) A thermodynamic model for calculating methane solubility, density and gas phase composition of methane-bearing aqueous fluids from 273 to 523 K and from 1 to 2000 bar. Geochimica et Cosmochimica Acta, 70 (13): 3369-3386.
 ' http://geochem-model.org/Publications/43-GCA_2006_3369.pdf
 ' http://dx.doi.org/10.1016/j.gca.2006.03.018TODO Umrechnung andere Salz in NaCl"
 '  output SI.MassFraction c_gas "gas concentration in kg_gas/kg_H2O"
@@ -430,7 +449,7 @@ Function solubility_CH4_pTX_Duan2006(p As Double, T As Double, X, p_gas) 'Duan Z
         End If
 
         Dim molalities '(nX)
-        molalities = massFractionsToMolalities(X, Brine.MM_vec)
+        molalities = massFractionsToMolalities(x, Brine.MM_vec)
         Dim m_Cl As Double, m_Na As Double, m_K As Double, m_Ca As Double, m_Mg As Double, m_SO4 As Double                 'Molality
         m_Cl = molalities(i_NaCl) + molalities(i_KCl) + 2 * molalities(i_CaCl2)  '+ 2 * molalities(i_MgCl2)
         m_Na = molalities(i_NaCl)
@@ -448,7 +467,7 @@ Function solubility_CH4_pTX_Duan2006(p As Double, T As Double, X, p_gas) 'Duan Z
         Dim solu As Double
         solu = p_gas / 10 ^ 5 * phi_CH4 * Exp(-mu_l0_CH4_RT - 2 * lambda_CH4_Na * (m_Na + m_K + 2 * m_Ca + 2 * m_Mg) - xi_CH4_NaCl * (m_Na + m_K + 2 * m_Ca + 2 * m_Mg) * (m_Cl + 2 * m_SO4) - 4 * 0.0332 * m_SO4)
         
-        solubility_CH4_pTX_Duan2006 = solu * M_CH4 * X(Brine.nX) 'molality->mass fraction
+        solubility_CH4_pTX_Duan2006 = solu * M_CH4 * x(Brine.nX) 'molality->mass fraction
     End If
 End Function
 
@@ -473,7 +492,7 @@ Function fugacity_CH4_Duan1992(p As Double, T As Double)    'Zero search with EO
     d = a(7) + a(8) / T_r ^ 2 + a(9) / T_r ^ 3
     E = a(10) + a(11) / T_r ^ 2 + a(12) / T_r ^ 3
     f = alpha / T_r ^ 3
-    Dim ln_phi As Double, d_ As Double, G As Double, z As Double, V_r As Double
+    Dim ln_phi As Double, d_ As Double, G As Double, Z As Double, V_r As Double
     Dim z_ As Integer 'counter to avoid getting caught in the iteration loop
     d_ = 0.7 'dampening factor 0=no dampening, 1=no progress
     
@@ -481,8 +500,8 @@ Function fugacity_CH4_Duan1992(p As Double, T As Double)    'Zero search with EO
         V = IIf(z_ < 5, V_neu, (1 - d_) * V_neu + d_ * V) 'dampened
         V_r = V / (Constants.R * T_C / P_c)
         G = f / (2 * gamma) * (beta + 1 - (beta + 1 + gamma / V_r ^ 2) * Exp(-gamma / V_r ^ 2))
-        z = 1 + b / V_r + c / V_r ^ 2 + d / V_r ^ 4 + E / V_r ^ 5 + f / V_r ^ 2 * (beta + gamma / V_r ^ 2) * Exp(-gamma / V_r ^ 2)
-        V_neu = z / p * Constants.R * T
+        Z = 1 + b / V_r + c / V_r ^ 2 + d / V_r ^ 4 + E / V_r ^ 5 + f / V_r ^ 2 * (beta + gamma / V_r ^ 2) * Exp(-gamma / V_r ^ 2)
+        V_neu = Z / p * Constants.R * T
         z_ = z_ + 1
         If z_ >= 1000 Then
             fugacity_CH4_Duan1992 = "#Reached maximum number of iterations for fugacity calculation.(fugacity_CH4_Duan1992)"
@@ -490,7 +509,7 @@ Function fugacity_CH4_Duan1992(p As Double, T As Double)    'Zero search with EO
         End If
     Wend
     
-    fugacity_CH4_Duan1992 = Exp(z - 1 + b / V_r + c / (2 * V_r ^ 2) + d / (4 * V_r ^ 4) + E / (5 * V_r ^ 5) + G) / z 'fugacity coefficient
+    fugacity_CH4_Duan1992 = Exp(Z - 1 + b / V_r + c / (2 * V_r ^ 2) + d / (4 * V_r ^ 4) + E / (5 * V_r ^ 5) + G) / Z 'fugacity coefficient
 End Function
   
 Function Par_CH4_Duan2006(p As Double, T As Double, c) 'Duan,Sun(2003)
