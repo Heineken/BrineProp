@@ -85,9 +85,8 @@ constant Integer nX_gas = size(gasNames, 1) "Number of gas components" annotatio
 
  //  Real[nX_gas+1] n_g_norm;
  //  Integer z "Number of iterations in VLE algorithm";
-protected
-   Integer pp(start=0)=state.phase
-    "just to get rid of initialization problem warning";
+ //  Integer pp(start=0)=state.phase "just to get rid of initialization problem warning";
+ //  MassFraction X_start[nX](start=cat(1,fill(0,nXi),{1}))=state.X;
  equation
  //   assert(nX_gas==2,"Wrong number of gas mass fractions specified (2 needed - CO2,N2)");
  //  assert(max(X)<=1 and min(X)>=0, "X out of range [0...1] = "+PowerPlant.vector2string(X)+" (saturationPressure_H2O())");
@@ -138,14 +137,14 @@ protected
 // redeclare replaceable record ThermodynamicState
 
 
-redeclare record extends ThermodynamicState
+redeclare record extends ThermodynamicState(phase(start=0),X(start=cat(1,fill(0,nXi),{1})))
   "a selection of variables that uniquely defines the thermodynamic state"
 /*  AbsolutePressure p "Absolute pressure of medium";
   Temperature T(unit="K") "Temperature of medium";*/
-  SpecificEnthalpy h "Specific enthalpy";
+  SpecificEnthalpy h(start=4e5) "Specific enthalpy";
 //  SI.SpecificEnthalpy h_g "Specific enthalpy gas phase";
 //  SI.SpecificEnthalpy h_l "Specific enthalpy liquid phase";
-  SpecificEntropy s "Specific entropy";
+  SpecificEntropy s(start=0) "Specific entropy";
   Density d(start=300) "density";
 //  Real GVF "Gas Void Fraction";
 //  Density d_l(start=300) "density liquid phase";
@@ -154,7 +153,7 @@ redeclare record extends ThermodynamicState
 //  AbsolutePressure p_H2O;
 //  AbsolutePressure p_gas[nX_gas];
 //  AbsolutePressure[nX_gas + 1] p_degas     "should be in SatProp, but is calculated in setState which returns a state";
-  MassFraction[nX_gas+1] X_g;
+  MassFraction[nX_gas+1] X_g(start=cat(1,fill(0,nX_gas),{1}));
    annotation (Documentation(info="<html>
 
 </html>"));
@@ -480,6 +479,7 @@ protected
     input SI.MolarMass MM[:] "molar masses of components";
     output SI.Pressure[nX_gas] p_sat;
   end saturationPressures;
+
 
 
   redeclare replaceable partial function extends setState_pTX
@@ -833,8 +833,7 @@ protected
   //extends specificHeatCapacityCp;SHOULD WORK WITH THIS!
     extends Modelica.Icons.Function;
     input ThermodynamicState state "thermodynamic state record";
-    output SpecificHeatCapacity cp
-    "Specific heat capacity at constant pressure";
+    output SpecificHeatCapacity cp "Specific heat capacity at constant pressure";
 
    /*protected 
   constant SI.TemperatureDifference dT=.1;
@@ -850,8 +849,7 @@ algorithm
   //extends specificHeatCapacityCp;SHOULD WORK WITH THIS!
     extends Modelica.Icons.Function;
     input ThermodynamicState state "thermodynamic state record";
-    output SpecificHeatCapacity cp
-    "Specific heat capacity at constant pressure";
+    output SpecificHeatCapacity cp "Specific heat capacity at constant pressure";
   /*protected 
   constant SI.TemperatureDifference dT=.1;
 algorithm 

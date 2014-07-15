@@ -2,6 +2,7 @@ within BrineProp;
 partial package PartialMixtureTwoPhaseMedium "Template class for two phase medium of a mixture of substances "
 // Uncomment this for MSL 3.2
 
+
 replaceable record SaturationProperties
   "Saturation properties of two phase medium"
   extends Modelica.Icons.Record;
@@ -37,7 +38,8 @@ redeclare replaceable record extends ThermodynamicState
     "phase of the fluid: 1 for 1-phase, 2 for two-phase, 0 for not known, e.g. interactive use";
   Density d_l(start=300) "density liquid phase";
   Density d_g(start=300) "density gas phase";
-  MassFraction X_l[nX] "Mass fraction of NaCl in kg/kg";
+  MassFraction X_l[nX](start=cat(1,fill(0,nXi),{1}))
+    "Mass fraction of NaCl in kg/kg";
   annotation (Documentation(info="<html></html>"));
   //MassFraction X[nX] "Mass fraction of NaCl in kg/kg"
 end ThermodynamicState;
@@ -120,8 +122,7 @@ algorithm
 end setSat_TX;
 
 
-replaceable function setSat_pX
-  "Return saturation property record from pressure"
+replaceable function setSat_pX "Return saturation property record from pressure"
   extends Modelica.Icons.Function;
   input AbsolutePressure p "pressure";
   input MassFraction X[nX] "Mass fractions";
@@ -574,8 +575,7 @@ algorithm
 end pressure_dT;
 
 
-replaceable function specificEnthalpy_dT
-  "Return specific enthalpy from d and T"
+replaceable function specificEnthalpy_dT "Return specific enthalpy from d and T"
   extends Modelica.Icons.Function;
   input Density d "Density";
   input Temperature T "Temperature";
@@ -593,8 +593,7 @@ algorithm
 end specificEnthalpy_dT;
 
 
-replaceable function specificEnthalpy_ps
-  "Return specific enthalpy from p and s"
+replaceable function specificEnthalpy_ps "Return specific enthalpy from p and s"
   extends Modelica.Icons.Function;
   input AbsolutePressure p "Pressure";
   input SpecificEntropy s "Specific entropy";
@@ -647,8 +646,7 @@ algorithm
 end density_ps;
 
 
-replaceable function specificEnthalpy_pT
-  "Return specific enthalpy from p and T"
+replaceable function specificEnthalpy_pT "Return specific enthalpy from p and T"
   extends Modelica.Icons.Function;
   input AbsolutePressure p "Pressure";
   input Temperature T "Temperature";
