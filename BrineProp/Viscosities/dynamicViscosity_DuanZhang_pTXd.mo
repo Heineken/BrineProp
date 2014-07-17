@@ -71,7 +71,8 @@ algorithm
   end if;
 
  for i in 1:nX_salt loop
-    if X[i]>0 then
+//    if X[i]>0 then
+    if molalities[i]>0 then
       salt := Salt_Constants[i];
       if not (ignoreLimitSalt_b[i] or (molalities[i]>=0 and molalities[i]<=salt.mola_max_eta)) then
         msg :="Molality of " + salt.name + " is " + String(molalities[i]) + "(X="
@@ -83,7 +84,7 @@ algorithm
     //  phi:=X[i]/sum(X[1:nX_salt]) "geometric mean mixture rule weighted with mass fraction (as in Laliberte)";
       phi:=molalities[i]/sum(molalities[1:nX_salt])
         "geometric mean mixture rule weighted with mass fraction (as in Laliberte)";
-
+      assert(phi>0,"phi= "+String(phi)+" should not be possible.");
       if i==3 then
         //Zhang (available for NaCl, KCl and CaCl)
          c :=X[i]/MM[i]*d/1000/phi "component molarity";

@@ -24,21 +24,6 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
   constant SI.MolarMass M_H2O = Modelica.Media.Water.waterConstants[1].molarMass
   "0.018015 [kg/mol]";
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 constant Modelica.Media.Interfaces.PartialTwoPhaseMedium.FluidConstants[nS] BrineConstants(
      each chemicalFormula = "H2O+NaCl+KCl+CaCl2+MgCl2+SrCl2+CO2+N2+CH4",
      each structureFormula="H2O+NaCl+KCl+CaCl2+MgCl2+SrCl2+CO2+N2+CH4",
@@ -52,8 +37,6 @@ constant Modelica.Media.Interfaces.PartialTwoPhaseMedium.FluidConstants[nS] Brin
      each meltingPoint = 1,
      each normalBoilingPoint = 1,
      each dipoleMoment = 1);
-
-
 
 
   function massFractionsToMolalities
@@ -155,7 +138,7 @@ protected
 </html>", revisions="<html>
 
 </html>"),
-    version="0.3.0",
+    version="0.3.1",
     versionDate="2014-04-02",
-    uses(DataFiles(version="1.0"), Modelica(version="3.2")));
+    uses(DataFiles(version="1.0"), Modelica(version="3.2.1")));
 end BrineProp;

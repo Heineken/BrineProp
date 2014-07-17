@@ -481,7 +481,6 @@ protected
   end saturationPressures;
 
 
-
   redeclare replaceable partial function extends setState_pTX
   "finds the VLE iteratively by varying the normalized quantity of gas in the gasphase, calculates the densities"
   input Real[nX_gas + 1] n_g_norm_start= fill(0.1,nX_gas+1)
@@ -833,7 +832,8 @@ protected
   //extends specificHeatCapacityCp;SHOULD WORK WITH THIS!
     extends Modelica.Icons.Function;
     input ThermodynamicState state "thermodynamic state record";
-    output SpecificHeatCapacity cp "Specific heat capacity at constant pressure";
+    output SpecificHeatCapacity cp
+    "Specific heat capacity at constant pressure";
 
    /*protected 
   constant SI.TemperatureDifference dT=.1;
@@ -849,7 +849,8 @@ algorithm
   //extends specificHeatCapacityCp;SHOULD WORK WITH THIS!
     extends Modelica.Icons.Function;
     input ThermodynamicState state "thermodynamic state record";
-    output SpecificHeatCapacity cp "Specific heat capacity at constant pressure";
+    output SpecificHeatCapacity cp
+    "Specific heat capacity at constant pressure";
   /*protected 
   constant SI.TemperatureDifference dT=.1;
 algorithm 
