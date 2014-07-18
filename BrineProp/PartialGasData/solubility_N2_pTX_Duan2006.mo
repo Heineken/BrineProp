@@ -48,7 +48,7 @@ protected
                           0};
 
   SI.MolarMass M_H2O = MM_vec[end];
-  Partial_Units.Molality molalities[size(X,1)]=massFractionsToMolalities(X,MM_vec);
+  Partial_Units.Molality molalities[size(X,1)]=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X,MM_vec);
   Partial_Units.Molality m_Cl = molalities[NaCl] + molalities[KCl] + 2*molalities[MgCl2] + 2*molalities[CaCl2];
   Partial_Units.Molality m_Na = molalities[NaCl];
   Partial_Units.Molality m_K = molalities[KCl];

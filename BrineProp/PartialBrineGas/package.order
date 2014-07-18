@@ -1,0 +1,9 @@
+ignoreNoCompositionInBrineGas
+BaseProperties
+MM_vec
+nM_vec
+gasNames
+specificHeatCapacityCp_pTX
+density_pTX
+dynamicViscosity_pTX
+thermalConductivity_pTX

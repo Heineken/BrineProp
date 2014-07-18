@@ -49,7 +49,8 @@ protected
   SI.SpecificEnthalpy[5] h_salt = h_salt_ref - (T_ref_salt .- T).*cp_salt
     "J/mol_salt solid enthalpy";
 
-  Partial_Units.Molality mola[size(X,1)]=massFractionsToMolalities(X,cat(1,MM_vec_salt,fill(-1,size(X,1)-size(MM_vec_salt,1))));
+  Partial_Units.Molality mola[size(X,1)]=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(
+                                                                   X,cat(1,MM_vec_salt,fill(-1,size(X,1)-size(MM_vec_salt,1))));
   Partial_Units.Molality mola_salt[5]=mola[1:5];
   SI.Temp_C T_C = SI.Conversions.to_degC(T);
   Pressure_bar p_bar=SI.Conversions.to_bar(p);

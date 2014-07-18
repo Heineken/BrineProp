@@ -1,5 +1,6 @@
 within BrineProp.PartialBrine_MultiSalt_2Phase_MultiGas;
 function saturationPressure_H2O "brine water vapour pressure"
+  import BrineProp;
   extends Modelica.Icons.Function;
   input SI.Pressure p;
   input SI.Temp_K T;
@@ -9,7 +10,7 @@ function saturationPressure_H2O "brine water vapour pressure"
   output SI.Pressure p_sat;
   output SI.Pressure p_H2O=0 "pure water vapour pressure";
 protected
-   BrineProp.Partial_Units.Molality ionMoleFractions[nX];
+   SI.MoleFraction ionMoleFractions[nX];
 algorithm
   if debugmode then
     print("Running saturationPressure_H2O("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
@@ -19,7 +20,8 @@ algorithm
   assert(max(X)-1<=1e-8, "X ="+String(max(X))+" out of range [0...1] = "+Modelica.Math.Matrices.toString(transpose([X]))+" (saturationPressure_H2O())");
   assert(min(X)>=-1e-8, "X ="+String(min(X))+" out of range [0...1] = "+Modelica.Math.Matrices.toString(transpose([X]))+" (saturationPressure_H2O())");
   if X[end]>0 then
-    ionMoleFractions:=massFractionsToMoleFractions(X, MM).*nM;
+//    ionMoleFractions:=BrineProp.massToMoleFractions(X, MM) .* nM;
+    ionMoleFractions:=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X, MM) .* nM;
     ionMoleFractions:=ionMoleFractions/sum(ionMoleFractions) "normalize";
     p_H2O:=Modelica.Media.Water.WaterIF97_base.saturationPressure(T);
     p_sat:= p_H2O * ionMoleFractions[end];

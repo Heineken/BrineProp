@@ -24,6 +24,21 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
   constant SI.MolarMass M_H2O = Modelica.Media.Water.waterConstants[1].molarMass
   "0.018015 [kg/mol]";
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 constant Modelica.Media.Interfaces.PartialTwoPhaseMedium.FluidConstants[nS] BrineConstants(
      each chemicalFormula = "H2O+NaCl+KCl+CaCl2+MgCl2+SrCl2+CO2+N2+CH4",
      each structureFormula="H2O+NaCl+KCl+CaCl2+MgCl2+SrCl2+CO2+N2+CH4",
@@ -39,58 +54,10 @@ constant Modelica.Media.Interfaces.PartialTwoPhaseMedium.FluidConstants[nS] Brin
      each dipoleMoment = 1);
 
 
-  function massFractionsToMolalities
-  "Calculate molalities (mole_i per kg H2O) from mass fractions X"
-    extends Modelica.Icons.Function;
-    input SI.MassFraction X[:] "Mass fractions of mixture";
-    input SI.MolarMass MM_vec[:] "molar masses of components";
-    output Partial_Units.Molality molalities[size(X, 1)]
-    "Molalities moles/m_H2O";
-
-  algorithm
-   assert(size(X, 1)==size(MM_vec, 1), "Inconsistent vectors for mass fraction("+String(size(X, 1))+") and molar masses("+String(size(MM_vec, 1))+")");
-
-    if X[end]>0 then
-      for i in 1:size(X, 1) loop
-        molalities[i] := if X[i]<1e-6 then 0 else X[i]/(MM_vec[i]*X[end])
-        "numerical errors my create X[i]>0, this prevents it";
-      end for;
-    else
-       molalities:=fill(-1, size(X, 1));
-    end if;
-    annotation(smoothOrder=5);
-  end massFractionsToMolalities;
 
 
-  function massFractionsToMoleFractions
-  "Return mole_i/sum(mole_i) from mass fractions X"
-    extends Modelica.Icons.Function;
-    input SI.MassFraction X[:] "Mass fractions of mixture";
-    input SI.MolarMass MM_vec[:] "molar masses of components";
-    output Partial_Units.Molality molefractions[size(X, 1)] "Molalities";
-    output Partial_Units.Molality molalities[size(X, 1)]
-    "Molalities moles/m_H2O";
-protected
-    Real n_total;
-    Integer n=size(X, 1);
-  algorithm
-   assert(n==size(MM_vec, 1), "Inconsistent vectors for mass fraction("+String(n)+") and molar masses("+String(size(MM_vec, 1))+")");
-  // print(String(size(X,1))+" "+String(X[end]));
-  //  printVector(MM);
-    for i in 1:n loop
-  // print("MMX["+String(i)+"]="+String(MMX[i]));
-      molalities[i] := if X[end]>0 then X[i]/(MM_vec[i]*X[end]) else -1;
-  //    n[i] := X[i]/MMX[i];
-    end for;
-    n_total :=sum(molalities);
-    for i in 1:n loop
-      molefractions[i] := molalities[i]/n_total;
-    end for;
-    annotation(smoothOrder=5);
-  end massFractionsToMoleFractions;
 
-
-  replaceable function Xi2X "calculates the full mass vector X from Xi"
+  function Xi2X "calculates the full mass vector X from Xi"
     extends Modelica.Icons.Function;
     input SI.MassFraction Xi[:] "Mass fractions of mixture";
     output SI.MassFraction X[size(Xi,1)+1] "Mass fractions of mixture";

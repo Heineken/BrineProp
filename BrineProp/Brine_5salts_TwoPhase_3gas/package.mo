@@ -33,6 +33,7 @@ package Brine_5salts_TwoPhase_3gas "Two-phase aqueous solution of NaCl, KCl, CaC
   end fugacity_pTX;
 
 
+
   redeclare function extends setState_pTX
   "is apparently needed so that array arguments work"
   end setState_pTX;
@@ -104,7 +105,10 @@ protected
   SI.SpecificEnthalpy[:] h_gas={h_CO2,h_N2,h_CH4,h_H2O};
   */
  algorithm
-     h :=BrineGas_3Gas.specificEnthalpy_pTX(p, T, X);
+     h :=BrineGas_3Gas.specificEnthalpy_pTX(
+     p,
+     T,
+     X);
    // print(String(p*1e-5)+" bar,"+String(T)+" K->"+String(h)+" J/kg (Brine_Duan_Multi_TwoPhase_ngas_3.specificEnthalpy_gas_pTX)");
  end specificEnthalpy_gas_pTX;
 
@@ -137,7 +141,10 @@ protected
 
  redeclare function extends dynamicViscosity_gas
  algorithm
-   eta  := BrineGas_3Gas.dynamicViscosity(BrineGas_3Gas.ThermodynamicState(state.p,state.T,state.X_g));
+   eta  :=BrineGas_3Gas.dynamicViscosity(BrineGas_3Gas.ThermodynamicState(
+     state.p,
+     state.T,
+     state.X_g));
    assert(eta>0,"Error in gas viscosity calculation.");
  end dynamicViscosity_gas;
 
@@ -195,7 +202,8 @@ protected
     SI.MassFraction X[:]=cat(1,state.X[1:end-1],{1-sum(state.X[1:end-1])})
     "mass fraction m_NaCl/m_Sol";
 
-    Partial_Units.Molality b[size(X,1)]=massFractionsToMolalities(X,cat(1,MM_vec_salt,fill(-1,size(X,1)-size(MM_vec_salt,1))));
+    Partial_Units.Molality b[size(X,1)]=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(
+                                                                  X,cat(1,MM_vec_salt,fill(-1,size(X,1)-size(MM_vec_salt,1))));
 
   /*  Real cp_by_cpWater[:]={0,
       SpecificEnthalpies.HeatCapacityRatio_KCl_White(T, b[KCl]),
@@ -240,7 +248,9 @@ protected
 
   //    cp :=specificHeatCapacityCp_gas_TX(
       cp :=BrineGas_3Gas.specificHeatCapacityCp_pTX(
-       p=state.p, T=state.T, X=X_g[end - nX_gas:end]);
+        p=state.p,
+        T=state.T,
+        X=X_g[end - nX_gas:end]);
     else
       cp:=-1;
     end if;

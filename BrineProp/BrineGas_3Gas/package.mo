@@ -7,18 +7,20 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
 
   constant Boolean waterSaturated=false "activates water saturation";
 
+
  redeclare record extends ThermodynamicState
  end ThermodynamicState;
 
+
   replaceable function waterSaturatedComposition_pTX
-    "calculates the water saturated mass vector for a given Temperature"
+  "calculates the water saturated mass vector for a given Temperature"
   //saturates the mixture with water
     extends Modelica.Icons.Function;
     input SI.Pressure p;
     input SI.Temperature T;
     input SI.MassFraction[nX] X_in "Mass fractions of mixture";
     output SI.MassFraction X[nX] "Mass fractions of mixture";
-  protected
+protected
       SI.Pressure y_H2O=Modelica.Media.Water.IF97_Utilities.BaseIF97.Basic.psat(T)/p;
       Real y[nX] "mole fractions";
   algorithm
@@ -32,7 +34,7 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
     if y_H2O<1 and X_in[end]>0 then
       //print(""+String(y_H2O));
       y:=cat(1,y[1:nX-1]/(sum(y[1:nX-1]))*(1-y_H2O), {y_H2O})
-        "gases + fixed water fraction";
+      "gases + fixed water fraction";
     else
       y:=cat(1,fill(0,nX-1), {y_H2O}) "only water vapour";
     end if;
@@ -40,6 +42,7 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
     X:=X/sum(X) "normalize";
 
   end waterSaturatedComposition_pTX;
+
 
   redeclare function extends density "water-saturated density from state"
 
@@ -55,8 +58,9 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
   //  assert(lambda>0,"lambda="+String(lambda));
   end density;
 
+
   redeclare function extends density_pTX
-    "Density of an ideal mixture of ideal gases"
+  "Density of an ideal mixture of ideal gases"
   //    SpecificHeatCapacity R_gas; //= sum(Modelica.Constants.R*X ./ MM_vec);
   //    MassFraction[:] X_=cat(1,fill(nX-1,0),{1});
   //    MassFraction[size(X,1)] X_=cat(1,fill(size(X,1),0),{1});
@@ -89,8 +93,9 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
   //  print("d="+String(d)+" kg/m^3");
   end density_pTX;
 
+
   redeclare function extends specificHeatCapacityCp
-    "water-saturated heat capacity of gas phase"
+  "water-saturated heat capacity of gas phase"
   algorithm
        cp := specificHeatCapacityCp_pTX(
           p=state.p,
@@ -102,54 +107,10 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
 
   end specificHeatCapacityCp;
 
-  function extends specificHeatCapacityCp_pTX
-    "calculation of specific heat capacities of gas mixture"
-    import Modelica.Media.IdealGases.Common.SingleGasNasa;
-    import Modelica.Media.IdealGases.SingleGases;
 
-    import Modelica.Media.Water;
-
-  protected
-      SingleGasNasa.ThermodynamicState state=SingleGasNasa.ThermodynamicState(p=0,T=T);
-      SI.SpecificHeatCapacity cp_CO2=SingleGases.CO2.specificHeatCapacityCp(state);
-      SI.SpecificHeatCapacity cp_N2=SingleGases.N2.specificHeatCapacityCp(state);
-      SI.SpecificHeatCapacity cp_CH4=SingleGases.CH4.specificHeatCapacityCp(state);
-      SI.SpecificHeatCapacity cp_H2O=Water.IF97_Utilities.cp_pT(min(p,Water.IF97_Utilities.BaseIF97.Basic.psat(T)-1),T=T)
-      "below psat -> gaseous";
-
-      SI.SpecificHeatCapacity cp_vec[:]={cp_CO2,cp_N2,cp_CH4,cp_H2O};
-
-      /*  SI.SpecificHeatCapacity cp_vec[:]={
-    SingleGasNasa.cp_T(data=SingleGasesData.CO2,T=T),
-    SingleGasNasa.cp_T(data=SingleGasesData.N2,T=T),
-    SingleGasNasa.cp_T(data=SingleGasesData.CH4,T=T),
-   Water.IF97_Utilities.cp_pT(min(p,Water.IF97_Utilities.BaseIF97.Basic.psat(T)-1),T=T)} 
-*/
-  algorithm
-    if debugmode then
-      print("Running specificHeatCapacityCp_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
-    end if;
-
-    if not min(X)>0 and not ignoreNoCompositionInBrineGas then
-      print("No gas composition, assuming water vapour.(BrineProp.BrineGas_3Gas.specificHeatCapacityCp_pTX)");
-    end if;
-
-  /*  if waterSaturated then
-    cp := cp_vec * waterSaturatedComposition_pTX(p,T,X[end - nX+1:end]);
-  else */
-  //    cp := cp_vec * X[end - nX+1:end];
-      cp := cp_vec * cat(1,X[1:end-1],{if min(X)>0 then X[end] else 1});
-      //  end if;
-
-  /*  print("cp_CO2: "+String(cp_vec[1])+" J/kg");
-  print("cp_N2: "+String(cp_vec[2])+" J/kg");
-  print("cp_CH4: "+String(cp_vec[3])+" J/kg");
-  print("cp_H2O: "+String(cp_vec[4])+" J/kg"); */
-
-  end specificHeatCapacityCp_pTX;
 
   redeclare function extends dynamicViscosity
-    "water-saturated  thermal conductivity of water"
+  "water-saturated  thermal conductivity of water"
   //very little influence of salinity
   algorithm
     eta := dynamicViscosity_pTX(
@@ -162,8 +123,9 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
   //  assert(lambda>0,"lambda="+String(lambda));
   end dynamicViscosity;
 
+
   redeclare function extends dynamicViscosity_pTX
-    "calculation of gas dynamic Viscosity"
+  "calculation of gas dynamic Viscosity"
   /*  import NG = Modelica.Media.IdealGases.Common.SingleGasNasa;
   input SI.Pressure p;
   input SI.Temperature T;
@@ -177,8 +139,9 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
       X={0,0}));
   end dynamicViscosity_pTX;
 
+
   redeclare function extends thermalConductivity
-    "water-saturated  thermal conductivity of water"
+  "water-saturated  thermal conductivity of water"
   //very little influence of salinity
   algorithm
     lambda := thermalConductivity_pTX(
@@ -195,8 +158,9 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
 
   end thermalConductivity;
 
+
   redeclare function extends thermalConductivity_pTX
-    "calculation of gas thermal conductivity"
+  "calculation of gas thermal conductivity"
   /*  import NG = Modelica.Media.IdealGases.Common.SingleGasNasa;
   input SI.Pressure p;
   input SI.Temperature T;
@@ -204,14 +168,12 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
   output SI.DynamicViscosity eta;*/
   algorithm
     lambda:=Modelica.Media.Air.MoistAir.thermalConductivity(
-      Modelica.Media.Air.MoistAir.ThermodynamicState(
-      p=0,
-      T=T,
-      X={0,0}));
+      Modelica.Media.Air.MoistAir.ThermodynamicState(p=0,T=T,X={0,0}));
   end thermalConductivity_pTX;
 
+
   redeclare function specificEnthalpy_pTX
-    "calculation of specific enthalpy of gas mixture"
+  "calculation of specific enthalpy of gas mixture"
     import Modelica.Media.IdealGases.Common.SingleGasNasa;
     import Modelica.Media.IdealGases.SingleGases;
     extends Modelica.Icons.Function;
@@ -219,10 +181,10 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
     input Temperature T "Temperature";
     input MassFraction X[:]=reference_X "Mass fractions";
     output SpecificEnthalpy h "Specific enthalpy";
-  protected
+protected
     SI.SpecificEnthalpy h_H2O_sat=Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.hv_p(p);
     SI.SpecificEnthalpy h_H2O=max(h_H2O_sat, Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p,T))
-      "to make sure it is gaseous";
+    "to make sure it is gaseous";
 
     SingleGasNasa.ThermodynamicState state=SingleGasNasa.ThermodynamicState(p=0,T=T);
     SI.SpecificEnthalpy h_CO2=SingleGases.CO2.specificEnthalpy(state);
@@ -241,7 +203,7 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
     end if;
 
   //  h := h_vec*X "mass weighted average";
-    h := h_vec * cat(1,X[1:end-1],{if min(X)>0 then X[end] else 1});
+    h := h_vec * cat(1,X[1:end-1],({if min(X)>0 then X[end] else 1}));
 
   /*  print("h_CO2: "+String(h_CO2)+" J/kg");
   print("h_N2: "+String(h_N2)+" J/kg");
@@ -251,8 +213,9 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
   */
   end specificEnthalpy_pTX;
 
+
   redeclare function extends specificEnthalpy
-    "water-saturated specific enthalpy of gas phase"
+  "water-saturated specific enthalpy of gas phase"
   algorithm
        h := specificEnthalpy_pTX(
           p=state.p,
@@ -263,6 +226,8 @@ package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
   //  else state.X[end - nX + 1:end]);
 
   end specificEnthalpy;
+
+
   annotation (Documentation(info="<html>
 <p><b>BrineGas_3Gas</b> is a medium package that, based on Brine.PartialBrineGas, defines a brine with 3 gases (CO<sub>2</sub>, N<sub>2</sub>, CH<sub>4</sub>), which are the main gases in the geofluid in Gross Schoenebeck, Germany.</p>
 <h4>Usage</h4>

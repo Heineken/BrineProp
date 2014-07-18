@@ -74,7 +74,8 @@ protected
     SI.Temperature T=state.T;
     SI.MassFraction X[:]=state.X "mass fraction m_NaCl/m_Sol";
 
-    Partial_Units.Molality b[size(X,1)]=massFractionsToMolalities(X,cat(1,MM_vec_salt,fill(-1,size(X,1)-size(MM_vec_salt,1))));
+    Partial_Units.Molality b[size(X,1)]=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(
+                                                                  X,cat(1,MM_vec_salt,fill(-1,size(X,1)-size(MM_vec_salt,1))));
 
   /*  Real cp_by_cpWater[:]={0,
       SpecificEnthalpies.HeatCapacityRatio_KCl_White(T, b[KCl]),

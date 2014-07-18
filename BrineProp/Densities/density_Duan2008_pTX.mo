@@ -77,7 +77,7 @@ protected
   Real[23] c;
 
   BrineProp.SaltData_Duan.SaltConstants salt;
-  constant Molality[:] m=massFractionsToMolalities(X, MM_vec);
+  constant Molality[:] m=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X, MM_vec);
   SI.Pressure p_sat=Modelica.Media.Water.IF97_Utilities.BaseIF97.Basic.psat(T);
   String msg;
 //  constant Boolean debugmode = true;

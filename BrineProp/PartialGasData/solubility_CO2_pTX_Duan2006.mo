@@ -60,7 +60,7 @@ protected
   Real zeta_CO2_NaCl;
 
   //constant
-  Partial_Units.Molality molalities[size(X,1)]=massFractionsToMolalities(X,MM_vec)
+  Partial_Units.Molality molalities[size(X,1)]=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X,MM_vec)
     "TODO neglecting CO2?";
   Partial_Units.Molality m_Cl = molalities[NaCl] + molalities[KCl] + 2*molalities[MgCl2] + 2*molalities[CaCl2];
   Partial_Units.Molality m_Na = molalities[NaCl];

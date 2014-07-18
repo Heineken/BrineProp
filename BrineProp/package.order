@@ -27,6 +27,5 @@ Water_MixtureTwoPhase_pT
 BrineConstants
 PartialBrine_MultiSalt_2Phase_MultiGas
 Brine_5salts_TwoPhase_3gas
-massFractionsToMolalities
-massFractionsToMoleFractions
+massToMoleFractions
 Xi2X

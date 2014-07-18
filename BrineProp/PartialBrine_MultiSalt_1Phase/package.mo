@@ -79,7 +79,9 @@ end ThermodynamicState;
 
 
  redeclare model extends BaseProperties "Base properties of medium"
-   BrineProp.Partial_Units.Molality y_vec[:]=massFractionsToMoleFractions(X,MM_vec);
+    //   import BrineProp;
+ //  BrineProp.Partial_Units.Molality y_vec[:]=BrineProp.massToMoleFractions(X,MM_vec);
+   SI.MoleFraction y_vec[:]=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X,MM_vec);
  equation
    d = density_pTX(p,T,X);
    h = specificEnthalpy_pTX(p,T,X);

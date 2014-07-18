@@ -28,7 +28,8 @@ protected
     Delta_h_solution_MgCl2,
     Delta_h_solution_SrCl2};*/
 
-  Partial_Units.Molality b[size(X,1)]=massFractionsToMolalities(X,cat(1,MM_vec_salt,fill(-1,size(X,1)-size(MM_vec_salt,1))));
+  Partial_Units.Molality b[size(X,1)]=
+  Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X,cat(1,MM_vec_salt,fill(-1,size(X,1)-size(MM_vec_salt,1))));
 //  Partial_Units.Molality b[5]=mola[1:5];
 
 //  SI.SpecificEnthalpy h_H2O =  Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p, T);

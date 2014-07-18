@@ -79,7 +79,7 @@ algorithm
    end if;
 
   //  (molefractions,molalities):=massFractionsToMoleFractions(X, MM);
-    molalities:=massFractionsToMolalities(X, MM_vec);
+    molalities:=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X, MM_vec);
   // print("molefractions[NaCl]="+String(molefractions[NaCl])+" (Partial_Gas_Data.solubility_CH4_pTX_Duan1992)");
     m_Cl :=molalities[NaCl] + molalities[KCl] + 2*molalities[MgCl2] + 2*
       molalities[CaCl2];

@@ -58,6 +58,7 @@ constant Integer nX_gas = size(gasNames, 1) "Number of gas components" annotatio
 
 
  redeclare model extends BaseProperties "Base properties of medium"
+   import BrineProp;
  //  MassFraction[nX] X_l(start=cat(1,fill(0,nXi),{1}))  "= X cat(1,X_salt/(X[end]*m_l),X[nX_salt+1:end])";
    SI.Density d_l "density of liquid phase";
    SI.Density d_g "density of gas phase";
@@ -77,7 +78,8 @@ constant Integer nX_gas = size(gasNames, 1) "Number of gas components" annotatio
     "start value, all gas in gas phase, all water liquid";
  //  Real[nX_gas+1] n_g_norm_start "uncomment for Examples.InitializationTest";
 
-   Real y_vec[:]=massFractionsToMoleFractions(X,MM_vec) "mole fractions";
+ //  Real y_vec[:]=BrineProp.massToMoleFractions(X, MM_vec) "mole fractions";
+   SI.MoleFraction y_vec[:]=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X,MM_vec);
    Real y_g[:]= p_gas/p "mole fractions in gas phase";
 
    Real[nX_gas + 1] x_vec = { (if X[nX_salt+i]>0 then state.X_g[i]*x/X[nX_salt+i] else 0) for i in 1:nX_gas+1}
@@ -481,6 +483,7 @@ protected
   end saturationPressures;
 
 
+
   redeclare replaceable partial function extends setState_pTX
   "finds the VLE iteratively by varying the normalized quantity of gas in the gasphase, calculates the densities"
   input Real[nX_gas + 1] n_g_norm_start= fill(0.1,nX_gas+1)
@@ -718,7 +721,10 @@ protected
     d_g :=if x > 0 then p/(T2*R_gas) else -1;*/
     //  d_g:= if x>0 then p/(Modelica.Constants.R*T2)*(n_g*cat(1,MM_gas,{M_H2O}))/sum(n_g) else -1;
       if x > 0 then
-        d_g := BrineGas_3Gas.density_pTX(p,T,X_g);
+        d_g :=BrineGas_3Gas.density_pTX(
+          p,
+          T,
+          X_g);
         h_g := specificEnthalpy_gas_pTX(p,T,X_g);
       else
         d_g := -1;
