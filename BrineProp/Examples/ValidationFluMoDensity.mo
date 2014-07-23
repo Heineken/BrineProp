@@ -1,11 +1,10 @@
 within BrineProp.Examples;
 model ValidationFluMoDensity "Validation with density measured by Flumo"
-  //working directory must be parent folder of \Data in BrineProp package
   //multitude of values from online measurement have been condensed by finding "BestFitPlane" and extracting the interpolation points
   //see 6.1.2 in PhD-Thesis (http://nbn-resolving.de/urn:nbn:de:kobv:83-opus4-47126)
 package Medium = Brine_5salts;
 
-  constant Real data[:,:]=DataFiles.readCSVmatrix("Data/FluMoFit.csv");
+  constant Real data[:,:]=DataFiles.readCSVmatrix(BrineProp.DataDir + "FluMoFit.csv");
   constant Integer n=size(data,1);
   Medium.BaseProperties[n] props;
   Real depth= time;
@@ -21,7 +20,8 @@ equation
     d[i]=props[i].d;
   end for;
 algorithm
-  DataFiles.writeCSVmatrix("DensityValidationFluMo_out.csv", {"rho_meas/10kg/m^3","p/bar","T/C","rho_calc"}, cat(2,data,transpose({d})), ";");
+  Modelica.Utilities.Files.createDirectory(BrineProp.OutputDir);
+  DataFiles.writeCSVmatrix((BrineProp.OutputDir + "DensityValidationFluMo_out.csv", {"rho_meas/10kg/m^3","p/bar","T/C","rho_calc"}, cat(2,data,transpose({d})), ";");
 
   annotation (experiment(__Dymola_NumberOfIntervals=1),
       __Dymola_experimentSetupOutput);

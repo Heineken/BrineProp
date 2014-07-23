@@ -23,21 +23,10 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
 
   constant SI.MolarMass M_H2O = Modelica.Media.Water.waterConstants[1].molarMass
   "0.018015 [kg/mol]";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  // Set the path to the data directory
+  constant String DataDir=Modelica.Utilities.Files.loadResource("modelica://BrineProp/Resources/Data/");
+  // Set the path of the output directory
+  constant String OutputDir=Modelica.Utilities.Files.loadResource("modelica://BrineProp/Resources/output/");
 
 constant Modelica.Media.Interfaces.PartialTwoPhaseMedium.FluidConstants[nS] BrineConstants(
      each chemicalFormula = "H2O+NaCl+KCl+CaCl2+MgCl2+SrCl2+CO2+N2+CH4",
@@ -52,10 +41,6 @@ constant Modelica.Media.Interfaces.PartialTwoPhaseMedium.FluidConstants[nS] Brin
      each meltingPoint = 1,
      each normalBoilingPoint = 1,
      each dipoleMoment = 1);
-
-
-
-
 
   function Xi2X "calculates the full mass vector X from Xi"
     extends Modelica.Icons.Function;
