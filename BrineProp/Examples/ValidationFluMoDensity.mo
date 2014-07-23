@@ -21,7 +21,7 @@ equation
   end for;
 algorithm
   Modelica.Utilities.Files.createDirectory(BrineProp.OutputDir);
-  DataFiles.writeCSVmatrix((BrineProp.OutputDir + "DensityValidationFluMo_out.csv", {"rho_meas/10kg/m^3","p/bar","T/C","rho_calc"}, cat(2,data,transpose({d})), ";");
+  DataFiles.writeCSVmatrix(BrineProp.OutputDir + "DensityValidationFluMo_out.csv", {"rho_meas/10kg/m^3","p/bar","T/C","rho_calc"}, cat(2,data,transpose({d})), ";");
 
   annotation (experiment(__Dymola_NumberOfIntervals=1),
       __Dymola_experimentSetupOutput);
