@@ -3,7 +3,7 @@ model ValidationLaborDensityViscosity "with lab measurements"
   //TO AVOID ERROR MESSAGES: set BrineProp.outOfRangeMode=1
   //see 6.1.1 and 6.2 in PhD-Thesis (http://nbn-resolving.de/urn:nbn:de:kobv:83-opus4-47126)
 package Medium = Brine_5salts;
-  constant Real data[:,:]=DataFiles.readCSVmatrix(DataDir + "Zusammenfassung_final.csv");
+  constant Real data[:,:]=DataFiles.readCSVmatrix(DataDir + "BrineLabMeasurements_Hoffert.csv");
 //  constant Real data[:,:]=DataFiles.readCSVmatrix(DataDir + "Zhang1996.csv");
   constant Integer n=size(data,1);
   Medium.BaseProperties[n] props;
