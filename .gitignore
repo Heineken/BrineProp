@@ -2,13 +2,11 @@
 ###################
 *.exe
 dsin.txt
-dslog.txt
+*log.txt
 *.mat
 dsfinal.txt
 buildlog.txt
-dymosim.exe
-dymosim.exp
-dymosim.lib
+dymosim*
 dsmodel*.c
 *.bak-mo
 *.asv
@@ -16,3 +14,4 @@ request
 status
 stop
 *.obj
+output
