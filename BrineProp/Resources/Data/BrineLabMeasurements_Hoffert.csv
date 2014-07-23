@@ -1,4 +1,4 @@
-Molalit�t_NaCl;Molalit�t_KCl;Molalit�t_CaCl2;Druck in bar;Temperatur in K;dyn. Viskosit�t ?  in mPa�s;? in g/cm�;therm._LF in W/m/K
+Molality_NaCl;Molality_KCl;Molality_CaCl2;Pressure in bar;Temperature in K;dyn. Viscosity in mPa.s;Density in g/cm^3;therm. Conductivity in W/m/K
 0;0;0;1;293.15;1.0073;0.99816;0
 0.10019;0;0;1;293.15;1.0197;1.00313;0
 0.2008;0;0;1;293.15;1.0254;1.00649;0
