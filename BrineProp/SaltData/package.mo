@@ -21,7 +21,7 @@ package SaltData "Molar masses and mole numbers of the contained salts"
     M_SrCl2};
 //    ,    M_H2O};
 
-  constant Real[:] nM_salt = {
+  constant Integer[:] nM_salt = {
     nM_NaCl,
     nM_KCl,
     nM_CaCl2,
