@@ -8,6 +8,8 @@ ignoreLimitSalt_p
 ignoreLimitSalt_T
 ignoreLimitSalt_b
 M_H2O
+DataDir
+OutputDir
 Examples
 Partial_Units
 SaltData

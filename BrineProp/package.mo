@@ -20,12 +20,11 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
  constant Boolean[5] ignoreLimitSalt_b={false,false,false,false,false}
   "ignore salinity limits";
 // constant Boolean[5] ignoreLimitSalt_visc={false,false,false,false,false};
-
   constant SI.MolarMass M_H2O = Modelica.Media.Water.waterConstants[1].molarMass
   "0.018015 [kg/mol]";
-  // Set the path to the data directory
+  /* Set the path to the data directory */
   constant String DataDir=Modelica.Utilities.Files.loadResource("modelica://BrineProp/Resources/Data/");
-  // Set the path of the output directory
+  /* Set the path of the output directory */
   constant String OutputDir=Modelica.Utilities.Files.loadResource("modelica://BrineProp/Resources/output/");
 
 constant Modelica.Media.Interfaces.PartialTwoPhaseMedium.FluidConstants[nS] BrineConstants(
@@ -53,7 +52,6 @@ constant Modelica.Media.Interfaces.PartialTwoPhaseMedium.FluidConstants[nS] Brin
       {1 - sum(Xi)});
 
   end Xi2X;
-
 
   annotation (Documentation(info="<html>
 <p><b>BrineProp</b> is a modelica package that calculates the thermodynamic properties of a specified brine, i.e. an aqueous solution of salts and gases, with a potential gas phase, including degassing/evaporation and solution/condensation.</p>
