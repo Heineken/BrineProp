@@ -2,7 +2,7 @@ within BrineProp.Examples;
 model ValidationFluMoDensity "Validation with density measured by Flumo"
   //multitude of values from online measurement have been condensed by finding "BestFitPlane" and extracting the interpolation points
   //see 6.1.2 in PhD-Thesis (http://nbn-resolving.de/urn:nbn:de:kobv:83-opus4-47126)
-package Medium = Brine_5salts;
+package Medium = Brine5salts;
 
   constant Real data[:,:]=DataFiles.readCSVmatrix(BrineProp.DataDir + "FluMoFit.csv");
   constant Integer n=size(data,1);

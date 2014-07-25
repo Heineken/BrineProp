@@ -8,7 +8,7 @@ function fugacity_CO2_Duan2006
   output Real phi;*/
 
 protected
-  Partial_Units.Pressure_bar P_1;
+  PartialUnits.Pressure_bar P_1;
   Real c[15];
 algorithm
   if outOfRangeMode==1 then

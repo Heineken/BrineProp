@@ -1,5 +1,5 @@
 within BrineProp;
-partial package PartialBrine_MultiSalt_1Phase "Template medium for  one-phase aqueous solution of m Salts and n Gases based on PartialMediaMixtureMedium"
+partial package PartialBrineMultiSaltOnePhase "Template medium for  one-phase aqueous solution of m Salts and n Gases based on PartialMediaMixtureMedium"
 
 
   extends Modelica.Media.Interfaces.PartialMixtureMedium(
@@ -258,4 +258,4 @@ end isobaricExpansionCoefficient;
 <h5>Usage</h5>
 <p>This partial package cannot be used as is. See <a href=\"Modelica://BrineProp.Examples.BrineProps1Phase\">BrineProp.Examples.BrineProps1Phase</a> or info of <a href=\"Modelica://BrineProp.Brine_5salts\">BrineProp.Brine_5salts</a> for examples.</p>
 </html>"));
-end PartialBrine_MultiSalt_1Phase;
+end PartialBrineMultiSaltOnePhase;

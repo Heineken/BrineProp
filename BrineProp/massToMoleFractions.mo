@@ -5,7 +5,7 @@ function massToMoleFractions "Return mole_i/sum(mole_i) from mass fractions X"
   input SI.MassFraction X[:] "Mass fractions of mixture";
   input SI.MolarMass MMX[:] "molar masses of components";
   output SI.MoleFraction molefractions[size(X, 1)] "Molalities";
-  output Partial_Units.Molality molalities[size(X, 1)] "Molalities moles/m_H2O";
+  output PartialUnits.Molality molalities[size(X, 1)] "Molalities moles/m_H2O";
 protected
   Real n_total;
   Integer n=size(X, 1);

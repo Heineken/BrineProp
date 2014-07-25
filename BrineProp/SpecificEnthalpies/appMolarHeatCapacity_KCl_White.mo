@@ -2,12 +2,12 @@ within BrineProp.SpecificEnthalpies;
 function appMolarHeatCapacity_KCl_White
 //2D-fit Reproduction of measurements of heat capacity of KCl solution
 extends PartialAppMolar_KCl_White;
-  output Partial_Units.PartialMolarHeatCapacity Cp_app_mol;
+  output PartialUnits.PartialMolarHeatCapacity Cp_app_mol;
 protected
   String msg = "";
 algorithm
   if outOfRangeMode>0 then
-    if not ( (ignoreLimit_h_KCl_Tmin or T>=T_min) and T<=T_max) then
+    if not ( (ignoreLimitInh_KCl_Tmin or T>=T_min) and T<=T_max) then
       msg :="Temperature is " + String(T-273.15) + "degC, but must be between " +
         String(T_min-273.15) + "degC and " + String(T_max-273.15) + "degC (BrineProp.SpecificEnthalpies.appMolarHeatCapacity_KCl_White)";
       if outOfRangeMode==1 then

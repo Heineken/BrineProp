@@ -9,9 +9,9 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
   "when out of validity range: 0-do nothing, 1-show warnings, 2-throw error";
  constant Boolean ignoreLimitN2_T=true;
  constant Boolean ignoreLimitN2_p=true;
- constant Boolean ignoreLimit_h_KCl_Tmin=true
+ constant Boolean ignoreLimitInh_KCl_Tmin=true
   "ignore Tmin in appMolarEnthalpy_KCl_White and appMolarHeatCapacity_KCl_White";
- constant Boolean ignoreLimit_h_CaCl2_Tmin=true
+ constant Boolean ignoreLimitInh_CaCl2_Tmin=true
   "ignore Tmin in appMolarEnthalpy_CaCl2_White and appMolarHeatCapacity_CaCl2_White";
  constant Boolean[5] ignoreLimitSalt_p={false,false,false,false,false}
   "ignore pressure limits";
@@ -27,6 +27,21 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
   /* Set the path of the output directory */
   constant String OutputDir=Modelica.Utilities.Files.loadResource("modelica://BrineProp/Resources/output/");
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 constant Modelica.Media.Interfaces.PartialTwoPhaseMedium.FluidConstants[nS] BrineConstants(
      each chemicalFormula = "H2O+NaCl+KCl+CaCl2+MgCl2+SrCl2+CO2+N2+CH4",
      each structureFormula="H2O+NaCl+KCl+CaCl2+MgCl2+SrCl2+CO2+N2+CH4",
@@ -41,6 +56,10 @@ constant Modelica.Media.Interfaces.PartialTwoPhaseMedium.FluidConstants[nS] Brin
      each normalBoilingPoint = 1,
      each dipoleMoment = 1);
 
+
+
+
+
   function Xi2X "calculates the full mass vector X from Xi"
     extends Modelica.Icons.Function;
     input SI.MassFraction Xi[:] "Mass fractions of mixture";
@@ -52,6 +71,7 @@ constant Modelica.Media.Interfaces.PartialTwoPhaseMedium.FluidConstants[nS] Brin
       {1 - sum(Xi)});
 
   end Xi2X;
+
 
   annotation (Documentation(info="<html>
 <p><b>BrineProp</b> is a modelica package that calculates the thermodynamic properties of a specified brine, i.e. an aqueous solution of salts and gases, with a potential gas phase, including degassing/evaporation and solution/condensation.</p>

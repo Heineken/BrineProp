@@ -1,11 +1,11 @@
 within BrineProp;
-package Brine_5salts_TwoPhase_3gas "Two-phase aqueous solution of NaCl, KCl, CaCl2, MgCl2, SrCl2, N2, CO2, CH4"
+package Brine5salts3gas "Two-phase aqueous solution of NaCl, KCl, CaCl2, MgCl2, SrCl2, N2, CO2, CH4"
 
 //TODO: use Fluid limits
 
 
-  extends BrineProp.PartialBrine_MultiSalt_2Phase_MultiGas(
-    redeclare package Salt_data = BrineProp.SaltData_Duan,
+  extends BrineProp.PartialBrineMultiSaltMultiGasTwoPhase(
+    redeclare package Salt_data = BrineProp.SaltDataDuan,
     final gasNames = {"carbondioxide","nitrogen","methane"},
     final saltNames = {"sodium chloride","potassium chloride","calcium chloride","magnesium chloride","strontium chloride"},
     final MM_gas = {M_CO2,M_N2,M_CH4},
@@ -63,14 +63,14 @@ package Brine_5salts_TwoPhase_3gas "Two-phase aqueous solution of NaCl, KCl, CaC
   end solubilities_pTX;
 
 
-  redeclare function extends density_liquid_pTX
+  redeclare function extends density_liq_pTX
   //  PowerPlant.Media.Brine.Salt_Data_Duan.density_Duan2008_pTX;
 protected
     parameter Integer[:] liqIndex=cat(1,1:nX_salt,{nX});
   algorithm
     d := Densities.density_Duan2008_pTX(p,T,X[liqIndex],MM[liqIndex]);
   //   print("density_liquid_pTX: "+String(p*1e-5)+" bar,"+String(T)+" K->"+String(d)+"kg/m^3");
-  end density_liquid_pTX;
+  end density_liq_pTX;
 
 
  redeclare function extends specificEnthalpy_liq_pTX
@@ -105,10 +105,10 @@ protected
   SI.SpecificEnthalpy[:] h_gas={h_CO2,h_N2,h_CH4,h_H2O};
   */
  algorithm
-     h :=BrineGas_3Gas.specificEnthalpy_pTX(
-     p,
-     T,
-     X);
+     h :=BrineGas3Gas.specificEnthalpy_pTX(
+         p,
+         T,
+         X);
    // print(String(p*1e-5)+" bar,"+String(T)+" K->"+String(h)+" J/kg (Brine_Duan_Multi_TwoPhase_ngas_3.specificEnthalpy_gas_pTX)");
  end specificEnthalpy_gas_pTX;
 
@@ -141,10 +141,10 @@ protected
 
  redeclare function extends dynamicViscosity_gas
  algorithm
-   eta  :=BrineGas_3Gas.dynamicViscosity(BrineGas_3Gas.ThermodynamicState(
-     state.p,
-     state.T,
-     state.X_g));
+   eta  :=BrineGas3Gas.dynamicViscosity(BrineGas3Gas.ThermodynamicState(
+         state.p,
+         state.T,
+         state.X_g));
    assert(eta>0,"Error in gas viscosity calculation.");
  end dynamicViscosity_gas;
 
@@ -192,7 +192,7 @@ protected
 
   redeclare function extends specificHeatCapacityCp_liq
   "calculation of liquid specific heat capacity from apparent molar heat capacities"
-    extends BrineProp.SaltData_Duan.defineSaltOrder;
+    extends BrineProp.SaltDataDuan.defineSaltOrder;
 
 protected
     SI.MolarMass MM_vec_salt[:]=BrineProp.SaltData.MM_salt[1:5];
@@ -202,14 +202,17 @@ protected
     SI.MassFraction X[:]=cat(1,state.X[1:end-1],{1-sum(state.X[1:end-1])})
     "mass fraction m_NaCl/m_Sol";
 
-    Partial_Units.Molality b[size(X,1)]=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(
-                                                                  X,cat(1,MM_vec_salt,fill(-1,size(X,1)-size(MM_vec_salt,1))));
+    PartialUnits.Molality b[size(X, 1)]=
+        Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X,
+        cat(1,
+            MM_vec_salt,
+            fill(-1, size(X, 1) - size(MM_vec_salt, 1))));
 
   /*  Real cp_by_cpWater[:]={0,
       SpecificEnthalpies.HeatCapacityRatio_KCl_White(T, b[KCl]),
       SpecificEnthalpies.HeatCapacityRatio_CaCl2_White(T, b[CaCl2]),
       0,0} "cp/cp_H2O of salt solutions";*/
-    Partial_Units.PartialMolarHeatCapacity[5] Cp_appmol
+    PartialUnits.PartialMolarHeatCapacity[5] Cp_appmol
     "Apparent molar enthalpy of salts";
 
     SI.SpecificHeatCapacity cp_Driesner=SpecificEnthalpies.specificHeatCapacity_pTX_Driesner(p,T,X[1]/(X[1]+X[end]));
@@ -247,10 +250,10 @@ protected
     cp:=X_g[end - nX_gas:end]*cp_vec;*/
 
   //    cp :=specificHeatCapacityCp_gas_TX(
-      cp :=BrineGas_3Gas.specificHeatCapacityCp_pTX(
-        p=state.p,
-        T=state.T,
-        X=X_g[end - nX_gas:end]);
+      cp :=BrineGas3Gas.specificHeatCapacityCp_pTX(
+            p=state.p,
+            T=state.T,
+            X=X_g[end - nX_gas:end]);
     else
       cp:=-1;
     end if;
@@ -311,4 +314,4 @@ Germany</div>
  revisions="<html>
 
 </html>"));
-end Brine_5salts_TwoPhase_3gas;
+end Brine5salts3gas;

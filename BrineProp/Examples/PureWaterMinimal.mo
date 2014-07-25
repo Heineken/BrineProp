@@ -4,7 +4,7 @@ model PureWaterMinimal "Minimal example for pure water"
   /*  package Medium = BrineProp.Brine_5salts_TwoPhase_3gas;
   Real[Medium.nXi] Xi = fill(0,Medium.nXi) "Brine with zero salinity";*/
 
-  package Medium = BrineProp.Water_MixtureTwoPhase_pT "IAPWS water in wrapper";
+  package Medium = BrineProp.WaterMixtureTwoPhase_pT "IAPWS water in wrapper";
     Real[Medium.nXi] Xi= fill(0,0);
 
   Medium.BaseProperties props;

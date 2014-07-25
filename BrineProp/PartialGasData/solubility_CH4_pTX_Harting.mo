@@ -10,8 +10,9 @@ function solubility_CH4_pTX_Harting "..."
   output SI.MassFraction c_gas "gas concentration in kg_gas/kg_H2O";
 */
 protected
-  Partial_Units.Molality molalities[size(X,1)]=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(
-                                                                         X,MM_vec);
+  PartialUnits.Molality molalities[size(X, 1)]=
+      Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X,
+      MM_vec);
   SI.Temp_C T_C = SI.Conversions.to_degC(T);
   Real L_0=0.454 "CH4 solubility in H2O at 25, 75degC";
   Real L_rel_p "pressure influence";

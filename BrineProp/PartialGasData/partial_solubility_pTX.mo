@@ -8,7 +8,7 @@ partial function partial_solubility_pTX
 //  output SI.MassFraction c_gas "gas concentration in kg_gas/kg_H2O";
   output SI.MassFraction X_gas "gas concentration in kg_gas/kg_fluid";
 protected
-  Partial_Units.Molality solu "gas solubility";
+  PartialUnits.Molality solu "gas solubility";
 //algorithm
 //    print("mola("+String(X_gas)+","+String(T-273.16)+")=->k="+String(X_gas/max(1,p_gas))+" (partial_solubility_pTX)");
 end partial_solubility_pTX;

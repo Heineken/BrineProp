@@ -8,7 +8,7 @@ function dynamicViscosity_DuanZhang_pTXd
   input SI.MassFraction X[:] "mass fraction m_NaCl/m_Sol";
   input SI.Density d;
   input SI.MolarMass MM[:];
-  input BrineProp.SaltData_Duan.SaltConstants[:] Salt_Constants;
+  input BrineProp.SaltDataDuan.SaltConstants[:] Salt_Constants;
   output SI.DynamicViscosity eta;
 protected
   SI.Temp_C T_C = SI.Conversions.to_degC(T_K);
@@ -26,7 +26,7 @@ protected
   SI.DynamicViscosity eta_H2O;
   Modelica.Media.Water.WaterIF97_base.ThermodynamicState state_H2O;
 
-  SaltData_Duan.SaltConstants salt;
+  SaltDataDuan.SaltConstants salt;
   constant Molality[:] molalities=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X,MM);
  // constant Partial_Units.Molality[:] molalities=X[1:nX_salt] ./ MM[1:nX_salt]/X[end];
    Molarity_molperliter c;

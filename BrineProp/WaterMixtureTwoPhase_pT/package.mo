@@ -1,5 +1,5 @@
 within BrineProp;
-package Water_MixtureTwoPhase_pT "(incomplete) Water model from Modelica.Media compatible to PartialMixtureTwoPhaseMedium (Example use)"
+package WaterMixtureTwoPhase_pT "(incomplete) Water model from Modelica.Media compatible to PartialMixtureTwoPhaseMedium (Example use)"
 
 constant Integer nX_salt = 0;
 constant Integer nX_gas = 0;
@@ -423,4 +423,4 @@ Germany
 <a href=mailto:info@xrg-simulation.de>francke@gfz-potsdam.de</a>
   </html>
 "));
-end Water_MixtureTwoPhase_pT;
+end WaterMixtureTwoPhase_pT;

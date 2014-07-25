@@ -3,7 +3,7 @@ model PureWaterFlashing "gradual evaporation by pressure reduction"
 //package Medium = Modelica.Media.Water.WaterIF97_ph;
 //package Medium = REFPROPMedium(final substanceNames={"water"},  final explicitVars = "pT");
 //package Medium = MediaTwoPhaseMixture.Water_MixtureTwoPhase_pT;
-  package Medium = BrineProp.Brine_5salts_TwoPhase_3gas "specify medium";
+  package Medium = BrineProp.Brine5salts3gas "specify medium";
 
   Medium.BaseProperties props;
 //  Modelica.SIunits.Pressure psat=Medium.saturationPressure(props.T);

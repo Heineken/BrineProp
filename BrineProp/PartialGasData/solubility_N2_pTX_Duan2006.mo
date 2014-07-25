@@ -6,7 +6,7 @@ function solubility_N2_pTX_Duan2006 "solubility calculation of N2 in seawater Ma
   http://www.geochem-model.org/wp-content/uploads/2009/09/46-FPE_248_103.pdf"
 //redeclare function extends solubility_N2_pTX
   extends partial_solubility_pTX;
-  extends BrineProp.SaltData_Duan.defineSaltOrder;
+  extends BrineProp.SaltDataDuan.defineSaltOrder;
 
 /*  input SI.Pressure p;
   input SI.Temp_K T;
@@ -48,13 +48,16 @@ protected
                           0};
 
   SI.MolarMass M_H2O = MM_vec[end];
-  Partial_Units.Molality molalities[size(X,1)]=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X,MM_vec);
-  Partial_Units.Molality m_Cl = molalities[NaCl] + molalities[KCl] + 2*molalities[MgCl2] + 2*molalities[CaCl2];
-  Partial_Units.Molality m_Na = molalities[NaCl];
-  Partial_Units.Molality m_K = molalities[KCl];
-  Partial_Units.Molality m_Ca = molalities[CaCl2];
-  Partial_Units.Molality m_Mg = molalities[MgCl2];
-  Partial_Units.Molality m_SO4 = 0 "TODO";
+  PartialUnits.Molality molalities[size(X, 1)]=
+      Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X,
+      MM_vec);
+  PartialUnits.Molality m_Cl=molalities[NaCl] + molalities[KCl] + 2*
+      molalities[MgCl2] + 2*molalities[CaCl2];
+  PartialUnits.Molality m_Na=molalities[NaCl];
+  PartialUnits.Molality m_K=molalities[KCl];
+  PartialUnits.Molality m_Ca=molalities[CaCl2];
+  PartialUnits.Molality m_Mg=molalities[MgCl2];
+  PartialUnits.Molality m_SO4=0 "TODO";
 
   SI.Pressure p_H2O=Modelica.Media.Water.WaterIF97_base.saturationPressure(T);
 //  Pressure_bar p_H2O_bar=SI.Conversions.to_bar(p_sat_H2O_Duan2003(T));

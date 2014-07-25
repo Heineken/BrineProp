@@ -2,7 +2,7 @@ within BrineProp.SpecificEnthalpies;
 function appMolarEnthalpy_CaCl2_White
 //2D-fit Reproduction of measurements of heat capacity of CaCl2 solution
 extends PartialAppMolar_CaCl2_White;
-  output Partial_Units.PartialMolarEnthalpy H_app_mol;
+  output PartialUnits.PartialMolarEnthalpy H_app_mol;
 protected
   constant SI.MolarInternalEnergy Delta_h_solution_CaCl2 = 81850
     "[J/mol_CaCl2] @ 298.15K Sinke1985 http://dx.doi.org/10.1016/0021-9614(85)90083-7";
@@ -10,7 +10,7 @@ protected
   String msg = "";
 algorithm
   if outOfRangeMode>0 then
-    if not ( (ignoreLimit_h_CaCl2_Tmin or T>=T_min) and T<=T_max) then
+    if not ( (ignoreLimitInh_CaCl2_Tmin or T>=T_min) and T<=T_max) then
       msg :="Temperature is " + String(T-273.15) + "degC, but must be between " +
         String(T_min-273.15) + "degC and " + String(T_max-273.15) + "degC (BrineProp.SpecificEnthalpies.appMolarEnthalpy_CaCl2_White)";
       if outOfRangeMode==1 then

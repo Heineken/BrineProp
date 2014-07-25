@@ -76,7 +76,7 @@ protected
   Real v_minus;
   Real[23] c;
 
-  BrineProp.SaltData_Duan.SaltConstants salt;
+  BrineProp.SaltDataDuan.SaltConstants salt;
   constant Molality[:] m=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X, MM_vec);
   SI.Pressure p_sat=Modelica.Media.Water.IF97_Utilities.BaseIF97.Basic.psat(T);
   String msg;
@@ -101,7 +101,7 @@ algorithm
     if not X[i] > 0 then
       M_salt[i] := 1;
     else
-      salt :=BrineProp.SaltData_Duan.saltConstants[i];
+      salt :=BrineProp.SaltDataDuan.saltConstants[i];
       if debugmode then
         print(salt.name+": "+String(X[i]));
       end if;

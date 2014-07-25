@@ -1,9 +1,9 @@
 within BrineProp;
-package SaltData_Duan "Coefficients used in Duan density calculation"
+package SaltDataDuan "Coefficients used in Duan density calculation"
   extends BrineProp.SaltData;
 
 
-  extends Partial_Units;
+  extends PartialUnits;
 
 
   redeclare record extends SaltConstants
@@ -251,4 +251,4 @@ constant SaltConstants[:] saltConstants = {
       p_max_rho=2e6,
       mola_max_eta=  0)};
 
-end SaltData_Duan;
+end SaltDataDuan;

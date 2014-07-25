@@ -1,5 +1,5 @@
 within BrineProp;
-partial package PartialBrine_MultiSalt_2Phase_MultiGas "Template medium for aqueous solutions of m Salts and n Gases, VLE solved by Newton's method"
+partial package PartialBrineMultiSaltMultiGasTwoPhase "Template medium for aqueous solutions of m Salts and n Gases, VLE solved by Newton's method"
   //definition of molar masses
 
 //constant String explicitVars = "ph" "set of variables the model is explicit for, may be set to all combinations of ph or pT, setting pT should speed up the model in pT cases";
@@ -210,17 +210,17 @@ end ThermodynamicState;
     input String substancename;
     output Real phi;
 protected
-    BrineProp.Partial_Units.Pressure_bar p_bar=SI.Conversions.to_bar(p);
+    BrineProp.PartialUnits.Pressure_bar p_bar=SI.Conversions.to_bar(p);
   end fugacity_pTX;
 
 
- replaceable function density_liquid_pTX "Density of the liquid phase"
+ replaceable function density_liq_pTX "Density of the liquid phase"
    input SI.Pressure p "TODO: Rename to density_liq_pTX";
    input SI.Temp_K T;
    input MassFraction X[nX] "mass fraction m_NaCl/m_Sol";
    input SI.MolarMass MM[:] "=MM_vec =fill(0,nX) molar masses of components";
    output SI.Density d;
- end density_liquid_pTX;
+ end density_liq_pTX;
 
 
 redeclare function vapourQuality
@@ -721,17 +721,20 @@ protected
     d_g :=if x > 0 then p/(T2*R_gas) else -1;*/
     //  d_g:= if x>0 then p/(Modelica.Constants.R*T2)*(n_g*cat(1,MM_gas,{M_H2O}))/sum(n_g) else -1;
       if x > 0 then
-        d_g :=BrineGas_3Gas.density_pTX(
-          p,
-          T,
-          X_g);
+        d_g :=BrineGas3Gas.density_pTX(
+              p,
+              T,
+              X_g);
         h_g := specificEnthalpy_gas_pTX(p,T,X_g);
       else
         d_g := -1;
         h_g := -1;
       end if;
-      d_l := if not x<1 then -1 else density_liquid_pTX(p,T2,X_l,MM_vec)
-      "no 1-phase gas";
+      d_l :=if not x < 1 then -1 else density_liq_pTX(
+            p,
+            T2,
+            X_l,
+            MM_vec) "no 1-phase gas";
       h_l := specificEnthalpy_liq_pTX(p,T,X_l);
     end if "TwoPhaseWater";
 
@@ -880,7 +883,11 @@ protected
     output SI.LinearTemperatureCoefficient beta;
   algorithm
   //  beta :=d_l*(1/d_l - 1/(density_liquid_pTX(state.p,state.T - Delta_T,state.X,MM_vec)))/Delta_T;
-    beta :=(1 - d_l/(density_liquid_pTX(state.p,state.T - Delta_T,state.X,MM_vec)))/Delta_T;
+    beta :=(1 - d_l/(density_liq_pTX(
+          state.p,
+          state.T - Delta_T,
+          state.X,
+          MM_vec)))/Delta_T;
   end isobaricExpansionCoefficient_liq;
 
 
@@ -931,4 +938,4 @@ Germany</div>
  revisions="<html>
 
 </html>"));
-end PartialBrine_MultiSalt_2Phase_MultiGas;
+end PartialBrineMultiSaltMultiGasTwoPhase;

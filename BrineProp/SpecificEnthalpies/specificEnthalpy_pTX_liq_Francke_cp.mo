@@ -8,7 +8,7 @@ function specificEnthalpy_pTX_liq_Francke_cp "enthalpy calculation DIY"
   output SI.SpecificEnthalpy h;
 //  constant Real M_NaCl=Salt_Data.M_NaCl "molar mass in [kg/mol]";
 //  output Real val2=H_appmol[CaCl2];
-  extends BrineProp.SaltData_Duan.defineSaltOrder;
+  extends BrineProp.SaltDataDuan.defineSaltOrder;
 
 protected
   SI.MolarInternalEnergy Delta_h_solution_NaCl = 0
@@ -28,8 +28,11 @@ protected
     Delta_h_solution_MgCl2,
     Delta_h_solution_SrCl2};*/
 
-  Partial_Units.Molality b[size(X,1)]=
-  Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X,cat(1,MM_vec_salt,fill(-1,size(X,1)-size(MM_vec_salt,1))));
+  PartialUnits.Molality b[size(X, 1)]=
+      Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X,
+      cat(1,
+          MM_vec_salt,
+          fill(-1, size(X, 1) - size(MM_vec_salt, 1))));
 //  Partial_Units.Molality b[5]=mola[1:5];
 
 //  SI.SpecificEnthalpy h_H2O =  Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p, T);
@@ -37,10 +40,9 @@ protected
 
   SI.MolarMass MM_vec_salt[:]=BrineProp.SaltData.MM_salt[1:5];
 
-  BrineProp.Partial_Units.PartialMolarEnthalpy[:] H_appmol={0,
-   if b[KCl] >0 then appMolarEnthalpy_KCl_White(T,b[KCl]) else 0,
-   if b[CaCl2] >0 then appMolarEnthalpy_CaCl2_White(T,b[CaCl2]) else 0,
-   0,0};
+  BrineProp.PartialUnits.PartialMolarEnthalpy[:] H_appmol={0,if b[KCl] > 0
+       then appMolarEnthalpy_KCl_White(T, b[KCl]) else 0,if b[CaCl2] > 0
+       then appMolarEnthalpy_CaCl2_White(T, b[CaCl2]) else 0,0,0};
 algorithm
   h := (X[NaCl]+X[end])*h_Driesner + X[end]*b[2:5]*H_appmol[2:5];
 

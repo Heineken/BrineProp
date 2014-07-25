@@ -1,7 +1,7 @@
 within BrineProp;
-package Brine_Driesner "NaCl solution using Driesner density and enthalpy function"
-  extends BrineProp.PartialBrine_MultiSalt_1Phase(
-      redeclare package Salt_data = BrineProp.SaltData_Duan,
+package BrineDriesner "NaCl solution using Driesner density and enthalpy function"
+  extends BrineProp.PartialBrineMultiSaltOnePhase(
+      redeclare package Salt_data = BrineProp.SaltDataDuan,
       final saltNames = {"sodium chloride"},
       final MM_salt = {Salt_data.M_NaCl},
       final nM_salt = {Salt_data.nM_NaCl});
@@ -22,10 +22,10 @@ public
   //  constant Real M_H2O= BrineProp.M_H2O "molar mass in [kg/mol] TODO";
 
 protected
-    Partial_Units.Molality mola = X[1]/M_NaCl "molality b (mol_NaCl/kg_sol)";
+    PartialUnits.Molality mola=X[1]/M_NaCl "molality b (mol_NaCl/kg_sol)";
     SI.Temp_C T_C = SI.Conversions.to_degC(T);
     SI.Temp_C T_Scale_V;
-    Partial_Units.Pressure_bar p_bar= SI.Conversions.to_bar(p);
+    PartialUnits.Pressure_bar p_bar=SI.Conversions.to_bar(p);
     Real n_21;
     Real n_22;
     Real n_20;
@@ -119,4 +119,4 @@ protected
 
   //  print("Brine_Driesner.specificEnthalpy_pTX: "+String(p*1e-5)+"bar."+String(T_Scale_h)+"degC->"+String(h)+" J/kg");
   end specificEnthalpy_pTX;
-end Brine_Driesner;
+end BrineDriesner;

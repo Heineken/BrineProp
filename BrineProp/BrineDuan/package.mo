@@ -1,7 +1,7 @@
 within BrineProp;
-package Brine_Duan "NaCl solution using Duan density"
-  extends BrineProp.PartialBrine_MultiSalt_1Phase(
-      redeclare package Salt_data = BrineProp.SaltData_Duan,
+package BrineDuan "NaCl solution using Duan density"
+  extends BrineProp.PartialBrineMultiSaltOnePhase(
+      redeclare package Salt_data = BrineProp.SaltDataDuan,
       final saltNames = {"sodium chloride"},
       final MM_salt = {Salt_data.M_NaCl},
       final nM_salt = {Salt_data.nM_NaCl});
@@ -60,7 +60,10 @@ protected
   redeclare function extends specificEnthalpy_pTX
   "enthalpy calculation according to Driesner et al: 0-1000degC; 0.1-500MPa"
   algorithm
-    h :=Brine_Driesner.specificEnthalpy_pTX(p,T,X);
+    h :=BrineDriesner.specificEnthalpy_pTX(
+          p,
+          T,
+          X);
   end specificEnthalpy_pTX;
 
 
@@ -68,4 +71,9 @@ protected
   algorithm
     d:=BrineProp.Densities.density_Duan2008_pTX(p,T,X,MM_vec);
   end density_pTX;
-end Brine_Duan;
+
+annotation (Documentation(info="<html>
+<p>Implementation of property functions (h,rho,eta) for NaCl solution by Duan.</p>
+<p>Based on multi-salt template.</p>
+</html>"));
+end BrineDuan;

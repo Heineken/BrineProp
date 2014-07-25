@@ -4,7 +4,7 @@ function solubility_CH4_pTX_Duan2006 "Duan ZH, Mao SD. (2006) A thermodynamic mo
   http://dx.doi.org/10.1016/j.gca.2006.03.018TODO Umrechnung andere Salz in NaCl"
   extends partial_solubility_pTX;
 //  output SI.MassFraction c_gas "gas concentration in kg_gas/kg_H2O";
-  extends BrineProp.SaltData_Duan.defineSaltOrder;
+  extends BrineProp.SaltDataDuan.defineSaltOrder;
 
 protected
   Real[:] mu_l0_CH4_RT_c = { 0.83143711E+01,
@@ -41,14 +41,14 @@ protected
                               0};
 
   SI.MolarMass M_H2O = MM_vec[end];
-  Partial_Units.Molality molalities[size(X,1)];
+  PartialUnits.Molality molalities[size(X, 1)];
 //  Partial_Units.Molality molefractions[size(X,1)];
-  Partial_Units.Molality m_Cl;
-  Partial_Units.Molality m_Na;
-  Partial_Units.Molality m_K;
-  Partial_Units.Molality m_Ca;
-  Partial_Units.Molality m_Mg;
-  Partial_Units.Molality m_SO4;
+  PartialUnits.Molality m_Cl;
+  PartialUnits.Molality m_Na;
+  PartialUnits.Molality m_K;
+  PartialUnits.Molality m_Ca;
+  PartialUnits.Molality m_Mg;
+  PartialUnits.Molality m_SO4;
 //  Real X_NaCl = molalities[NaCl]*M_H2O "mole fraction of NaCl in liquid phase";
 
 //  SI.Pressure p_H2O = Modelica.Media.Water.WaterIF97_base.saturationPressure(T);

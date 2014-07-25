@@ -1,5 +1,5 @@
 within BrineProp;
-package BrineGas_3Gas "Gas mixture of CO2+N2+CH4+H2O"
+package BrineGas3Gas "Gas mixture of CO2+N2+CH4+H2O"
   extends PartialBrineGas(
     final substanceNames={"carbondioxide","nitrogen","methane","water"},
     final MM_vec = {M_CO2,M_N2,M_CH4, M_H2O},
@@ -251,4 +251,4 @@ protected
   //speedup: calculate water saturated composition externally once and pass on
 <p>All calculated values are returned in SI units and are mass based.</p>
 </html>"));
-end BrineGas_3Gas;
+end BrineGas3Gas;

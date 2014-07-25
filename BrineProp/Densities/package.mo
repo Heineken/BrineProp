@@ -1,8 +1,8 @@
 within BrineProp;
 package Densities "Density functions"
-  extends Partial_Units;
+  extends PartialUnits;
 
 
-  extends BrineProp.SaltData_Duan;
+  extends BrineProp.SaltDataDuan;
 
 end Densities;

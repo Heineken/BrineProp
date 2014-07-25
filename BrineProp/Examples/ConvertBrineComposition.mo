@@ -3,7 +3,7 @@ model ConvertBrineComposition
   "convert volume related composition into mass fraction g/l -> kg/kg"
 //  Finds brine composition as mass fraction from infos in g/l by iterative density calculation
 
-  package Medium = BrineProp.Brine_5salts_TwoPhase_3gas;
+  package Medium = BrineProp.Brine5salts3gas;
 
   constant SI.MolarMass M_cation[:] = {22.98977,39.0983,40.078,24.305,87.62}/1000 "kg/mol";
   constant SI.MolarMass M_Cl = 35.453/1000;

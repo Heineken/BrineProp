@@ -3,7 +3,7 @@ partial function PartialCpRatio_CaCl2_White
 //2D-fit Reproduction of measurements of heat capacity of KCl solution
 //  input SI.Pressure p;
   input SI.Temp_K T;
-  input BrineProp.Partial_Units.Molality mola "n_KCl/m_H2O";
+  input BrineProp.PartialUnits.Molality mola "n_KCl/m_H2O";
 //  output SI.SpecificHeatCapacity cp=1 "=cp_by_cpWater*cp_Water";
   //Parameters of MATLAB 2D-Fit
 protected
@@ -16,8 +16,8 @@ protected
   Real g=0.008315;
   Real h=-0.01568;
   Real i=-0.01057;
-  BrineProp.Partial_Units.Molality b_mean=0.9803;
-  BrineProp.Partial_Units.Molality b_std=1.047;
+  BrineProp.PartialUnits.Molality b_mean=0.9803;
+  BrineProp.PartialUnits.Molality b_std=1.047;
   SI.Temp_K T_mean=437.7;
   SI.Temp_K T_std=104.5;
 

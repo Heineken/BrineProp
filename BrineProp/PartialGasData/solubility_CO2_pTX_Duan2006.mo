@@ -3,7 +3,7 @@ function solubility_CO2_pTX_Duan2006 "CO2 solubility in aqueous saltsolutions"
 /*  Zhenhao Duan et al. (2006) An improved model for the calculation of CO2 solubility in aqueous
 solutions containing Na+,K+,Ca2+,Mg2+,Cl-, and SO4_2-. Marine Chemistry 98:131-139. 
   fugacity from doi:10.1016/j.marchem.2005.09.001*/
-  extends BrineProp.SaltData_Duan.defineSaltOrder;
+  extends BrineProp.SaltDataDuan.defineSaltOrder;
   extends partial_solubility_pTX;
 /*  input SI.Pressure p;
   input SI.Temp_K T;
@@ -12,7 +12,7 @@ solutions containing Na+,K+,Ca2+,Mg2+,Cl-, and SO4_2-. Marine Chemistry 98:131-1
   input SI.Pressure p_gas;
  output SI.MassFraction c_gas "gas concentration in kg_gas/kg_H2O";*/
 protected
-  Partial_Units.Molality solu "CO2 solubility in mol_CO2/kg H2O";
+  PartialUnits.Molality solu "CO2 solubility in mol_CO2/kg H2O";
   Real[:] mu_l0_CO2_RT_c = { 28.9447706,
                         -0.0354581768,
                      -4770.67077,
@@ -60,14 +60,16 @@ protected
   Real zeta_CO2_NaCl;
 
   //constant
-  Partial_Units.Molality molalities[size(X,1)]=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X,MM_vec)
-    "TODO neglecting CO2?";
-  Partial_Units.Molality m_Cl = molalities[NaCl] + molalities[KCl] + 2*molalities[MgCl2] + 2*molalities[CaCl2];
-  Partial_Units.Molality m_Na = molalities[NaCl];
-  Partial_Units.Molality m_K = molalities[KCl];
-  Partial_Units.Molality m_Ca = molalities[CaCl2];
-  Partial_Units.Molality m_Mg = molalities[MgCl2];
-  Partial_Units.Molality m_SO4 = 0;
+  PartialUnits.Molality molalities[size(X, 1)]=
+      Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X,
+      MM_vec) "TODO neglecting CO2?";
+  PartialUnits.Molality m_Cl=molalities[NaCl] + molalities[KCl] + 2*
+      molalities[MgCl2] + 2*molalities[CaCl2];
+  PartialUnits.Molality m_Na=molalities[NaCl];
+  PartialUnits.Molality m_K=molalities[KCl];
+  PartialUnits.Molality m_Ca=molalities[CaCl2];
+  PartialUnits.Molality m_Mg=molalities[MgCl2];
+  PartialUnits.Molality m_SO4=0;
   String msg="";
 algorithm
 //  print("Running solubility_CO2_pTX_Duan2006("+String(p)+","+String(T)+","+String(X[end-3])+","+String(p_gas)+")");

@@ -1,7 +1,7 @@
 within BrineProp;
-package Brine_5salts "One-phase (liquid) multisalt brine solution"
-  extends BrineProp.PartialBrine_MultiSalt_1Phase(
-    redeclare package Salt_data = BrineProp.SaltData_Duan,
+package Brine5salts "One-phase (liquid) multisalt brine solution"
+  extends BrineProp.PartialBrineMultiSaltOnePhase(
+    redeclare package Salt_data = BrineProp.SaltDataDuan,
     final saltNames = {"sodium chloride","potassium chloride","calcium chloride","magnesium chloride","strontium chloride"},
     final MM_salt = Salt_data.MM_salt,
     final nM_salt = Salt_data.nM_salt);
@@ -67,21 +67,24 @@ protected
 
   redeclare function extends specificHeatCapacityCp
   "calculation of liquid specific heat capacity from apparent molar heat capacities"
-    extends BrineProp.SaltData_Duan.defineSaltOrder;
+    extends BrineProp.SaltDataDuan.defineSaltOrder;
 protected
     SI.MolarMass MM_vec_salt[:]=BrineProp.SaltData.MM_salt[1:5];
     SI.Pressure p=state.p;
     SI.Temperature T=state.T;
     SI.MassFraction X[:]=state.X "mass fraction m_NaCl/m_Sol";
 
-    Partial_Units.Molality b[size(X,1)]=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(
-                                                                  X,cat(1,MM_vec_salt,fill(-1,size(X,1)-size(MM_vec_salt,1))));
+    PartialUnits.Molality b[size(X, 1)]=
+        Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X,
+        cat(1,
+            MM_vec_salt,
+            fill(-1, size(X, 1) - size(MM_vec_salt, 1))));
 
   /*  Real cp_by_cpWater[:]={0,
       SpecificEnthalpies.HeatCapacityRatio_KCl_White(T, b[KCl]),
       SpecificEnthalpies.HeatCapacityRatio_CaCl2_White(T, b[CaCl2]),
       0,0} "cp/cp_H2O of salt solutions";*/
-    Partial_Units.PartialMolarHeatCapacity[5] Cp_appmol
+    PartialUnits.PartialMolarHeatCapacity[5] Cp_appmol
     "Apparent molar enthalpy of salts";
 
     SI.SpecificHeatCapacity cp_Driesner=SpecificEnthalpies.specificHeatCapacity_pTX_Driesner(p,T,X[1]/(X[1]+X[end]));
@@ -164,4 +167,4 @@ protected
 <p>The model is explicit for p and T, but for h(p,T) the inverse function T(p,h) is defined. T(p,h) is inverts h(p,T) numerically by bisection, stopping at a given tolerance.</p>
 <p>Density and enthalpy are calculated like the liquid phase properties in <code>BrineProp.Brine_5salts_TwoPhase_3gas</code> .</p>
 </html>"));
-end Brine_5salts;
+end Brine5salts;

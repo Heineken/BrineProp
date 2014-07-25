@@ -2,7 +2,7 @@ within BrineProp.Examples;
 model BrineProps2PhaseMinimal_state
   "Using the state record instead of Baseproperties"
 
-package Medium = BrineProp.Brine_5salts_TwoPhase_3gas;
+package Medium = BrineProp.Brine5salts3gas;
 //  package Medium = Modelica.Media.Water.WaterIF97_ph;
   SI.Temperature T= 273.16+145;
   SI.Pressure p= (10+time)*1.01325e5;
