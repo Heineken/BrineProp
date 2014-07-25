@@ -8,7 +8,7 @@ DOI: 10.1016/0021-9614(87)90132-7.
 */
 
   input SI.Temp_K T;
-  input BrineProp.PartialUnits.Molality mola "n_KCl/m_H2O";
+  input BrineProp.Types.Molality mola "n_KCl/m_H2O";
 //  output SI.SpecificHeatCapacity cp=1 "=cp_by_cpWater*cp_Water";
   //Parameters of MATLAB 2D-Fit
 protected

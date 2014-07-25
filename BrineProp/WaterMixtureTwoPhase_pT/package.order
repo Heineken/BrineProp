@@ -25,3 +25,6 @@ setState_phX
 density_pTX
 density_phX
 vapourQuality
+temperature_ph
+specificEnthalpy_pT
+density_pT

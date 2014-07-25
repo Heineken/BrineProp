@@ -24,10 +24,10 @@ protected
   Integer nX_salt = size(Salt_Constants,1);
 //  SI.DynamicViscosity[nX_salt] etas=fill(0,nX_salt);
   SI.DynamicViscosity eta_H2O;
-  Modelica.Media.Water.WaterIF97_base.ThermodynamicState state_H2O;
+  Modelica.Media.Water.WaterIF97_pT.ThermodynamicState state_H2O;
 
   SaltDataDuan.SaltConstants salt;
-  constant Molality[:] molalities=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X,MM);
+  constant Molality[:] molalities=Utilities.massToMoleFractions(X,MM);
  // constant Partial_Units.Molality[:] molalities=X[1:nX_salt] ./ MM[1:nX_salt]/X[end];
    Molarity_molperliter c;
   Molality b "component molality";
@@ -57,8 +57,8 @@ algorithm
    end if;
 
  //viscosity calculation
-  state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(p_Pa, T_K, X);
-  eta_H2O := Modelica.Media.Water.WaterIF97_base.dynamicViscosity(state_H2O);
+  state_H2O := Modelica.Media.Water.WaterIF97_pT.setState_pTX(p_Pa, T_K, X);
+  eta_H2O := Modelica.Media.Water.WaterIF97_pT.dynamicViscosity(state_H2O);
 //  print("eta_H2O= "+String(eta_H2O)+" Pa.s");
 
   //for pure water skip the whole calculation and return water viscosity

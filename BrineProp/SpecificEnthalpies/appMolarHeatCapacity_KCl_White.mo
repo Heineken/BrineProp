@@ -2,7 +2,7 @@ within BrineProp.SpecificEnthalpies;
 function appMolarHeatCapacity_KCl_White
 //2D-fit Reproduction of measurements of heat capacity of KCl solution
 extends PartialAppMolar_KCl_White;
-  output PartialUnits.PartialMolarHeatCapacity Cp_app_mol;
+  output Types.PartialMolarHeatCapacity Cp_app_mol;
 protected
   String msg = "";
 algorithm

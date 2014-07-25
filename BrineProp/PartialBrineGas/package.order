@@ -1,4 +1,5 @@
 ignoreNoCompositionInBrineGas
+ThermodynamicState
 BaseProperties
 MM_vec
 nM_vec

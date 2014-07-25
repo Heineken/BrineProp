@@ -7,7 +7,7 @@ function fugacity_H2O
   output Real phi;
 
 protected
-  PartialUnits.Pressure_bar p_bar=SI.Conversions.to_bar(p);
+  Types.Pressure_bar p_bar=SI.Conversions.to_bar(p);
   Real[:] a = {1.86357885E-03,
                1.17332094E-02,
                7.82682497E-07,

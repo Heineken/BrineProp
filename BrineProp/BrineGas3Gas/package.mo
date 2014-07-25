@@ -8,10 +8,6 @@ package BrineGas3Gas "Gas mixture of CO2+N2+CH4+H2O"
   constant Boolean waterSaturated=false "activates water saturation";
 
 
- redeclare record extends ThermodynamicState
- end ThermodynamicState;
-
-
   replaceable function waterSaturatedComposition_pTX
   "calculates the water saturated mass vector for a given Temperature"
   //saturates the mixture with water
@@ -181,7 +177,7 @@ protected
     output SpecificEnthalpy h "Specific enthalpy";
 protected
     SI.SpecificEnthalpy h_H2O_sat=Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.hv_p(p);
-    SI.SpecificEnthalpy h_H2O=max(h_H2O_sat, Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p,T))
+    SI.SpecificEnthalpy h_H2O=max(h_H2O_sat, Modelica.Media.Water.WaterIF97_pT.specificEnthalpy_pT(p,T))
     "to make sure it is gaseous";
 
     SingleGasNasa.ThermodynamicState state=SingleGasNasa.ThermodynamicState(p=0,T=T);

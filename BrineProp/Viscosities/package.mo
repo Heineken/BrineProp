@@ -1,6 +1,6 @@
 within BrineProp;
 package Viscosities "Viscosity functions"
-    extends PartialUnits;
+    extends Types;
 
 
 

@@ -1,11 +1,11 @@
 within BrineProp;
 function massToMoleFractions "Return mole_i/sum(mole_i) from mass fractions X"
-  //same as Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions()
+  //same as Utilities.massToMoleFractions()
   extends Modelica.Icons.Function;
   input SI.MassFraction X[:] "Mass fractions of mixture";
   input SI.MolarMass MMX[:] "molar masses of components";
   output SI.MoleFraction molefractions[size(X, 1)] "Molalities";
-  output PartialUnits.Molality molalities[size(X, 1)] "Molalities moles/m_H2O";
+  output Types.Molality molalities[size(X, 1)] "Molalities moles/m_H2O";
 protected
   Real n_total;
   Integer n=size(X, 1);

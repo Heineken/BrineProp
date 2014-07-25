@@ -56,8 +56,8 @@ model BrineProps2phaseFull
   */
 
  //Medium.SaturationProperties sat(Tsat=props.T,psat=props.p,X=props.X);
-//SI.SurfaceTension sigma = Modelica.Media.Water.WaterIF97_base.surfaceTension(sat);
-//  SI.SurfaceTension sigma = Modelica.Media.Water.WaterIF97_base.surfaceTension(props.sat);
+//SI.SurfaceTension sigma = Modelica.Media.Water.WaterIF97_pT.surfaceTension(sat);
+//  SI.SurfaceTension sigma = Modelica.Media.Water.WaterIF97_pT.surfaceTension(props.sat);
 
 //  Real c_CO2=Partial_Gas_Data.solubility_CO2_pTX_Duan2003(props.p,props.T,props.X,Medium.MM_vec,props.p);
 //  Real c_N2=Partial_Gas_Data.solubility_N2_pTX_Duan2006(props.p,props.T,props.X,Medium.MM_vec,props.p);

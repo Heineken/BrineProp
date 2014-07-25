@@ -21,9 +21,9 @@ algorithm
   assert(min(X)>=-1e-8, "X ="+String(min(X))+" out of range [0...1] = "+Modelica.Math.Matrices.toString(transpose([X]))+" (saturationPressure_H2O())");
   if X[end]>0 then
 //    ionMoleFractions:=BrineProp.massToMoleFractions(X, MM) .* nM;
-    ionMoleFractions:=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X, MM) .* nM;
+    ionMoleFractions:=Utilities.massToMoleFractions(X, MM) .* nM;
     ionMoleFractions:=ionMoleFractions/sum(ionMoleFractions) "normalize";
-    p_H2O:=Modelica.Media.Water.WaterIF97_base.saturationPressure(T);
+    p_H2O:=Modelica.Media.Water.WaterIF97_pT.saturationPressure(T);
     p_sat:= p_H2O * ionMoleFractions[end];
   else
     p_sat:=10*p;

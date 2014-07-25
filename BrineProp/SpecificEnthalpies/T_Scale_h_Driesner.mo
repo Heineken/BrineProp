@@ -12,13 +12,13 @@ protected
   constant Real M_NaCl=BrineProp.SaltData.M_NaCl "molar mass in [kg/mol]";
 //  constant Real M_H2O =  PartialBrine.M_H2O "molar mass in [kg/mol] TODO";
 
-  constant PartialUnits.Pressure_bar p_min=1;
-  constant PartialUnits.Pressure_bar p_max=1000;
+  constant Types.Pressure_bar p_min=1;
+  constant Types.Pressure_bar p_max=1000;
   constant SI.Temp_C T_min=0;
   constant SI.Temp_C T_max=1000;
   SI.Temp_C T_C = SI.Conversions.to_degC(T);
 //  SI.Temp_C T_Scale_h;
-  PartialUnits.Pressure_bar p_bar=SI.Conversions.to_bar(p);
+  Types.Pressure_bar p_bar=SI.Conversions.to_bar(p);
   Real q_21;
   Real q_22;
   Real q_20;
@@ -28,7 +28,7 @@ protected
   Real q_10;
   Real q_12;
   Real q_1;
-//  Modelica.Media.Water.WaterIF97_base.ThermodynamicState state_H2O;
+//  Modelica.Media.Water.WaterIF97_pT.ThermodynamicState state_H2O;
   Real x_NaCl "mol fraction";
   //  SI.MolarMass M_Solution "[kg/mol]";
   String msg="";
@@ -84,13 +84,13 @@ algorithm
 
   T_Scale_h := SI.Conversions.from_degC(T_C*q_2 + q_1);
 
-//  p_check:=max(p, Modelica.Media.Water.WaterIF97_base.saturationPressure(T_Scale_h)) "To make sure its liquid";
+//  p_check:=max(p, Modelica.Media.Water.WaterIF97_pT.saturationPressure(T_Scale_h)) "To make sure its liquid";
 
   //END OF CALCULATION OF EQUIVALENT TEMPERATURE
 
-/*  state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(p, SI.Conversions.from_degC(T_Scale_h), fill(0,0));
-  h := Modelica.Media.Water.WaterIF97_base.specificEnthalpy(state_H2O);*/
-//  h := Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p, SI.Conversions.from_degC(T_Scale_h));
+/*  state_H2O := Modelica.Media.Water.WaterIF97_pT.setState_pTX(p, SI.Conversions.from_degC(T_Scale_h), fill(0,0));
+  h := Modelica.Media.Water.WaterIF97_pT.specificEnthalpy(state_H2O);*/
+//  h := Modelica.Media.Water.WaterIF97_pT.specificEnthalpy_pT(p, SI.Conversions.from_degC(T_Scale_h));
 
 //  print("Brine_Driesner.specificEnthalpy_pTX: "+String(p*1e-5)+"bar."+String(T_Scale_h)+"degC->"+String(h)+" J/kg");
 end T_Scale_h_Driesner;

@@ -22,10 +22,10 @@ package BrineDriesner "NaCl solution using Driesner density and enthalpy functio
   //  constant Real M_H2O= BrineProp.M_H2O "molar mass in [kg/mol] TODO";
 
 protected
-    PartialUnits.Molality mola=X[1]/M_NaCl "molality b (mol_NaCl/kg_sol)";
+    Types.Molality mola=X[1]/M_NaCl "molality b (mol_NaCl/kg_sol)";
     SI.Temp_C T_C = SI.Conversions.to_degC(T);
     SI.Temp_C T_Scale_V;
-    PartialUnits.Pressure_bar p_bar=SI.Conversions.to_bar(p);
+    Types.Pressure_bar p_bar=SI.Conversions.to_bar(p);
     Real n_21;
     Real n_22;
     Real n_20;
@@ -44,7 +44,7 @@ protected
     Real n_10;
     Real n_12;
     Real n_1;
-    Modelica.Media.Water.WaterIF97_base.ThermodynamicState state_H2O;
+    Modelica.Media.Water.WaterIF97_pT.ThermodynamicState state_H2O;
     Real x_NaCl;
     SI.MolarMass M_Solution "[kg/mol]";
   algorithm
@@ -99,8 +99,8 @@ protected
     T_Scale_V := T_C*n_2 + n_1 + D;
     //END OF CALCULATION OF EQUIVALENT TEMPERATURE
 
-    state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(p, SI.Conversions.from_degC(T_Scale_V), fill(0,0));
-    d := Modelica.Media.Water.WaterIF97_base.density(state_H2O)*M_Solution/M_H2O;
+    state_H2O := Modelica.Media.Water.WaterIF97_pT.setState_pTX(p, SI.Conversions.from_degC(T_Scale_V), fill(0,0));
+    d := Modelica.Media.Water.WaterIF97_pT.density(state_H2O)*M_Solution/M_H2O;
   //  print("T_Scale_V: "+String(T_Scale_V)+"(density_Driesner_pTX)");
   //  print("Density: "+String(d)+"(density_Driesner_pTX)");
   end density_pTX;

@@ -11,7 +11,7 @@ M_H2O
 DataDir
 OutputDir
 Examples
-PartialUnits
+Types
 SaltData
 SaltDataDuan
 Densities
@@ -23,10 +23,11 @@ BrineDriesner
 Brine5salts
 PartialBrineGas
 BrineGas3Gas
-PartialGasData
+GasData
 PartialMixtureTwoPhaseMedium
 WaterMixtureTwoPhase_pT
 PartialBrineMultiSaltMultiGasTwoPhase
 Brine5salts3gas
 massToMoleFractions
 Xi2X
+Utilities

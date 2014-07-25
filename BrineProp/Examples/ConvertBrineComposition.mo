@@ -48,10 +48,23 @@ Real gasLiquidRatio=0.8475 "GVF/(1-GVF) at STP";*/
     "X_g.q gas mass in gas phase per fluid mass";
   // SI.MassConcentration[:] X_g_gas(each start=0)={max(0,g/(1+sum(g)))  for  g in  gasMassPerLiquidMass};
   SI.Pressure[:] PartialPressures(each start=1e4)=(props.p-props.p_H2O)*gasVolumeFractions;
-  SI.MassConcentration[:] X_l_gas(each start=0)= {
-    PartialGasData.solubility_CO2_pTX_Duan2006(props.p,props.T,props.X,Medium.MM_vec,PartialPressures[1]),
-    PartialGasData.solubility_N2_pTX_Duan2006(props.p,props.T,props.X,Medium.MM_vec,PartialPressures[2]),
-    PartialGasData.solubility_CH4_pTX_Duan2006(props.p,props.T,props.X,Medium.MM_vec,PartialPressures[3])}/(1-props.x)
+  SI.MassConcentration[:] X_l_gas(each start=0) = {
+    GasData.solubility_CO2_pTX_Duan2006(
+        props.p,
+        props.T,
+        props.X,
+        Medium.MM_vec,
+        PartialPressures[1]),GasData.solubility_N2_pTX_Duan2006(
+        props.p,
+        props.T,
+        props.X,
+        Medium.MM_vec,
+        PartialPressures[2]),GasData.solubility_CH4_pTX_Duan2006(
+        props.p,
+        props.T,
+        props.X,
+        Medium.MM_vec,
+        PartialPressures[3])}/(1 - props.x)
     "gas mass in liquid phase per fluid mass";
 
   Real V_l = sum(props.X_l[6:8]./Medium.MM_gas)*22.4/props.X_l[end]

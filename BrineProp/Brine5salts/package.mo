@@ -24,7 +24,7 @@ package Brine5salts "One-phase (liquid) multisalt brine solution"
 
  redeclare function extends specificEnthalpy_pTX
  // Partial_Units.Molality molalities = massFractionsToMoleFractions(X, MM_vec);
- //  SI.SpecificEnthalpy h_H2O := Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p, T) "H2O";
+ //  SI.SpecificEnthalpy h_H2O := Modelica.Media.Water.WaterIF97_pT.specificEnthalpy_pT(p, T) "H2O";
  algorithm
  //    h_app[1] :=Brine_Driesner.specificEnthalpy_pTX(p,T,X) "NaCl";
  /*    h_app[1] :=apparentMolarEnthalpy_NaCl(p,T) "NaCl";
@@ -74,8 +74,8 @@ protected
     SI.Temperature T=state.T;
     SI.MassFraction X[:]=state.X "mass fraction m_NaCl/m_Sol";
 
-    PartialUnits.Molality b[size(X, 1)]=
-        Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X,
+    Types.Molality b[size(X, 1)]=
+        Utilities.massToMoleFractions(X,
         cat(1,
             MM_vec_salt,
             fill(-1, size(X, 1) - size(MM_vec_salt, 1))));
@@ -84,7 +84,7 @@ protected
       SpecificEnthalpies.HeatCapacityRatio_KCl_White(T, b[KCl]),
       SpecificEnthalpies.HeatCapacityRatio_CaCl2_White(T, b[CaCl2]),
       0,0} "cp/cp_H2O of salt solutions";*/
-    PartialUnits.PartialMolarHeatCapacity[5] Cp_appmol
+    Types.PartialMolarHeatCapacity[5] Cp_appmol
     "Apparent molar enthalpy of salts";
 
     SI.SpecificHeatCapacity cp_Driesner=SpecificEnthalpies.specificHeatCapacity_pTX_Driesner(p,T,X[1]/(X[1]+X[end]));

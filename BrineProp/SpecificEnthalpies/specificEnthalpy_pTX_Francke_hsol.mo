@@ -45,20 +45,20 @@ protected
     "salt enthalpies @ T_ref";
   constant SI.Temp_K[:] T_ref_salt = {373.16,0,0,0,0};
 
-  SI.SpecificEnthalpy h_H2O =  Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p, T);
+  SI.SpecificEnthalpy h_H2O =  Modelica.Media.Water.WaterIF97_pT.specificEnthalpy_pT(p, T);
   SI.SpecificEnthalpy[5] h_salt = h_salt_ref - (T_ref_salt .- T).*cp_salt
     "J/mol_salt solid enthalpy";
 
-  PartialUnits.Molality mola[size(X, 1)]=
-      Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X,
+  Types.Molality mola[size(X, 1)]=
+      Utilities.massToMoleFractions(X,
       cat(1,
           MM_vec_salt,
           fill(-1, size(X, 1) - size(MM_vec_salt, 1))));
-  PartialUnits.Molality mola_salt[5]=mola[1:5];
+  Types.Molality mola_salt[5]=mola[1:5];
   SI.Temp_C T_C = SI.Conversions.to_degC(T);
-  PartialUnits.Pressure_bar p_bar=SI.Conversions.to_bar(p);
+  Types.Pressure_bar p_bar=SI.Conversions.to_bar(p);
 
-//  Modelica.Media.Water.WaterIF97_base.ThermodynamicState state_H2O;
+//  Modelica.Media.Water.WaterIF97_pT.ThermodynamicState state_H2O;
 //  SI.MolarMass M_Solution "[kg/mol]";
 //  SI.Pressure p_check;
 
@@ -84,8 +84,8 @@ print("h_salt: "+String(h_salt[1]) +" J/kg");
   M_Solution := x_NaCl*M_NaCl + (1-x_NaCl)* M_H2O;
 */
 
-/*  state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(p, SI.Conversions.from_degC(T_Scale_h), fill(0,0));
-  h := Modelica.Media.Water.WaterIF97_base.specificEnthalpy(state_H2O);*/
+/*  state_H2O := Modelica.Media.Water.WaterIF97_pT.setState_pTX(p, SI.Conversions.from_degC(T_Scale_h), fill(0,0));
+  h := Modelica.Media.Water.WaterIF97_pT.specificEnthalpy(state_H2O);*/
   h := X[end]*(h_H2O+Delta_h_solution*mola_salt) +X[1:5]*h_salt;
 //  h := h_H2O;
 

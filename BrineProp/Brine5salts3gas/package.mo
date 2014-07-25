@@ -3,6 +3,7 @@ package Brine5salts3gas "Two-phase aqueous solution of NaCl, KCl, CaCl2, MgCl2, 
 
 //TODO: use Fluid limits
 
+
   extends PartialBrineMultiSaltMultiGasTwoPhase(
     redeclare package Salt_data = BrineProp.SaltDataDuan,
     final gasNames = {"carbondioxide","nitrogen","methane"},
@@ -14,9 +15,12 @@ package Brine5salts3gas "Two-phase aqueous solution of NaCl, KCl, CaCl2, MgCl2, 
 
 
 
-  redeclare function extends setState_pTX
-  "is apparently needed so that array arguments work"
+  redeclare function extends setState_pTX "to avoid check error"
   end setState_pTX;
+
+
+  redeclare function extends setState_phX "to avoid check error"
+  end setState_phX;
 
 
   redeclare function extends solubilities_pTX
@@ -55,7 +59,7 @@ protected
 
  redeclare function extends specificEnthalpy_liq_pTX
  // Partial_Units.Molality molalities = massFractionsToMoleFractions(X, MM_vec);
- //  SI.SpecificEnthalpy h_H2O := Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p, T) "H2O";
+ //  SI.SpecificEnthalpy h_H2O := Modelica.Media.Water.WaterIF97_pT.specificEnthalpy_pT(p, T) "H2O";
  algorithm
  //    h := SpecificEnthalpies.specificEnthalpy_pTX_Driesner(p,T,X);
      h := SpecificEnthalpies.specificEnthalpy_pTX_liq_Francke_cp(p,T,X);
@@ -145,7 +149,7 @@ protected
 
   redeclare function extends surfaceTension
   algorithm
-     sigma:=Modelica.Media.Water.WaterIF97_base.surfaceTension(sat)
+     sigma:=Modelica.Media.Water.WaterIF97_pT.surfaceTension(sat)
     "TODO http://www.if.ufrgs.br/~levin/Pdfs.dir/6756.pdf";
   end surfaceTension;
 
@@ -162,8 +166,8 @@ protected
     SI.MassFraction X[:]=cat(1,state.X[1:end-1],{1-sum(state.X[1:end-1])})
     "mass fraction m_NaCl/m_Sol";
 
-    PartialUnits.Molality b[size(X, 1)]=
-        Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X,
+    Types.Molality b[size(X, 1)]=
+        Utilities.massToMoleFractions(X,
         cat(1,
             MM_vec_salt,
             fill(-1, size(X, 1) - size(MM_vec_salt, 1))));
@@ -172,7 +176,7 @@ protected
       SpecificEnthalpies.HeatCapacityRatio_KCl_White(T, b[KCl]),
       SpecificEnthalpies.HeatCapacityRatio_CaCl2_White(T, b[CaCl2]),
       0,0} "cp/cp_H2O of salt solutions";*/
-    PartialUnits.PartialMolarHeatCapacity[5] Cp_appmol
+    Types.PartialMolarHeatCapacity[5] Cp_appmol
     "Apparent molar enthalpy of salts";
 
     SI.SpecificHeatCapacity cp_Driesner=SpecificEnthalpies.specificHeatCapacity_pTX_Driesner(p,T,X[1]/(X[1]+X[end]));

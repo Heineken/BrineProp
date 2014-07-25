@@ -7,7 +7,7 @@ function specificEnthalpy_pTX_Driesner
   output SI.SpecificEnthalpy h;/**/
 algorithm
 
-//  h := Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p, SI.Conversions.from_degC(T_Scale_h));
-  h := Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p, T_Scale_h_Driesner(p,T,X_NaCl));
+//  h := Modelica.Media.Water.WaterIF97_pT.specificEnthalpy_pT(p, SI.Conversions.from_degC(T_Scale_h));
+  h := Modelica.Media.Water.WaterIF97_pT.specificEnthalpy_pT(p, T_Scale_h_Driesner(p,T,X_NaCl));
 
 end specificEnthalpy_pTX_Driesner;

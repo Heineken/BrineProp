@@ -39,8 +39,8 @@ package Medium = BrineProp.BrineGas3Gas (ignoreNoCompositionInBrineGas=true);
   SI.SpecificHeatCapacity c_p_DryGas=MoistAir.specificHeatCapacityCp_pTX(props.p,props.T, props.state.X_g);
 
   SI.SpecificHeatCapacity c_p_watervapour=
-  Modelica.Media.Water.WaterIF97_base.specificHeatCapacityCp(
-    Modelica.Media.Water.WaterIF97_base.setState_pTX(p=Modelica.Media.Water.IF97_Utilities.BaseIF97.Basic.psat(props.T)-1,
+  Modelica.Media.Water.WaterIF97_pT.specificHeatCapacityCp(
+    Modelica.Media.Water.WaterIF97_pT.setState_pTX(p=Modelica.Media.Water.IF97_Utilities.BaseIF97.Basic.psat(props.T)-1,
     T=props.T));
 
  SI.MassFraction[:] X_sat=BrineProp.BrineGas_3Gas.waterSaturatedComposition_pTX(props.p,props.T,props.state.X_g);

@@ -1,5 +1,5 @@
 within BrineProp;
-partial package PartialGasData "Molar masses and ion numbers of gases"
+package GasData "Molar masses and ion numbers of gases"
   //TODO: Limits mit in den Record
   /*replaceable record GasConstants
     extends Modelica.Icons.Record;
@@ -61,4 +61,4 @@ partial package PartialGasData "Molar masses and ion numbers of gases"
 
 
   annotation (Documentation(info=""));
-end PartialGasData;
+end GasData;

@@ -36,8 +36,8 @@ protected
   final constant Real k=1.3806505E-16 "Boltzmann constant in [erg/K]";
   final constant Real R=Modelica.Constants.R "Gas constant [J/mol*K]";
   SI.MassFraction w_salt "kg_salt/kg_brine";
-  PartialUnits.Pressure_bar p_bar=SI.Conversions.to_bar(p);
-  PartialUnits.Pressure_MPa p_MPa=p*1e-6;
+  Types.Pressure_bar p_bar=SI.Conversions.to_bar(p);
+  Types.Pressure_MPa p_MPa=p*1e-6;
   Real v;
   Real I;
   Real I_mr;
@@ -77,7 +77,9 @@ protected
   Real[23] c;
 
   BrineProp.SaltDataDuan.SaltConstants salt;
-  constant PartialUnits.Molality[:] m=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X, MM_vec);
+  constant Types.Molality[:] m=
+      Utilities.massToMoleFractions(X,
+      MM_vec);
   SI.Pressure p_sat=Modelica.Media.Water.IF97_Utilities.BaseIF97.Basic.psat(T);
   String msg;
 //  constant Boolean debugmode = true;
@@ -86,7 +88,7 @@ algorithm
       print("Running density_Duan2008_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
   end if;
 
-  rho_H2O := Modelica.Media.Water.WaterIF97_base.density_pT(max(p, p_sat + 1), T)*1e-3
+  rho_H2O := Modelica.Media.Water.WaterIF97_pT.density_pT(max(p, p_sat + 1), T)*1e-3
     "kg/m^3->kg/dm^3";
   if debugmode then
     print("rho_H2O=" +String(rho_H2O)+" kg/dm^3");
@@ -199,12 +201,12 @@ algorithm
       D_plus := D_1000 + Cc*log((Bb + p_plus_bar)/(Bb + 1000));
       D_minus := D_1000 + Cc*log((Bb + p_minus_bar)/(Bb + 1000));
 
-//      rho_H2O_plus := Modelica.Media.Water.WaterIF97_base.density_pT(p_plus_bar*1e5, T) * 1e-3
-      rho_H2O_plus := Modelica.Media.Water.WaterIF97_base.density_pT(max(p_plus_bar*1e5, p_sat + 1), T)*
+//      rho_H2O_plus := Modelica.Media.Water.WaterIF97_pT.density_pT(p_plus_bar*1e5, T) * 1e-3
+      rho_H2O_plus := Modelica.Media.Water.WaterIF97_pT.density_pT(max(p_plus_bar*1e5, p_sat + 1), T)*
         1e-3 "kg/m^3->kg/dm^3";
 
       rho_H2O_minus := rho_H2O
-        "Modelica.Media.Water.WaterIF97_base.density_pT(p_minus_bar*1e5, T) * 1e-3 kg/m^3->kg/dm^3";
+        "Modelica.Media.Water.WaterIF97_pT.density_pT(p_minus_bar*1e5, T) * 1e-3 kg/m^3->kg/dm^3";
       A_Phi_plus := 1/3*(2*Modelica.Constants.pi*N_0*rho_H2O_plus/1000)^(1/2)*(
         e^2/(D_plus*k*T))^(3/2);
       A_Phi_minus := 1/3*(2*Modelica.Constants.pi*N_0*rho_H2O_minus/1000)^(1/2)*

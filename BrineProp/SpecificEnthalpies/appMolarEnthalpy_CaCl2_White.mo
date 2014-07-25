@@ -2,7 +2,7 @@ within BrineProp.SpecificEnthalpies;
 function appMolarEnthalpy_CaCl2_White
 //2D-fit Reproduction of measurements of heat capacity of CaCl2 solution
 extends PartialAppMolar_CaCl2_White;
-  output PartialUnits.PartialMolarEnthalpy H_app_mol;
+  output Types.PartialMolarEnthalpy H_app_mol;
 protected
   constant SI.MolarInternalEnergy Delta_h_solution_CaCl2 = 81850
     "[J/mol_CaCl2] @ 298.15K Sinke1985 http://dx.doi.org/10.1016/0021-9614(85)90083-7";

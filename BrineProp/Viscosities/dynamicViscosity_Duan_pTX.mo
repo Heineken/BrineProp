@@ -23,10 +23,10 @@ protected
 
   Integer nX_salt = size(Salt_Constants,1);
   SI.DynamicViscosity eta_H2O;
-  Modelica.Media.Water.WaterIF97_base.ThermodynamicState state_H2O;
+  Modelica.Media.Water.WaterIF97_pT.ThermodynamicState state_H2O;
 
   SaltDataDuan.SaltConstants salt;
-  constant Molality[:] molalities=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(
+  constant Molality[:] molalities=Utilities.massToMoleFractions(
                                                             X,MM);
  String msg;
 algorithm
@@ -38,8 +38,8 @@ algorithm
   assert(p_bar>=1 and p_bar<=1000, "Pressure must be between 1 and 500 bar");
 
   //viscosity calculation
-  state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(p_Pa, T_K, X);
-  eta_H2O := Modelica.Media.Water.WaterIF97_base.dynamicViscosity(state_H2O);
+  state_H2O := Modelica.Media.Water.WaterIF97_pT.setState_pTX(p_Pa, T_K, X);
+  eta_H2O := Modelica.Media.Water.WaterIF97_pT.dynamicViscosity(state_H2O);
 //  print("eta_H2O= "+String(eta_H2O)+" Pa.s");
 
   //for pure water skip the whole calculation and return water viscosity

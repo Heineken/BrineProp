@@ -12,7 +12,7 @@ partial package PartialBrineMultiSaltMultiGasTwoPhase "Template medium for aqueo
    replaceable package Salt_data = BrineProp.SaltData;
 
 
-   extends BrineProp.PartialGasData;
+   extends BrineProp.GasData;
 
    constant SI.MolarMass[:] MM_gas;
    constant Integer[:] nM_gas "number of ions per molecule";
@@ -78,7 +78,7 @@ partial package PartialBrineMultiSaltMultiGasTwoPhase "Template medium for aqueo
    //  Real[nX_gas+1] n_g_norm_start "uncomment for Examples.InitializationTest";
 
    //  Real y_vec[:]=BrineProp.massToMoleFractions(X, MM_vec) "mole fractions";
-     SI.MoleFraction y_vec[:]=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X,MM_vec);
+     SI.MoleFraction y_vec[:]=Utilities.massToMoleFractions(X,MM_vec);
      Real y_g[:]= p_gas/p "mole fractions in gas phase";
 
      Real[nX_gas + 1] x_vec = { (if X[nX_salt+i]>0 then state.X_g[i]*x/X[nX_salt+i] else 0) for i in 1:nX_gas+1}
@@ -120,11 +120,6 @@ partial package PartialBrineMultiSaltMultiGasTwoPhase "Template medium for aqueo
      sat.psat = sum(p_degas);
      sat.Tsat = T;
      sat.X = X_l;
-
-     annotation (Documentation(info="<html></html>"),
-                 Documentation(revisions="<html>
-
-</html>"));
    end BaseProperties;
 
    /* Provide implementations of the following optional properties.
@@ -210,7 +205,7 @@ partial package PartialBrineMultiSaltMultiGasTwoPhase "Template medium for aqueo
       input String substancename;
       output Real phi;
 protected
-      PartialUnits.Pressure_bar p_bar=SI.Conversions.to_bar(p);
+    Types.Pressure_bar p_bar=SI.Conversions.to_bar(p);
     end fugacity_pTX;
 
 
@@ -307,7 +302,7 @@ protected
       SI.SpecificHeatCapacity c_p;
       SI.Temperature T_a=273.16;
     //  SI.Temperature T0_a=273.16;
-      SI.Temperature T_b=min(400,Modelica.Media.Water.WaterIF97_base.saturationTemperature(p)-1) "400";
+      SI.Temperature T_b=min(400,Modelica.Media.Water.WaterIF97_pT.saturationTemperature(p)-1) "400";
 
       SI.SpecificEnthalpy h_a "h at lower limit";
       SI.SpecificEnthalpy h_b "h at upper limit";
@@ -322,7 +317,7 @@ protected
         if debugmode then
           print("2Phase water (temperature_phX("+String(p)+","+String(h)+"))");
         end if;
-          T :=Modelica.Media.Water.WaterIF97_base.temperature_ph(p, h);
+          T :=Modelica.Media.Water.WaterIF97_pT.temperature_ph(p, h);
           //T = Modelica.Media.Water.IF97_Utilities.T_ph(p,h);
       else
 
@@ -581,10 +576,10 @@ protected
             print("2Phase water (PartialBrine_Multi_TwoPhase_ngas.setState_pTX("+String(p)+","+String(T2)+"))");
           end if;
           X_l:=X_l;
-       // h:=Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p, T);
+       // h:=Modelica.Media.Water.WaterIF97_pT.specificEnthalpy_pT(p, T);
         h_l :=Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.hl_p(p);
         h_g :=Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.hv_p(p);
-        x :=min(max((Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p, T) - h_l)/(h_g - h_l + 1e-18), 0), 1);
+        x :=min(max((Modelica.Media.Water.WaterIF97_pT.specificEnthalpy_pT(p, T) - h_l)/(h_g - h_l + 1e-18), 0), 1);
         d_l :=Modelica.Media.Water.IF97_Utilities.rhol_T(T);
         d_g :=Modelica.Media.Water.IF97_Utilities.rhov_T(T);
 
@@ -904,6 +899,7 @@ protected
   algorithm
     d := state.d;
   end density;
+
 
     annotation (Documentation(info="<html>
 <ul>

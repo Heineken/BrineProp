@@ -60,7 +60,7 @@ constant Integer nX_gas = 0;
 
  //DENSITY
  //  q = vapourQuality(state);
-     d = Modelica.Media.Water.WaterIF97_base.density_ph(p,h);
+     d = Modelica.Media.Water.WaterIF97_pT.density_ph(p,h);
  //  d = d_l/(1-q*(1-d_l/d_g));
  //End DENSITY
 
@@ -68,9 +68,9 @@ constant Integer nX_gas = 0;
    h = specificEnthalpy_pTX(p,T,X);
  /*
       if (p_H2O>p) then
-    h_H2O_g = Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p,T,1);
+    h_H2O_g = Modelica.Media.Water.WaterIF97_pT.specificEnthalpy_pT(p,T,1);
   else
-    h_H2O_g = Modelica.Media.Water.WaterIF97_base.dewEnthalpy(Modelica.Media.Water.WaterIF97_base.setSat_p(p));
+    h_H2O_g = Modelica.Media.Water.WaterIF97_pT.dewEnthalpy(Modelica.Media.Water.WaterIF97_pT.setSat_p(p));
   end if;
   h_gas_dissolved = 0;
   Delta_h_solution = solutionEnthalpy(T) ""only valid for saturated solution";
@@ -109,10 +109,6 @@ constant Integer nX_gas = 0;
      sat.Tsat = saturationTemperature(p);
      sat.X = X;
  //  end if;
-   annotation (Documentation(info="<html></html>"),
-               Documentation(revisions="<html>
-
-</html>"));
  end BaseProperties;
 
 
@@ -121,7 +117,7 @@ constant Integer nX_gas = 0;
     input Modelica.SIunits.Temp_K T;
     input MassFraction X[:]=fill(0,0) "mass fraction m_NaCl/m_Sol";
     input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
-    output Modelica.SIunits.SpecificEnthalpy h=Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p,T);
+    output Modelica.SIunits.SpecificEnthalpy h=Modelica.Media.Water.WaterIF97_pT.specificEnthalpy_pT(p,T);
   algorithm
   //  Modelica.Utilities.Streams.print("specificEnthalpy_pTX("+String(p)+","+String(T)+")");
     annotation(LateInline=true,inverse(T = temperature_phX(p=p,h=h,X=X,phase=phase)));
@@ -133,7 +129,7 @@ constant Integer nX_gas = 0;
     input Modelica.SIunits.SpecificEnthalpy h;
     input MassFraction X[:]=fill(0,0) "mass fraction m_XCl/m_Sol";
     input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
-    output Modelica.SIunits.Temp_K T=Modelica.Media.Water.WaterIF97_base.temperature_ph(p,h);
+    output Modelica.SIunits.Temp_K T=Modelica.Media.Water.WaterIF97_pT.temperature_ph(p,h);
   algorithm
   //  Modelica.Utilities.Streams.print("temperature_phX("+String(p)+","+String(h)+")");
 
@@ -176,13 +172,13 @@ end ThermodynamicState;
   redeclare function extends saturationTemperature
   algorithm
      //T := Modelica.Media.Water.IF97_Utilities.BaseIF97.Basic.tsat(p);
-     T := Modelica.Media.Water.WaterIF97_base.saturationTemperature(p);
+     T := Modelica.Media.Water.WaterIF97_pT.saturationTemperature(p);
   end saturationTemperature;
 
 
   redeclare function extends dynamicViscosity
   algorithm
-    eta := Modelica.Media.Water.WaterIF97_base.dynamicViscosity(state);
+    eta := Modelica.Media.Water.WaterIF97_pT.dynamicViscosity(state);
   end dynamicViscosity;
 
 
@@ -279,12 +275,12 @@ end specificEntropy_pTX;
   "specific heat capacity at constant pressure of water"
 
   algorithm
-    if Modelica.Media.Water.WaterIF97_base.dT_explicit then
+    if Modelica.Media.Water.WaterIF97_pT.dT_explicit then
       cp := Modelica.Media.Water.IF97_Utilities.cp_dT(
           state.d,
           state.T,
           state.phase);
-    elseif Modelica.Media.Water.WaterIF97_base.pT_explicit then
+    elseif Modelica.Media.Water.WaterIF97_pT.pT_explicit then
       cp := Modelica.Media.Water.IF97_Utilities.cp_pT(state.p, state.T);
     else
       cp := Modelica.Media.Water.IF97_Utilities.cp_ph(
@@ -301,7 +297,7 @@ end specificEntropy_pTX;
 
   redeclare function extends saturationPressure
   algorithm
-     p := Modelica.Media.Water.WaterIF97_base.saturationPressure(T);
+     p := Modelica.Media.Water.WaterIF97_pT.saturationPressure(T);
   end saturationPressure;
 
 
@@ -309,12 +305,12 @@ end specificEntropy_pTX;
   "specific heat capacity at constant pressure of water"
 
   algorithm
-    if Modelica.Media.Water.WaterIF97_base.dT_explicit then
+    if Modelica.Media.Water.WaterIF97_pT.dT_explicit then
       cv := Modelica.Media.Water.IF97_Utilities.cv_dT(
           state.d,
           state.T,
           state.phase);
-    elseif Modelica.Media.Water.WaterIF97_base.pT_explicit then
+    elseif Modelica.Media.Water.WaterIF97_pT.pT_explicit then
       cv := Modelica.Media.Water.IF97_Utilities.cv_pT(state.p, state.T);
     else
       cv := Modelica.Media.Water.IF97_Utilities.cv_ph(
@@ -331,14 +327,14 @@ end specificEntropy_pTX;
 
  redeclare function extends dynamicViscosity_liq
  algorithm
- //  eta := Modelica.Media.Water.WaterIF97_base.dynamicViscosity(state);
+ //  eta := Modelica.Media.Water.WaterIF97_pT.dynamicViscosity(state);
    eta := Modelica.Media.Water.IF97_Utilities.dynamicViscosity(state.d, saturationTemperature(state.p), state.p+1, 1);
  end dynamicViscosity_liq;
 
 
  redeclare function extends dynamicViscosity_gas
  algorithm
- //  eta := Modelica.Media.Water.WaterIF97_base.dynamicViscosity(state);
+ //  eta := Modelica.Media.Water.WaterIF97_pT.dynamicViscosity(state);
    eta := Modelica.Media.Water.IF97_Utilities.dynamicViscosity(state.d, saturationTemperature(state.p), state.p-1, 1);
  end dynamicViscosity_gas;
 
@@ -390,7 +386,7 @@ end setState_phX;
     input Modelica.SIunits.Temp_K T;
     input MassFraction X[:]=fill(0,0) "mass fraction m_NaCl/m_Sol";
     input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
-    output Modelica.SIunits.Density d=Modelica.Media.Water.WaterIF97_base.density_pT(p,T);
+    output Modelica.SIunits.Density d=Modelica.Media.Water.WaterIF97_pT.density_pT(p,T);
   algorithm
   //  Modelica.Utilities.Streams.print("density_pTX("+String(p)+","+String(T)+")");
   //  annotation(LateInline=true,inverse(T = temperature_phX(p=p,h=h,X=X,phase=phase)));
@@ -402,7 +398,7 @@ end setState_phX;
     input SpecificEnthalpy h;
     input MassFraction X[:]=fill(0,0) "mass fraction m_NaCl/m_Sol";
     input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
-    output Modelica.SIunits.Density d=Modelica.Media.Water.WaterIF97_base.density_ph(p,h);
+    output Modelica.SIunits.Density d=Modelica.Media.Water.WaterIF97_pT.density_ph(p,h);
   algorithm
   //  Modelica.Utilities.Streams.print("density_phX("+String(p)+","+String(h)+")");
   //  annotation(LateInline=true,inverse(T = temperature_phX(p=p,h=h,X=X,phase=phase)));
@@ -416,6 +412,18 @@ end setState_phX;
   //  x := state.x;
     annotation(Documentation(info="<html></html>"));
   end vapourQuality;
+
+
+redeclare function extends temperature_ph "to avoid check error"
+end temperature_ph;
+
+
+redeclare function extends specificEnthalpy_pT "to avoid check error"
+end specificEnthalpy_pT;
+
+
+redeclare function extends density_pT "to avoid check error"
+end density_pT;
 
 
  annotation (Documentation(info="<html>

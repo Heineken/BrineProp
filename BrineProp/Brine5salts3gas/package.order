@@ -1,5 +1,6 @@
 fugacity_H2O
 setState_pTX
+setState_phX
 solubilities_pTX
 density_liq_pTX
 specificEnthalpy_liq_pTX

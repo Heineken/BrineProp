@@ -13,10 +13,10 @@ package BrineDuan "NaCl solution using Duan density"
      constant SI.MolarMass M_NaCl = salt.M_salt; ;
       "[kg/mol]";*/
 protected
-    PartialUnits.Molality mola = X[1]/(MM_salt[1]*(1-X[1]))
+    Types.Molality mola=X[1]/(MM_salt[1]*(1 - X[1]))
     "molality b (mol_NaCl/kg_H2O)";
     SI.Temp_C T_C = SI.Conversions.to_degC(T);
-    PartialUnits.Pressure_bar p_bar= SI.Conversions.to_bar(p);
+    Types.Pressure_bar p_bar=SI.Conversions.to_bar(p);
 
     Real a_0_NaCl = -0.21319213;
     Real a_1_NaCl = +0.13651589E-2;
@@ -36,7 +36,7 @@ protected
     Real eta_relative;
 
     SI.DynamicViscosity eta_H2O;
-    Modelica.Media.Water.WaterIF97_base.ThermodynamicState state_H2O;
+    Modelica.Media.Water.WaterIF97_pT.ThermodynamicState state_H2O;
   algorithm
     assert(T_C>=0 and T_C<=300, "Temperature is "+String(SI.Conversions.to_degC(T))+"degC, but must be between 10 and 350degC");
     assert(p_bar>=1 and p_bar<=1000, "Pressure must be between 1 and 500 bar");
@@ -48,8 +48,8 @@ protected
     eta_relative := exp(A_NaCl*mola + B_NaCl*mola^2 + C_NaCl*mola^3);
 
     //viscosity calculation
-    state_H2O := Modelica.Media.Water.WaterIF97_base.setState_pTX(p, T, X);
-    eta_H2O := Modelica.Media.Water.WaterIF97_base.dynamicViscosity(state_H2O);
+    state_H2O := Modelica.Media.Water.WaterIF97_pT.setState_pTX(p, T, X);
+    eta_H2O := Modelica.Media.Water.WaterIF97_pT.dynamicViscosity(state_H2O);
     eta := eta_relative * eta_H2O;
   //  print("mola: "+String(mola));
   //  print("eta_relative: "+String(eta_relative));
@@ -72,6 +72,7 @@ protected
   algorithm
     d:=BrineProp.Densities.density_Duan2008_pTX(p,T,X,MM_vec);
   end density_pTX;
+
 
   annotation (Documentation(info="<html>
 <p>Implementation of property functions (h,rho,eta) for NaCl solution by Duan.</p>

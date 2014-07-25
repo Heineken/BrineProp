@@ -1,9 +1,9 @@
 within BrineProp;
-package PartialBrineGas "Medium template for gas mixture of nX_gas gases and water based on PartialMixtureMedium"
+partial package PartialBrineGas "Medium template for gas mixture of nX_gas gases and water based on PartialMixtureMedium"
   //TODO add inverse functions
 
 
-  extends BrineProp.PartialGasData;
+  extends BrineProp.GasData;
 
 
   extends Modelica.Media.Interfaces.PartialMixtureMedium(reference_X=cat(1,fill(0,nX-1),{1}));
@@ -11,12 +11,16 @@ package PartialBrineGas "Medium template for gas mixture of nX_gas gases and wat
  constant Boolean ignoreNoCompositionInBrineGas=false;
 
 
+redeclare record extends ThermodynamicState
+end ThermodynamicState;
+
+
  redeclare model extends BaseProperties "Base properties of medium"
     import BrineProp;
 
  //  SI.Pressure p_H2O;
   //   BrineProp.Partial_Units.Molality y_vec[:]=BrineProp.massToMoleFractions();
-   SI.MoleFraction y_vec[:]=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X,MM_vec);
+   SI.MoleFraction y_vec[:]=Utilities.massToMoleFractions(X,MM_vec);
  equation
     //   assert(nX_gas==2,"Wrong number of gas mass fractions specified (2 needed - CO2,N2)");
  //  assert(max(X)<=1 and min(X)>=0, "X out of range [0...1] = "+PowerPlant.vector2string(X)+" (saturationPressure_H2O())");
@@ -30,10 +34,6 @@ package PartialBrineGas "Medium template for gas mixture of nX_gas gases and wat
  //    d=density_pTX(p,T,X);
      (d,R) = density_pTX(p,T,X);
      state=ThermodynamicState(p=p,T=T,X=X);
-   annotation (Documentation(info="<html></html>"),
-               Documentation(revisions="<html>
-
-</html>"));
  end BaseProperties;
  constant SI.MolarMass[:] MM_vec;
  constant Integer[:] nM_vec "number of ions per molecule";

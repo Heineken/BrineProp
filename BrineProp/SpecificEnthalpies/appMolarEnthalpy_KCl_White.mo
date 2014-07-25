@@ -2,7 +2,7 @@ within BrineProp.SpecificEnthalpies;
 function appMolarEnthalpy_KCl_White
 //2D-fit Reproduction of measurements of heat capacity of KCl solution
 extends PartialAppMolar_KCl_White;
-  output PartialUnits.PartialMolarEnthalpy H_app_mol;
+  output Types.PartialMolarEnthalpy H_app_mol;
 protected
   SI.Temperature T0=293.16 "Temperature at which HeatOfSolution is taken";
   String msg = "";
