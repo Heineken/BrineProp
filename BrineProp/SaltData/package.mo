@@ -13,7 +13,7 @@ package SaltData "Molar masses and mole numbers of the contained salts"
    constant Integer nM_SrCl2 = 3 "[ion moles/mol]";
 //   constant SI.MolarMass M_H2O = 0.018015 "[kg/mol]";
 
-  constant Real[:] MM_salt = {
+  constant SI.MolarMass[:] MM_salt = {
     M_NaCl,
     M_KCl,
     M_CaCl2,

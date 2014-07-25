@@ -78,9 +78,7 @@ protected
   //  else
   //    X_:=X;
     end if;
-    R_gas :=Modelica.Constants.R*sum(
-    cat(1,X[1:end-1],{if min(X)>0 then X[end] else 1})
-     ./ MM_vec);
+    R_gas :=Modelica.Constants.R*sum(cat(1,X[1:end-1],{(if min(X)>0 then X[end] else 1)})./ MM_vec);
   /*  if waterSaturated then
     R_gas :=sum(Modelica.Constants.R*waterSaturatedComposition_pTX(
         p,
@@ -203,7 +201,7 @@ protected
     end if;
 
   //  h := h_vec*X "mass weighted average";
-    h := h_vec * cat(1,X[1:end-1],({if min(X)>0 then X[end] else 1}));
+    h := h_vec * cat(1,X[1:end-1],{(if min(X)>0 then X[end] else 1)});
 
   /*  print("h_CO2: "+String(h_CO2)+" J/kg");
   print("h_N2: "+String(h_N2)+" J/kg");

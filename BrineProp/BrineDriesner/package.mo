@@ -17,8 +17,8 @@ package BrineDriesner "NaCl solution using Driesner density and enthalpy functio
   /*  constant Real M_NaCl = 0.058443 "molar mass in [kg/mol]";
   constant Real M_H2O = 0.018015 "molar mass in [kg/mol]";
 */
-public
-    constant Real M_NaCl=BrineProp.SaltData.M_NaCl "molar mass in [kg/mol]";
+    constant Real M_NaCl=Salt_data.M_NaCl "molar mass in [kg/mol]";
+  //  constant Real M_NaCl=BrineProp.SaltData.M_NaCl "molar mass in [kg/mol]";
   //  constant Real M_H2O= BrineProp.M_H2O "molar mass in [kg/mol] TODO";
 
 protected

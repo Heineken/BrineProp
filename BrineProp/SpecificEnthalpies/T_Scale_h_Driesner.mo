@@ -12,13 +12,13 @@ protected
   constant Real M_NaCl=BrineProp.SaltData.M_NaCl "molar mass in [kg/mol]";
 //  constant Real M_H2O =  PartialBrine.M_H2O "molar mass in [kg/mol] TODO";
 
-  constant Pressure_bar p_min=1;
-  constant Pressure_bar p_max=1000;
+  constant PartialUnits.Pressure_bar p_min=1;
+  constant PartialUnits.Pressure_bar p_max=1000;
   constant SI.Temp_C T_min=0;
   constant SI.Temp_C T_max=1000;
   SI.Temp_C T_C = SI.Conversions.to_degC(T);
 //  SI.Temp_C T_Scale_h;
-  Pressure_bar p_bar=SI.Conversions.to_bar(p);
+  PartialUnits.Pressure_bar p_bar=SI.Conversions.to_bar(p);
   Real q_21;
   Real q_22;
   Real q_20;

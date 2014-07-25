@@ -490,8 +490,8 @@ algorithm
   assert(nX == 1, "This function is not allowed for mixtures.");
   state := setState_ph(
       p,
-      (1 - x)*bubbleEnthalpy(BrineProp.PartialMixtureTwoPhaseMedium.setSat_pX(p))
-       + x*dewEnthalpy(BrineProp.PartialMixtureTwoPhaseMedium.setSat_pX(p)),
+      (1 - x)*bubbleEnthalpy(setSat_pX(p,{1}))
+       + x*dewEnthalpy(setSat_pX(p,{1})),
       2);
   annotation (Documentation(info="<html></html>"));
 end setState_px;
@@ -505,9 +505,9 @@ replaceable function setState_Tx
 algorithm
   assert(nX == 1, "This function is not allowed for mixtures.");
   state := setState_ph(
-      saturationPressure_sat(BrineProp.PartialMixtureTwoPhaseMedium.setSat_TX(T)),
-      (1 - x)*bubbleEnthalpy(BrineProp.PartialMixtureTwoPhaseMedium.setSat_TX(T))
-       + x*dewEnthalpy(BrineProp.PartialMixtureTwoPhaseMedium.setSat_TX(T)),
+      saturationPressure_sat(setSat_TX(T,{1})),
+      (1 - x)*bubbleEnthalpy(setSat_TX(T,{1}))
+       + x*dewEnthalpy(setSat_TX(T,{1})),
       2);
   annotation (Documentation(info="<html></html>"));
 end setState_Tx;
@@ -716,14 +716,6 @@ algorithm
 end pressure;
 
 
-redeclare replaceable function specificEnthalpy
-  input ThermodynamicState state "Thermodynamic state record";
-  output Modelica.SIunits.SpecificEnthalpy h;
-algorithm
-  h := state.h;
-end specificEnthalpy;
-
-
 replaceable function density_liq
   input ThermodynamicState state "Thermodynamic state record";
   output Modelica.SIunits.Density d_l;
@@ -774,12 +766,6 @@ algorithm
 end temperature;
 
 
-redeclare function extends density "return density of ideal gas"
-algorithm
-  d := state.d;
-end density;
-
-
 replaceable function pressure_dTX "Return pressure from d, T, and X or Xi"
   extends Modelica.Icons.Function;
   input Density d;
@@ -788,9 +774,9 @@ replaceable function pressure_dTX "Return pressure from d, T, and X or Xi"
   input FixedPhase phase=0 "2 for two-phase, 1 for one-phase, 0 if not known";
   output Modelica.SIunits.Pressure p;
 algorithm
-  T := temperature(setState_phX(
-      p,
-      h,
+  p := pressure(setState_dTX(
+      d,
+      T,
       X,
       phase));
   annotation (Documentation(info="<html></html>"));

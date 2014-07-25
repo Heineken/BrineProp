@@ -13,8 +13,23 @@ constant Integer nX_gas = 0;
     reference_X=cat(
         1,
         fill(0, nX - 1),
-        {1}),
-    fluidConstants=BrineConstants);
+        {1}));
+/*,
+    fluidConstants=BrineConstants    
+ constant FluidConstants[nS] BrineConstants(
+     each chemicalFormula = "H2O+NaCl+KCl+CaCl2+MgCl2+SrCl2+CO2+N2+CH4",
+     each structureFormula="H2O+NaCl+KCl+CaCl2+MgCl2+SrCl2+CO2+N2+CH4",
+     each casRegistryNumber="007",
+     each iupacName="Geothermal Brine",
+     each molarMass=0.1,
+     each criticalTemperature = 600,
+     each criticalPressure = 300e5,
+     each criticalMolarVolume = 1,
+     each acentricFactor = 1,
+     each meltingPoint = 1,
+     each normalBoilingPoint = 1,
+     each dipoleMoment = 1);   
+*/
 //   final extraPropertiesNames={"gas enthalpy","liquid enthalpy"},
 
   constant Modelica.SIunits.MolarMass M_H2O = 0.018015 "[kg/mol] TODO";
@@ -198,19 +213,14 @@ algorithm
     phase=0,
     h=specificEnthalpy_ps(p,s),
     p=p,
-    X=X,
+    X={1},
+    X_l={1},
     s=s,
-    q=-1,
-    GVF=-1,
+    x=-1,
     d_l=-1,
     d_g=-1);
+//    GVF=-1,
 end setState_psX;
-
-
-  redeclare function extends temperature "return temperature of ideal gas"
-  algorithm
-    T := state.T;
-  end temperature;
 
 
 redeclare function extends setState_pTX

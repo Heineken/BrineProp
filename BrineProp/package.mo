@@ -42,19 +42,6 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
 
 
 
-constant Modelica.Media.Interfaces.PartialTwoPhaseMedium.FluidConstants[nS] BrineConstants(
-     each chemicalFormula = "H2O+NaCl+KCl+CaCl2+MgCl2+SrCl2+CO2+N2+CH4",
-     each structureFormula="H2O+NaCl+KCl+CaCl2+MgCl2+SrCl2+CO2+N2+CH4",
-     each casRegistryNumber="007",
-     each iupacName="Geothermal Brine",
-     each molarMass=0.1,
-     each criticalTemperature = 600,
-     each criticalPressure = 300e5,
-     each criticalMolarVolume = 1,
-     each acentricFactor = 1,
-     each meltingPoint = 1,
-     each normalBoilingPoint = 1,
-     each dipoleMoment = 1);
 
 
 

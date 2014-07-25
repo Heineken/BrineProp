@@ -3,8 +3,7 @@ package Brine5salts3gas "Two-phase aqueous solution of NaCl, KCl, CaCl2, MgCl2, 
 
 //TODO: use Fluid limits
 
-
-  extends BrineProp.PartialBrineMultiSaltMultiGasTwoPhase(
+  extends PartialBrineMultiSaltMultiGasTwoPhase(
     redeclare package Salt_data = BrineProp.SaltDataDuan,
     final gasNames = {"carbondioxide","nitrogen","methane"},
     final saltNames = {"sodium chloride","potassium chloride","calcium chloride","magnesium chloride","strontium chloride"},
@@ -12,25 +11,6 @@ package Brine5salts3gas "Two-phase aqueous solution of NaCl, KCl, CaCl2, MgCl2, 
     final nM_gas = {nM_CO2,nM_N2,nM_CH4},
     final MM_salt = Salt_data.MM_salt,
     final nM_salt = Salt_data.nM_salt);
-
-
-  redeclare function extends fugacity_pTX
-  "solubility calculation of CO2 in seawater Duan,Sun(2003)"
-  algorithm
-    if substancename =="carbondioxide" then
-      phi := BrineProp.PartialGasData.fugacity_CO2_Duan2006(
-                                                    p,T);
-    elseif substancename =="nitrogen" then
-      phi := BrineProp.PartialGasData.fugacity_N2(
-                                          p,T,X,MM);
-    elseif substancename =="methane" then
-      phi := BrineProp.PartialGasData.fugacity_CH4_Duan1992(
-                                                    p,T,X,MM);
-    elseif substancename =="water" then
-      phi := BrineProp.PartialGasData.fugacity_H2O(
-                                           p,T,X,MM);
-    end if;
-  end fugacity_pTX;
 
 
 
@@ -77,39 +57,19 @@ protected
  // Partial_Units.Molality molalities = massFractionsToMoleFractions(X, MM_vec);
  //  SI.SpecificEnthalpy h_H2O := Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p, T) "H2O";
  algorithm
- //    h_app[1] :=Brine_Driesner.specificEnthalpy_pTX(p,T,X) "NaCl";
- /*    h_app[1] :=apparentMolarEnthalpy_NaCl(p,T) "NaCl";
-    h_app[2] := 0 "apparentMolarEnthalpy_KCl_Holmes1983(T)KCl";
-    h_app[3] := 0 "apparentMolarEnthalpy_CaCl(p,T)CaCl2";
-    h_app[4] := 0 "apparentMolarEnthalpy_MgCl2(p,T)MgCl2";
-    h_app[5] := 0 "apparentMolarEnthalpy_SrCl2(p,T)0SrCl2";
-
-    h := (h_H2O + h_app*molalities) * X[end];
-*/
-
  //    h := SpecificEnthalpies.specificEnthalpy_pTX_Driesner(p,T,X);
      h := SpecificEnthalpies.specificEnthalpy_pTX_liq_Francke_cp(p,T,X);
-
  //  print(String(p*1e-5)+" bar,"+String(T)+" K->"+String(h)+" J/kg (Brine_Duan_Multi_TwoPhase_ngas_3.specificEnthalpy_liq_pTX)");
- //print("h="+String(X[1])+"*"+String(h_vec[1])+"="+String(X[1:nX_salt]*h_vec));
  end specificEnthalpy_liq_pTX;
 
 
  redeclare function extends specificEnthalpy_gas_pTX
- /*  SI.SpecificEnthalpy h_H2O_sat=Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.hv_p(p);
-  SI.SpecificEnthalpy h_H2O=max(h_H2O_sat, Modelica.Media.Water.WaterIF97_base.specificEnthalpy_pT(p,T)) 
-    "make sure it's gaseous";
-  SI.SpecificEnthalpy h_CO2=Modelica.Media.IdealGases.SingleGases.CO2.h_T(Modelica.Media.IdealGases.SingleGases.CO2.data,T);
-  SI.SpecificEnthalpy h_N2=Modelica.Media.IdealGases.SingleGases.N2.h_T(Modelica.Media.IdealGases.SingleGases.N2.data,T);
-  SI.SpecificEnthalpy h_CH4=Modelica.Media.IdealGases.SingleGases.CH4.h_T(Modelica.Media.IdealGases.SingleGases.CH4.data,T);
-  SI.SpecificEnthalpy[:] h_gas={h_CO2,h_N2,h_CH4,h_H2O};
-  */
+
  algorithm
      h :=BrineGas3Gas.specificEnthalpy_pTX(
          p,
          T,
          X);
-   // print(String(p*1e-5)+" bar,"+String(T)+" K->"+String(h)+" J/kg (Brine_Duan_Multi_TwoPhase_ngas_3.specificEnthalpy_gas_pTX)");
  end specificEnthalpy_gas_pTX;
 
 

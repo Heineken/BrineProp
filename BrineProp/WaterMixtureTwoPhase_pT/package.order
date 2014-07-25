@@ -12,7 +12,6 @@ dynamicViscosity
 specificEntropy
 specificEnthalpy_ps
 setState_psX
-temperature
 setState_pTX
 specificEntropy_pTX
 thermalConductivity

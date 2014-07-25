@@ -36,7 +36,7 @@ package PartialBrineGas "Medium template for gas mixture of nX_gas gases and wat
 </html>"));
  end BaseProperties;
  constant SI.MolarMass[:] MM_vec;
- constant SI.MolarMass[:] nM_vec "number of ions per molecule";
+ constant Integer[:] nM_vec "number of ions per molecule";
 
 constant String gasNames[:]={""};
 /*

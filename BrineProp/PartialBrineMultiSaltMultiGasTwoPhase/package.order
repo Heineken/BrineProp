@@ -35,3 +35,5 @@ specificHeatCapacityCp
 specificHeatCapacityCp_liq
 specificHeatCapacityCp_gas
 isobaricExpansionCoefficient_liq
+specificEnthalpy
+density

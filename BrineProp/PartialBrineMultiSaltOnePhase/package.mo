@@ -30,17 +30,15 @@ partial package PartialBrineMultiSaltOnePhase "Template medium for  one-phase aq
 
  replaceable package Salt_data = BrineProp.SaltData;
 
-  import Partial_Units;
-
- constant Real[:] MM_salt "TODO: redundant with MM_vec";
+ constant SI.MolarMass[:] MM_salt "TODO: redundant with MM_vec";
  constant Integer[:] nM_salt "number of ions per molecule";
 
- constant SI.MolarMass MM_vec = cat(1,MM_salt, {M_H2O});
- constant SI.MolarMass nM_vec = cat(1,nM_salt, {1});
+ constant SI.MolarMass[:] MM_vec = cat(1,MM_salt, {M_H2O});
+ constant Integer nM_vec[:] = cat(1,nM_salt, {1});
 
  constant String saltNames[:]={""};
 
-  constant Integer nX_salt = size(saltNames, 1) "Number of salt components"   annotation(Evaluate=true);
+ constant Integer nX_salt = size(saltNames, 1) "Number of salt components"   annotation(Evaluate=true);
 
 
 redeclare record extends ThermodynamicState
@@ -130,9 +128,6 @@ end ThermodynamicState;
     input AbsolutePressure p "Pressure";
     input SpecificEnthalpy h "Specific enthalpy";
     input MassFraction X[nX] "Mass fractions";
-    input Real[nX_gas + 1] n_g_start=fill(0.5,
-                                             nX_gas+1)
-    "start value, all gas in gas phase, all water liquid";
     output Temperature T "Temperature";
 protected
     SI.SpecificHeatCapacity c_p;
@@ -222,7 +217,7 @@ algorithm
   if debugmode then
     print("Running setState_phX("+String(p/1e5)+" bar,"+String(h)+" J/kg,X)...");
   end if;
-  state := setState_pTX(p,temperature_phX(p,h,X,phase),X,phase) ",fluidnames)";
+  state := setState_pTX(p,temperature_phX(p,h,X),X) ",fluidnames)";
 end setState_phX;
 
 

@@ -52,10 +52,8 @@ specificEnthalpy_pT
 density_pT
 specificEnthalpy_dTX
 pressure
-specificEnthalpy
 density_liq
 dynamicViscosity_liq
 dynamicViscosity_gas
 temperature
-density
 pressure_dTX

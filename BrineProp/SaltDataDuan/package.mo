@@ -3,9 +3,6 @@ package SaltDataDuan "Coefficients used in Duan density calculation"
   extends BrineProp.SaltData;
 
 
-  extends PartialUnits;
-
-
   redeclare record extends SaltConstants
     String name;
     //DENSITY

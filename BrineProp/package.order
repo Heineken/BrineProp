@@ -26,7 +26,6 @@ BrineGas3Gas
 PartialGasData
 PartialMixtureTwoPhaseMedium
 WaterMixtureTwoPhase_pT
-BrineConstants
 PartialBrineMultiSaltMultiGasTwoPhase
 Brine5salts3gas
 massToMoleFractions

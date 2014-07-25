@@ -16,7 +16,7 @@ protected
     "[J/(kg.K)] aus Driesner 6molar 0...100degC";
    constant SI.SpecificHeatCapacity cp_KCl = 690
     "[J/(kg.K)] http://www.korth.de/index.php/material-detailansicht/items/16.html";
-   constant SI.SpecificHeatCapacity cp_CaCl2 = 72.59/MM_vec_salt[CaCl2]
+   constant SI.SpecificHeatCapacity cp_CaCl2 = 72.59/MM_vec_salt[3]
     "[J/(kg.K)] http://hyperphysics.phy-astr.gsu.edu/hbase/tables/therprop.html";
    constant SI.SpecificHeatCapacity cp_MgCl2 = 0 "[J/(kg.K)]";
    constant SI.SpecificHeatCapacity cp_SrCl2 = 0 "[J/(kg.K)]";
@@ -56,7 +56,7 @@ protected
           fill(-1, size(X, 1) - size(MM_vec_salt, 1))));
   PartialUnits.Molality mola_salt[5]=mola[1:5];
   SI.Temp_C T_C = SI.Conversions.to_degC(T);
-  Pressure_bar p_bar=SI.Conversions.to_bar(p);
+  PartialUnits.Pressure_bar p_bar=SI.Conversions.to_bar(p);
 
 //  Modelica.Media.Water.WaterIF97_base.ThermodynamicState state_H2O;
 //  SI.MolarMass M_Solution "[kg/mol]";

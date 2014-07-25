@@ -2,7 +2,7 @@ within BrineProp.Examples;
 model SingleSaltBrine
   //SPECIFY MEDIUM
   package Medium = BrineProp.BrineDriesner "Driesner EOS for NaCl solution";
-  //  package Medium = BrineProp.Brine_Duan "Duan for NaCl solution";
+  //package Medium = BrineProp.BrineDuan "Duan for NaCl solution";
   Medium.BaseProperties props;
 equation
   //specify thermodynamic state

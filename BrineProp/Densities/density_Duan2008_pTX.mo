@@ -36,8 +36,8 @@ protected
   final constant Real k=1.3806505E-16 "Boltzmann constant in [erg/K]";
   final constant Real R=Modelica.Constants.R "Gas constant [J/mol*K]";
   SI.MassFraction w_salt "kg_salt/kg_brine";
-  Pressure_bar p_bar=SI.Conversions.to_bar(p);
-  Pressure_MPa p_MPa=p*1e-6;
+  PartialUnits.Pressure_bar p_bar=SI.Conversions.to_bar(p);
+  PartialUnits.Pressure_MPa p_MPa=p*1e-6;
   Real v;
   Real I;
   Real I_mr;
@@ -77,7 +77,7 @@ protected
   Real[23] c;
 
   BrineProp.SaltDataDuan.SaltConstants salt;
-  constant Molality[:] m=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X, MM_vec);
+  constant PartialUnits.Molality[:] m=Modelica.Media.Interfaces.PartialMixtureMedium.massToMoleFractions(X, MM_vec);
   SI.Pressure p_sat=Modelica.Media.Water.IF97_Utilities.BaseIF97.Basic.psat(T);
   String msg;
 //  constant Boolean debugmode = true;

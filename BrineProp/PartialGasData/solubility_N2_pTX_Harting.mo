@@ -1,6 +1,6 @@
 within BrineProp.PartialGasData;
 function solubility_N2_pTX_Harting "..."
-//from Harting1981, considering only NaCl
+  //from Harting1981, considering only NaCl
   extends partial_solubility_pTX;
 
 /*  input SI.Pressure p;
@@ -30,8 +30,8 @@ algorithm
   end if; /**/
   assert(p>=1e5 and p<=600e5, "p="+String(p/1e5)+" bar, but N2 solubility calculation only valid for pressures between 1 and 600 bar");
 //  assert(molalities[NaCl]<6, "mola[NaCl]="+String(molalities[NaCl])+" mol/kg, but N2 solubility calculation only valid for salinities up to 6 mol/kg");
-  if molalities[NaCl]>6 then
-    print("mola[NaCl]="+String(molalities[NaCl])+" mol/kg, but N2 solubility calculation only valid for salinities up to 6 mol/kg");
+  if molalities[1]>6 then
+    print("mola[NaCl]="+String(molalities[1])+" mol/kg, but N2 solubility calculation only valid for salinities up to 6 mol/kg");
   end if;
 
 //page 19

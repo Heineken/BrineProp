@@ -6,7 +6,7 @@ function saturationPressure_H2O "brine water vapour pressure"
   input SI.Temp_K T;
   input SI.MassFraction X[:] "mass fractions m_x/m_Sol";
   input SI.MolarMass MM[:] "molar masses of components";
-  input Real nM[:] "number of atoms per molecule of components";
+  input Integer nM[:] "number of atoms per molecule of components";
   output SI.Pressure p_sat;
   output SI.Pressure p_H2O=0 "pure water vapour pressure";
 protected
