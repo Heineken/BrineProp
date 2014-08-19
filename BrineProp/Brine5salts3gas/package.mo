@@ -14,7 +14,6 @@ package Brine5salts3gas "Two-phase aqueous solution of NaCl, KCl, CaCl2, MgCl2, 
     final nM_salt = Salt_data.nM_salt);
 
 
-
   redeclare function extends setState_pTX "to avoid check error"
   end setState_pTX;
 
@@ -162,9 +161,6 @@ protected
     SI.MolarMass MM_vec_salt[:]=BrineProp.SaltData.MM_salt[1:5];
     SI.Pressure p=state.p;
     SI.Temperature T=state.T;
-  //  SI.MassFraction X[:]=state.X "mass fraction m_NaCl/m_Sol";
-    SI.MassFraction X[:]=cat(1,state.X[1:end-1],{1-sum(state.X[1:end-1])})
-    "mass fraction m_NaCl/m_Sol";
 
     Types.Molality b[size(X, 1)]=
         Utilities.massToMoleFractions(X,
@@ -181,8 +177,15 @@ protected
 
     SI.SpecificHeatCapacity cp_Driesner=SpecificEnthalpies.specificHeatCapacity_pTX_Driesner(p,T,X[1]/(X[1]+X[end]));
   //  SI.SpecificHeatCapacity cp_H2O=Modelica.Media.Water.IF97_Utilities.cp_pT(p,T);
+
+  //  SI.MassFraction X[:]=state.X "mass fraction m_NaCl/m_Sol";
+  //    SI.MassFraction X[:]=cat(1,state.X[1:end-1],{1-sum(state.X[1:end-1])}) "Doesn't work in function in OM";
+      SI.MassFraction X[size(X,1)] "OM workaround for cat";
   algorithm
-  Cp_appmol:={0,if b[KCl] > 0 then
+      X[1:end-1]:=state.X[1:end-1] "OM workaround for cat";
+      X[end]:=1-sum(state.X[1:end-1]) "OM workaround for cat";
+
+    Cp_appmol:={0,if b[KCl] > 0 then
       SpecificEnthalpies.appMolarHeatCapacity_KCl_White(T, b[KCl]) else 0,if b[
       CaCl2] > 0 then SpecificEnthalpies.appMolarHeatCapacity_CaCl2_White(T, b[
       CaCl2]) else 0,0,0} "Apparent molar enthalpy of salts";

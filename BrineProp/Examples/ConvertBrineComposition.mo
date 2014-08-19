@@ -67,8 +67,8 @@ Real gasLiquidRatio=0.8475 "GVF/(1-GVF) at STP";*/
         PartialPressures[3])}/(1 - props.x)
     "gas mass in liquid phase per fluid mass";
 
-  Real V_l = sum(props.X_l[6:8]./Medium.MM_gas)*22.4/props.X_l[end]
-    "Volume dissolved gas would have at standard conditions";
+  Real V_l = sum(props.X_l[6:8]./Medium.MM_gas)*22.4/props.X_l[Medium.nX]
+    "Volume dissolved gas would have at standard conditions / OM workaround: Medium.nX instead of end";
   SI.MassConcentration TDS= sum(props.X_l[1:Medium.nX_salt])*props.d_l;
   Real[:] y_l=if not max(props.X_l[6:8])>0 then fill(0,Medium.nX_gas) else props.X_l[6:8]./Medium.MM_gas / sum(props.X_l[6:8]./Medium.MM_gas)
     "mol fraction of dissolved gases";

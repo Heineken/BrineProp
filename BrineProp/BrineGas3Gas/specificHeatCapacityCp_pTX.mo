@@ -7,7 +7,7 @@ function extends specificHeatCapacityCp_pTX
   import Modelica.Media.Water;
 
 protected
-    SingleGasNasa.ThermodynamicState state=SingleGasNasa.ThermodynamicState(p=0,T=T);
+    SingleGases.H2O.ThermodynamicState state=SingleGases.H2O.ThermodynamicState(p=0,T=T);
     SI.SpecificHeatCapacity cp_CO2=SingleGases.CO2.specificHeatCapacityCp(state);
     SI.SpecificHeatCapacity cp_N2=SingleGases.N2.specificHeatCapacityCp(state);
     SI.SpecificHeatCapacity cp_CH4=SingleGases.CH4.specificHeatCapacityCp(state);
@@ -35,7 +35,7 @@ algorithm
     cp := cp_vec * waterSaturatedComposition_pTX(p,T,X[end - nX+1:end]);
   else */
 //    cp := cp_vec * X[end - nX+1:end];
-    cp := cp_vec * cat(1,X[1:end-1],{if min(X)>0 then X[end] else 1});
+  cp := cp_vec * cat(1,X[1:end-1],{if min(X)>0 then X[end] else 1});
     //  end if;
 
 /*  print("cp_CO2: "+String(cp_vec[1])+" J/kg");

@@ -28,25 +28,6 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
   constant String OutputDir=Modelica.Utilities.Files.loadResource("modelica://BrineProp/Resources/output/");
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   function Xi2X "calculates the full mass vector X from Xi"
     extends Modelica.Icons.Function;
     input SI.MassFraction Xi[:] "Mass fractions of mixture";

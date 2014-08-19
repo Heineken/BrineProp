@@ -5,6 +5,15 @@ package BrineGas3Gas "Gas mixture of CO2+N2+CH4+H2O"
     final MM_vec = {M_CO2,M_N2,M_CH4, M_H2O},
     final nM_vec = {nM_CO2,nM_N2,nM_CH4, nM_CH4});
 
+
+ redeclare model extends BaseProperties
+ //Dummy for OM
+ end BaseProperties;
+
+/* redeclare record extends ThermodynamicState
+ //Dummy for OM
+ end ThermodynamicState;
+*/
   constant Boolean waterSaturated=false "activates water saturation";
 
 
@@ -71,10 +80,9 @@ protected
   // assert(min(X)>0,"Cannot calculate with empty composition.");
     if not min(X)>0 and not ignoreNoCompositionInBrineGas then
       print("No gas composition, assuming water vapour.(BrineProp.BrineGas_3Gas.density_pTX)");
-  //  else
-  //    X_:=X;
     end if;
     R_gas :=Modelica.Constants.R*sum(cat(1,X[1:end-1],{(if min(X)>0 then X[end] else 1)})./ MM_vec);
+
   /*  if waterSaturated then
     R_gas :=sum(Modelica.Constants.R*waterSaturatedComposition_pTX(
         p,
@@ -87,19 +95,6 @@ protected
   //  print("d="+String(d)+" kg/m^3");
   end density_pTX;
 
-
-  redeclare function extends specificHeatCapacityCp
-  "water-saturated heat capacity of gas phase"
-  algorithm
-       cp := specificHeatCapacityCp_pTX(
-          p=state.p,
-          T=state.T,
-          X= if waterSaturated then
-       waterSaturatedComposition_pTX(state.p,state.T,state.X)
-    else state.X);
-  //  else state.X[end - nX + 1:end]);
-
-  end specificHeatCapacityCp;
 
 
 
@@ -168,7 +163,7 @@ protected
 
   redeclare function specificEnthalpy_pTX
   "calculation of specific enthalpy of gas mixture"
-    import Modelica.Media.IdealGases.Common.SingleGasNasa;
+  //  import Modelica.Media.IdealGases.Common.SingleGasNasa;
     import Modelica.Media.IdealGases.SingleGases;
     extends Modelica.Icons.Function;
     input AbsolutePressure p "Pressure";
@@ -180,14 +175,17 @@ protected
     SI.SpecificEnthalpy h_H2O=max(h_H2O_sat, Modelica.Media.Water.WaterIF97_pT.specificEnthalpy_pT(p,T))
     "to make sure it is gaseous";
 
-    SingleGasNasa.ThermodynamicState state=SingleGasNasa.ThermodynamicState(p=0,T=T);
+    SingleGases.H2O.ThermodynamicState state=SingleGases.H2O.ThermodynamicState(p=0,T=T);
     SI.SpecificEnthalpy h_CO2=SingleGases.CO2.specificEnthalpy(state);
     SI.SpecificEnthalpy h_N2=SingleGases.N2.specificEnthalpy(state);
     SI.SpecificEnthalpy h_CH4=SingleGases.CH4.specificEnthalpy(state);
 
     SI.SpecificEnthalpy[:] h_vec={h_CO2,h_N2,h_CH4,h_H2O};
-
+    SI.MassFraction X_[size(X,1)] "OM workaround for cat";
   algorithm
+    X_[1:end-1]:=X[1:end-1] "OM workaround for cat";
+    X_[end]:=if min(X)>0 then X[end] else 1 "OM workaround for cat";
+
     if debugmode then
       print("Running specificEnthalpy_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
     end if;
@@ -196,8 +194,8 @@ protected
       print("No gas composition, assuming water vapour.(BrineProp.BrineGas_3Gas.specificEnthalpy_pTX)");
     end if;
 
-  //  h := h_vec*X "mass weighted average";
-    h := h_vec * cat(1,X[1:end-1],{(if min(X)>0 then X[end] else 1)});
+    h := h_vec*X_ "mass weighted average, OM workaround for cat";
+  //h := h_vec * cat(1,X[1:end-1], {if min(X)>0 then X[end] else 1}) "Doesn't work in function in OM";
 
   /*  print("h_CO2: "+String(h_CO2)+" J/kg");
   print("h_N2: "+String(h_N2)+" J/kg");

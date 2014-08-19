@@ -12,6 +12,7 @@ DataDir
 OutputDir
 Examples
 Types
+Utilities
 SaltData
 SaltDataDuan
 Densities
@@ -30,4 +31,3 @@ PartialBrineMultiSaltMultiGasTwoPhase
 Brine5salts3gas
 massToMoleFractions
 Xi2X
-Utilities

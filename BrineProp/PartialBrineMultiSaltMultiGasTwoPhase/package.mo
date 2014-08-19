@@ -482,7 +482,6 @@ protected
     end saturationPressures;
 
 
-
     redeclare replaceable partial function extends setState_pTX
   "finds the VLE iteratively by varying the normalized quantity of gas in the gasphase, calculates the densities"
     input Real[nX_gas + 1] n_g_norm_start= fill(0.1,nX_gas+1)
@@ -875,8 +874,9 @@ protected
     //  extends isobaricExpansionCoefficient;
       input ThermodynamicState state;
       input SI.Density d_l;
-      constant SI.Temperature Delta_T= 1;
       output SI.LinearTemperatureCoefficient beta;
+protected
+      constant SI.Temperature Delta_T= 1;
     algorithm
     //  beta :=d_l*(1/d_l - 1/(density_liquid_pTX(state.p,state.T - Delta_T,state.X,MM_vec)))/Delta_T;
       beta :=(1 - d_l/(density_liq_pTX(

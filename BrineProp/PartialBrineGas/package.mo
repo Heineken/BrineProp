@@ -3,26 +3,23 @@ partial package PartialBrineGas "Medium template for gas mixture of nX_gas gases
   //TODO add inverse functions
 
 
-  extends BrineProp.GasData;
+ extends GasData;
 
 
-  extends Modelica.Media.Interfaces.PartialMixtureMedium(reference_X=cat(1,fill(0,nX-1),{1}));
+ extends Modelica.Media.Interfaces.PartialMixtureMedium(reference_X=cat(1,fill(0,nX-1),{1}));
 
  constant Boolean ignoreNoCompositionInBrineGas=false;
 
 
-redeclare record extends ThermodynamicState
-end ThermodynamicState;
+ redeclare record extends ThermodynamicState
+ //Dummy for OM
+ end ThermodynamicState;
 
 
- redeclare model extends BaseProperties "Base properties of medium"
-    import BrineProp;
-
- //  SI.Pressure p_H2O;
-  //   BrineProp.Partial_Units.Molality y_vec[:]=BrineProp.massToMoleFractions();
-   SI.MoleFraction y_vec[:]=Utilities.massToMoleFractions(X,MM_vec);
+ redeclare replaceable model extends BaseProperties "Base properties of medium"
+    SI.MoleFraction y_vec[:]=Utilities.massToMoleFractions(X,MM_vec);
  equation
-    //   assert(nX_gas==2,"Wrong number of gas mass fractions specified (2 needed - CO2,N2)");
+ //   assert(nX_gas==2,"Wrong number of gas mass fractions specified (2 needed - CO2,N2)");
  //  assert(max(X)<=1 and min(X)>=0, "X out of range [0...1] = "+PowerPlant.vector2string(X)+" (saturationPressure_H2O())");
      MM = y_vec*MM_vec;
  //  R  = Modelica.Constants.R/MM;
@@ -33,6 +30,7 @@ end ThermodynamicState;
      h = specificEnthalpy_pTX(p,T,X);
  //    d=density_pTX(p,T,X);
      (d,R) = density_pTX(p,T,X);
+
      state=ThermodynamicState(p=p,T=T,X=X);
  end BaseProperties;
  constant SI.MolarMass[:] MM_vec;
@@ -117,7 +115,7 @@ constant String gasNames[:]={""};
 
   replaceable function dynamicViscosity_pTX
   "calculation of gas dynamic Viscosity"
-    import NG = Modelica.Media.IdealGases.Common.SingleGasNasa;
+  //    import NG = Modelica.Media.IdealGases.Common.SingleGasNasa;
     input SI.Pressure p;
     input SI.Temperature T;
     input SI.MassFraction[nX] X "Mass fractions of mixture";
@@ -128,7 +126,7 @@ constant String gasNames[:]={""};
 
   replaceable function thermalConductivity_pTX
   "calculation of gas thermalConductivity"
-    import NG = Modelica.Media.IdealGases.Common.SingleGasNasa;
+  //    import NG = Modelica.Media.IdealGases.Common.SingleGasNasa;
     input SI.Pressure p;
     input SI.Temperature T;
     input SI.MassFraction[nX] X "Mass fractions of mixture";
