@@ -56,7 +56,8 @@ partial package PartialBrineMultiSaltMultiGasTwoPhase "Template medium for aqueo
   //  type Pressure_bar = Real(final quantity="Pressure", final unit="bar") "pressure in bar";
 
 
-   redeclare model extends BaseProperties "Base properties of medium"
+   redeclare model extends BaseProperties(d(start=1000))
+  "Base properties of medium"
      import BrineProp;
    //  MassFraction[nX] X_l(start=cat(1,fill(0,nXi),{1}))  "= X cat(1,X_salt/(X[end]*m_l),X[nX_salt+1:end])";
      SI.Density d_l "density of liquid phase";
@@ -823,8 +824,8 @@ protected
       cp:=state.x*cp_gas + (1-state.x)*cp_liq;
 
     //  assert(cp>0 and cp<5000,"T="+String(state.T-273.15)+"K, p="+String(state.p/1e5)+"bar, x="+String(state.x)+", cp_liq="+String(cp_liq)+"J(kgK), cp_gas="+String(cp_gas)+"J(kgK)");
-
     //  print("c_p_liq("+String(state.T)+"degC)="+String(p)+" J/(kg.K)");
+
         annotation (Documentation(info="<html>
                                 <p>In the two phase region this function returns the interpolated heat capacity between the
                                 liquid and vapour state heat capacities.</p>

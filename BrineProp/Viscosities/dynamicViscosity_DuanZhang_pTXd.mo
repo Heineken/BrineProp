@@ -72,7 +72,7 @@ algorithm
 
  for i in 1:nX_salt loop
 //    if X[i]>0 then
-    if molalities[i]>0 then
+    if molalities[i]>1e-8 then
       salt := Salt_Constants[i];
       if not (ignoreLimitSalt_b[i] or (molalities[i]>=0 and molalities[i]<=salt.mola_max_eta)) then
         msg :="Molality of " + salt.name + " is " + String(molalities[i]) + "(X="
@@ -92,7 +92,7 @@ algorithm
       else
         //Duan (available for NaCl and KCl)
         if max(cat(1,salt.a,salt.b,salt.c))==0 then
-          msg :="No coefficients for " + salt.name + " in dynamicViscosity_DuanZhang_pTXd";
+          msg :="No coefficients for " + salt.name + " (b="+String(molalities[i])+" mol/kg) in dynamicViscosity_DuanZhang_pTXd";
         end if;
         b:=molalities[i]/phi;
         A := salt.a[1] + salt.a[2]*T_K + salt.a[3]*T_K^2;

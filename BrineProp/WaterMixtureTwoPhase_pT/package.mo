@@ -35,15 +35,11 @@ constant Integer nX_gas = 0;
   constant Modelica.SIunits.MolarMass M_H2O = 0.018015 "[kg/mol] TODO";
 
 
- redeclare model extends BaseProperties "Base properties of medium"
-
+ redeclare model extends BaseProperties(d(start=1000))
+  "Base properties of medium"
    Real GVF=x*d/d_g "gas void fraction";
    Modelica.SIunits.Density d_l = Modelica.Media.Water.IF97_Utilities.rhol_T(T);
    Modelica.SIunits.Density d_g = Modelica.Media.Water.IF97_Utilities.rhov_T(T);
- /*  Modelica.SIunits.Density d_l = Modelica.Media.Water.IF97_Utilities.rhol_p(p);
-  Modelica.SIunits.Density d_g = Modelica.Media.Water.IF97_Utilities.rhov_p(p);*/
- /*  Modelica.SIunits.Density d_l = Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.rhol_p(p);
-  Modelica.SIunits.Density d_g = Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.rhov_p(p);*/
    Modelica.SIunits.SpecificEnthalpy h_l = bubbleEnthalpy(sat);
    Modelica.SIunits.SpecificEnthalpy h_g = dewEnthalpy(sat);
   // Real x = Medium.vapourQuality(props.state);
@@ -424,6 +420,12 @@ end specificEnthalpy_pT;
 
 redeclare function extends density_pT "to avoid check error"
 end density_pT;
+
+
+  redeclare function extends density "density from state"
+  algorithm
+    d := state.d;
+  end density;
 
 
  annotation (Documentation(info="<html>
