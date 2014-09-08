@@ -6,17 +6,17 @@ An Excel version is available in the [download section](https://github.com/Heine
 
 Compatibility
 -------------
-* Works in Dymola 2014 FD01 with MSL 3.2
-* Works in Dymola 2014 FD01 with MSL 3.2.1
-* Works via FMU in OpenModelica
-* Works via FMU in JModelica
+* Works in Dymola 2014 FD01/2015 with MSL 3.2.1
+* Works in Dymola 2013/2014 FD01 with MSL 3.2 (changes needed, see "Installation" below)
+
+* Works in OpenModelica 1.9.1Beta2 and JModelica 1.14 via FMU.
+* Works partly in OpenModelica, for details see Library documentation (in code).
 
 Installation
 ------------
 Download, unzip and open BrineProp/package.mo
 
-For use with MSL 3.2.1 you need to load the MSL 3.2.1 first via File>Libraries>MSL, then open package,
-after conversion make changes marked with "MSL 3.2.1" in PartialMixtureTwoPhaseMedium to get rid of warnings. After the changes the lib will not work in MSL 3.2).
+For use with MSL 3.2 you need to make changes marked with "MSL 3.2.1" in PartialMixtureTwoPhaseMedium.
 
 Getting started
 ---------------

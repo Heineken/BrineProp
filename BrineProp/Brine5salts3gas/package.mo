@@ -161,7 +161,6 @@ protected
     SI.MolarMass MM_vec_salt[:]=BrineProp.SaltData.MM_salt[1:5];
     SI.Pressure p=state.p;
     SI.Temperature T=state.T;
-
     Types.Molality b[size(X, 1)]=
         Utilities.massToMoleFractions(X,
         cat(1,
@@ -175,15 +174,22 @@ protected
     Types.PartialMolarHeatCapacity[5] Cp_appmol
     "Apparent molar enthalpy of salts";
 
-    SI.SpecificHeatCapacity cp_Driesner=SpecificEnthalpies.specificHeatCapacity_pTX_Driesner(p,T,X[1]/(X[1]+X[end]));
-  //  SI.SpecificHeatCapacity cp_H2O=Modelica.Media.Water.IF97_Utilities.cp_pT(p,T);
+    SI.SpecificHeatCapacity cp_Driesner
+    "=SpecificEnthalpies.specificHeatCapacity_pTX_Driesner(p,T,X[1]/(X[1]+X[end]))";
+
+    //  SI.SpecificHeatCapacity cp_H2O=Modelica.Media.Water.IF97_Utilities.cp_pT(p,T);
 
   //  SI.MassFraction X[:]=state.X "mass fraction m_NaCl/m_Sol";
   //    SI.MassFraction X[:]=cat(1,state.X[1:end-1],{1-sum(state.X[1:end-1])}) "Doesn't work in function in OM";
-      SI.MassFraction X[size(X,1)] "OM workaround for cat";
+      SI.MassFraction X[size(state.X,1)] "OM workaround for cat";
   algorithm
+      if debugmode then
+        print("Running specificHeatCapacityCp_liq("+String(p/1e5)+" bar,"+String(T-273.15)+"degC, X="+Modelica.Math.Matrices.toString(transpose([state.X]))+")");
+      end if;
       X[1:end-1]:=state.X[1:end-1] "OM workaround for cat";
       X[end]:=1-sum(state.X[1:end-1]) "OM workaround for cat";
+  //    assert(state.X[end]>0, "No water in brine.");
+      cp_Driesner:=SpecificEnthalpies.specificHeatCapacity_pTX_Driesner(p,T,X[1]/(X[1] + X[end]));
 
     Cp_appmol:={0,if b[KCl] > 0 then
       SpecificEnthalpies.appMolarHeatCapacity_KCl_White(T, b[KCl]) else 0,if b[

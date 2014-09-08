@@ -56,10 +56,68 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
 <ul>
 <li>no differentials implemented</li>
 <li>1phase-transient calculation does not compile, supposedly due to missing derivatives</li>
-<li>Does not compile in JModelica/OpenModelica</li>
 <li>To switch from MSL 3.2 to MSL 3.2.1 (un)comment code in <code>PartialMixtureTwoPhaseMedium </code>to avoid warnings</li>
 <li>To switch from MSL 3.2.1 to MSL 3.2 (un)comment code in <code>PartialMixtureTwoPhaseMedium </code>to avoid errors</li>
+<li>not fully compatible to OpenModelica(check OK, errors at compiling or simulation)</li>
+<li>not fully compatible to JModelica (String arguments not fully supported)</li>
 </ul>
+<h4>Compatibilty:</h4>
+<table cellspacing=\"2\" cellpadding=\"0\" border=\"1\"><tr>
+<td></td>
+<td><p align=\"center\"><h4>OpenModelica 1.9.1 beta2</h4></p></td>
+<td><p align=\"center\"><h4>JModelica 1.14</h4></p></td>
+</tr>
+<tr>
+<td><p>SingleSaltBrine</p></td>
+<td><p>check</p></td>
+<td><p>?</p></td>
+</tr>
+<tr>
+<td><p>BrineProps1PhaseMinimal</p></td>
+<td><p>check</p></td>
+<td><p>?</p></td>
+</tr>
+<tr>
+<td><p>BrineProps1PhaseFull</p></td>
+<td><p>check</p></td>
+<td><p>?</p></td>
+</tr>
+<tr>
+<td><p>BrineGas</p></td>
+<td><p>check, compile w/ warning</p></td>
+<td><p>?</p></td>
+</tr>
+<tr>
+<td><p>PureWaterMinimal</p></td>
+<td><p>check, compile, simulate</p></td>
+<td><p>error</p></td>
+</tr>
+<tr>
+<td><p>PureWaterFlashing</p></td>
+<td><p>check</p></td>
+<td><p>?</p></td>
+</tr>
+<tr>
+<td><p>BrineProps2PhaseMinimal</p></td>
+<td><p>check</p></td>
+<td><p>?</p></td>
+</tr>
+<tr>
+<td><p>BrineProps2phaseFull</p></td>
+<td><p>check</p></td>
+<td><p>?</p></td>
+</tr>
+<tr>
+<td><p>BrineProps2PhaseMinimal_state</p></td>
+<td><p>check</p></td>
+<td><p>?</p></td>
+</tr>
+<tr>
+<td><p>ConvertBrineComposition</p></td>
+<td><p>check</p></td>
+<td><p>?</p></td>
+</tr>
+</table>
 <h4>TODO:</h4>
 <ul>
 <li>implement differentials</li>
