@@ -14,6 +14,7 @@ package Brine5salts3gas "Two-phase aqueous solution of NaCl, KCl, CaCl2, MgCl2, 
     final nM_salt = Salt_data.nM_salt);
 
 
+
   redeclare function extends setState_pTX "to avoid check error"
   end setState_pTX;
 
@@ -81,7 +82,7 @@ protected
    SI.Temperature T_corr;
  algorithm
   if state.T<273.16 then
-     print("T="+String(state.T)+" too low (<0degC), setting to 0degC in dynamicViscosity_liq");
+     print("T="+String(state.T)+" too low (<0 degC), setting to 0 degC in BrineProp.Brine5salts3gas.dynamicViscosity_liq");
   end if;
   T_corr:= max(273.16,state.T);
 
