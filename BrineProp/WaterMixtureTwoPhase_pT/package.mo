@@ -140,7 +140,7 @@ redeclare record extends ThermodynamicState
   MassFraction X[nX] "Mass fraction of NaCl in kg/kg";*/
   SpecificEnthalpy h "Specific enthalpy";
   SpecificEntropy s "Specific entropy";
-  Density d(start=300) "density";
+  Density d(start=1000) "density";
 //  Real GVF "Gas Void Fraction";
 //  Density d_l(start=300) "density liquid phase";
 //  Density d_g(start=300) "density gas phase";

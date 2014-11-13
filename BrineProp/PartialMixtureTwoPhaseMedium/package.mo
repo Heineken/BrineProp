@@ -40,8 +40,8 @@ redeclare replaceable record extends ThermodynamicState
     max=2,
     start=0)
     "phase of the fluid: 1 for 1-phase, 2 for two-phase, 0 for not known, e.g. interactive use";
-  Density d_l(start=300) "density liquid phase";
-  Density d_g(start=300) "density gas phase";
+  Density d_l(start=1000) "density liquid phase";
+  Density d_g(start=1) "density gas phase";
   MassFraction X_l[nX](start=cat(1,fill(0,nXi),{1}))
     "Mass fraction of NaCl in kg/kg";
   annotation (Documentation(info="<html></html>"));

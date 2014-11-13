@@ -229,16 +229,16 @@ protected
 <p>Use the BaseProperties model to define the actual brine composition(Xi or X), to define the thermodynamic state and calculate the corresponding properties. </p>
 <pre>  props.p = 1e5;
   props.T = 300;
-  props.Xi = {1-4, 7e-4, 6e-005} &QUOT;CO2, N2, CH4&QUOT;
+  props.Xi = {1-4, 7e-4, 6e-005} \"CO2, N2, CH4\"
   d = props.d;
 </pre>
 
 <p>See <code><a href=\"Modelica://BrineProp.Examples.BrineGas\">BrineProp.Examples.BrineGas</a></code> for more usage examples.</p>
-
-  //returns properties for given composition when _pTX functions are called directly
-  //returns properties for given gas composition + saturated water when called via state functions ()e.g. density)
-  //TODO: Why?
-  //speedup: calculate water saturated composition externally once and pass on
+<p>Returns properties for given composition when _pTX functions are called directly.
+  Returns properties for given gas composition + saturated water when called via state functions (e.g. density)
+</p>  
 <p>All calculated values are returned in SI units and are mass based.</p>
+<h4>Potential speedup:</h4>
+<p>Calculate water saturated composition externally once (instead of separately in each property function) and pass on.</p>
 </html>"));
 end BrineGas3Gas;

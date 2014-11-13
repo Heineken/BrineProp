@@ -158,10 +158,9 @@ protected
 <p>Use the BaseProperties model to define the actual brine composition(Xi or X), to define the thermodynamic state and calculate the corresponding properties. </p>
 <pre>  props.p = 1e5;
   props.T = 300;
-  props.Xi = {0.08, 0.004, 0.12, 0.001, 0.002} &QUOT;NaCl, KCl, CaCl2, MgCl2, SrCl2&QUOT;
+  props.Xi = {0.08, 0.004, 0.12, 0.001, 0.002} \"NaCl, KCl, CaCl2, MgCl2, SrCl2\"
   d = props.d;</pre>
 <p>Pressure and temperature as well as pressure and specific enthalpy can be used to define a thermodynamic state.</p>
-
 <p>All calculated values are returned in SI-Units and are mass based. </p>
 <p><h4>Details</h4></p>
 <p>The model is explicit for p and T, but for h(p,T) the inverse function T(p,h) is defined. T(p,h) is inverts h(p,T) numerically by bisection, stopping at a given tolerance.</p>

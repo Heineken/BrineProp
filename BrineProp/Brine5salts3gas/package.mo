@@ -250,7 +250,7 @@ protected
 <p>Use the BaseProperties model to define the actual brine composition(Xi or X), to define the thermodynamic state and calculate the corresponding properties. </p>
 <pre>  props.p = 1e5;
   props.T = 300;
-  props.Xi = {0.08, 0.004, 0.12, 0.001, 0.002, 1-4, 7e-4, 6e-005} &QUOT;NaCl, KCl, CaCl2, MgCl2, SrCl2, CO2, N2, CH4&QUOT;
+  props.Xi = {0.08, 0.004, 0.12, 0.001, 0.002, 1-4, 7e-4, 6e-005} \"NaCl, KCl, CaCl2, MgCl2, SrCl2, CO2, N2, CH4\"
   d = props.d;
 </pre>
 
@@ -264,7 +264,7 @@ protected
 <pre align=\"center\">h = x&middot;h_g + (1-x)&middot;h_l</pre>
 <h5>Specific enthalpy of gas phase:</h5>
 <p>Enthalpy of the gas phase is modelled as the enthalpy of an ideal mixture of ideal gases, i.e. it is calculated as the mass weighted average of the individual gas enthalpies including water. </p>
-<p align=\"center\"><code>h_g = sum(h&QUOT;<sub>i</sub>&middot;X&QUOT;<sub>i</sub>)</code></p>
+<p align=\"center\"><code>h_g = sum(h\"<sub>i</sub>&middot;X\"<sub>i</sub>)</code></p>
 <p>The individual gas enthalpies are calculated using the functions for ideal gases in Modelica.Media.IdealGases.SingleGases.</p>
 <h5>Specific enthalpy of liquid phase: </h5>
 <p>Enthalpy of the liquid phase is assembled from the enthalpy of a NaCl-solution (Driesner) and the apparent molar enthalpies of the salts multiplied by their respective molalities</p>
