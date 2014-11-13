@@ -483,6 +483,7 @@ protected
     end saturationPressures;
 
 
+
     redeclare replaceable partial function extends setState_pTX
   "finds the VLE iteratively by varying the normalized quantity of gas in the gasphase, calculates the densities"
     input Real[nX_gas + 1] n_g_norm_start= fill(0.1,nX_gas+1)
@@ -547,7 +548,7 @@ protected
     //  assert(T>273.15,"T too low in PartialBrine_ngas_Newton.()");
 
       if T<273.15 then
-        print("T="+String(T)+" too low (<0degC), setting to 0degC in PartialBrine_ngas_Newton.setState_pTX()");
+        print("T="+String(T)+" too low (<0 degC), setting to 0 degC in BrineProp.PartialBrineMultiSaltMultiGasTwoPhase.setState_pTX()");
       end if;
       T2:= max(273.16,T);
 
@@ -735,6 +736,7 @@ protected
       end if "TwoPhaseWater";
 
       d:=1/(x/d_g + (1 - x)/d_l);
+    //  d:=1/(x/max(1e-8,d_g) + (1 - x)/d_l);
     //  print(String(z)+" (p="+String(p_gas[1])+" bar)");
 
     // X_g:=if x>0 then (X-X_l*(1-x))/x else fill(0,nX);
@@ -750,14 +752,15 @@ protected
         s=0,
         d=d,
         d_l=d_l,
-        d_g=d_g,
+        d_g=max(0,d_g),
         phase=if x>0 and x<1 then 2 else 1) "phase_out";
     /*    h_g=h_g,
     h_l=h_l,
     p_H2O=p_H2O,
     p_gas=p_gas[1:nX_gas],
     p_degas=p_degas
-
+    X_l={max(0,X_l[i]) for i in 1:nX}, didn't help!
+    X_g={max(0,X_g[i]) for i in 1:nX_gas+1}, didn't help"
 */
 
       annotation (Diagram(graphics={Text(
