@@ -62,20 +62,28 @@ protected
   Real mu_l0_CH4_RT;
   Real lambda_CH4_Na;
   Real xi_CH4_NaCl;
+  String msg;
 algorithm
   if not p_gas>0 then
     X_gas:=0;
   else
    if outOfRangeMode==1 then
      if (273>T or T>273+250) then
-        print("T="+String(T)+" K, but  CH4 solubility  calculation is only valid for temperatures between 0 and 250degC (Partial_Gas_Data.solubility_CH4_pTX_Duan1992)");
+        msg:="T=" + String(T) +
+          " K, but  CH4 solubility  calculation is only valid for temperatures between 0 and 250degC (Partial_Gas_Data.solubility_CH4_pTX_Duan1992)";
      end if;
      if (p<1e5 or p>2000e5) then
-        print("p="+String(p/1e5)+" bar, but CH4 fugacity calculation only valid for pressures between 1 and 1600 bar (Partial_Gas_Data.solubility_CH4_pTX_Duan1992)");
+        msg :="p=" + String(p/1e5) +
+          " bar, but CH4 fugacity calculation only valid for pressures between 1 and 1600 bar (Partial_Gas_Data.solubility_CH4_pTX_Duan1992)";
      end if;
-   elseif outOfRangeMode==2 then
-     assert(273.15<=T and T<=273+250, "T="+String(T-273.15)+"degC, but CH4 solubility calculation is only valid for temperatures between 0 and 250degC (solubility_CH4_pTX_Duan1992)");
-     assert(p<=1600e5, "p="+String(p/1e5)+"bar, but CH4 fugacity calculation only valid for pressures up to 1600 bar (solubility_CH4_pTX_Duan1992)");
+   end if;
+
+    if msg<>"" then
+      if outOfRangeMode==1 then
+       print(msg);
+      elseif outOfRangeMode==2 then
+       assert(false,msg);
+      end if;
    end if;
 
   //  (molefractions,molalities):=massFractionsToMoleFractions(X, MM);
@@ -89,7 +97,7 @@ algorithm
     m_Mg :=molalities[MgCl2];
     m_SO4 :=0 "TODO";
 
-    phi_CH4 :=fugacity_CH4_Duan1992(p_gas+p_H2O, T);
+    phi_CH4 :=fugacity_CH4_Duan1992(p_gas + p_H2O, T);
     mu_l0_CH4_RT :=Par_CH4_Duan2006(p_gas+p_H2O,T,mu_l0_CH4_RT_c);
     lambda_CH4_Na :=Par_CH4_Duan2006(p_gas+p_H2O,T,lambda_CH4_Na_c);
     xi_CH4_NaCl :=Par_CH4_Duan2006(p_gas+p_H2O,T,xi_CH4_NaCl_c);

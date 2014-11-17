@@ -14,7 +14,6 @@ package Brine5salts3gas "Two-phase aqueous solution of NaCl, KCl, CaCl2, MgCl2, 
     final nM_salt = Salt_data.nM_salt);
 
 
-
   redeclare function extends setState_pTX "to avoid check error"
   end setState_pTX;
 

@@ -13,7 +13,7 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
   "ignore Tmin in appMolarEnthalpy_KCl_White and appMolarHeatCapacity_KCl_White";
  constant Boolean ignoreLimitInh_CaCl2_Tmin=true
   "ignore Tmin in appMolarEnthalpy_CaCl2_White and appMolarHeatCapacity_CaCl2_White";
- constant Boolean[5] ignoreLimitSalt_p={false,false,false,false,false}
+ constant Boolean[5] ignoreLimitSalt_p={false,true,true,false,false}
   "ignore pressure limits";
  constant Boolean[5] ignoreLimitSalt_T={false,false,false,false,false}
   "ignore temperature limits";

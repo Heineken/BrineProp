@@ -1,14 +1,9 @@
 within BrineProp.GasData;
-function solubility_CH4_pTX_Harting "..."
-//from Harting1981, considering only NaCl
+function solubility_CH4_pTX_Harting
+  //from Harting1981 (not used)
+  //made for NaCl, considering other salts via conversion factors
   extends partial_solubility_pTX;
 
-/*  input SI.Pressure p;
-  input SI.Temp_K T;
-  input SI.MassFraction X[:] "mass fractions m_x/m_H2O";
-  input SI.MolarMass MM[:] "molar masses of components";
-  output SI.MassFraction c_gas "gas concentration in kg_gas/kg_H2O";
-*/
 protected
   Types.Molality molalities[size(X, 1)]=
       Utilities.massToMoleFractions(X,
@@ -21,17 +16,25 @@ protected
 //  Real c = X[1]/Salt_Data.M_NaCl/X[end];
   Real c = sum(molalities[1:2])+sum(molalities[3:5])*1.8;
   Real p_atm = p_gas/101325;
+  String msg;
 algorithm
 // print("mola_CH4("+String(p_gas)+","+String(T-273.16)+") (solubility_CH4_pTX_Duan2006)");
-assert(false,"wo?");
-//  assert(273<=T and T<=400, "T="+String(T)+" K, but N2 solubility calculation is only valid for temperatures between 0 and 127degC");
- if 273>T or  T>400 then
-    print("T="+String(T)+" K, but N2 solubility calculation is only valid for temperatures between 0 and 127degC (Partial_Gas_Data.solubility_N2_pTX_Duan2006())");
-  end if; /**/
-  assert(p>=1e5 and p<=600e5, "p="+String(p/1e5)+" bar, but N2 solubility calculation only valid for pressures between 1 and 600 bar");
-//  assert(molalities[NaCl]<6, "mola[NaCl]="+String(molalities[NaCl])+" mol/kg, but N2 solubility calculation only valid for salinities up to 6 mol/kg");
+  if 273>T or  T>400 then
+    msg:="T=" + String(T) + " K, but CH4 solubility calculation is only valid for temperatures between 0 and 127degC (Partial_Gas_Data.solubility_CH4_pTX_Harting)";
+  end if;
+  if (p<1e5 or p>600e5) then
+    msg:="p=" + String(p/1e5) + " bar, but CH4 solubility calculation only valid for pressures between 1 and 600 bar (Partial_Gas_Data.solubility_CH4_pTX_Harting)";
+  end if;
   if molalities[1]>6 then
-    print("mola[NaCl]="+String(molalities[1])+" mol/kg, but N2 solubility calculation only valid for salinities up to 6 mol/kg");
+    msg :="mola[NaCl]=" + String(molalities[1]) + " mol/kg, but N2 solubility calculation only valid for salinities up to 6 mol/kg (Partial_Gas_Data.solubility_CH4_pTX_Harting)";
+  end if;
+
+  if msg<>"" then
+    if outOfRangeMode==1 then
+     print(msg);
+    elseif outOfRangeMode==2 then
+     assert(false,msg);
+    end if;
   end if;
 
 //page 19

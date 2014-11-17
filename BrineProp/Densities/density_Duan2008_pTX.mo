@@ -131,10 +131,6 @@ algorithm
           print(msg);
         elseif outOfRangeMode==2 then
           assert(false,msg);
-        /*assert(m[i] >= 0 and m[i] <= salt.mola_max_rho, "Molality of "+salt.name+" is "+String(m[i]) + ", but must be between 0 and "+ String(salt.mola_max_rho) + " mol/kg");
-          assert(ignoreLimitSalt_T[i] or (T >= salt.T_min_rho and T <= salt.T_max_rho), "Temperature is "+String(SI.Conversions.to_degC(T)) + "degC, but for " + salt.name + " must be between " + String(SI.Conversions.to_degC(salt.T_min_rho)) + "degC and " + String(SI.Conversions.to_degC(salt.T_max_rho)) + "degC");
-          assert(ignoreLimitSalt_p[i] or (p >= salt.p_min_rho and p <= salt.p_max_rho), "Pressure is " + String(p_bar) + " bar, but for "+salt.name + " must be between " + String(salt.p_min_rho*1e-5) + " bar and " + String(salt.p_max_rho*1e-5) + " bar");
-        */
         end if;
       end if;
 
