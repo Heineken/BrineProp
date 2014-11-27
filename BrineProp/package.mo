@@ -14,11 +14,11 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
  constant Boolean ignoreLimitInh_CaCl2_Tmin=true
   "ignore Tmin in appMolarEnthalpy_CaCl2_White and appMolarHeatCapacity_CaCl2_White";
  constant Boolean[5] ignoreLimitSalt_p={false,true,true,false,false}
-  "ignore pressure limits";
+  "ignore pressure limits            {NaCl, KCl, CaCl2, MgCl2, SrCl2}";
  constant Boolean[5] ignoreLimitSalt_T={false,false,false,false,false}
-  "ignore temperature limits";
+  "ignore temperature limits         {NaCl, KCl, CaCl2, MgCl2, SrCl2}";
  constant Boolean[5] ignoreLimitSalt_b={false,false,false,false,false}
-  "ignore salinity limits";
+  "ignore salinity limits            {NaCl, KCl, CaCl2, MgCl2, SrCl2}";
 // constant Boolean[5] ignoreLimitSalt_visc={false,false,false,false,false};
   constant SI.MolarMass M_H2O = Modelica.Media.Water.waterConstants[1].molarMass
   "0.018015 [kg/mol]";
@@ -26,6 +26,25 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
   constant String DataDir=Modelica.Utilities.Files.loadResource("modelica://BrineProp/Resources/Data/");
   /* Set the path of the output directory */
   constant String OutputDir=Modelica.Utilities.Files.loadResource("modelica://BrineProp/Resources/output/");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   annotation (Documentation(info="<html>

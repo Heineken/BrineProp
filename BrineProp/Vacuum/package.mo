@@ -38,8 +38,6 @@ package Vacuum "Medium with zero properties"
   end density_pTX;
 
 
-
-
   redeclare function extends dynamicViscosity
   "water-saturated  thermal conductivity of water"
   //very little influence of salinity

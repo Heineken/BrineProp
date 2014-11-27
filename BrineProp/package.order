@@ -10,7 +10,6 @@ ignoreLimitSalt_b
 M_H2O
 DataDir
 OutputDir
-Types
 Utilities
 SaltData
 SaltDataDuan
@@ -18,15 +17,16 @@ Densities
 SpecificEnthalpies
 Viscosities
 Examples
+Types
 PartialBrineMultiSaltOnePhase
-BrineDriesner
 Brine5salts
 BrineDuan
+BrineDriesner
 PartialBrineGas
-GasData
 BrineGas3Gas
+Vacuum
+GasData
 PartialMixtureTwoPhaseMedium
 WaterMixtureTwoPhase_pT
 PartialBrineMultiSaltMultiGasTwoPhase
 Brine5salts3gas
-Vacuum
