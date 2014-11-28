@@ -2,8 +2,8 @@ within BrineProp;
 package BrineGas3Gas "Gas mixture of CO2+N2+CH4+H2O"
   extends PartialBrineGas(
     final substanceNames={"carbondioxide","nitrogen","methane","water"},
-    final MM_vec = {M_CO2,M_N2,M_CH4, M_H2O},
-    final nM_vec = {nM_CO2,nM_N2,nM_CH4, nM_CH4});
+    final MM_vec = {M_CO2,M_N2,M_CH4,M_H2O},
+    final nM_vec = {nM_CO2,nM_N2,nM_CH4,nM_CH4});
 
 
  redeclare model extends BaseProperties
@@ -94,6 +94,8 @@ protected
   //  end if;
   //  print("d="+String(d)+" kg/m^3");
   end density_pTX;
+
+
 
 
   redeclare function extends dynamicViscosity

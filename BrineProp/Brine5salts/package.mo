@@ -1,31 +1,40 @@
 within BrineProp;
 package Brine5salts "One-phase (liquid) multisalt brine solution"
+  extends SpecificEnthalpies;
+
+  extends Densities;
+
+  extends Viscosities;
+
   extends BrineProp.PartialBrineMultiSaltOnePhase(
-    redeclare package Salt_data = BrineProp.SaltDataDuan,
     final saltNames = {"sodium chloride","potassium chloride","calcium chloride","magnesium chloride","strontium chloride"},
+    final MM_salt = {M_NaCl,M_KCl,M_CaCl2,M_MgCl2,M_SrCl2},
+    final nM_salt = {nM_NaCl,nM_KCl,nM_CaCl2,nM_MgCl2,nM_SrCl2});
+/*    redeclare package Salt_data = BrineProp.SaltDataDuan,
     final MM_salt = Salt_data.MM_salt,
-    final nM_salt = Salt_data.nM_salt);
+    final nM_salt = Salt_data.nM_salt*/
 
 
-  redeclare function extends density_pTX
-  /*redeclare function density_pTX
-  extends Densities.density_Duan2008_pTX;*/
-  algorithm
-  //    print("MM:"+String(size(MM,1))+" "+String(MM[1]));
-    d := Densities.density_Duan2008_pTX(p,T,X,MM_vec)
-    "Defined in Salt_Data_Duan";
+  redeclare function density_pTX
+    extends density_Duan2008_pTX(MM_vec=cat(1,MM_salt, {M_H2O}));
+     //TODO should take MM_vec;
+
+  //  extends Densities.density_Duan2008_pTX(MM_vec=MM_vec);
+  /*algorithm 
+//   print("density_liquid_pTX: "+String(p*1e-5)+" bar,"+String(T)+" K->"+String(d)+"kg/m^3");
+  d := Densities.density_Duan2008_pTX(p,T,X,MM_vec);*/
   //  d := Brine_Driesner.density_pTX(p,T,X[1:nX_salt],MM_salt);
   //  d := Modelica.Media.Water.WaterIF97_pT.density_pT(p,T)  "*(1+sum(X[1:nX_salt]))/X[end]";
-
-  //   print("density_liquid_pTX: "+String(p*1e-5)+" bar,"+String(T)+" K->"+String(d)+"kg/m^3");
-
   end density_pTX;
 
 
- redeclare function extends specificEnthalpy_pTX
+ redeclare function specificEnthalpy_pTX
  // Partial_Units.Molality molalities = massFractionsToMoleFractions(X, MM_vec);
  //  SI.SpecificEnthalpy h_H2O := Modelica.Media.Water.WaterIF97_pT.specificEnthalpy_pT(p, T) "H2O";
- algorithm
+ extends specificEnthalpy_pTX_liq_Francke_cp(MM_vec=MM_salt);
+ /*algorithm 
+    h := specificEnthalpy_pTX_liq_Francke_cp(p,T,X);
+*/
  //    h_app[1] :=Brine_Driesner.specificEnthalpy_pTX(p,T,X) "NaCl";
  /*    h_app[1] :=apparentMolarEnthalpy_NaCl(p,T) "NaCl";
     h_app[2] := 0 "apparentMolarEnthalpy_KCl_Holmes1983(T)KCl";
@@ -37,7 +46,7 @@ package Brine5salts "One-phase (liquid) multisalt brine solution"
 */
 
  //    h := SpecificEnthalpies.specificEnthalpy_pTX_Driesner(p,T,X);
-     h := BrineProp.SpecificEnthalpies.specificEnthalpy_pTX_liq_Francke_cp(p,T,X);
+ //    h := BrineProp.SpecificEnthalpies.specificEnthalpy_pTX_liq_Francke_cp(p,T,X);
 
  //  print(String(p*1e-5)+" bar,"+String(T)+" K->"+String(h)+" J/kg (Brine_Duan_Multi_TwoPhase_ngas_3.specificEnthalpy_liq_pTX)");
  //print("h="+String(X[1])+"*"+String(h_vec[1])+"="+String(X[1:nX_salt]*h_vec));
@@ -61,52 +70,15 @@ protected
        X,
        d,
        MM_vec,
-       Salt_data.saltConstants);
+       saltConstants);
  end dynamicViscosity_pTXd;
 
 
   redeclare function extends specificHeatCapacityCp
   "calculation of liquid specific heat capacity from apparent molar heat capacities"
-    extends BrineProp.SaltDataDuan.defineSaltOrder;
-protected
-    SI.MolarMass MM_vec_salt[:]=BrineProp.SaltData.MM_salt[1:5];
-    SI.Pressure p=state.p;
-    SI.Temperature T=state.T;
-    SI.MassFraction X[:]=state.X "mass fraction m_NaCl/m_Sol";
-
-    Types.Molality b[size(X, 1)]=
-        Utilities.massToMoleFractions(X,
-        cat(1,
-            MM_vec_salt,
-            fill(-1, size(X, 1) - size(MM_vec_salt, 1))));
-
-  /*  Real cp_by_cpWater[:]={0,
-      SpecificEnthalpies.HeatCapacityRatio_KCl_White(T, b[KCl]),
-      SpecificEnthalpies.HeatCapacityRatio_CaCl2_White(T, b[CaCl2]),
-      0,0} "cp/cp_H2O of salt solutions";*/
-    Types.PartialMolarHeatCapacity[5] Cp_appmol
-    "Apparent molar enthalpy of salts";
-
-    SI.SpecificHeatCapacity cp_Driesner=SpecificEnthalpies.specificHeatCapacity_pTX_Driesner(p,T,X[1]/(X[1]+X[end]));
-  //  SI.SpecificHeatCapacity cp_H2O=Modelica.Media.Water.IF97_Utilities.cp_pT(p,T);
   algorithm
-  Cp_appmol:={0,if b[KCl] > 0 then
-      SpecificEnthalpies.appMolarHeatCapacity_KCl_White(T, b[KCl]) else 0,if b[
-      CaCl2] > 0 then SpecificEnthalpies.appMolarHeatCapacity_CaCl2_White(T, b[
-      CaCl2]) else 0,0,0} "Apparent molar enthalpy of salts";
-  //    Cp_appmol:={(if b[i] > 0 and cp_by_cpWater[i]>0 then ((1 .+ MM_vec_salt[i] .* b[i]) .* cp_by_cpWater[i] .- 1)*cp_H2O ./ b[i] else 0) for i in 1:5};
-
-      cp := (X[NaCl]+X[end])*cp_Driesner + X[end]*b[2:5]*(Cp_appmol[2:5]);
-
-  //  cp:=(specificEnthalpy_pTX(state.p,state.T+.1,state.X)-state.h)/.1;
-  //  cp := Modelica.Media.Water.IF97_Utilities.cp_pT(state.p, state.T)+mola[1:size(MM_vec_salt,1)];
-  //  print("Cp_appmol: "+PowerPlant.vector2string(Cp_appmol)+" J/kg/K");
-  //  print("cp_Driesner("+String(cp_Driesner)+")= J/(kg.K)");
-
-      annotation (Documentation(info="<html>
-                                <p>In the two phase region this function returns the interpolated heat capacity between the
-                                liquid and vapour state heat capacities.</p>
-                                </html>"));
+      cp:=specificHeatCapacityCp_pTX_liq_Francke(p=state.p,T=state.T,X=state.X,
+          MM_vec=MM_salt);
   end specificHeatCapacityCp;
 
 
@@ -138,12 +110,12 @@ protected
      print("T="+String(T)+" too low (<0 degC), setting to 0 degC in PartialBrine_ngas_Newton.quality_pTX()");
   end if;
      T_corr:= max(273.16,T);
-    eta := Viscosities.dynamicViscosity_Duan_pTX(
+    eta := dynamicViscosity_Duan_pTX(
        p,
        T_corr,
        X,
        MM_vec,
-       Salt_data.saltConstants);
+       saltConstants);
  end dynamicViscosity_pTX;
 
 

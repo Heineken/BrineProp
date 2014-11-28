@@ -1,5 +1,6 @@
 within BrineProp;
 partial package PartialBrineMultiSaltOnePhase "Template medium for  one-phase aqueous solution of m Salts and n Gases based on PartialMediaMixtureMedium"
+  extends PartialFlags;
 
 
   extends Modelica.Media.Interfaces.PartialMixtureMedium(
@@ -26,9 +27,6 @@ partial package PartialBrineMultiSaltOnePhase "Template medium for  one-phase aq
 
   constant String explicitVars = "ph"
   "set of variables the model is explicit for, may be set to all combinations of ph or pT, setting pT should speed up the model in pT cases";
-
-
- replaceable package Salt_data = BrineProp.SaltData;
 
  constant SI.MolarMass[:] MM_salt "TODO: redundant with MM_vec";
  constant Integer[:] nM_salt "number of ions per molecule";
@@ -92,6 +90,8 @@ end ThermodynamicState;
    state.T = T;
    state.d = d;
    state.X = X;
+ /*algorithm 
+  print("MM_vec: "+String(size(MM_vec,1)));*/
    annotation (Documentation(revisions="<html>
 
 </html>"));

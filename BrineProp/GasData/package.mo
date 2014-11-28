@@ -8,6 +8,8 @@ package GasData "Molar masses and ion numbers of gases"
   end GasConstants;*/
 //  constant Real[:] MM_gas;
 
+  extends PartialFlags;
+
   constant SI.MolarMass M_CO2 = Modelica.Media.IdealGases.SingleGases.CO2.data.MM
   "0.0440095 [kg/mol]";
   constant Integer nM_CO2 = 1 "number of ions per molecule";
@@ -32,6 +34,32 @@ package GasData "Molar masses and ion numbers of gases"
   
  constant Real[:] MM_gas = {
     M_CO2,M_N2};*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   annotation (Documentation(info=""));

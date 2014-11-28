@@ -13,6 +13,7 @@ function density_Duan2008_pTX
   input SI.MolarMass MM_vec[:] "molar masses of components";
 
   output SI.Density d;
+//SI.MolarMass MM_vec[:] "molar masses of components";
 protected
  parameter Integer nX_salt=size(X,1)-1;
 
@@ -77,12 +78,9 @@ protected
   Real[23] c;
 
   BrineProp.SaltDataDuan.SaltConstants salt;
-  constant Types.Molality[:] m=
-      Utilities.massToMoleFractions(X,
-      MM_vec);
+  constant Types.Molality[:] m=Utilities.massToMoleFractions(X,MM_vec);
   SI.Pressure p_sat=Modelica.Media.Water.IF97_Utilities.BaseIF97.Basic.psat(T);
   String msg;
-//  constant Boolean debugmode = true;
 algorithm
   if debugmode then
       print("Running density_Duan2008_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");

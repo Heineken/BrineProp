@@ -1,5 +1,8 @@
 within BrineProp;
 package Viscosities "Viscosity functions"
-    extends Types;
+  extends Types;
+
+  extends PartialFlags;
+
 
 end Viscosities;

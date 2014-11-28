@@ -1,7 +1,8 @@
 within BrineProp.Examples;
 model BrineProps1PhaseMinimal
   "Minimal example for 1-phase brine property model"
-  package Medium = Brine5salts "specify medium";
+  package Medium = Brine5salts(ignoreLimitSalt_p={false,true,true,false,false})
+    "specify medium";
   Medium.BaseProperties props;
 equation
 //specify thermodynamic state

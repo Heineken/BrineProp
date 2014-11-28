@@ -4,28 +4,12 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
  import SI = Modelica.SIunits;
  import Modelica.Utilities.Streams.print;
 
- constant Boolean debugmode = false "print messages in functions";
- constant Integer outOfRangeMode=2
-  "when out of validity range: 0-do nothing, 1-show warnings, 2-throw error";
- constant Boolean ignoreLimitN2_T=false;
- constant Boolean ignoreLimitN2_p=false;
- constant Boolean ignoreLimitInh_KCl_Tmin=true
-  "ignore Tmin in appMolarEnthalpy_KCl_White and appMolarHeatCapacity_KCl_White";
- constant Boolean ignoreLimitInh_CaCl2_Tmin=true
-  "ignore Tmin in appMolarEnthalpy_CaCl2_White and appMolarHeatCapacity_CaCl2_White";
- constant Boolean[5] ignoreLimitSalt_p={false,true,true,false,false}
-  "ignore pressure limits            {NaCl, KCl, CaCl2, MgCl2, SrCl2}";
- constant Boolean[5] ignoreLimitSalt_T={false,false,false,false,false}
-  "ignore temperature limits         {NaCl, KCl, CaCl2, MgCl2, SrCl2}";
- constant Boolean[5] ignoreLimitSalt_b={false,false,false,false,false}
-  "ignore salinity limits            {NaCl, KCl, CaCl2, MgCl2, SrCl2}";
-// constant Boolean[5] ignoreLimitSalt_visc={false,false,false,false,false};
   constant SI.MolarMass M_H2O = Modelica.Media.Water.waterConstants[1].molarMass
   "0.018015 [kg/mol]";
   /* Set the path to the data directory */
-  constant String DataDir=Modelica.Utilities.Files.loadResource("modelica://BrineProp/Resources/Data/");
+  constant String DataDir=Modelica.Utilities.Files.loadResource("modelica://BrineProp/Resources/Data");
   /* Set the path of the output directory */
-  constant String OutputDir=Modelica.Utilities.Files.loadResource("modelica://BrineProp/Resources/output/");
+  constant String OutputDir=Modelica.Utilities.Files.loadResource("modelica://BrineProp/Resources/output");
 
 
 

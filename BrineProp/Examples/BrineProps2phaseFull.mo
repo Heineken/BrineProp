@@ -2,7 +2,7 @@ within BrineProp.Examples;
 model BrineProps2phaseFull
 
 //SPECIFY MEDIUM
-  package Medium = Brine5salts3gas;
+  package Medium = Brine5salts3gas(ignoreLimitN2_T=true);
   //package Medium = Brine_5salts_TwoPhase_3gas(input_dT=true) "also take dT input";
   //package Medium = Brine_5salts_TwoPhase_3gas(input_ph=false) "no ph input expected -> save time";
 
