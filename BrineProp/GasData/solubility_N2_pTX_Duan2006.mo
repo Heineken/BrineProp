@@ -15,6 +15,7 @@ function solubility_N2_pTX_Duan2006 "solubility calculation of N2 in seawater Ma
   output SI.MassFraction c_gas "gas concentration in kg_gas/kg_H2O";
 */
 protected
+  constant String self="BrineProp.GasData.solubility_N2_pTX_Duan2006";
   Real[:] mu_l0_N2_RT_c = { -0.23093813E+02,
                              0.56048525E-01,
                              0.98808898E+04,
@@ -81,13 +82,13 @@ algorithm
     X_gas:=0;
   else
      if not ignoreLimitN2_T and (273>T or T>400) then
-       msg:="T=" + String(T - 273.15) + ", but N2 solubility calculation is only valid for temperatures between 0 and 127 C\nTo ignore set ignoreLimitN2_T=true  (Partial_Gas_Data.solubility_N2_pTX_Duan2006)";
+       msg:="T=" + String(T - 273.15) + ", but N2 solubility calculation is only valid for temperatures between 0 and 127 C\nTo ignore set ignoreLimitN2_T=true ("+self+"\n";
      end if;
-     if (p<1e5 or p>600e5) then
-       msg:="p=" + String(p/1e5) + " bar, but N2 solubility calculation only valid for pressures between 1 and 600 bar (Partial_Gas_Data.solubility_N2_pTX_Duan2006)";
+     if not ignoreLimitN2_p and (p<1e5 or p>600e5) then
+       msg:="p=" + String(p/1e5) + " bar, but N2 solubility calculation only valid for pressures between 1 and 600 bar\nTo ignore set ignoreLimitN2_p=true  ("+self+"\n";
      end if;
      if molalities[NaCl]>6 then
-       msg:="mola[NaCl]=" + String(molalities[NaCl]) + " mol/kg, but N2 solubility calculation only valid for salinities up to 6 mol/kg (Partial_Gas_Data.solubility_N2_pTX_Duan2006)";
+       msg:="mola[NaCl]=" + String(molalities[NaCl]) + " mol/kg, but N2 solubility calculation only valid for salinities up to 6 mol/kg ("+self+"\n";
      end if;
 
     if msg<>"" then

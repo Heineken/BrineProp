@@ -20,13 +20,13 @@ protected
 algorithm
 // print("mola_CH4("+String(p_gas)+","+String(T-273.16)+") (solubility_CH4_pTX_Duan2006)");
   if 273>T or  T>400 then
-    msg:="T=" + String(T) + " K, but CH4 solubility calculation is only valid for temperatures between 0 and 127degC (Partial_Gas_Data.solubility_CH4_pTX_Harting)";
+    msg:="T=" + String(T) + " K, but CH4 solubility calculation is only valid for temperatures between 0 and 127degC (GasData.solubility_CH4_pTX_Harting)";
   end if;
   if (p<1e5 or p>600e5) then
-    msg:="p=" + String(p/1e5) + " bar, but CH4 solubility calculation only valid for pressures between 1 and 600 bar (Partial_Gas_Data.solubility_CH4_pTX_Harting)";
+    msg:="p=" + String(p/1e5) + " bar, but CH4 solubility calculation only valid for pressures between 1 and 600 bar (GasData.solubility_CH4_pTX_Harting)";
   end if;
   if molalities[1]>6 then
-    msg :="mola[NaCl]=" + String(molalities[1]) + " mol/kg, but N2 solubility calculation only valid for salinities up to 6 mol/kg (Partial_Gas_Data.solubility_CH4_pTX_Harting)";
+    msg :="mola[NaCl]=" + String(molalities[1]) + " mol/kg, but N2 solubility calculation only valid for salinities up to 6 mol/kg (GasData.solubility_CH4_pTX_Harting)";
   end if;
 
   if msg<>"" then

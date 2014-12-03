@@ -2,7 +2,8 @@ within BrineProp.Examples;
 model BrineProps2phaseFull
 
 //SPECIFY MEDIUM
-  package Medium = Brine5salts3gas(ignoreLimitN2_T=true);
+//   package Medium = BrineProp.Brine5salts3gas(ignoreLimitN2_T=true);
+   package Medium = BrineProp.Brine5salts3gas(outOfRangeMode=1);
   //package Medium = Brine_5salts_TwoPhase_3gas(input_dT=true) "also take dT input";
   //package Medium = Brine_5salts_TwoPhase_3gas(input_ph=false) "no ph input expected -> save time";
 
@@ -16,6 +17,10 @@ model BrineProps2phaseFull
   //SI.Density 2 = Medium.density_liquid_pTX(props.p,props.T,props.X_l, Medium.MM_vec) "direct density calculation";
   SI.Density GVF= props.GVF "gas volume fraction";
   SI.SpecificEnthalpy h = props.h "effective specific enthalpy";
+
+//RECALCULATE TEMPERATURE
+  SI.Temperature T=Medium.temperature_phX(props.p,props.h,props.X);
+
 //CALCULATE ADDITIONAL PROPERTIES
 // VISCOSITY
   SI.DynamicViscosity eta_l = Medium.dynamicViscosity_liq(props.state)
@@ -59,9 +64,9 @@ model BrineProps2phaseFull
 //SI.SurfaceTension sigma = Modelica.Media.Water.WaterIF97_pT.surfaceTension(sat);
 //  SI.SurfaceTension sigma = Modelica.Media.Water.WaterIF97_pT.surfaceTension(props.sat);
 
-//  Real c_CO2=Partial_Gas_Data.solubility_CO2_pTX_Duan2003(props.p,props.T,props.X,Medium.MM_vec,props.p);
-//  Real c_N2=Partial_Gas_Data.solubility_N2_pTX_Duan2006(props.p,props.T,props.X,Medium.MM_vec,props.p);
-//  Real c=Partial_Gas_Data.solubility_CH4_pTX_Duan2006(props.p,props.T,props.X,Medium.MM_vec,props.p_gas[2]);
+//  Real c_CO2=GasData.solubility_CO2_pTX_Duan2003(props.p,props.T,props.X,Medium.MM_vec,props.p);
+//  Real c_N2=GasData.solubility_N2_pTX_Duan2006(props.p,props.T,props.X,Medium.MM_vec,props.p);
+//  Real c=GasData.solubility_CH4_pTX_Duan2006(props.p,props.T,props.X,Medium.MM_vec,props.p_gas[2]);
 
 /*    SI.Pressure p_degas_CO2=Medium.degassingPressure_CO2_Duan2003(props.p,props.T,props.X,Medium.MM_vec);
   SI.Pressure p_degas_N2=Medium.degassingPressure_N2_Duan2006(props.p,props.T,props.X,Medium.MM_vec);
@@ -96,7 +101,7 @@ equation
   //DEFINE STATE (define 2 variables pT, ph or Td)
   //pT transient
   props.p = 10*1.01325e5;
-  props.T = 273.15+50 "+time";
+  props.T = 273.15+150 "+time";
 
 /*  //ph  
   props.p = 435e5;

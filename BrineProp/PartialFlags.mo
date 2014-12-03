@@ -9,6 +9,10 @@ partial package PartialFlags
     "when out of validity range: 0-do nothing, 1-show warnings, 2-throw error";
     constant Boolean ignoreLimitN2_T=false;
     constant Boolean ignoreLimitN2_p=false;
+    constant Boolean ignoreLimitCO2_T=false;
+    constant Boolean ignoreLimitCO2_p=false;
+    constant Boolean ignoreLimitCH4_T=false;
+    constant Boolean ignoreLimitCH4_p=false;
     // constant Boolean[5] ignoreLimitSalt_visc={false,false,false,false,false};
     constant Boolean[5] ignoreLimitSalt_p={false,false,false,false,false}
     "ignore pressure limits            {NaCl, KCl, CaCl2, MgCl2, SrCl2}";

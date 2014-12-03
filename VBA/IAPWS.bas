@@ -580,7 +580,7 @@ Private Function h5_pT(p, T) As Double
     tau = 1000 / T
     Pi = p
     gamma0_tau = 0
-    For i = 1 To 6
+    For 1 = 1 To 6
         gamma0_tau = gamma0_tau + ni0(i) * Ji0(i) * tau ^ (Ji0(i) - 1)
     Next i
     gammar_tau = 0
@@ -661,10 +661,10 @@ Private Function p3sat_h(h)
     Dim ni: ni = Array(0.600073641753024, -9.36203654849857, 24.6590798594147, -107.014222858224, -91582131580576.8, -8623.32011700662, -23.5837344740032, 2.52304969384128E+17, -3.89718771997719E+18, -3.33775713645296E+22, 35649946963.6328, -1.48547544720641E+26, 3.30611514838798E+18, 8.13641294467829E+37)
     Dim hs As Double: hs = h / 2600
     Dim ps As Double ': ps = 0
-    Dim i As Interior
-    For i = 0 To 13 'CHANGED HERE: reduced by 1, because VBA-Arrays start at 0
+    Dim i As Integer
+    For i = 1 To 14
         ps = ps + ni(i) * (hs - 1.02) ^ Ii(i) * (hs - 0.608) ^ Ji(i)
-    End
+    Next i
     p3sat_h = ps * 22
 End Function
 

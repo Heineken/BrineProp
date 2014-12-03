@@ -7,6 +7,7 @@ function solubility_CH4_pTX_Duan2006 "Duan ZH, Mao SD. (2006) A thermodynamic mo
   extends BrineProp.SaltDataDuan.defineSaltOrder;
 
 protected
+  constant String self="BrineProp.GasData.solubility_CH4_pTX_Duan2006";
   Real[:] mu_l0_CH4_RT_c = { 0.83143711E+01,
                             -0.72772168E-03,
                              0.21489858E+04,
@@ -67,16 +68,14 @@ algorithm
   if not p_gas>0 then
     X_gas:=0;
   else
-   if outOfRangeMode==1 then
-     if (273>T or T>273+250) then
-        msg:="T=" + String(T) +
-          " K, but  CH4 solubility  calculation is only valid for temperatures between 0 and 250degC (Partial_Gas_Data.solubility_CH4_pTX_Duan1992)";
-     end if;
-     if (p<1e5 or p>2000e5) then
-        msg :="p=" + String(p/1e5) +
-          " bar, but CH4 fugacity calculation only valid for pressures between 1 and 1600 bar (Partial_Gas_Data.solubility_CH4_pTX_Duan1992)";
-     end if;
-   end if;
+    if not ignoreLimitCH4_T and (273>T or T>273+250) then
+       msg:="T=" + String(T) +
+         " K, but  CH4 solubility  calculation is only valid for temperatures between 0 and 250 C\nTo ignore set ignoreLimitCH4_T=true ("+self+"\n";
+    end if;
+    if not ignoreLimitCH4_p and (p<1e5 or p>2000e5) then
+       msg :="p=" + String(p/1e5) +
+         " bar, but CH4 fugacity calculation only valid for pressures between 1 and 1600 bar\nTo ignore set ignoreLimitCH4_p=true  ("+self+"\n";
+    end if;
 
     if msg<>"" then
       if outOfRangeMode==1 then
@@ -88,7 +87,7 @@ algorithm
 
   //  (molefractions,molalities):=massFractionsToMoleFractions(X, MM);
     molalities:=Utilities.massToMoleFractions(X, MM_vec);
-  // print("molefractions[NaCl]="+String(molefractions[NaCl])+" (Partial_Gas_Data.solubility_CH4_pTX_Duan1992)");
+  // print("molefractions[NaCl]="+String(molefractions[NaCl])+" (GasData.solubility_CH4_pTX_Duan1992)");
     m_Cl :=molalities[NaCl] + molalities[KCl] + 2*molalities[MgCl2] + 2*
       molalities[CaCl2];
     m_Na :=molalities[NaCl];

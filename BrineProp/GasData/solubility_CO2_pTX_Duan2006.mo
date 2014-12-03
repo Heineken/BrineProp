@@ -12,6 +12,7 @@ solutions containing Na+,K+,Ca2+,Mg2+,Cl-, and SO4_2-. Marine Chemistry 98:131-1
   input SI.Pressure p_gas;
  output SI.MassFraction c_gas "gas concentration in kg_gas/kg_H2O";*/
 protected
+  constant String self="BrineProp.GasData.solubility_CO2_pTX_Duan2006";
   Types.Molality solu "CO2 solubility in mol_CO2/kg H2O";
   Real[:] mu_l0_CO2_RT_c = { 28.9447706,
                         -0.0354581768,
@@ -78,11 +79,11 @@ algorithm
     X_gas:=0;
   else
   // checked in fugacity
-  if T<273 or T>573 then
-      msg :="T=" + String(T) + "K, but CO2 solubility calculation is only valid for temperatures between 0 and 260degC (Partial_Gas_Data.solubility_CO2_pTX_Duan2006)";
+  if not ignoreLimitCO2_T and (T<273 or T>573) then
+      msg :="T=" + String(T) + "K, but CO2 solubility calculation is only valid for temperatures between 0 and 260 C\nTo ignore set ignoreLimitCO2_T=true ("+self+"\n";
       end if;
-   if (p<0 or p>2000e5) then
-      msg :="p=" + String(p/1e5) + " bar, But CO2 fugacity calculation only valid for pressures between 0 and 2000 bar (Partial_Gas_Data.solubility_CO2_pTX_Duan2006)";
+   if not ignoreLimitCO2_p and (p<0 or p>2000e5) then
+      msg :="p=" + String(p/1e5) + " bar, But CO2 fugacity calculation only valid for pressures between 0 and 2000 bar\nTo ignore set ignoreLimitCO2_p=true ("+self+"\n";
    end if;
   if msg<>"" then
     if outOfRangeMode==1 then
