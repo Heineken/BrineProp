@@ -6,7 +6,6 @@ function solubility_N2_pTX_Duan2006 "solubility calculation of N2 in seawater Ma
   http://www.geochem-model.org/wp-content/uploads/2009/09/46-FPE_248_103.pdf"
 //redeclare function extends solubility_N2_pTX
   extends partial_solubility_pTX;
-  extends BrineProp.SaltDataDuan.defineSaltOrder;
 /*  input SI.Pressure p;
   input SI.Temp_K T;
   input SI.MassFraction X[:] "mass fractions m_x/m_H2O";
@@ -15,7 +14,6 @@ function solubility_N2_pTX_Duan2006 "solubility calculation of N2 in seawater Ma
   output SI.MassFraction c_gas "gas concentration in kg_gas/kg_H2O";
 */
 protected
-  constant String self="BrineProp.GasData.solubility_N2_pTX_Duan2006";
   Real[:] mu_l0_N2_RT_c = { -0.23093813E+02,
                              0.56048525E-01,
                              0.98808898E+04,
@@ -50,18 +48,18 @@ protected
   Types.Molality molalities[size(X, 1)]=
       Utilities.massToMoleFractions(X,
       MM_vec);
-  Types.Molality m_Cl=molalities[NaCl] + molalities[KCl] + 2*molalities[MgCl2]
-       + 2*molalities[CaCl2];
-  Types.Molality m_Na=molalities[NaCl];
-  Types.Molality m_K=molalities[KCl];
-  Types.Molality m_Ca=molalities[CaCl2];
-  Types.Molality m_Mg=molalities[MgCl2];
+  Types.Molality m_Cl=molalities[iNaCl] + molalities[iKCl] + 2*molalities[iMgCl2]
+       + 2*molalities[iCaCl2];
+  Types.Molality m_Na=molalities[iNaCl];
+  Types.Molality m_K=molalities[iKCl];
+  Types.Molality m_Ca=molalities[iCaCl2];
+  Types.Molality m_Mg=molalities[iMgCl2];
   Types.Molality m_SO4=0 "TODO";
 
   SI.Pressure p_H2O=Modelica.Media.Water.WaterIF97_pT.saturationPressure(T);
 //  Pressure_bar p_H2O_bar=SI.Conversions.to_bar(p_sat_H2O_Duan2003(T));
 //  Partial_Units.Pressure_bar p_bar=SI.Conversions.to_bar(p);
-  SI.MassFraction X_NaCl = molalities[NaCl]*M_H2O
+  SI.MassFraction X_NaCl = molalities[iNaCl]*M_H2O
     "mole fraction of NaCl in liquid phase";
   SI.MolarVolume v_l_H2O=M_H2O/Modelica.Media.Water.WaterIF97_pT.density_pT(p,T);
   Real phi_H2O = fugacity_H2O_Duan2006N2(p,T);
@@ -75,29 +73,17 @@ protected
   Real mu_l0_N2_RT;
   Real lambda_N2_Na;
   Real xi_N2_NaCl;
-  String msg;
 algorithm
 // print("mola_N2("+String(p_gas)+","+String(T-273.16)+") (solubility_N2_pTX_Duan2006)");
   if not p_gas>0 then
     X_gas:=0;
   else
-     if not ignoreLimitN2_T and (273>T or T>400) then
-       msg:="T=" + String(T - 273.15) + ", but N2 solubility calculation is only valid for temperatures between 0 and 127 C\nTo ignore set ignoreLimitN2_T=true ("+self+"\n";
-     end if;
-     if not ignoreLimitN2_p and (p<1e5 or p>600e5) then
-       msg:="p=" + String(p/1e5) + " bar, but N2 solubility calculation only valid for pressures between 1 and 600 bar\nTo ignore set ignoreLimitN2_p=true  ("+self+"\n";
-     end if;
-     if molalities[NaCl]>6 then
-       msg:="mola[NaCl]=" + String(molalities[NaCl]) + " mol/kg, but N2 solubility calculation only valid for salinities up to 6 mol/kg ("+self+"\n";
-     end if;
 
-    if msg<>"" then
-      if outOfRangeMode==1 then
-       print(msg);
-      elseif outOfRangeMode==2 then
-       assert(false,msg);
-      end if;
-   end if;
+    if AssertLevel>0 then
+     assert(ignoreLimitN2_T or (273<T and T<400), "\nTemperature out of validity range: T=" + String(T - 273.15) + ".\nTo ignore set ignoreLimitN2_T=true",aLevel);
+     assert(ignoreLimitN2_p or (1e5<p and p<600e5),"\nPressure out of validity rangep=" + String(p/1e5) + " bar.\nTo ignore set ignoreLimitN2_p=true",aLevel);
+     assert(ignoreLimitN2_b or molalities[iNaCl]<6,"\nMolality out of validity range: mola[NaCl]=" + String(molalities[iNaCl]) + " mol/kg.\nTo ignore set ignoreLimitN2_b=true",aLevel);
+    end if;
 
     phi_N2 :=fugacity_N2_Duan2006(p_gas+p_H2O, T);
     mu_l0_N2_RT :=Par_N2_Duan2006(p_gas+p_H2O,T,mu_l0_N2_RT_c);

@@ -3,7 +3,7 @@ model BrineProps1PhaseFull
   "Example for 1-phase brine property model using all properties"
 
   //SPECIFY MEDIUM
-  package Medium = Brine5salts;
+  package Medium = Brine5salts(ignoreLimitSalt_T={false,true,false,false,false});
 //package Medium = Modelica.Media.Water.WaterIF97_pT;
 
   Medium.BaseProperties props;

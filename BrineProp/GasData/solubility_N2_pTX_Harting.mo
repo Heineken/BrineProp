@@ -20,27 +20,16 @@ protected
   Real L_rel_c "salinity influence";
   Real L_rel_T "Temperature influence";
 //  Real c = X[1]/Salt_Data.M_NaCl/X[end];
-  Real c = sum(molalities[1:2])+sum(molalities[3:5])*1.8;
+  Real c = sum(molalities[1:2])+sum(molalities[3:5])*1.8
+    "TODO: remove absolute indices";
   Real p_atm = p_gas/101325;
 algorithm
 // print("mola_N2("+String(p_gas)+","+String(T-273.16)+") (solubility_N2_pTX_Duan2006)");
 
-  if 273>T or  T>400 then
-    msg:="T=" + String(T) + " K, but N2 solubility calculation is only valid for temperatures between 0 and 127degC (GasData.solubility_N2_pTX_Harting)";
-  end if;
-  if (p<1e5 or p>600e5) then
-    msg:="p=" + String(p/1e5) + " bar, but N2 solubility calculation only valid for pressures between 1 and 600 bar (GasData.solubility_N2_pTX_Harting)";
-  end if;
-  if molalities[1]>6 then
-    msg :="mola[NaCl]=" + String(molalities[1]) + " mol/kg, but N2 solubility calculation only valid for salinities up to 6 mol/kg (GasData.solubility_N2_pTX_Harting)";
-  end if;
-
-  if msg<>"" then
-    if outOfRangeMode==1 then
-     print(msg);
-    elseif outOfRangeMode==2 then
-     assert(false,msg);
-    end if;
+  if AssertLevel>0 then
+     assert(ignoreLimitN2_T or (273<T and T<400), "\nTemperature out of validity range: T=" + String(T - 273.15) + ".\nTo ignore set ignoreLimitN2_T=true",aLevel);
+     assert(ignoreLimitN2_p or (1e5<p and p<600e5),"\nPressure out of validity rangep=" + String(p/1e5) + " bar.\nTo ignore set ignoreLimitN2_p=true",aLevel);
+     assert(ignoreLimitN2_b or molalities[iNaCl]<6,"\nMolality out of validity range: mola[NaCl]=" + String(molalities[iNaCl]) + " mol/kg.\nTo ignore set ignoreLimitN2_b=true",aLevel);
   end if;
 
 //page 19

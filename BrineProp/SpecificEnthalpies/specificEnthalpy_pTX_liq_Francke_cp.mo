@@ -9,7 +9,7 @@ function specificEnthalpy_pTX_liq_Francke_cp "enthalpy calculation DIY"
   output SI.SpecificEnthalpy h;
 //  constant Real M_NaCl=Salt_Data.M_NaCl "molar mass in [kg/mol]";
 //  output Real val2=H_appmol[CaCl2];
-  extends BrineProp.SaltDataDuan.defineSaltOrder;
+//  extends BrineProp.SaltDataDuan.defineSaltOrder_;
 
 //  SI.MolarMass MM_vec[:]=BrineProp.SaltData.MM_salt[1:5];
 //  SI.MolarMass MM_vec[:];
@@ -41,11 +41,13 @@ protected
 //  SI.SpecificEnthalpy h_H2O =  Modelica.Media.Water.WaterIF97_pT.specificEnthalpy_pT(p, T);
   SI.SpecificEnthalpy h_Driesner = specificEnthalpy_pTX_Driesner(p, T, X[1]/(X[1]+X[end]));
 
-  BrineProp.Types.PartialMolarEnthalpy[:] H_appmol={0,if b[KCl] > 0 then
-      appMolarEnthalpy_KCl_White(T, b[KCl]) else 0,if b[CaCl2] > 0 then
-      appMolarEnthalpy_CaCl2_White(T, b[CaCl2]) else 0,0,0};
+  BrineProp.Types.PartialMolarEnthalpy[:] H_appmol={0,if b[iKCl] > 0 then
+      appMolarEnthalpy_KCl_White(T, b[iKCl]) else 0,if b[iCaCl2] > 0 then
+      appMolarEnthalpy_CaCl2_White(T, b[iCaCl2]) else 0,0,0}
+    "TODO: remove absolute indices";
 algorithm
-  h := (X[NaCl]+X[end])*h_Driesner + X[end]*b[2:5]*H_appmol[2:5];
+  h := (X[iNaCl]+X[end])*h_Driesner + X[end]*b[2:5]*H_appmol[2:5]
+    "TODO: remove absolute indices";
 
 //  print("MM_vec      :"+PowerPlant.vector2string(MM_vec));
 //  print("b                :"+PowerPlant.vector2string(b));

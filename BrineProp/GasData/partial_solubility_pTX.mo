@@ -11,5 +11,5 @@ partial function partial_solubility_pTX
 protected
   Types.Molality solu "gas solubility";
 //algorithm
-//    print("mola("+String(X_gas)+","+String(T-273.16)+")=->k="+String(X_gas/max(1,p_gas))+" (partial_solubility_pTX)");
+  //    print("mola("+String(X_gas)+","+String(T-273.16)+")=->k="+String(X_gas/max(1,p_gas))+" (partial_solubility_pTX)");
 end partial_solubility_pTX;

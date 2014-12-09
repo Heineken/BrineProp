@@ -34,7 +34,7 @@ partial package PartialBrineMultiSaltOnePhase "Template medium for  one-phase aq
  constant SI.MolarMass[:] MM_vec = cat(1,MM_salt, {M_H2O});
  constant Integer nM_vec[:] = cat(1,nM_salt, {1});
 
- constant String saltNames[:]={""};
+ constant String saltNames[:]={""} "TODO: replace by saltOrder";
 
  constant Integer nX_salt = size(saltNames, 1) "Number of salt components"   annotation(Evaluate=true);
 
@@ -145,7 +145,7 @@ protected
        print("\ntemperature_phX("+String(p)+","+String(h)+")");
     end if;
     //Find temperature with h above given h ->T_b
-    assert(h>specificEnthalpy_pTX(p,T_a,X),"h="+String(h/1e3)+" kJ/kg -> Enthalpy too low (< 0degC) (Brine.PartialBrine_ngas_Newton.temperature_phX)");
+    assert(h>specificEnthalpy_pTX(p,T_a,X),"h="+String(h/1e3)+" kJ/kg -> Enthalpy too low (< 0degC)");
     while true loop
       h_T:=specificEnthalpy_pTX(p,T_b,X);
   // print(String(p)+","+String(T_b)+" K->"+String(h_T)+" J/kg (PartialBrine_ngas_Newton.temperature_phX)");
@@ -174,7 +174,7 @@ protected
       z:=z+1;
   //    print(String(z)+": "+String(T_a)+" K & "+String(T_b)+" K -> "+String((h-h_T)/h)+"(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)\n");
   //    print("h("+String(T_a)+")="+String(h_a-h)+" J/kg & h("+String(T_b)+")="+String(h_b-h)+" J/kg");
-      assert(z<100,"Maximum number of iteration reached for temperature calculation. Something's wrong here. Cancelling...(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)");
+      assert(z<100,"Maximum number of iteration reached for temperature calculation. Something's wrong here. Cancelling...");
     end while;
   // print("BISECTION " + String(z)+": "+String(T));
 
@@ -202,7 +202,7 @@ protected
     z:=z+1;
 //    print(String(z)+": "+String(T_a)+" K & "+String(T_b)+" K -> "+String((h-h_T)/h)+"(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)\n");
 //    print("h("+String(T_a)+")="+String(h_a-h)+" J/kg & h("+String(T_b)+")="+String(h_b-h)+" J/kg");
-    assert(z<100,"Maximum number of iteration reached for temperature calculation. Something's wrong here. Cancelling...(PartialBrine_Multi_TwoPhase_ngas.temperature_phX)");
+    assert(z<100,"Maximum number of iteration reached for temperature calculation. Something's wrong here. Cancelling...");
   end while;
  print("REGULA FALSI " + String(z)+": "+String(T));
 */

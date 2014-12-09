@@ -17,8 +17,8 @@ algorithm
 //    print("p_H2O("+String(T)+")="+String(p_sat/1e5)+" bar (PartialBrine_Multi_TwoPhase_ngas.saturationPressure_H2O)");
   end if;
 //  printVector(nM);
-  assert(max(X)-1<=1e-8, "X ="+String(max(X))+" out of range [0...1] = "+Modelica.Math.Matrices.toString(transpose([X]))+" (saturationPressure_H2O())");
-  assert(min(X)>=-1e-8, "X ="+String(min(X))+" out of range [0...1] = "+Modelica.Math.Matrices.toString(transpose([X]))+" (saturationPressure_H2O())");
+  assert(max(X)-1<=1e-8, "X ="+String(max(X))+" out of range [0...1] = "+Modelica.Math.Matrices.toString(transpose([X])));
+  assert(min(X)>=-1e-8, "X ="+String(min(X))+" out of range [0...1] = "+Modelica.Math.Matrices.toString(transpose([X])));
   if X[end]>0 then
 //    ionMoleFractions:=BrineProp.massToMoleFractions(X, MM) .* nM;
     ionMoleFractions:=Utilities.massToMoleFractions(X, MM) .* nM;

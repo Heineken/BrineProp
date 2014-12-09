@@ -3,7 +3,7 @@ model BrineProps2phaseFull
 
 //SPECIFY MEDIUM
 //   package Medium = BrineProp.Brine5salts3gas(ignoreLimitN2_T=true);
-   package Medium = BrineProp.Brine5salts3gas(outOfRangeMode=1);
+   package Medium = Brine5salts3gas(AssertLevel=1);
   //package Medium = Brine_5salts_TwoPhase_3gas(input_dT=true) "also take dT input";
   //package Medium = Brine_5salts_TwoPhase_3gas(input_ph=false) "no ph input expected -> save time";
 
@@ -11,7 +11,6 @@ model BrineProps2phaseFull
   Medium.BaseProperties props;
   //  Medium.BaseProperties props(n_g_norm_start=fill(0.5,Medium.nX_gas+1)) "change start vector for VLE algorithm (componentwise mass distribution, default=0.5)";
     //Medium.BaseProperties props(phase=1) "deactivate VLE calculation";
-
 //EXTRACT CALCULATED PROPERTIES
   SI.Density d= props.d "effective density";
   //SI.Density 2 = Medium.density_liquid_pTX(props.p,props.T,props.X_l, Medium.MM_vec) "direct density calculation";
@@ -29,17 +28,18 @@ model BrineProps2phaseFull
     "gas phase viscosity";
 
 //SPECIFIC HEAT CAPACITY
-  SI.SpecificHeatCapacity c_p_brine= Medium.specificHeatCapacityCp(props.state);
+  SI.SpecificHeatCapacity c_p_brine= Brine5salts3gas.specificHeatCapacityCp(props.state);
 
   SI.Temperature dT= 0.1 "temperature intervall for differential quotient";
   SI.SpecificHeatCapacity c_p_brine2=(Medium.specificEnthalpy_pTX(props.p,props.T+dT/2,props.X)
                                      -Medium.specificEnthalpy_pTX(props.p,props.T-dT/2,props.X))/dT
     "by differentiation from enthalpy";
   SI.SpecificHeatCapacity c_p_liq=Medium.specificHeatCapacityCp_liq(props.state);
+
   SI.SpecificHeatCapacity c_p_gas=Medium.specificHeatCapacityCp_gas(props.state);
   SI.SpecificEnthalpy h_Driesner= BrineProp.SpecificEnthalpies.specificEnthalpy_pTX_Driesner(props.p,props.T,sum(props.X[1:5]))
     "NaCl solution enthalpy acc to Driesner";
-  SI.SpecificHeatCapacity c_p_Driesner= SpecificEnthalpies.specificHeatCapacity_pTX_Driesner(props.p,props.T,sum(props.X[1:5]))
+  SI.SpecificHeatCapacity c_p_Driesner= Medium.specificHeatCapacity_pTX_Driesner(props.p,props.T,sum(props.X[1:5]))
     "NaCl heat capacity acc to Driesner";
 
 //THERMAL EXPANSION COEFFICIENT
@@ -47,7 +47,6 @@ model BrineProps2phaseFull
   //  SI.LinearTemperatureCoefficient beta2=props.d*(1/Medium.density_pTX(props.p,props.T+dT/2,props.X)-1/Medium.density_pTX(props.p,props.T-dT/2,props.X))/dT "isobaric expansion coefficient from density - as calculated in model";
   SI.LinearTemperatureCoefficient beta2=(1-props.d/Medium.density_pTX(props.p,props.T-1,props.X))
     "isobaric expansion coefficient from density - central differential coefficient";
-
   //EXTRACT MOLAR WEIGHTS
  constant Real MM[:] = Medium.MM_vec;
 
@@ -136,7 +135,6 @@ algorithm
 //  print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");
 //  print(Modelica.Math.Matrices.toString(transpose([props.Xi])));
 //  print("k="+Modelica.Math.Matrices.toString(transpose([Brine_5salts_TwoPhase_3gas.solubilities_pTX(props.p, props.T, props.X_l, props.X, props.p_gas[1:3]) ./ props.p_gas[1:3]])));
-
   annotation (experiment(StopTime=100, __Dymola_NumberOfIntervals=100),
       __Dymola_experimentSetupOutput);
 end BrineProps2phaseFull;

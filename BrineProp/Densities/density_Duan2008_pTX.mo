@@ -80,7 +80,6 @@ protected
   BrineProp.SaltDataDuan.SaltConstants salt;
   constant Types.Molality[:] m=Utilities.massToMoleFractions(X,MM_vec);
   SI.Pressure p_sat=Modelica.Media.Water.IF97_Utilities.BaseIF97.Basic.psat(T);
-  String msg;
 algorithm
   if debugmode then
       print("Running density_Duan2008_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
@@ -106,30 +105,10 @@ algorithm
         print(salt.name+": "+String(X[i]));
       end if;
 
-      if not (ignoreLimitSalt_b[i] or (m[i] >= 0 and m[i] <= salt.mola_max_rho)) then
-        msg:="Molality of " + salt.name + " is " + String(m[i]) +
-          ", but must be between 0 and " + String(salt.mola_max_rho) +
-          " mol/kg (BrineProp.Densities.density_Duan2008_pTX)";
-      end if;
-      if not (ignoreLimitSalt_p[i] or (p >= salt.p_min_rho and p <= salt.p_max_rho)) then
-        msg:="Pressure is " + String(p_bar) + " bar, but for " + salt.name +
-          " must be between " + String(salt.p_min_rho*1e-5) + " bar and " +
-          String(salt.p_max_rho*1e-5) +
-          " bar (Brine.Salt_Data_Duan.density_Duan2008_pTX())";
-      end if;
-      if not (ignoreLimitSalt_T[i] or (T >= salt.T_min_rho and T <= salt.T_max_rho)) then
-        msg:="Temperature is " + String(SI.Conversions.to_degC(T)) +
-          "degC, but for " + salt.name + " must be between " + String(
-          SI.Conversions.to_degC(salt.T_min_rho)) + "degC and " + String(
-          SI.Conversions.to_degC(salt.T_max_rho)) +
-          "degC (Brine.Salt_Data_Duan.density_Duan2008_pTX())";
-      end if;
-      if msg<>"" then
-        if outOfRangeMode==1 then
-          print(msg);
-        elseif outOfRangeMode==2 then
-          assert(false,msg);
-        end if;
+      if AssertLevel>0 then
+        assert(ignoreLimitSalt_p[i] or (p >= salt.p_min_rho and p <= salt.p_max_rho),"\nPressure p=" + String(p/1e5) + " bar is out of validity range  ["+String(salt.p_min_rho/1e5)+"..."+String(salt.p_max_rho/1e5)+"]bar for "+salt.name + ":.\nTo ignore set ignoreLimitSalt_p["+String(i)+"]=true",aLevel);
+        assert(ignoreLimitSalt_T[i] or (T >= salt.T_min_rho and T <= salt.T_max_rho),"\nTemperature  T=" + String(T-273.15) + " C is out of validity range ["+String(salt.T_min_rho-273.15)+"..."+String(salt.T_max_rho-273.15)+"] for "+salt.name + ".\nTo ignore set ignoreLimitSalt_T["+String(i)+"]=true",aLevel);
+        assert(ignoreLimitSalt_b[i] or (m[i] >= 0 and m[i] <= salt.mola_max_rho),salt.name + "\nMolality is out of validity range: m[i]=" + String(m[i]) + " mol/kg.\nTo ignore set ignoreLimitSalt_b["+String(i)+"]=true",aLevel);
       end if;
 
       M_salt[i] := salt.M_salt*1000 "in g/mol";

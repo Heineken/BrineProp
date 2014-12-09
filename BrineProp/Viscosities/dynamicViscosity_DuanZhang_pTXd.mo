@@ -44,17 +44,10 @@ algorithm
     print("p="+String(p_Pa)+" Pa, T_K"+String(T_K)+" K (Brine.Viscosities.dynamicViscosity_DuanZhuang_pTXd)");
   end if;
 
-   if outOfRangeMode==1 then
-      if not (p_bar>=p_min and p_bar<=p_max) then
-        print("Pressure is " + String(p_bar) + " bar, but must be between " + String(p_min) + " bar and " + String(p_max) + " bar (BrineProp.Viscosities.dynamicViscosity_DuanZhang_pTXd)");
-      end if;
-      if not (T_C>=T_min and T_C<=T_max) then
-        print("Temperature is "+String(T_C) + "degC, but must be between " + String(T_min) + "degC and " + String(T_max) + "degC (BrineProp.Viscosities.dynamicViscosity_DuanZhang_pTXd)");
-      end if;
-   elseif outOfRangeMode==2 then
-    assert(p_bar>=p_min and p_bar<=p_max, "p="+String(p_bar)+", but must be between "+String(p_min)+" and "+String(p_max)+" bar");
-    assert(T_C>=T_min and T_C<=T_max, "T="+String(T_C)+", but must be between "+String(T_min)+" and "+String(T_max)+"degC");
-   end if;
+if AssertLevel>0 then
+  assert(p_bar>=p_min and p_bar<=p_max, "\np="+String(p_bar)+", but must be between "+String(p_min)+" and "+String(p_max)+" bar",aLevel);
+  assert(T_C>=T_min and T_C<=T_max, "\nT="+String(T_C)+", but must be between "+String(T_min)+" and "+String(T_max)+"degC",aLevel);
+end if;
 
  //viscosity calculation
   state_H2O := Modelica.Media.Water.WaterIF97_pT.setState_pTX(p_Pa, T_K, X);
@@ -74,11 +67,17 @@ algorithm
 //    if X[i]>0 then
     if molalities[i]>1e-8 then
       salt := Salt_Constants[i];
-      if not (ignoreLimitSalt_b[i] or (molalities[i]>=0 and molalities[i]<=salt.mola_max_eta)) then
+      /*if not (ignoreLimitSalt_b[i] or (molalities[i]>=0 and molalities[i]<=salt.mola_max_eta)) then
         msg :="Molality of " + salt.name + " is " + String(molalities[i]) + "(X="
            + String(X[i]) + "), but must be between 0 and " + String(salt.mola_max_eta)
            + " mol/kg (dynamicViscosity_DuanZhang_pTXd)";
+      end if;*/
+      if AssertLevel>0 then
+        assert(ignoreLimitSalt_p[i] or (p_bar>=p_min and p_bar<=p_max),"\nPressure is out of validity range: p=" + String(p_bar) + " bar.\nTo ignore set ignoreLimitSalt_p["+String(i)+"]=true",aLevel);
+        assert(ignoreLimitSalt_T[i] or (T_C>=T_min and T_C<=T_max),"\nTemperature is out of validity range: T=" + String(T_C) + " C.\nTo ignore set ignoreLimitSalt_T["+String(i)+"]=true",aLevel);
+        assert(ignoreLimitSalt_b[i] or (molalities[i] >= 0 and molalities[i] <= salt.mola_max_eta),"\n"+salt.name + "Molality is out of validity range: m[i]=" + String(molalities[i]) + " mol/kg.\nTo ignore set ignoreLimitSalt_b["+String(i)+"]=true",aLevel);
       end if;
+
       //factors
       //MIXING WEIGHT
     //  phi:=X[i]/sum(X[1:nX_salt]) "geometric mean mixture rule weighted with mass fraction (as in Laliberte)";
@@ -91,9 +90,7 @@ algorithm
          eta_relative := 1 + salt.Zh_A*c^0.5 + salt.Zh_B*c + salt.Zh_D*c^2 + 1e-4*salt.Zh_E*c^3.5 + 1e-5*salt.Zh_F*c^7;
       else
         //Duan (available for NaCl and KCl)
-        if max(cat(1,salt.a,salt.b,salt.c))==0 then
-          msg :="No coefficients for " + salt.name + " (b="+String(molalities[i])+" mol/kg) in dynamicViscosity_DuanZhang_pTXd";
-        end if;
+        assert(AssertLevel>0 and max(cat(1,salt.a,salt.b,salt.c))>0,"\nNo coefficients for " + salt.name + " (b="+String(molalities[i])+" mol/kg");
         b:=molalities[i]/phi;
         A := salt.a[1] + salt.a[2]*T_K + salt.a[3]*T_K^2;
         B := salt.b[1] + salt.b[2]*T_K + salt.b[3]*T_K^2;
@@ -114,13 +111,6 @@ algorithm
 
 //      print("Viscosity "+salt.name+" phi="+String(phi)+": "+String(eta_relative)+"->"+String(eta)+" Pa.s (BrineProp.Viscosities.dynamicViscosity_Duan_pTX)");
 
-      if msg<>"" then
-        if outOfRangeMode==1 then
-          print(msg);
-        elseif outOfRangeMode==2 then
-          assert(false,msg);
-        end if;
-      end if;
     end if;
 //    eta := eta + etas[i]*molalities[i];
   end for;

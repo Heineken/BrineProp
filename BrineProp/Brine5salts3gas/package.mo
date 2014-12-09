@@ -3,7 +3,12 @@ package Brine5salts3gas "Two-phase aqueous solution of NaCl, KCl, CaCl2, MgCl2, 
 
 //TODO: use Fluid limits
 
-  extends SpecificEnthalpies;
+  extends SpecificEnthalpies(
+      final iNaCl=1,
+      final iKCl=2,
+      final iCaCl2=3,
+      final iMgCl2=4,
+      final iSrCl2=5);
 
   extends Densities;
 

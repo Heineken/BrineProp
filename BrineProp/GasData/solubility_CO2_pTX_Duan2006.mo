@@ -3,7 +3,6 @@ function solubility_CO2_pTX_Duan2006 "CO2 solubility in aqueous saltsolutions"
 /*  Zhenhao Duan et al. (2006) An improved model for the calculation of CO2 solubility in aqueous
 solutions containing Na+,K+,Ca2+,Mg2+,Cl-, and SO4_2-. Marine Chemistry 98:131-139. 
   fugacity from doi:10.1016/j.marchem.2005.09.001*/
-  extends BrineProp.SaltDataDuan.defineSaltOrder;
   extends partial_solubility_pTX;
 /*  input SI.Pressure p;
   input SI.Temp_K T;
@@ -12,7 +11,6 @@ solutions containing Na+,K+,Ca2+,Mg2+,Cl-, and SO4_2-. Marine Chemistry 98:131-1
   input SI.Pressure p_gas;
  output SI.MassFraction c_gas "gas concentration in kg_gas/kg_H2O";*/
 protected
-  constant String self="BrineProp.GasData.solubility_CO2_pTX_Duan2006";
   Types.Molality solu "CO2 solubility in mol_CO2/kg H2O";
   Real[:] mu_l0_CO2_RT_c = { 28.9447706,
                         -0.0354581768,
@@ -64,33 +62,22 @@ protected
   Types.Molality molalities[size(X, 1)]=
       Utilities.massToMoleFractions(X,
       MM_vec) "TODO neglecting CO2?";
-  Types.Molality m_Cl=molalities[NaCl] + molalities[KCl] + 2*molalities[MgCl2]
-       + 2*molalities[CaCl2];
-  Types.Molality m_Na=molalities[NaCl];
-  Types.Molality m_K=molalities[KCl];
-  Types.Molality m_Ca=molalities[CaCl2];
-  Types.Molality m_Mg=molalities[MgCl2];
+  Types.Molality m_Cl=molalities[iNaCl] + molalities[iKCl] + 2*molalities[iMgCl2]
+       + 2*molalities[iCaCl2];
+  Types.Molality m_Na=molalities[iNaCl];
+  Types.Molality m_K=molalities[iKCl];
+  Types.Molality m_Ca=molalities[iCaCl2];
+  Types.Molality m_Mg=molalities[iMgCl2];
   Types.Molality m_SO4=0;
-  String msg="";
 algorithm
 //  print("Running solubility_CO2_pTX_Duan2006("+String(p)+","+String(T)+","+String(X[end-3])+","+String(p_gas)+")");
 
   if not p_gas>0 then
     X_gas:=0;
   else
-  // checked in fugacity
-  if not ignoreLimitCO2_T and (T<273 or T>573) then
-      msg :="T=" + String(T) + "K, but CO2 solubility calculation is only valid for temperatures between 0 and 260 C\nTo ignore set ignoreLimitCO2_T=true ("+self+"\n";
-      end if;
-   if not ignoreLimitCO2_p and (p<0 or p>2000e5) then
-      msg :="p=" + String(p/1e5) + " bar, But CO2 fugacity calculation only valid for pressures between 0 and 2000 bar\nTo ignore set ignoreLimitCO2_p=true ("+self+"\n";
-   end if;
-  if msg<>"" then
-    if outOfRangeMode==1 then
-      print(msg);
-    elseif outOfRangeMode==2 then
-      assert(false, msg);
-    end if;
+  if AssertLevel>0 then
+     assert(ignoreLimitCO2_T or (273<T and T<573),"\nTemperature out of validity range: T=" + String(T) + "K.\nTo ignore set ignoreLimitCO2_T=true",aLevel);
+     assert(ignoreLimitCO2_p or (0<p and p<2000e5),"\nPressure out of validity range p=" + String(p/1e5) + " bar.\nTo ignore set ignoreLimitCO2_p=true",aLevel);
   end if;
 
   //equ. 9

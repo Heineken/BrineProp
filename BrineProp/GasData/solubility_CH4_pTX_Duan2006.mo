@@ -4,8 +4,6 @@ function solubility_CH4_pTX_Duan2006 "Duan ZH, Mao SD. (2006) A thermodynamic mo
   http://dx.doi.org/10.1016/j.gca.2006.03.018TODO Umrechnung andere Salz in NaCl"
   extends partial_solubility_pTX;
 //  output SI.MassFraction c_gas "gas concentration in kg_gas/kg_H2O";
-  extends BrineProp.SaltDataDuan.defineSaltOrder;
-
 protected
   constant String self="BrineProp.GasData.solubility_CH4_pTX_Duan2006";
   Real[:] mu_l0_CH4_RT_c = { 0.83143711E+01,
@@ -63,37 +61,24 @@ protected
   Real mu_l0_CH4_RT;
   Real lambda_CH4_Na;
   Real xi_CH4_NaCl;
-  String msg;
 algorithm
   if not p_gas>0 then
     X_gas:=0;
   else
-    if not ignoreLimitCH4_T and (273>T or T>273+250) then
-       msg:="T=" + String(T) +
-         " K, but  CH4 solubility  calculation is only valid for temperatures between 0 and 250 C\nTo ignore set ignoreLimitCH4_T=true ("+self+"\n";
-    end if;
-    if not ignoreLimitCH4_p and (p<1e5 or p>2000e5) then
-       msg :="p=" + String(p/1e5) +
-         " bar, but CH4 fugacity calculation only valid for pressures between 1 and 1600 bar\nTo ignore set ignoreLimitCH4_p=true  ("+self+"\n";
-    end if;
-
-    if msg<>"" then
-      if outOfRangeMode==1 then
-       print(msg);
-      elseif outOfRangeMode==2 then
-       assert(false,msg);
-      end if;
-   end if;
+  if AssertLevel>0 then
+     assert(ignoreLimitCH4_T or (273<T and T<273+250),"\nTemperature out of validity range: T=" + String(T) + " K.\nTo ignore set ignoreLimitCH4_T=true",aLevel);
+     assert(ignoreLimitCH4_p or (1e5<p or p<2000e5),"\nPressure out of validity range: p=" + String(p/1e5) + " bar.\nTo ignore set ignoreLimitCH4_p=true",aLevel);
+  end if;
 
   //  (molefractions,molalities):=massFractionsToMoleFractions(X, MM);
     molalities:=Utilities.massToMoleFractions(X, MM_vec);
   // print("molefractions[NaCl]="+String(molefractions[NaCl])+" (GasData.solubility_CH4_pTX_Duan1992)");
-    m_Cl :=molalities[NaCl] + molalities[KCl] + 2*molalities[MgCl2] + 2*
-      molalities[CaCl2];
-    m_Na :=molalities[NaCl];
-    m_K :=molalities[KCl];
-    m_Ca :=molalities[CaCl2];
-    m_Mg :=molalities[MgCl2];
+    m_Cl :=molalities[iNaCl] + molalities[iKCl] + 2*molalities[iMgCl2] + 2*
+      molalities[iCaCl2];
+    m_Na :=molalities[iNaCl];
+    m_K :=molalities[iKCl];
+    m_Ca :=molalities[iCaCl2];
+    m_Mg :=molalities[iMgCl2];
     m_SO4 :=0 "TODO";
 
     phi_CH4 :=fugacity_CH4_Duan1992(p_gas + p_H2O, T);

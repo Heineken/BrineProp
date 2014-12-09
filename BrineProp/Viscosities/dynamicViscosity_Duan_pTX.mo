@@ -50,25 +50,16 @@ algorithm
 
   eta:= eta_H2O "^X[end]";
 //  print("eta_H2O^X[end]= "+String(eta_H2O)+"^"+String(X[end]) + " -> "+String(eta)+" Pa.s");
-  for i in 1:nX_salt loop
+
+ for i in 1:nX_salt loop
     if X[i]>0 then
-      salt := Salt_Constants[i];
-      if not (ignoreLimitSalt_b[i] or (molalities[i]>=0 and molalities[i]<=salt.mola_max_eta)) then
-        msg :="Molality of " + salt.name + " is " + String(molalities[i]) + "(X="
+       salt := Salt_Constants[i];
+    if AssertLevel>0 then
+     assert(ignoreLimitSalt_b[i] or (molalities[i]>=0 and molalities[i]<=salt.mola_max_eta), "\nMolality of " + salt.name + " is " + String(molalities[i]) + "(X="
            + String(X[i]) + "), but must be between 0 and " + String(salt.mola_max_eta)
-           + " mol/kg (dynamicViscosity_Duan_pTX)";
-      end if;
-      if max(cat(1,salt.a,salt.b,salt.c))==0 then
-        msg :="No coefficients for " + salt.name +
-          " in Viscosities.dynamicViscosity_Duan_pTX";
-      end if;
-      if msg<>"" then
-        if outOfRangeMode==1 then
-          print(msg);
-        elseif outOfRangeMode==2 then
-          assert(false,msg);
-        end if;
-      end if;
+           + " mol/kg.\nTo ignore set ignoreLimitSalt_b["+String(i)+"]=true",aLevel);
+     assert(max(cat(1,salt.a,salt.b,salt.c))>0,"\nNo coefficients for " + salt.name+".",aLevel);
+    end if;
 
 //      print(salt.name+" content = "+String(molalities[i])+" (Viscosities.dynamicViscosity_Duan_pTX)");
       //factors

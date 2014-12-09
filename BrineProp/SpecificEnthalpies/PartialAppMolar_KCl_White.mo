@@ -13,11 +13,11 @@ DOI: 10.1016/0021-9614(87)90012-7.
 //  output SI.SpecificHeatCapacity cp=1 "=cp_by_cpWater*cp_Water";
   //Parameters of MATLAB 2D-Fit
 protected
-  Real b =   0.09818;
-  Real c =    -1.244;
-  Real k =    -327.9;
-  Real l = -1.31e+05;
-  Real m =     628.8;
+  constant Real b =   0.09818;
+  constant Real c =    -1.244;
+  constant Real k =    -327.9;
+  constant Real l = -1.31e+05;
+  constant Real m =     628.8;
 
 /*  Real a= -10.63;
   Real b= 57.96;
@@ -38,6 +38,6 @@ protected
   Real Tn= (T-T_mean)/T_std "normalized & centered";*/
   //  SI.SpecificHeatCapacity cp_Water =  Modelica.Media.Water.IF97_Utilities.cp_pT(p, T);
 
-  SI.Temp_K T_min = 325;
-  SI.Temp_K T_max = 600;
+  constant SI.Temp_K T_min = 325;
+  constant SI.Temp_K T_max = 600;
 end PartialAppMolar_KCl_White;

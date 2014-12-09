@@ -246,6 +246,6 @@ constant SaltConstants[:] saltConstants = {
       T_max_rho=473,
       p_min_rho=0.1e6,
       p_max_rho=2e6,
-      mola_max_eta=  0)};
+      mola_max_eta=  0)} "TODO: remove absolute indices";
 
 end SaltDataDuan;

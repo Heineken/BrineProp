@@ -39,7 +39,7 @@ protected
     Delta_h_solution_KCl,
     Delta_h_solution_CaCl2,
     Delta_h_solution_MgCl2,
-    Delta_h_solution_SrCl2};
+    Delta_h_solution_SrCl2} "TODO: remove absolute indices";
 
   constant SI.SpecificEnthalpy[:] h_salt_ref = {286935,0,0,0,0}
     "salt enthalpies @ T_ref";
@@ -63,16 +63,13 @@ protected
 //  SI.Pressure p_check;
 
 algorithm
-print("h_H2O: "+String(h_H2O)+" J/kg");
-print("h_salt: "+String(h_salt[1]) +" J/kg");
+//print("h_H2O: "+String(h_H2O)+" J/kg");
+//print("h_salt: "+String(h_salt[1]) +" J/kg");
 //print("cp_salt: "+String(size(cp_salt,1))+"");
 //print("Delta_h_solution_NaCl: "+String(Delta_h_solution_NaCl)+" J/kg");
 //print("mola_salt[NaCl]: "+String(mola_salt[NaCl])+" J/kg");
 
 //  p_bar := SI.Conversions.to_bar(p);
-//  assert(T_C>=0 and T_C<=1000, "T="+String(T-273.15)+", but must be between 0 and 1000degC");
-//  assert(p_bar>=1 and p_bar<=1000, "P="+String(p/1e5)+" bar, but must be between 1 and 1000 bar");
-//  assert(mola>=.25 and mola<=5, "Molality must be between 0.25 and 5 mol/kg");
 
 //Salinity conversion
 /*
@@ -86,7 +83,8 @@ print("h_salt: "+String(h_salt[1]) +" J/kg");
 
 /*  state_H2O := Modelica.Media.Water.WaterIF97_pT.setState_pTX(p, SI.Conversions.from_degC(T_Scale_h), fill(0,0));
   h := Modelica.Media.Water.WaterIF97_pT.specificEnthalpy(state_H2O);*/
-  h := X[end]*(h_H2O+Delta_h_solution*mola_salt) +X[1:5]*h_salt;
+  h := X[end]*(h_H2O+Delta_h_solution*mola_salt) +X[1:5]*h_salt
+    "TODO: remove absolute indices";
 //  h := h_H2O;
 
   print("Brine.specificEnthalpy_pTX_Francke: "+String(p*1e-5)+"bar."+String(T)+"degC->"+String(h)+" J/kg");

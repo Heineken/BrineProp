@@ -7,23 +7,12 @@ function apparentMolarEnthalpy_KCl_Holmes1983
   output SI.SpecificEnthalpy h_app "apparent molar enthalpy";
 protected
   Real[ 5] q={1.5774e5, -1037.86, 2.7739, -0.00284332, -686};
-  String msg = "";
   SI.Temp_C T_C = SI.Conversions.to_degC(T);
   constant SI.Temp_C T_min=273.15;
   constant SI.Temp_C T_max=250+273.15;
 algorithm
-  if outOfRangeMode>0 then
-    if not (T>=T_min and T<=250+273.15) then
-      msg :="Temperature is " + String(T_C) + "degC, but must be between " +
-        String(T_min) + "degC and " + String(T_max) + "degC (BrineProp.SpecificEnthalpies.T_Scale_h_Driesner)";
-    end if;
-    if msg<>"" then
-      if outOfRangeMode==1 then
-      print(msg);
-      elseif outOfRangeMode==2 then
-       assert(true, msg);
-      end if;
-    end if;
+  if AssertLevel>0 then
+    assert(ignoreLimitSalt_T[3] or (T_C>=T_min and T_C<=T_max),"\nTemperature is out of validity range: T=" + String(T) + " mol/kg.\nTo ignore set ignoreLimitSalt_T[3]=true",aLevel);
   end if;
 
   h_app := q[1] + q[2]*T + q[3]*T^2 + q[4]*T^3 + q[5] * log(T-270);

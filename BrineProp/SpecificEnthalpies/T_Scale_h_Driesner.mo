@@ -31,28 +31,12 @@ protected
 //  Modelica.Media.Water.WaterIF97_pT.ThermodynamicState state_H2O;
   Real x_NaCl "mol fraction";
   //  SI.MolarMass M_Solution "[kg/mol]";
-  String msg="";
 algorithm
-//  assert(mola>=.25 and mola<=5, "Molality must be between 0.25 and 5 mol/kg");
 
-  if outOfRangeMode>0 then
-    if not (p_bar>=p_min and p_bar<=p_max) then
-      msg :="Pressure is " + String(p_bar) + " bar, but must be between " +
-        String(p_min) + " bar and " + String(p_max) +
-        " bar (BrineProp.SpecificEnthalpies.T_Scale_h_Driesner)";
-    end if;
-    if not (T_C>=T_min and T_C<=T_max) then
-      msg :="Temperature is " + String(T_C) + "degC, but must be between " +
-        String(T_min) + "degC and " + String(T_max) +
-        "degC (BrineProp.SpecificEnthalpies.T_Scale_h_Driesner)";
-    end if;
-    if msg<>"" then
-      if outOfRangeMode==1 then
-      print(msg);
-      elseif outOfRangeMode==2 then
-       assert(true, msg);
-      end if;
-    end if;
+  if AssertLevel>0 then
+    assert(ignoreLimitSalt_p[iNaCl] or (p_bar>=p_min and p_bar<=p_max),"\nPressure p=" + String(p/1e5) + " bar is out of validity range ["+String(p_min-273.15)+"..."+String(p_max-273.15)+"]bar.\nTo ignore set ignoreLimitSalt_p["+String(iNaCl)+"]=true",aLevel);
+    assert(ignoreLimitSalt_T[iNaCl] or (T_C>=T_min and T_C<=T_max),"\nTemperature T=" + String(T-273.15) + " C out of validity range ["+String(T_min-273.15)+"..."+String(T_max-273.15)+"]C.\nTo ignore set ignoreLimitSalt_T["+String(iNaCl)+"]=true",aLevel);
+//    assert(ignoreLimitSalt_b[1] or (mola>=0.25 and mola<=5),"NaCl-Molality is out of validity range: m[i]=" + String(mola) + " mol/kg.\nTo ignore set ignoreLimitSalt_b["+String(iNaCl)+"]=true\n",aLevel);
   end if;
 
 //Salinity conversion

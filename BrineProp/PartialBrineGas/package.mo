@@ -8,8 +8,6 @@ partial package PartialBrineGas "Medium template for gas mixture of nX_gas gases
 
  extends Modelica.Media.Interfaces.PartialMixtureMedium(reference_X=cat(1,fill(0,nX-1),{1}));
 
- constant Boolean ignoreNoCompositionInBrineGas=false;
-
 
  redeclare record extends ThermodynamicState
  //Dummy for OM
@@ -19,14 +17,11 @@ partial package PartialBrineGas "Medium template for gas mixture of nX_gas gases
  redeclare replaceable model extends BaseProperties "Base properties of medium"
     SI.MoleFraction y_vec[:]=Utilities.massToMoleFractions(X,MM_vec);
  equation
- //   assert(nX_gas==2,"Wrong number of gas mass fractions specified (2 needed - CO2,N2)");
- //  assert(max(X)<=1 and min(X)>=0, "X out of range [0...1] = "+PowerPlant.vector2string(X)+" (saturationPressure_H2O())");
      MM = y_vec*MM_vec;
  //  R  = Modelica.Constants.R/MM;
    u = h - p/d;
 
  //  (h,x,d,d_g,d_l) = specificEnthalpy_pTX(p,T,X) unfortunately, this is not invertable;
-
      h = specificEnthalpy_pTX(p,T,X);
  //    d=density_pTX(p,T,X);
      (d,R) = density_pTX(p,T,X);
@@ -37,58 +32,6 @@ partial package PartialBrineGas "Medium template for gas mixture of nX_gas gases
  constant Integer[:] nM_vec "number of ions per molecule";
 
 constant String gasNames[:]={""};
-/*
-
-  redeclare replaceable function extends specificHeatCapacityCp 
-    "calculation of gas specific heat capacity"
-  algorithm 
-    //der Aufruf hier funzt seltsamerweise nur mit "BrineGas_3Gas.", bei rho, eta und lambda gehts ohne !?
-      cp := specificHeatCapacityCp_pTX(
-        state.p,
-        state.T,
-        state.X[end - nX+1:end]);
-      annotation (Documentation(info="<html>
-                                <p>In the two phase region this function returns the interpolated heat capacity between the
-                                liquid and vapour state heat capacities.</p>
-                                </html>"));
-  end specificHeatCapacityCp;
-
-  redeclare replaceable function extends density "Density from state"
-
-  algorithm 
-    d := density_pTX(
-        state.p,
-        state.T,
-        state.X[end - nX+1:end]);
-  //  assert(lambda>0,"lambda="+String(lambda));
-  end density;
-
-  redeclare replaceable function extends dynamicViscosity 
-    "Thermal conductivity of water"
-  //very little influence of salinity  
-  algorithm 
-    eta := dynamicViscosity_pTX(
-        state.p,
-        state.T,
-        state.X[end - nX+1:end]);
-  //  assert(lambda>0,"lambda="+String(lambda));
-  end dynamicViscosity;
-
-  redeclare replaceable function extends thermalConductivity 
-    "Thermal conductivity of water"
-  //very little influence of salinity  
-  algorithm 
-    lambda := thermalConductivity_pTX(
-        state.p,
-        state.T,
-        state.X[end - nX+1:end]);
-  //  assert(lambda>0,"lambda="+String(lambda));
-  if lambda<0 then
-    print("lambda = " + String(lambda) + "W/(m.K)");
-  end if;
-
-  end thermalConductivity;
-*/
 
 
   replaceable function specificHeatCapacityCp_pTX
