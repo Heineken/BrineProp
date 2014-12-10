@@ -59,9 +59,8 @@ protected
   Real zeta_CO2_NaCl;
 
   //constant
-  Types.Molality molalities[size(X, 1)]=
-      Utilities.massToMoleFractions(X,
-      MM_vec) "TODO neglecting CO2?";
+  Types.Molality molalities[size(X, 1)]=Utilities.massFractionsToMolalities(X,MM_vec)
+    "TODO neglecting CO2?";
   Types.Molality m_Cl=molalities[iNaCl] + molalities[iKCl] + 2*molalities[iMgCl2]
        + 2*molalities[iCaCl2];
   Types.Molality m_Na=molalities[iNaCl];

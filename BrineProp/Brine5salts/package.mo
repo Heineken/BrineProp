@@ -128,8 +128,8 @@ protected
 <p><b>BrineProp.Brine_5salts</b> is a medium package that provides properties of one-phase solution of five salts (NaCl, KCl, CaCl<sub>2</sub>, MgCl<sub>2</sub>, SrCl<sub>2</sub>).</p>
 <h4>Usage</h4>
 <p>It is based on Modelica.Media, the usage is accordingly:</p>
-<p>Create an instance of the Medium: </p>
-<pre>  package Medium = Brine_5salts;</pre>
+<p>Create an instance of the Medium (optionally deactivating range checks, for all options see .PartialFlags): </p>
+<pre>  package Medium = Brine_5salts(AssertLevel=1,ignoreLimitSalt_T={false,true,true,false,false});</pre>
 <p>Create an instance of Medium.Baseproperties: </p>
 <pre>  Medium.BaseProperties props;</pre>
 <p>Use the BaseProperties model to define the actual brine composition(Xi or X), to define the thermodynamic state and calculate the corresponding properties. </p>

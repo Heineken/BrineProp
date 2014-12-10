@@ -10,10 +10,7 @@ function specificHeatCapacityCp_pTX_liq_Francke
 
 protected
   Types.Molality b[size(X_, 1)]=
-      Utilities.massToMoleFractions(X_,
-      cat(1,
-          MM_vec,
-          fill(-1, size(X_, 1) - size(MM_vec, 1))));
+      Utilities.massFractionsToMolalities(X_,cat(1,MM_vec,fill(-1, size(X_, 1) - size(MM_vec, 1))));
 
 /*  Real cp_by_cpWater[:]={0,
       SpecificEnthalpies.HeatCapacityRatio_KCl_White(T, b[KCl]),

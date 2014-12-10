@@ -33,10 +33,7 @@ protected
     Delta_h_solution_SrCl2};*/
 
   Types.Molality b[size(X, 1)]=
-      Utilities.massToMoleFractions(X,
-      cat(1,
-          MM_vec,
-          fill(-1, size(X, 1) - size(MM_vec, 1))));
+      Utilities.massFractionsToMolalities(X,cat(1,MM_vec,fill(-1, size(X, 1) - size(MM_vec, 1))));
 
 //  SI.SpecificEnthalpy h_H2O =  Modelica.Media.Water.WaterIF97_pT.specificEnthalpy_pT(p, T);
   SI.SpecificEnthalpy h_Driesner = specificEnthalpy_pTX_Driesner(p, T, X[1]/(X[1]+X[end]));

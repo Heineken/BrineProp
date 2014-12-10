@@ -71,7 +71,7 @@ algorithm
   end if;
 
   //  (molefractions,molalities):=massFractionsToMoleFractions(X, MM);
-    molalities:=Utilities.massToMoleFractions(X, MM_vec);
+    molalities:=Utilities.massFractionsToMolalities(X, MM_vec);
   // print("molefractions[NaCl]="+String(molefractions[NaCl])+" (GasData.solubility_CH4_pTX_Duan1992)");
     m_Cl :=molalities[iNaCl] + molalities[iKCl] + 2*molalities[iMgCl2] + 2*
       molalities[iCaCl2];

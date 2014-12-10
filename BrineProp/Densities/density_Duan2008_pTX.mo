@@ -78,7 +78,7 @@ protected
   Real[23] c;
 
   BrineProp.SaltDataDuan.SaltConstants salt;
-  constant Types.Molality[:] m=Utilities.massToMoleFractions(X,MM_vec);
+  constant Types.Molality[:] m=Utilities.massFractionsToMolalities(X,MM_vec);
   SI.Pressure p_sat=Modelica.Media.Water.IF97_Utilities.BaseIF97.Basic.psat(T);
 algorithm
   if debugmode then
@@ -102,13 +102,17 @@ algorithm
     else
       salt :=BrineProp.SaltDataDuan.saltConstants[i];
       if debugmode then
-        print(salt.name+": "+String(X[i]));
+        print("X["+salt.name+"]: "+String(X[i]));
       end if;
 
       if AssertLevel>0 then
         assert(ignoreLimitSalt_p[i] or (p >= salt.p_min_rho and p <= salt.p_max_rho),"\nPressure p=" + String(p/1e5) + " bar is out of validity range  ["+String(salt.p_min_rho/1e5)+"..."+String(salt.p_max_rho/1e5)+"]bar for "+salt.name + ":.\nTo ignore set ignoreLimitSalt_p["+String(i)+"]=true",aLevel);
         assert(ignoreLimitSalt_T[i] or (T >= salt.T_min_rho and T <= salt.T_max_rho),"\nTemperature  T=" + String(T-273.15) + " C is out of validity range ["+String(salt.T_min_rho-273.15)+"..."+String(salt.T_max_rho-273.15)+"] for "+salt.name + ".\nTo ignore set ignoreLimitSalt_T["+String(i)+"]=true",aLevel);
         assert(ignoreLimitSalt_b[i] or (m[i] >= 0 and m[i] <= salt.mola_max_rho),salt.name + "\nMolality is out of validity range: m[i]=" + String(m[i]) + " mol/kg.\nTo ignore set ignoreLimitSalt_b["+String(i)+"]=true",aLevel);
+      end if;
+
+      if debugmode then
+        print("m["+String(i)+"]= "+String(m[i])+"");
       end if;
 
       M_salt[i] := salt.M_salt*1000 "in g/mol";
@@ -131,6 +135,9 @@ algorithm
 
       //Equation 3: Ionic strength
       I := 1/2*(m[i]*v_plus*z_plus^2 + m[i]*v_minus*z_minus^2);
+      if debugmode then
+        print("I["+String(i)+"]= "+String(I)+"");
+      end if;
       I_mr := 1/2*(m_r*v_plus*z_plus^2 + m_r*v_minus*z_minus^2);
 
       //Equation 4:
@@ -196,10 +203,12 @@ algorithm
     //Equation 13: apparent molar Volume at infinite dilution in cm^3/mol
       V_o_Phi := (V_m_r/m_r - 1000/(m_r*rho_H2O) - v*abs(z_plus*z_minus)*A_v*h_mr - 2*v_plus*
         v_minus*R*T*(B_v*m_r + v_plus*z_plus*C_v*m_r^2));
+/*      if debugmode then
+        print("V_o_Phi["+String(i)+"]= "+String(V_o_Phi)+"");
+      end if;*/
 
                     //Equation 2: apparent molar Volume in cm^3/mol
-      V_Phi[i] := V_o_Phi + v*abs(z_plus*z_minus)*A_v*h + 2*v_plus*v_minus*m[i]*R*T*(
-        B_v + v_plus*z_plus*m[i]*C_v);
+      V_Phi[i] := V_o_Phi + v*abs(z_plus*z_minus)*A_v*h + 2*v_plus*v_minus*m[i]*R*T*(B_v + v_plus*z_plus*m[i]*C_v);
 
                     //Equation 1: density of the solution
 //      rho[i] := ((1000 + m[i]*M_salt[i])*rho_H2O)/(1000 + m[i]*V_Phi[i]*rho_H2O)*1000;
@@ -223,7 +232,6 @@ algorithm
   end for;
 //  d := m[1:nX_salt]*rho/(1-X[end]) "mass fraction weighted linear mixture (matrix multiplication)";
 //   d := m[1:nX_salt]*rho/(sum(m[1:nX_salt])) "molality weighted linear mixture (matrix multiplication)";
-
 // d := ((1 + m[1:end-1]*MM_vec[1:end-1])*1000*rho_H2O)/(1000 + m[1:nX_salt]*V_Phi*rho_H2O)*1000     "Mixing rule frei nach Duan";
 
   d :=  1/(X[end]/(rho_H2O*1000) + X[1:nX_salt]*( V_Phi/1e6 ./ (M_salt/1000)))
