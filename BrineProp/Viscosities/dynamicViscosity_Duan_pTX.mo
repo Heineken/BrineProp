@@ -26,8 +26,7 @@ protected
   Modelica.Media.Water.WaterIF97_pT.ThermodynamicState state_H2O;
 
   SaltDataDuan.SaltConstants salt;
-  constant Molality[:] molalities=Utilities.massToMoleFractions(
-                                                            X,MM);
+  constant Molality[:] molalities=Utilities.massFractionsToMolalities(X,MM);
  String msg;
 algorithm
    print("X[1]="+String(X[1])+" (Brine.Viscosities.dynamicViscosity_Duan_pTX)");

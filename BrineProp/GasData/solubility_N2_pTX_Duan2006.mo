@@ -46,8 +46,7 @@ protected
 
   SI.MolarMass M_H2O = MM_vec[end];
   Types.Molality molalities[size(X, 1)]=
-      Utilities.massToMoleFractions(X,
-      MM_vec);
+      Utilities.massFractionsToMolalities(X,MM_vec);
   Types.Molality m_Cl=molalities[iNaCl] + molalities[iKCl] + 2*molalities[iMgCl2]
        + 2*molalities[iCaCl2];
   Types.Molality m_Na=molalities[iNaCl];

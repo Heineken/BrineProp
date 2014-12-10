@@ -3,7 +3,7 @@ model BrineProps1PhaseFull
   "Example for 1-phase brine property model using all properties"
 
   //SPECIFY MEDIUM
-  package Medium = Brine5salts(ignoreLimitSalt_T={false,true,false,false,false});
+  package Medium = Brine5salts(AssertLevel=2,ignoreLimitSalt_T={false,true,true,false,false});
 //package Medium = Modelica.Media.Water.WaterIF97_pT;
 
   Medium.BaseProperties props;
@@ -45,11 +45,11 @@ equation
 //   props.Xi = {    0,   0,   0,   0,  0} "pure water";
 //  props.Xi = {6*SaltData.M_NaCl/(1+6*SaltData.M_NaCl),0,0,0,0} "6-molar NaCl solution";
 //  props.Xi = {n_Na*SaltData.M_NaCl,n_K*SaltData.M_KCl,n_Ca*SaltData.M_CaCl2,0,0}/(1+n_Na*SaltData.M_NaCl+n_K*SaltData.M_KCl+n_Ca*SaltData.M_CaCl2) "specify molalities above";
-    props.Xi = {0.0839077010751,0.00253365118988,0.122786737978,0,0}
+    props.Xi = {0*0.0839077010751,0*0.00253365118988,0.122786737978,0,0}
     "GrSk brine composition (Feldbusch 2-2013 1.1775g/ml V2)";
 
 //SPECIFY THERMODYNAMIC STATE
-  props.p = 10e5;
- props.T = 273.15+50;
+  props.p = 10*1.01325e5;
+ props.T = 273.15+20;
  // props.T = 273.15+50+time "transient - DOES NOT WORK";
 end BrineProps1PhaseFull;

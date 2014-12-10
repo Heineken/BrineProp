@@ -224,8 +224,8 @@ protected
 <p><b>BrineGas_3Gas</b> is a medium package that, based on Brine.PartialBrineGas, defines a brine with 3 gases (CO<sub>2</sub>, N<sub>2</sub>, CH<sub>4</sub>), which are the main gases in the geofluid in Gross Schoenebeck, Germany.</p>
 <h4>Usage</h4>
 <p>It is based on Modelica.Media, the usage is accordingly:</p>
-<p>Create an instance of the Medium: </p>
-<pre>  package Medium = BrineGas_3Gas;</pre>
+<p>Create an instance of the Medium (optionally deactivating range checks, for all options see .PartialFlags): </p>
+<pre>  package Medium = BrineGas_3Gas(ignoreLimitN2_T=false);</pre>
 <p>Create an instance of Medium.Baseproperties: </p>
 <pre>  Medium.BaseProperties props;</pre>
 <p>Use the BaseProperties model to define the actual brine composition(Xi or X), to define the thermodynamic state and calculate the corresponding properties. </p>

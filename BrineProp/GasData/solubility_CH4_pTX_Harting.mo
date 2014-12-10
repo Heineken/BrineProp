@@ -5,9 +5,7 @@ function solubility_CH4_pTX_Harting
   extends partial_solubility_pTX;
 
 protected
-  Types.Molality molalities[size(X, 1)]=
-      Utilities.massToMoleFractions(X,
-      MM_vec);
+  Types.Molality molalities[size(X, 1)]=Utilities.massFractionsToMolalities(X,MM_vec);
   SI.Temp_C T_C = SI.Conversions.to_degC(T);
   Real L_0=0.454 "CH4 solubility in H2O at 25, 75degC";
   Real L_rel_p "pressure influence";

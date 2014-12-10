@@ -27,7 +27,7 @@ protected
   Modelica.Media.Water.WaterIF97_pT.ThermodynamicState state_H2O;
 
   SaltDataDuan.SaltConstants salt;
-  constant Molality[:] molalities=Utilities.massToMoleFractions(X,MM);
+  constant Molality[:] molalities=Utilities.massFractionsToMolalities(X,MM);
  // constant Partial_Units.Molality[:] molalities=X[1:nX_salt] ./ MM[1:nX_salt]/X[end];
    Molarity_molperliter c;
   Molality b "component molality";

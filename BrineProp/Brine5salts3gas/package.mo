@@ -211,7 +211,7 @@ protected
 <p>It was used for the calculations documented in this <a href=\"http://nbn-resolving.de/urn:nbn:de:kobv:83-opus4-47126\">PhD thesis</a>.</p>
 <h4>Usage</h4>
 <p>As it is based on Modelica.Media, the usage differs little from the usage of the two-phase water model:</p>
-<p>Create an Instance of the Medium: </p>
+<p>Create an Instance of the Medium (optionally deactivating range checks, for all options see .PartialFlags): </p>
 <pre>  package Medium = Brine_Duan_Multi_TwoPhase_ngas_3;</pre>
 <p>Create an Instance of Medium.Baseproperties: </p>
 <pre>  Medium.BaseProperties props;</pre>

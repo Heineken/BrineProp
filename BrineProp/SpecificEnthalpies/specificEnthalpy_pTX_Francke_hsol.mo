@@ -50,10 +50,7 @@ protected
     "J/mol_salt solid enthalpy";
 
   Types.Molality mola[size(X, 1)]=
-      Utilities.massToMoleFractions(X,
-      cat(1,
-          MM_vec_salt,
-          fill(-1, size(X, 1) - size(MM_vec_salt, 1))));
+    Utilities.massFractionsToMolalities(X,cat(1,MM_vec_salt,fill(-1, size(X, 1) - size(MM_vec_salt, 1))));
   Types.Molality mola_salt[5]=mola[1:5];
   SI.Temp_C T_C = SI.Conversions.to_degC(T);
   Types.Pressure_bar p_bar=SI.Conversions.to_bar(p);

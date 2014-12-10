@@ -577,7 +577,7 @@ protected
         if (p_H2O>p) then
             print("p_H2O(" + String(p/1e5) + " bar," +
               String(T2 - 273.15) + "degC, " + Modelica.Math.Matrices.toString(transpose([X])) + ") = "
-               + String(p_H2O/1e5) + " bar>p ! (PartialBrine_ngas_Newton.setState_pTX)");
+               + String(p_H2O/1e5) + " bar>p ! (PartialBrineMultiSaltMultiGasTwoPhase.setState_pTX())");
           x:=1;
           break;
         end if;

@@ -24,8 +24,7 @@ protected
   SI.DynamicViscosity eta_H2O;
   Modelica.Media.Water.WaterIF97_pT.ThermodynamicState state_H2O;
 
-  constant Molality[:] molalities=Utilities.massToMoleFractions(
-                                                            X,MM);
+  constant Molality[:] molalities=Utilities.massFractionsToMolalities(X,MM);
  // constant Partial_Units.Molality[:] molalities=X[1:nX_salt] ./ MM[1:nX_salt]/      X[end];
   Molarity_molperliter c = X[3]/MM[3]*d/1000;
 algorithm
