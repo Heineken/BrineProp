@@ -47,7 +47,6 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
 <ul>
 <li>no differentials implemented</li>
 <li>1phase-transient calculation does not compile, supposedly due to missing derivatives</li>
-<li>Temperature limits have to be deactivated when temperature_phX is called (because the algorithm starts at 0 C)</li>
 <li>To switch from MSL 3.2 to MSL 3.2.1 (un)comment code in <code>PartialMixtureTwoPhaseMedium </code>to avoid warnings</li>
 <li>To switch from MSL 3.2.1 to MSL 3.2 (un)comment code in <code>PartialMixtureTwoPhaseMedium </code>to avoid errors</li>
 <li>not fully compatible to OpenModelica(check OK, errors at compiling or simulation)</li>

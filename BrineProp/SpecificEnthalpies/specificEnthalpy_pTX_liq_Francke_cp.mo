@@ -6,6 +6,7 @@ function specificEnthalpy_pTX_liq_Francke_cp "enthalpy calculation DIY"
   input SI.Temp_K T;
   input SI.MassFraction X[:] "mass fractions m_i/m_Sol";
   input SI.MolarMass MM_vec[:];
+  input Boolean ignoreTlimit=false "activated by temperature_phX";
   output SI.SpecificEnthalpy h;
 //  constant Real M_NaCl=Salt_Data.M_NaCl "molar mass in [kg/mol]";
 //  output Real val2=H_appmol[CaCl2];
@@ -39,8 +40,8 @@ protected
   SI.SpecificEnthalpy h_Driesner = specificEnthalpy_pTX_Driesner(p, T, X[1]/(X[1]+X[end]));
 
   BrineProp.Types.PartialMolarEnthalpy[:] H_appmol={0,if b[iKCl] > 0 then
-      appMolarEnthalpy_KCl_White(T, b[iKCl]) else 0,if b[iCaCl2] > 0 then
-      appMolarEnthalpy_CaCl2_White(T, b[iCaCl2]) else 0,0,0}
+      appMolarEnthalpy_KCl_White(T, b[iKCl],ignoreTlimit) else 0,if b[iCaCl2] > 0 then
+      appMolarEnthalpy_CaCl2_White(T, b[iCaCl2],ignoreTlimit) else 0,0,0}
     "TODO: remove absolute indices";
 algorithm
   h := (X[iNaCl]+X[end])*h_Driesner + X[end]*b[2:5]*H_appmol[2:5]

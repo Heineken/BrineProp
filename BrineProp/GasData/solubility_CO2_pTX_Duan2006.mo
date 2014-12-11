@@ -75,8 +75,8 @@ algorithm
     X_gas:=0;
   else
   if AssertLevel>0 then
-     assert(ignoreLimitCO2_T or (273<T and T<573),"\nTemperature out of validity range: T=" + String(T) + "K.\nTo ignore set ignoreLimitCO2_T=true",aLevel);
-     assert(ignoreLimitCO2_p or (0<p and p<2000e5),"\nPressure out of validity range p=" + String(p/1e5) + " bar.\nTo ignore set ignoreLimitCO2_p=true",aLevel);
+     assert(ignoreTlimit or ignoreLimitCO2_T or (273<T and T<573),"Temperature out of validity range: T=" + String(T) + "K.\nTo ignore set ignoreLimitCO2_T=true",aLevel);
+     assert(ignoreLimitCO2_p or (0<p and p<2000e5),"Pressure out of validity range p=" + String(p/1e5) + " bar.\nTo ignore set ignoreLimitCO2_p=true",aLevel);
   end if;
 
   //equ. 9

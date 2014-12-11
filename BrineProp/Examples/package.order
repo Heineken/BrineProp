@@ -5,6 +5,7 @@ BrineGas
 PureWaterMinimal
 PureWaterFlashing
 BrineProps2PhaseMinimal
+BrineProps2PhaseMinimal_ph
 BrineProps2phaseFull
 BrineProps2PhaseMinimal_state
 ConvertBrineComposition

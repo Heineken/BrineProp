@@ -106,9 +106,9 @@ algorithm
       end if;
 
       if AssertLevel>0 then
-        assert(ignoreLimitSalt_p[i] or (p >= salt.p_min_rho and p <= salt.p_max_rho),"\nPressure p=" + String(p/1e5) + " bar is out of validity range  ["+String(salt.p_min_rho/1e5)+"..."+String(salt.p_max_rho/1e5)+"]bar for "+salt.name + ":.\nTo ignore set ignoreLimitSalt_p["+String(i)+"]=true",aLevel);
-        assert(ignoreLimitSalt_T[i] or (T >= salt.T_min_rho and T <= salt.T_max_rho),"\nTemperature  T=" + String(T-273.15) + " C is out of validity range ["+String(salt.T_min_rho-273.15)+"..."+String(salt.T_max_rho-273.15)+"] for "+salt.name + ".\nTo ignore set ignoreLimitSalt_T["+String(i)+"]=true",aLevel);
-        assert(ignoreLimitSalt_b[i] or (m[i] >= 0 and m[i] <= salt.mola_max_rho),salt.name + "\nMolality is out of validity range: m[i]=" + String(m[i]) + " mol/kg.\nTo ignore set ignoreLimitSalt_b["+String(i)+"]=true",aLevel);
+        assert(ignoreLimitSalt_p[i] or (p >= salt.p_min_rho and p <= salt.p_max_rho),"Pressure p=" + String(p/1e5) + " bar is out of validity range  ["+String(salt.p_min_rho/1e5)+"..."+String(salt.p_max_rho/1e5)+"]bar for "+salt.name + ":.\nTo ignore set ignoreLimitSalt_p["+String(i)+"]=true",aLevel);
+        assert(ignoreLimitSalt_T[i] or (T >= salt.T_min_rho and T <= salt.T_max_rho),"Temperature  T=" + String(T-273.15) + " C is out of validity range ["+String(salt.T_min_rho-273.15)+"..."+String(salt.T_max_rho-273.15)+"] for "+salt.name + ".\nTo ignore set ignoreLimitSalt_T["+String(i)+"]=true",aLevel);
+        assert(ignoreLimitSalt_b[i] or (m[i] >= 0 and m[i] <= salt.mola_max_rho),salt.name + "Molality is out of validity range: m[i]=" + String(m[i]) + " mol/kg.\nTo ignore set ignoreLimitSalt_b["+String(i)+"]=true",aLevel);
       end if;
 
       if debugmode then

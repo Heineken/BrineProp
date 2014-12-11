@@ -15,9 +15,9 @@ PartialBrineMultiSaltOnePhase
 Brine5salts
 BrineDuan
 BrineDriesner
+GasData
 PartialBrineGas
 BrineGas3Gas
-GasData
 Vacuum
 PartialMixtureTwoPhaseMedium
 WaterMixtureTwoPhase_pT

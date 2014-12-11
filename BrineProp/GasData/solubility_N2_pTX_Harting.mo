@@ -25,9 +25,9 @@ algorithm
 // print("mola_N2("+String(p_gas)+","+String(T-273.16)+") (solubility_N2_pTX_Duan2006)");
 
   if AssertLevel>0 then
-     assert(ignoreLimitN2_T or (273<T and T<400), "\nTemperature out of validity range: T=" + String(T - 273.15) + ".\nTo ignore set ignoreLimitN2_T=true",aLevel);
-     assert(ignoreLimitN2_p or (1e5<p and p<600e5),"\nPressure out of validity rangep=" + String(p/1e5) + " bar.\nTo ignore set ignoreLimitN2_p=true",aLevel);
-     assert(ignoreLimitN2_b or molalities[iNaCl]<6,"\nMolality out of validity range: mola[NaCl]=" + String(molalities[iNaCl]) + " mol/kg.\nTo ignore set ignoreLimitN2_b=true",aLevel);
+     assert(ignoreTlimit or ignoreLimitN2_T or (273<T and T<400), "Temperature out of validity range: T=" + String(T - 273.15) + ".\nTo ignore set ignoreLimitN2_T=true",aLevel);
+     assert(ignoreLimitN2_p or (1e5<p and p<600e5),"Pressure out of validity rangep=" + String(p/1e5) + " bar.\nTo ignore set ignoreLimitN2_p=true",aLevel);
+     assert(ignoreLimitN2_b or molalities[iNaCl]<6,"Molality out of validity range: mola[NaCl]=" + String(molalities[iNaCl]) + " mol/kg.\nTo ignore set ignoreLimitN2_b=true",aLevel);
   end if;
 
 //page 19

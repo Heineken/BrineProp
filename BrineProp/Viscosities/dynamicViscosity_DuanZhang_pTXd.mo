@@ -45,8 +45,8 @@ algorithm
   end if;
 
 if AssertLevel>0 then
-  assert(p_bar>=p_min and p_bar<=p_max, "\np="+String(p_bar)+", but must be between "+String(p_min)+" and "+String(p_max)+" bar",aLevel);
-  assert(T_C>=T_min and T_C<=T_max, "\nT="+String(T_C)+", but must be between "+String(T_min)+" and "+String(T_max)+"degC",aLevel);
+  assert(p_bar>=p_min and p_bar<=p_max, "p="+String(p_bar)+", but must be between "+String(p_min)+" and "+String(p_max)+" bar",aLevel);
+  assert(T_C>=T_min and T_C<=T_max, "T="+String(T_C)+", but must be between "+String(T_min)+" and "+String(T_max)+"degC",aLevel);
 end if;
 
  //viscosity calculation
@@ -73,9 +73,9 @@ end if;
            + " mol/kg (dynamicViscosity_DuanZhang_pTXd)";
       end if;*/
       if AssertLevel>0 then
-        assert(ignoreLimitSalt_p[i] or (p_bar>=p_min and p_bar<=p_max),"\nPressure is out of validity range: p=" + String(p_bar) + " bar.\nTo ignore set ignoreLimitSalt_p["+String(i)+"]=true",aLevel);
-        assert(ignoreLimitSalt_T[i] or (T_C>=T_min and T_C<=T_max),"\nTemperature is out of validity range: T=" + String(T_C) + " C.\nTo ignore set ignoreLimitSalt_T["+String(i)+"]=true",aLevel);
-        assert(ignoreLimitSalt_b[i] or (molalities[i] >= 0 and molalities[i] <= salt.mola_max_eta),"\n"+salt.name + "Molality is out of validity range: m[i]=" + String(molalities[i]) + " mol/kg.\nTo ignore set ignoreLimitSalt_b["+String(i)+"]=true",aLevel);
+        assert(ignoreLimitSalt_p[i] or (p_bar>=p_min and p_bar<=p_max),"Pressure is out of validity range: p=" + String(p_bar) + " bar.\nTo ignore set ignoreLimitSalt_p["+String(i)+"]=true",aLevel);
+        assert(ignoreLimitSalt_T[i] or (T_C>=T_min and T_C<=T_max),"Temperature is out of validity range: T=" + String(T_C) + " C.\nTo ignore set ignoreLimitSalt_T["+String(i)+"]=true",aLevel);
+        assert(ignoreLimitSalt_b[i] or (molalities[i] >= 0 and molalities[i] <= salt.mola_max_eta),salt.name + "Molality is out of validity range: m[i]=" + String(molalities[i]) + " mol/kg.\nTo ignore set ignoreLimitSalt_b["+String(i)+"]=true",aLevel);
       end if;
 
       //factors
@@ -90,7 +90,7 @@ end if;
          eta_relative := 1 + salt.Zh_A*c^0.5 + salt.Zh_B*c + salt.Zh_D*c^2 + 1e-4*salt.Zh_E*c^3.5 + 1e-5*salt.Zh_F*c^7;
       else
         //Duan (available for NaCl and KCl)
-        assert(AssertLevel>0 and max(cat(1,salt.a,salt.b,salt.c))>0,"\nNo coefficients for " + salt.name + " (b="+String(molalities[i])+" mol/kg");
+        assert(AssertLevel>0 and max(cat(1,salt.a,salt.b,salt.c))>0,"No coefficients for " + salt.name + " (b="+String(molalities[i])+" mol/kg");
         b:=molalities[i]/phi;
         A := salt.a[1] + salt.a[2]*T_K + salt.a[3]*T_K^2;
         B := salt.b[1] + salt.b[2]*T_K + salt.b[3]*T_K^2;

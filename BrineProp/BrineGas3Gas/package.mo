@@ -5,6 +5,8 @@ package BrineGas3Gas "Gas mixture of CO2+N2+CH4+H2O"
     final MM_vec = {M_CO2,M_N2,M_CH4,M_H2O},
     final nM_vec = {nM_CO2,nM_N2,nM_CH4,nM_CH4});
 
+  extends PartialFlags;
+
 
  redeclare model extends BaseProperties
  //Dummy for OM

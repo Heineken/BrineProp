@@ -66,8 +66,8 @@ algorithm
     X_gas:=0;
   else
   if AssertLevel>0 then
-     assert(ignoreLimitCH4_T or (273<T and T<273+250),"\nTemperature out of validity range: T=" + String(T) + " K.\nTo ignore set ignoreLimitCH4_T=true",aLevel);
-     assert(ignoreLimitCH4_p or (1e5<p or p<2000e5),"\nPressure out of validity range: p=" + String(p/1e5) + " bar.\nTo ignore set ignoreLimitCH4_p=true",aLevel);
+     assert(ignoreTlimit or ignoreLimitCH4_T or (273<T and T<273+250),"Temperature out of validity range: T=" + String(T) + " K.\nTo ignore set ignoreLimitCH4_T=true",aLevel);
+     assert(ignoreLimitCH4_p or (1e5<p or p<2000e5),"Pressure out of validity range: p=" + String(p/1e5) + " bar.\nTo ignore set ignoreLimitCH4_p=true",aLevel);
   end if;
 
   //  (molefractions,molalities):=massFractionsToMoleFractions(X, MM);

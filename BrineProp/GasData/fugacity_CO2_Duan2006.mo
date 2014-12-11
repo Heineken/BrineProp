@@ -12,8 +12,8 @@ protected
   Real c[15];
 algorithm
   if AssertLevel>0 then
-    assert(T>273 and T<573, "\nT="+String(T-273.15)+"degC out of range(0...300 C) for CO2 fugacity calculation",aLevel);
-    assert(p<2000e5, "\np="+String(p/1e5)+" bar out of range for CO2 fugacity calculation",aLevel);
+    assert(T>273 and T<573, "T="+String(T-273.15)+"degC out of range(0...300 C) for CO2 fugacity calculation",aLevel);
+    assert(p<2000e5, "p="+String(p/1e5)+" bar out of range for CO2 fugacity calculation",aLevel);
   end if;
 
     if T<305 then

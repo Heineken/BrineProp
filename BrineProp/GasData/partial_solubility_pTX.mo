@@ -5,6 +5,7 @@ partial function partial_solubility_pTX
   input SI.MassFraction X[:] "mass fractions m_x/m_Sol";
   input SI.MolarMass MM_vec[:] "molar masses of components";
   input SI.Pressure p_gas;
+  input Boolean ignoreTlimit=false "activated by temperature_phX";
 //  output SI.MassFraction c_gas "gas concentration in kg_gas/kg_H2O";
 //  input PartialFlags flags;
   output SI.MassFraction X_gas "gas concentration in kg_gas/kg_fluid";

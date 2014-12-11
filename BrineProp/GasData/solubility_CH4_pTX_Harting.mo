@@ -18,9 +18,9 @@ algorithm
 // print("mola_CH4("+String(p_gas)+","+String(T-273.16)+") (solubility_CH4_pTX_Duan2006)");
 
   if AssertLevel>0 then
-     assert(ignoreLimitCH4_T or (273<T and T<400),"\nTemperature out of validity range T=" + String(T) + " K.\nTo ignore set ignoreLimitCH4_T=true",aLevel);
-     assert(ignoreLimitCH4_p or (1e5<p or p<600e5),"\nPressure out of validity range: p=" + String(p/1e5) + " bar.\nTo ignore set ignoreLimitCH4_p=true",aLevel);
-     assert(ignoreLimitCH4_b or molalities[1]<6,"\nMolality out of validity range: b=" + String(molalities[1]) + " mol/kg.\nTo ignore set ignoreLimitCH4_p=true",aLevel);
+     assert(ignoreTlimit or ignoreLimitCH4_T or (273<T and T<400),"Temperature out of validity range T=" + String(T) + " K.\nTo ignore set ignoreLimitCH4_T=true",aLevel);
+     assert(ignoreLimitCH4_p or (1e5<p or p<600e5),"Pressure out of validity range: p=" + String(p/1e5) + " bar.\nTo ignore set ignoreLimitCH4_p=true",aLevel);
+     assert(ignoreLimitCH4_b or molalities[1]<6,"Molality out of validity range: b=" + String(molalities[1]) + " mol/kg.\nTo ignore set ignoreLimitCH4_p=true",aLevel);
   end if;
 //page 19
   L_rel_p :=(0.4009

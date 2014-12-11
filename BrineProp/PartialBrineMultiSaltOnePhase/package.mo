@@ -142,7 +142,7 @@ protected
     Integer z=0 "Loop counter";
   algorithm
     if debugmode then
-       print("\ntemperature_phX("+String(p)+","+String(h)+")");
+       print("temperature_phX("+String(p)+","+String(h)+")");
     end if;
     //Find temperature with h above given h ->T_b
     assert(h>specificEnthalpy_pTX(p,T_a,X),"h="+String(h/1e3)+" kJ/kg -> Enthalpy too low (< 0degC)");

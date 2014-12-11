@@ -12,7 +12,7 @@ protected
   constant SI.Temp_C T_max=250+273.15;
 algorithm
   if AssertLevel>0 then
-    assert(ignoreLimitSalt_T[3] or (T_C>=T_min and T_C<=T_max),"\nTemperature is out of validity range: T=" + String(T) + " mol/kg.\nTo ignore set ignoreLimitSalt_T[3]=true",aLevel);
+    assert(ignoreLimitSalt_T[3] or (T_C>=T_min and T_C<=T_max),"Temperature is out of validity range: T=" + String(T) + " mol/kg.\nTo ignore set ignoreLimitSalt_T[3]=true",aLevel);
   end if;
 
   h_app := q[1] + q[2]*T + q[3]*T^2 + q[4]*T^3 + q[5] * log(T-270);

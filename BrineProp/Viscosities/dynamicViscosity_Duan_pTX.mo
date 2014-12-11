@@ -54,10 +54,10 @@ algorithm
     if X[i]>0 then
        salt := Salt_Constants[i];
     if AssertLevel>0 then
-     assert(ignoreLimitSalt_b[i] or (molalities[i]>=0 and molalities[i]<=salt.mola_max_eta), "\nMolality of " + salt.name + " is " + String(molalities[i]) + "(X="
+     assert(ignoreLimitSalt_b[i] or (molalities[i]>=0 and molalities[i]<=salt.mola_max_eta), "Molality of " + salt.name + " is " + String(molalities[i]) + "(X="
            + String(X[i]) + "), but must be between 0 and " + String(salt.mola_max_eta)
            + " mol/kg.\nTo ignore set ignoreLimitSalt_b["+String(i)+"]=true",aLevel);
-     assert(max(cat(1,salt.a,salt.b,salt.c))>0,"\nNo coefficients for " + salt.name+".",aLevel);
+     assert(max(cat(1,salt.a,salt.b,salt.c))>0,"No coefficients for " + salt.name+".",aLevel);
     end if;
 
 //      print(salt.name+" content = "+String(molalities[i])+" (Viscosities.dynamicViscosity_Duan_pTX)");

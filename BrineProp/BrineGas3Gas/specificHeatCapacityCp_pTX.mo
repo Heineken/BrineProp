@@ -27,7 +27,7 @@ algorithm
     print("Running specificHeatCapacityCp_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
   end if;
 
-  if not min(X)>0 and not ignoreNoCompositionInBrineGas then
+  if not ignoreNoCompositionInBrineGas and not min(X)>0 then
     print("No gas composition, assuming water vapour.(BrineProp.BrineGas_3Gas.specificHeatCapacityCp_pTX)");
   end if;
 

@@ -162,9 +162,10 @@ partial package PartialBrineMultiSaltMultiGasTwoPhase "Template medium for aqueo
   "solubility calculation of gas in m_gas/m_H2O"
       input SI.Pressure p;
       input SI.Temp_K T;
-      input SI.MassFraction X[nX] "mass fractions m_x/m_Sol";
       input SI.MassFraction X_l[nX] "mass fractions m_x/m_Sol";
+      input SI.MassFraction X[nX] "mass fractions m_x/m_Sol";
       input SI.Pressure[nX_gas] p_gas;
+      input Boolean ignoreTlimit=false "activated by temperature_phX";
     //  input SI.MolarMass MM[:] "=fill(0,nX)molar masses of components";
     //  output Molality[nX_gas] solu;
       output MassFraction solu[nX_gas] "gas concentration in kg_gas/kg_fluid";
@@ -210,22 +211,25 @@ protected
     "2 for two-phase, 1 for one-phase, 0 if not known";
       input Real[nX_gas+1] n_g_norm_start=fill(0.5,nX_gas+1)
     "start value, all gas in gas phase, all water liquid";
+      input Boolean ignoreTlimit=false;
       output SI.SpecificEnthalpy h;
 
     algorithm
       if debugmode then
-          print("Running specificEnthalpy_pTX("+String(p/1e5)+","+String(T-273.15)+"degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
+          print("Running specificEnthalpy_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" C, ignoreTlimit="+String(ignoreTlimit)+", X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
       end if;
      h:=specificEnthalpy(setState_pTX(
         p,
         T,
         X,
-        phase,n_g_norm_start));
+        phase,
+        n_g_norm_start,
+        ignoreTlimit));
 
     //print(String(p)+","+String(T)+" K->"+String(h)+" J/kg & (PartialBrine_Multi_TwoPhase_ngas.specificEnthalpy_pTX)");
      //,p=pressure_ThX(T,h,X);
 
-     annotation(LateInline=true,inverse(T=temperature_phX(p,h,X,phase,n_g_norm_start)));
+     annotation(LateInline=true,inverse(T=temperature_phX(p,h,X,phase,n_g_norm_start,ignoreTlimit)));
     end specificEnthalpy_pTX;
 
 
@@ -258,9 +262,10 @@ protected
       input MassFraction X[nX] "Mass fractions";
       input FixedPhase phase=0
     "2 for two-phase, 1 for one-phase, 0 if not known";
-      input Real[nX_gas + 1] n_g_start=fill(0.5,
-                                               nX_gas+1)
+      input Real[nX_gas + 1] n_g_start=fill(0.5,nX_gas+1)
     "start value, all gas in gas phase, all water liquid";
+      input Boolean ignoreTlimit=true
+    "To avoid warnings due to low temperature";
       output Temperature T "Temperature";
 protected
       SI.SpecificHeatCapacity c_p;
@@ -286,9 +291,9 @@ protected
       else
 
         //Find temperature with h above given h ->T_b
-        assert(h>specificEnthalpy_pTX(p,T_a,X),"h="+String(h/1e3)+" kJ/kg -> Enthalpy too low (< 0degC)");
+        assert(h>specificEnthalpy_pTX(p,T_a,X,0,n_g_start,ignoreTlimit=true),"h="+String(h/1e3)+" kJ/kg -> Enthalpy below lower bisection limit ("+String(T_a-273.15)+" C)");
         while true loop
-          h_T:=specificEnthalpy_pTX(p,T_b,X);
+          h_T:=specificEnthalpy_pTX(p,T_b,X,0,n_g_start,ignoreTlimit=true);
           //print(String(p)+","+String(T_b)+" K->"+String(h_T)+" J/kg (PartialBrine_ngas_Newton.temperature_phX)");
           if h>h_T then
             T_a := T_b;
@@ -304,7 +309,7 @@ protected
       //    print("T_b-T_a="+String(T_b-T_a)+", abs(h-h_T)/h="+String(abs(h-h_T)/h));
           T:=(T_a+T_b)/2 "Halbieren";
       //    print("T_neu="+String(T)+"K");
-          h_T:=specificEnthalpy_pTX(p,T,X);
+          h_T:=specificEnthalpy_pTX(p,T,X,0,n_g_start,ignoreTlimit=true);
           if h_T > h then
             T_b:=T;
       //      print("T_b="+String(T)+"K -> dh="+String(h_T-h));
@@ -374,7 +379,7 @@ protected
 
     algorithm
       if debugmode then
-         print("\npressure_TdX("+String(T)+","+String(d)+")");
+         print("pressure_TdX("+String(T)+","+String(d)+")");
       end if;
       //Find temperature with h above given h ->T_b
       assert(d>density_pTX(p_a,T,X),"d="+String(d)+" kg/m^3 -> density too low (< d(1 bar))");
@@ -418,7 +423,8 @@ protected
      input SI.Pressure p;
      input SI.Temp_K T;
      input MassFraction X[nX] "mass fraction m_NaCl/m_Sol";
-     input SI.MolarMass MM[:]=fill(0,nX) "molar masses of components";
+   //  input SI.MolarMass MM[:]=fill(0,nX) "molar masses of components";
+     input Boolean ignoreTlimit=false "activated by temperature_phX";
      output SI.SpecificEnthalpy h;
 protected
      SI.SpecificEnthalpy[nX_salt] h_vec;
@@ -457,6 +463,7 @@ protected
 //output Real k[nX_gas];
 // SI.Density d_g_H2O = Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.rhov_p(p) "density of water vapor";
 */
+      input Boolean ignoreTlimit=false "activated by temperature_phX";
       output Real GVF;
       output SI.SpecificEnthalpy h_l;
       output SI.SpecificEnthalpy h_g;
@@ -503,14 +510,14 @@ protected
       Boolean isTwoPhaseWater=false;
     algorithm
       if debugmode then
-          print("Running setState_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
+          print("Running setState_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, ignoreTlimit="+String(ignoreTlimit)+", X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
       end if;
 
      assert(p>0,"p="+String(p/1e5)+" bar - Negative pressure is not yet supported.");
      assert(max(X)-1<=1e-8 and min(X)>=-1e-8, "X out of range [0...1] = "+Modelica.Math.Matrices.toString(transpose([X])));
 
       if T<273.15 then
-        print("T="+String(T)+" too low (<0 degC), setting to 0 degC in BrineProp.PartialBrineMultiSaltMultiGasTwoPhase.setState_pTX()");
+        print("T="+String(T-273.15)+" C too low (<0 degC), setting to 0 degC in BrineProp.PartialBrineMultiSaltMultiGasTwoPhase.setState_pTX()");
       end if;
       T2:= max(273.16,T);
 
@@ -518,7 +525,7 @@ protected
 
     /*     p_degas := cat(1,saturationPressures(p,T2,X,MM_vec), {p_H2O}); 60% slower*/
         p_gas :=fill(p/(nX_gas + 1), nX_gas + 1);
-        solu :=solubilities_pTX(p,T,X_l,X,p_gas[1:nX_gas]);
+        solu :=solubilities_pTX(p,T,X_l,X,p_gas[1:nX_gas],ignoreTlimit=ignoreTlimit);
 
         k :=solu ./ p_gas[1:nX_gas];
         for i in 1:nX_gas loop
@@ -584,7 +591,7 @@ protected
 
      //      print("p_gas[1]=" + String(p_gas[1]));
 
-            solu:=solubilities_pTX(p=p, T=T2, X_l=X_l, X=X, p_gas=p_gas[1:nX_gas]);
+            solu:=solubilities_pTX(p=p, T=T2, X_l=X_l, X=X, p_gas=p_gas[1:nX_gas],ignoreTlimit=ignoreTlimit);
 
             for i in 1:nX_gas loop
               k[i]:=if p_gas[i] > 0 then solu[i]/p_gas[i] else 1e10;
@@ -685,7 +692,7 @@ protected
               T2,
               X_l,
               MM_vec) "no 1-phase gas";
-        h_l := specificEnthalpy_liq_pTX(p,T,X_l);
+        h_l := specificEnthalpy_liq_pTX(p,T,X_l,ignoreTlimit);
       end if "TwoPhaseWater";
 
       d:=1/(x/d_g + (1 - x)/d_l);
