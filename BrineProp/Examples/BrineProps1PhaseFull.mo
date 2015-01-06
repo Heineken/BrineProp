@@ -45,7 +45,7 @@ equation
 //   props.Xi = {    0,   0,   0,   0,  0} "pure water";
 //  props.Xi = {6*SaltData.M_NaCl/(1+6*SaltData.M_NaCl),0,0,0,0} "6-molar NaCl solution";
 //  props.Xi = {n_Na*SaltData.M_NaCl,n_K*SaltData.M_KCl,n_Ca*SaltData.M_CaCl2,0,0}/(1+n_Na*SaltData.M_NaCl+n_K*SaltData.M_KCl+n_Ca*SaltData.M_CaCl2) "specify molalities above";
-    props.Xi = {0*0.0839077010751,0*0.00253365118988,0.122786737978,0,0}
+    props.Xi = {0.0839077010751,0.00253365118988,0.122786737978,0,0}
     "GrSk brine composition (Feldbusch 2-2013 1.1775g/ml V2)";
 
 //SPECIFY THERMODYNAMIC STATE

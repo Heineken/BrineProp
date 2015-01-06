@@ -9,5 +9,5 @@ algorithm
   end if;
 
   Cp_app_mol:=(mola^b+c)*(k-l*(m-T)^(-1));
-//   print("Cp_app_mol_CaCl2= "+String(Cp_app_mol)+"J/kg");
+//  print("Cp_app_mol_CaCl2= "+String(Cp_app_mol)+"J/kg");
 end appMolarHeatCapacity_CaCl2_White;

@@ -3,9 +3,9 @@ model BrineProps2phaseFull
 
 //SPECIFY MEDIUM
 //   package Medium = BrineProp.Brine5salts3gas(ignoreLimitN2_T=true);
-   package Medium = Brine5salts3gas(AssertLevel=1);
-  //package Medium = Brine_5salts_TwoPhase_3gas(input_dT=true) "also take dT input";
-  //package Medium = Brine_5salts_TwoPhase_3gas(input_ph=false) "no ph input expected -> save time";
+   package Medium = Brine5salts3gas(AssertLevel=1,ignoreLimitSalt_T={false,true,true,false,false});
+  //package Medium = Brine5salts3gas(input_dT=true) "also take dT input";
+  //package Medium = Brine5salts3gas(input_ph=false) "no ph input expected -> save time";
 
 //INSTANTIATE PROPERTY MODEL
   Medium.BaseProperties props;
@@ -28,16 +28,16 @@ model BrineProps2phaseFull
     "gas phase viscosity";
 
 //SPECIFIC HEAT CAPACITY
-  SI.SpecificHeatCapacity c_p_brine= Brine5salts3gas.specificHeatCapacityCp(props.state);
+  SI.SpecificHeatCapacity c_p_brine= Medium.specificHeatCapacityCp(props.state);
 
   SI.Temperature dT= 0.1 "temperature intervall for differential quotient";
   SI.SpecificHeatCapacity c_p_brine2=(Medium.specificEnthalpy_pTX(props.p,props.T+dT/2,props.X)
                                      -Medium.specificEnthalpy_pTX(props.p,props.T-dT/2,props.X))/dT
-    "by differentiation from enthalpy";
+    "by differentiation from enthalpy (should equal c_p_brine)";
   SI.SpecificHeatCapacity c_p_liq=Medium.specificHeatCapacityCp_liq(props.state);
 
   SI.SpecificHeatCapacity c_p_gas=Medium.specificHeatCapacityCp_gas(props.state);
-  SI.SpecificEnthalpy h_Driesner= BrineProp.SpecificEnthalpies.specificEnthalpy_pTX_Driesner(props.p,props.T,sum(props.X[1:5]))
+  SI.SpecificEnthalpy h_Driesner= Medium.specificEnthalpy_pTX_Driesner(props.p,props.T,sum(props.X[1:5]))
     "NaCl solution enthalpy acc to Driesner";
   SI.SpecificHeatCapacity c_p_Driesner= Medium.specificHeatCapacity_pTX_Driesner(props.p,props.T,sum(props.X[1:5]))
     "NaCl heat capacity acc to Driesner";
@@ -123,9 +123,10 @@ equation
   X_g[6:8]={8.05e-4,  5.87e-5, 7.15e-5}; GEHT NICHT, WEIL ER X<0 ausprobiert und das wird in PartialMedium abgefangen
 */
 //props.Xi = {     0.08214,   0.0053126,     0.11052,   0*0.0011094,   0*0.0019676,  0.00018083,  0.00074452,  6.661e-005}     "Feldbusch 9/11";
-    props.Xi = {0.083945671051201,0.00253479771131107,0.122842299461699,0*0.000612116692496665,0*0.00214041137028575,  0.00016883,  0.00073459, 6.5652e-005}
-    "Feldbusch 2-2013 1.1775g/ml";
+//    props.Xi = {0.083945671051201,0.00253479771131107,0.122842299461699,0*0.000612116692496665,0*0.00214041137028575,  0.00016883,  0.00073459, 6.5652e-005} "Feldbusch 2-2013 1.1775g/ml";
 //    props.Xi = {0.0839077010751,0.00253365118988,0.122786737978,0,0,g*7.2426359111e-05,g*0.000689505657647,g*6.14906384726e-05} "Feldbusch 2-2013 1.1775g/ml V2";
+    props.Xi = {0.0839077010751,0.00253365118988,0.122786737978,0,0,g*0.00016883,g*0.00073459, g*6.5652e-005}
+    "Feldbusch 2-2013 1.1775g/ml V2";
 
 //  mola_gas=Medium.solubility_N2_pTX_Duan2006(props.p,props.T,props.X,Medium.MM_vec,p_gas);
 //  mola[:] = Medium.solubilities_pTX(props.p,props.T,props.X);

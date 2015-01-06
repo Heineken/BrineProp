@@ -44,6 +44,9 @@ protected
       appMolarEnthalpy_CaCl2_White(T, b[iCaCl2],ignoreTlimit) else 0,0,0}
     "TODO: remove absolute indices";
 algorithm
+    if debugmode then
+      print("Running specificEnthalpy_pTX_liq_Francke_cp("+String(p/1e5)+" bar,"+String(T-273.15)+"degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
+    end if;
   h := (X[iNaCl]+X[end])*h_Driesner + X[end]*b[2:5]*H_appmol[2:5]
     "TODO: remove absolute indices";
 

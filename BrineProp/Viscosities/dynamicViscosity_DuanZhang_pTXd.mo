@@ -75,7 +75,7 @@ end if;
       if AssertLevel>0 then
         assert(ignoreLimitSalt_p[i] or (p_bar>=p_min and p_bar<=p_max),"Pressure is out of validity range: p=" + String(p_bar) + " bar.\nTo ignore set ignoreLimitSalt_p["+String(i)+"]=true",aLevel);
         assert(ignoreLimitSalt_T[i] or (T_C>=T_min and T_C<=T_max),"Temperature is out of validity range: T=" + String(T_C) + " C.\nTo ignore set ignoreLimitSalt_T["+String(i)+"]=true",aLevel);
-        assert(ignoreLimitSalt_b[i] or (molalities[i] >= 0 and molalities[i] <= salt.mola_max_eta),salt.name + "Molality is out of validity range: m[i]=" + String(molalities[i]) + " mol/kg.\nTo ignore set ignoreLimitSalt_b["+String(i)+"]=true",aLevel);
+        assert(ignoreLimitSalt_b[i] or (molalities[i] >= 0 and molalities[i] <= salt.mola_max_eta),salt.name + "Molality m[i]=" + String(molalities[i]) + " mol/kg is out of validity range: 0..."+String(salt.mola_max_eta)+".\nTo ignore set ignoreLimitSalt_b["+String(i)+"]=true",aLevel);
       end if;
 
       //factors
