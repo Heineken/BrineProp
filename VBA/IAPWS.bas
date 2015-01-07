@@ -580,7 +580,7 @@ Private Function h5_pT(p, T) As Double
     tau = 1000 / T
     Pi = p
     gamma0_tau = 0
-    For 1 = 1 To 6
+    For i = 1 To 6
         gamma0_tau = gamma0_tau + ni0(i) * Ji0(i) * tau ^ (Ji0(i) - 1)
     Next i
     gammar_tau = 0
