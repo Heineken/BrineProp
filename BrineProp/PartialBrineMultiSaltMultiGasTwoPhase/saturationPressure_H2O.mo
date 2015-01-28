@@ -13,7 +13,7 @@ protected
    SI.MoleFraction ionMoleFractions[nX];
 algorithm
   if debugmode then
-    print("Running saturationPressure_H2O("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
+    print("Running saturationPressure_H2O("+String(p/1e5)+" bar,"+String(T-273.15)+" C, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
 //    print("p_H2O("+String(T)+")="+String(p_sat/1e5)+" bar (PartialBrine_Multi_TwoPhase_ngas.saturationPressure_H2O)");
   end if;
 //  printVector(nM);
@@ -24,6 +24,7 @@ algorithm
     ionMoleFractions:=Utilities.massToMoleFractions(X, MM) .* nM;
     ionMoleFractions:=ionMoleFractions/sum(ionMoleFractions) "normalize";
     p_H2O:=Modelica.Media.Water.WaterIF97_pT.saturationPressure(T);
+//    p_H2O:=Modelica.Media.Water.WaterIF97_pT.saturationPressure(if noEvent(T>300) then T else 300);
     p_sat:= p_H2O * ionMoleFractions[end];
   else
     p_sat:=10*p;

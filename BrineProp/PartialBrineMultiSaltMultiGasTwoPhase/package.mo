@@ -269,9 +269,9 @@ protected
       output Temperature T "Temperature";
 protected
       SI.SpecificHeatCapacity c_p;
-      SI.Temperature T_a=273.16;
-    //  SI.Temperature T0_a=273.16;
-      SI.Temperature T_b=min(400,Modelica.Media.Water.WaterIF97_pT.saturationTemperature(p)-1) "400";
+      SI.Temperature T_a=273.16 "lower window temperature";
+      SI.Temperature T_b=min(400,Modelica.Media.Water.WaterIF97_pT.saturationTemperature(p)-1)
+    "upper window temperature";
 
       SI.SpecificEnthalpy h_a "h at lower limit";
       SI.SpecificEnthalpy h_b "h at upper limit";
@@ -426,8 +426,6 @@ protected
    //  input SI.MolarMass MM[:]=fill(0,nX) "molar masses of components";
      input Boolean ignoreTlimit=false "activated by temperature_phX";
      output SI.SpecificEnthalpy h;
-protected
-     SI.SpecificEnthalpy[nX_salt] h_vec;
    end specificEnthalpy_liq_pTX;
 
 
@@ -450,7 +448,6 @@ protected
       input SI.MolarMass MM[:] "molar masses of components";
       output SI.Pressure[nX_gas] p_sat;
     end saturationPressures;
-
 
 
     redeclare replaceable partial function extends setState_pTX
@@ -510,16 +507,19 @@ protected
       Boolean isTwoPhaseWater=false;
     algorithm
       if debugmode then
-          print("Running setState_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, ignoreTlimit="+String(ignoreTlimit)+", X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
+          print("\nRunning setState_pTX("+String(p/1e5)+" bar,"+String(min(1000,T)-273.15)+" degC, ignoreTlimit="+String(ignoreTlimit)+", X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
       end if;
 
      assert(p>0,"p="+String(p/1e5)+" bar - Negative pressure is not yet supported.");
      assert(max(X)-1<=1e-8 and min(X)>=-1e-8, "X out of range [0...1] = "+Modelica.Math.Matrices.toString(transpose([X])));
 
-      if T<273.15 then
-        print("T="+String(T-273.15)+" C too low (<0 degC), setting to 0 degC in BrineProp.PartialBrineMultiSaltMultiGasTwoPhase.setState_pTX()");
+      if String(T)== "-1.#IND" then
+      assert(false, "T is NaN, probably division by zero."+(if AssertLevel==1 then "Setting T=300 K." else ""),aLevel);
+        T2:=350;
+      else
+        assert(T>273.15,"T="+String(T-273.15)+" C too low (<0 C)."+(if AssertLevel==1 then " setting to 0 C" else ""),aLevel);
+        T2:= max(273.16,T);
       end if;
-      T2:= max(273.16,T);
 
       p_H2O := saturationPressure_H2O(p,T2,X,MM_vec,nM_vec);
 

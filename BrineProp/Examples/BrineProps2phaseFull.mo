@@ -100,7 +100,7 @@ equation
   //DEFINE STATE (define 2 variables pT, ph or Td)
   //pT transient
   props.p = 10*1.01325e5;
-  props.T = 273.15+150 "+time";
+  props.T = 273.15+125 "+time";
 
 /*  //ph  
   props.p = 435e5;

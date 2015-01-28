@@ -82,7 +82,7 @@ protected
   SI.Pressure p_sat=Modelica.Media.Water.IF97_Utilities.BaseIF97.Basic.psat(T);
 algorithm
   if debugmode then
-      print("Running density_Duan2008_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
+      print("\nRunning density_Duan2008_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
   end if;
 
   rho_H2O := Modelica.Media.Water.WaterIF97_pT.density_pT(max(p, p_sat + 1), T)*1e-3

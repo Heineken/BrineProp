@@ -3,6 +3,7 @@ package Brine5salts3gas "Two-phase aqueous solution of NaCl, KCl, CaCl2, MgCl2, 
 
 //TODO: use Fluid limits
 
+
   extends SpecificEnthalpies(
       final iNaCl=1,
       final iKCl=2,
@@ -10,7 +11,9 @@ package Brine5salts3gas "Two-phase aqueous solution of NaCl, KCl, CaCl2, MgCl2, 
       final iMgCl2=4,
       final iSrCl2=5);
 
+
   extends Densities;
+
 
   extends Viscosities;
 
@@ -25,7 +28,6 @@ package Brine5salts3gas "Two-phase aqueous solution of NaCl, KCl, CaCl2, MgCl2, 
     final nM_salt = {nM_NaCl,nM_KCl,nM_CaCl2,nM_MgCl2,nM_SrCl2});
     /*final MM_salt = Salt_data.MM_salt,
     final nM_salt = Salt_data.nM_salt*/
-
 
 
   redeclare function extends setState_pTX "to avoid check error"
