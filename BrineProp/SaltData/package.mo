@@ -31,6 +31,7 @@ package SaltData "Molar masses and mole numbers of the contained salts"
     nM_SrCl2};
 */
 
+
   replaceable record SaltConstants
     extends Modelica.Icons.Record;
     SI.MolarMass M_salt "Molar Mass in kg/mol";

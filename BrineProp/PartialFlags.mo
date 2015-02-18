@@ -18,7 +18,6 @@ partial package PartialFlags
     "ignore temperature limits         {NaCl, KCl, CaCl2, MgCl2, SrCl2}";
     constant Boolean[5] ignoreLimitSalt_b={false,false,false,false,false}
     "ignore salinity limits            {NaCl, KCl, CaCl2, MgCl2, SrCl2}";
-    annotation (Documentation(info="<html></html>"));
 
 /*    constant Integer iNaCl "order in vectors";
     constant Integer iKCl=0 "order in vectors";

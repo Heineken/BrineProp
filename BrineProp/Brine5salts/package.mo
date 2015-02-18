@@ -7,9 +7,12 @@ package Brine5salts "One-phase (liquid) multisalt brine solution"
       final iMgCl2=4,
       final iSrCl2=5);
 
+
   extends Densities;
 
+
   extends Viscosities;
+
 
   extends BrineProp.PartialBrineMultiSaltOnePhase(
     final saltNames = {"sodium chloride","potassium chloride","calcium chloride","magnesium chloride","strontium chloride"},

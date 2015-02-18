@@ -8,6 +8,7 @@ package GasData "Molar masses and ion numbers of gases"
   end GasConstants;*/
 //  constant Real[:] MM_gas;
 
+
   extends PartialFlags;
    constant Integer iNaCl=1;
    constant Integer iKCl=2;
@@ -44,32 +45,6 @@ package GasData "Molar masses and ion numbers of gases"
   
  constant Real[:] MM_gas = {
     M_CO2,M_N2};*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   annotation (Documentation(info=""));

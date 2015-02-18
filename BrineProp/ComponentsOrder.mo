@@ -1,5 +1,6 @@
 within BrineProp;
 package ComponentsOrder "to be defined in actual Medium package"
+  //TODO add gases
    constant Integer iNaCl;
    constant Integer iKCl;
    constant Integer iCaCl2;

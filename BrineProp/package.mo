@@ -32,6 +32,7 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
 
 
 
+
   annotation (Documentation(info="<html>
 <p><b>BrineProp</b> is a modelica package that calculates the thermodynamic properties of a specified brine, i.e. an aqueous solution of salts and gases, with a potential gas phase, including degassing/evaporation and solution/condensation.</p>
 <p>It was developed as a part of a PhD projected, documented in the thesis &QUOT;<a href=\"http://nbn-resolving.de/urn:nbn:de:kobv:83-opus4-47126\">Thermo-hydraulic model of the two-phase flow in the brine circuit of a geothermal power plant</a>&QUOT;. </p>
@@ -125,7 +126,7 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
 <p><a href=\"mailto:francke@gfz-potsdam.de\">francke@gfz-potsdam.de</a></p>
 </html>",
  revisions="<html></html>"),
-    version="0.4.0",
+    version="0.4.1",
     versionDate="2014-12-03",
     uses(DataFiles(version="1.0"),Modelica(version="3.2.1")));
 end BrineProp;

@@ -53,11 +53,12 @@ model BrineProps2phaseFull
    //RATIO GAS-LIQUID
  Real ratioGasLiquid = props.GVF/(1-props.GVF) "gas-liquid volume ratio";
 
- /*
-   Real V_l = sum(props.X_l[6:8]./Medium.MM_gas)*22.4/props.X_l[end] 
+  Modelica.SIunits.MolarVolume Vm0 = Modelica.Constants.R*273.15/101325
+    "molar volume at STP";
+  Modelica.SIunits.MolarVolume V_l = sum(props.X_l[6:8]./Medium.MM_gas)*Vm0*1000/props.X_l[end]
     "Liter of dissolved gas per kg_brine would have after complete degassing at standard conditions";
-  Real ratioGasLiquid = V_l*props.d_l/1000;
-  */
+  Real ratioGasLiquid_STP = V_l*props.d_l/1000
+    "gas-liquid volume ratio at standard conditions, fully degassed";
 
  //Medium.SaturationProperties sat(Tsat=props.T,psat=props.p,X=props.X);
 //SI.SurfaceTension sigma = Modelica.Media.Water.WaterIF97_pT.surfaceTension(sat);
@@ -100,7 +101,7 @@ equation
   //DEFINE STATE (define 2 variables pT, ph or Td)
   //pT transient
   props.p = 10*1.01325e5;
-  props.T = 273.15+125 "+time";
+  props.T = 273.15+150 "+time";
 
 /*  //ph  
   props.p = 435e5;
