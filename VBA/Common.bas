@@ -29,7 +29,7 @@ Function String2Vector(Xi_string, Optional ByRef n As Integer) 'As Double() Conv
         Xi_vec = Split(Replace(Xi_string, ",", "."), ";")
      End If
         
-    n = UBound(Xi_vec) + 1
+    n = UBound(Xi_vec) + 1 'Split returns vector starting at 0
     If Len(Xi_vec(n - 1)) = 0 Then 'if last field is empty then crop
         n = n - 1
     End If
@@ -90,8 +90,12 @@ End Function
 
 
 Function ToDouble(vec, Optional ByRef n As Integer, Optional reduce = False) 'Typecast scalar/array to double scalar/array with index starting at 1
+    If VarType(vec) = vbString Then
+        ToDouble = "Type error (ToDouble)"
+        Exit Function
+    End If
+        
     n = Length(vec)
-     
     Dim vt As Integer
     vt = VarType(vec)
     If vt < 12 Then ' if scalar
@@ -106,7 +110,11 @@ Function ToDouble(vec, Optional ByRef n As Integer, Optional reduce = False) 'Ty
         ReDim dbl(1 To n)
         Dim i As Integer
         For i = 1 To n
-            dbl(i) = vec(i)
+            'If vt = 8204 Then
+            '    dbl(i) = vec(i, 1)
+            'Else
+                dbl(i) = vec(i)
+            'End If
         Next i
         ToDouble = dbl
     End If
@@ -299,26 +307,26 @@ End Function
 
 Function FullMassVector(Xi, Optional ByRef nX As Integer) 'As Double()
     Dim nXi As Integer
-    Dim x '() As Double
-    x = ToDouble(Xi, nXi)
-    If VarType(x) = vbString Or VarType(x) = vbError Or IsEmpty(x) Then
-        FullMassVector = x
+    Dim X '() As Double
+    X = ToDouble(Xi, nXi)
+    If VarType(X) = vbString Or VarType(X) = vbError Or IsEmpty(X) Then
+        FullMassVector = X
         Exit Function
     End If
     nX = nXi + 1
-    ReDim Preserve x(1 To nX)
+    ReDim Preserve X(1 To nX)
   
-    x(nX) = 1 - Application.Sum(Xi)
-    If x(nX) > 1 Or x(nX) <= 0 Then
-        x(1) = -1
+    X(nX) = 1 - Application.Sum(Xi)
+    If X(nX) > 1 Or X(nX) <= 0 Then
+        X(1) = -1
         ' MsgBox "Mass vector is wrong"
     End If
-    FullMassVector = x
+    FullMassVector = X
 End Function
 
-Function massFractionsToMolalities(x, MM) 'Calculate molalities (mole_i per kg H2O) from mass fractions X
+Function massFractionsToMolalities(X, MM) 'Calculate molalities (mole_i per kg H2O) from mass fractions X
   Dim molalities, nX As Integer, nM As Integer
-  nX = Length(x)
+  nX = Length(X)
   nM = Length(MM)
   ReDim molalities(1 To nX) 'Molalities moles/m_H2O
     If nX <> nM Then
@@ -327,9 +335,9 @@ Function massFractionsToMolalities(x, MM) 'Calculate molalities (mole_i per kg H
 
     Dim i As Integer
     For i = 1 To nX
-        If x(nX) > 0 Then
-            If x(i) > 10 ^ -6 Then
-                molalities(i) = x(i) / (MM(i) * x(nX)) 'numerical errors my create X[i]>0, this prevents it
+        If X(nX) > 0 Then
+            If X(i) > 10 ^ -6 Then
+                molalities(i) = X(i) / (MM(i) * X(nX)) 'numerical errors my create X[i]>0, this prevents it
            'Else
            '    molalities(i) = 0
             End If
@@ -340,12 +348,12 @@ Function massFractionsToMolalities(x, MM) 'Calculate molalities (mole_i per kg H
   massFractionsToMolalities = molalities
 End Function
 
-Function massFractionToMolality(x, X_H2O, MM) 'Calculate molalities (mole_i per kg H2O) from mass fractions X
-  Dim nX As Integer: nX = Length(x)
+Function massFractionToMolality(X, X_H2O, MM) 'Calculate molalities (mole_i per kg H2O) from mass fractions X
+  Dim nX As Integer: nX = Length(X)
 
     If X_H2O > 0 Then
-        If x > 10 ^ -6 Then
-            massFractionToMolality = x / (MM * X_H2O) 'numerical errors my create X[i]>0, this prevents it
+        If X > 10 ^ -6 Then
+            massFractionToMolality = X / (MM * X_H2O) 'numerical errors my create X[i]>0, this prevents it
        'Else
        '    molalities(i) = 0
         End If
@@ -355,38 +363,40 @@ Function massFractionToMolality(x, X_H2O, MM) 'Calculate molalities (mole_i per 
 End Function
 
 
-Function CheckMassVector(x, nX_must) As Variant
+Function CheckMassVector(X, nX_must) As Variant
     Dim nX As Integer, msg As String
     Dim Xout, s2v As Boolean
-    If VarType(x) = vbString Then
-        Xout = String2Vector(x, nX) 'make sure first index is 1
+If VarType(X) = vbString Then
+        Xout = String2Vector(X, nX) 'make sure first index is 1
         s2v = True 'stupid flag to avoid having to recheck or copy Xout=X
     Else
-        nX = Length(x)
+        nX = Length(X)
+        Xout = X
         s2v = False
     End If
+    
     If nX = nX_must - 1 Then 'without water
-        Xout = FullMassVector(IIf(s2v, Xout, x), nX) 'make sure first index is 1
+        Xout = FullMassVector(IIf(s2v, Xout, X), nX) 'make sure first index is 1
         If VarType(Xout) = vbString Then
-            msg = Xout
+            CheckMassVector = Xout
+        ElseIf VarType(Xout) = vbError Or Xout(1) = -1 Then
+            CheckMassVector = "#Mass vector is wrong"
+        Else
+            CheckMassVector = Xout
         End If
-        If VarType(Xout) = vbError Then
-            msg = "#Mass vector is wrong"
+'    ElseIf nX = nX_salt + 1 Then 'Full mass vector with water
+    ElseIf nX = nX_must Then 'Full mass vector with water
+        If Abs(Application.Sum(IIf(s2v, Xout, X)) - 1) > 10 ^ -8 Then
+            CheckMassVector = "#Mass vector does not add up to 1"
+        Else
+            CheckMassVector = ToDouble(IIf(s2v, Xout, X)) 'to prevent adding a dimension
         End If
-        If Xout(1) = -1 Then
-            msg = "#Mass vector is wrong"
-        End If
-        CheckMassVector = Xout
-    ElseIf nX = nX_salt + 1 Then 'Full mass vector with water
-        If Abs(Application.Sum(x) - 1) > 10 ^ -8 Then
-            msg = "#Mass vector does not add up to 1"
-        End If
-        CheckMassVector = ToDouble(x) 'to prevent adding a dimension
     Else
-        msg = "#Mass vector is wrong"
+        CheckMassVector = "#Mass vector has wrong number of elements (" & nX & " instead of " & nX_must - 1 & " or " & nX_must & " )"
     End If
-    If Len(msg) <> 0 Then
-        CheckMassVector = msg
-        Exit Function
-    End If
+    
+    'If Len(msg) <> 0 Then
+    '    CheckMassVector = msg
+    '    Exit Function
+    'End If
 End Function

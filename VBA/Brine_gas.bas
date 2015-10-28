@@ -9,7 +9,7 @@ Option Base 1
 
 Public Const nX_gas = 3
 Public Const nX = nX_gas + 1
-Public Const ignoreLimitN2_T = False
+Public Const ignoreLimitN2_T = True
 
 Const R = 8.314472
 Const nM_CO2 = 1 'number of ions per molecule
@@ -37,24 +37,24 @@ Function nM_vec() As Double()
 End Function
 
 Function R_gas(Xi)
-    Dim x
-    x = CheckMassVector(Xi, nX)
-    If VarType(x) = vbString Then
-        R_gas = x
+    Dim X
+    X = CheckMassVector(Xi, nX)
+    If VarType(X) = vbString Then
+        R_gas = X
         Exit Function
    End If
-    R_gas = ScalProd(x, Array(CO2.R, N2.R, CH4.R, H2O.R))
+    R_gas = ScalProd(X, Array(CO2.R, N2.R, CH4.R, H2O.R))
 End Function
 
 'ABOVE SPECIFIC TO GAS COMPOSITION
 'BELOW GENERIC PART
 
-Private Function MM_gas(x) As Double
-    MM_gas = CheckMassVector(x)
+Private Function MM_gas(X) As Double
+    MM_gas = CheckMassVector(X)
     If VarType(MM_gas) <> vbBoolean Then
         Exit Function
     End If
-    MM_gas = ScalProd(x, MM_vec)
+    MM_gas = ScalProd(X, MM_vec)
 End Function
 
 Function density(p As Double, T As Double, Xin)
@@ -63,14 +63,14 @@ Function density(p As Double, T As Double, Xin)
         Debug.Print "Running BrineGas.Density(" & p / 10 ^ 5 & " bar," & T - 273.15 & " °C"
     End If
     
-    Dim x
-    x = CheckMassVector(Xin, nX)
-    If VarType(x) = vbString Then
-        density = x & " (Brine_gas.density)"
+    Dim X
+    X = CheckMassVector(Xin, nX)
+    If VarType(X) = vbString Then
+        density = X & " (Brine_gas.density)"
         Exit Function
     End If
     
-    density = p / (T * R_gas(x))
+    density = p / (T * R_gas(X))
 End Function
 
 Private Function SingleGasNasa_h_T(data As DataRecord, T As Double, Optional exclEnthForm As Boolean = True, Optional ZeroAt0K As Boolean = True, Optional h_off As Double = 0) As Double
@@ -83,10 +83,10 @@ End Function
 Function specificEnthalpy(p As Double, T As Double, Xin)
     'calculation of specific enthalpy of gas mixture
     
-    Dim x
-    x = CheckMassVector(Xin, nX)
-    If VarType(x) = vbString Then
-        specificEnthalpy = x & " (Brine_gas.specificEnthalpy)"
+    Dim X
+    X = CheckMassVector(Xin, nX)
+    If VarType(X) = vbString Then
+        specificEnthalpy = X & " (Brine_gas.specificEnthalpy)"
         Exit Function
     End If
     
@@ -101,14 +101,14 @@ Function specificEnthalpy(p As Double, T As Double, Xin)
     ) 'to make sure it is gaseous TODO:Take regions directly
 
     If DebugMode Then
-      Debug.Print "Running BrineGas.SpecificEnthalpy(" & p / 10 ^ 5 & " bar," & T - 273.15 & " °C, X=" & Vector2String(x) & ")"
+      Debug.Print "Running BrineGas.SpecificEnthalpy(" & p / 10 ^ 5 & " bar," & T - 273.15 & " °C, X=" & Vector2String(X) & ")"
     End If
 
     'If Not Application.Min(X) > 0 Then
     '  Debug.Print "No gas composition, assuming water vapour.(Brine_gas.SpecificHeatCapacity_pTX)"
     'End If
 
-    specificEnthalpy = ScalProd(h_vec, x) 'mass weighted average
+    specificEnthalpy = ScalProd(h_vec, X) 'mass weighted average
     
 End Function
     
@@ -126,10 +126,10 @@ Function specificHeatCapacityCp(p As Double, T As Double, Xin) 'calculation of s
       Debug.Print "Running specificHeatCapacityCp_gas(" & p / 10 ^ 5 & " bar," & T - 273.15 & " °C)"
     End If
     
-    Dim x
-    x = CheckMassVector(Xin, nX)
-    If VarType(x) = vbString Then
-        specificHeatCapacityCp = x & " (Brine_gas.specificHeatCapacityCp)"
+    Dim X
+    X = CheckMassVector(Xin, nX)
+    If VarType(X) = vbString Then
+        specificHeatCapacityCp = X & " (Brine_gas.specificHeatCapacityCp)"
         Exit Function
     End If
     
@@ -149,9 +149,9 @@ Function specificHeatCapacityCp(p As Double, T As Double, Xin) 'calculation of s
         Debug.Print "cp_H2O: " & cp_H2O
     End If
 
-    specificHeatCapacityCp = ScalProd(cp_vec, x) 'mass weighted average
+    specificHeatCapacityCp = ScalProd(cp_vec, X) 'mass weighted average
 End Function
 
-Function dynamicViscosity(p As Double, T As Double, Optional x)
+Function dynamicViscosity(p As Double, T As Double, Optional X)
     dynamicViscosity = GasData.MoistAirDynamicViscosity(T)
 End Function
