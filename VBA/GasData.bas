@@ -107,7 +107,7 @@ Function H2O() As DataRecord
     End With
 End Function
 
-Function solubility_CO2_pTX_Duan2006(p As Double, T As Double, X, p_gas) 'CO2 solubility in aqueous saltsolutions
+Function solubility_CO2_pTX_Duan2006(p As Double, T As Double, x, p_gas) 'CO2 solubility in aqueous saltsolutions
 '' Zhenhao Duan et al. (2006) An improved model for the calculation of CO2 solubility in aqueous
 '' solutions containing Na+,K+,Ca2+,Mg2+,Cl-, and SO4_2-. Marine Chemistry 98131-139.
 '' fugacity from doi10.1016/j.marchem.2005.09.001
@@ -129,7 +129,7 @@ Function solubility_CO2_pTX_Duan2006(p As Double, T As Double, X, p_gas) 'CO2 so
 
  'constant
  Dim molalities '() As Double ReDim molalities(nX)
- molalities = massFractionsToMolalities(X, Brine.MM_vec)
+ molalities = massFractionsToMolalities(x, Brine.MM_vec)
  Dim m_Cl As Double, m_Na As Double, m_K As Double, m_Ca As Double, m_Mg As Double, m_SO4 As Double
  m_Cl = molalities(i_NaCl) + molalities(i_KCl) + 2 * molalities(i_CaCl2)
  m_Na = molalities(i_NaCl)
@@ -162,7 +162,7 @@ Function solubility_CO2_pTX_Duan2006(p As Double, T As Double, X, p_gas) 'CO2 so
      zeta_CO2_NaCl = Par_CO2_Duan2003(p_gas + p_H2O, T, zeta_CO2_NaCl_c)
     
      solu = phi * p_gas / 10 ^ 5 * Exp(-mu_l0_CO2_RT - 2 * lambda_CO2_Na * (m_Na + m_K + 2 * m_Ca + 2 * m_Mg) - zeta_CO2_NaCl * m_Cl * (m_Na + m_K + m_Mg + m_Ca) + 0.07 * m_SO4 * 0)
-     solubility_CO2_pTX_Duan2006 = solu * M_CO2 * X(Brine.nX) 'molality->mass fraction
+     solubility_CO2_pTX_Duan2006 = solu * M_CO2 * x(Brine.nX) 'molality->mass fraction
  End If
 End Function
 
@@ -249,7 +249,7 @@ End Function
     End If
   End Function
 
- Function solubility_N2_pTX_Duan2006(p As Double, T As Double, X, p_gas) 'solubility calculation of N2 in seawater Mao&Duan(2006)
+ Function solubility_N2_pTX_Duan2006(p As Double, T As Double, x, p_gas) 'solubility calculation of N2 in seawater Mao&Duan(2006)
     ' Shide Mao and Zhenhao Duan (2006) A thermodynamic model for calculating nitrogen solubility, gas phase composition and density of the H2O-N2-NaCl system. Fluid Phase Equilibria, 248 (2): 103-114
     ' 273-400 K, 1-600 bar and 0-6 mol/kg
     ' http://dx.doi.org/10.1016/j.fluid.2006.07.020
@@ -257,7 +257,7 @@ End Function
     
     'Dim M_H2O As Double:M_H2O = H2O.MM
     Dim molalities
-    molalities = ToDouble(massFractionsToMolalities(X, Brine.MM_vec))
+    molalities = ToDouble(massFractionsToMolalities(x, Brine.MM_vec))
     If VarType(molalities) = vbString Then
         solubility_N2_pTX_Duan2006 = molalities
         Exit Function
@@ -339,7 +339,7 @@ End Function
     'equ. 9
       Dim solu As Double
       solu = p_gas / 10 ^ 5 * phi_N2 * Exp(-mu_l0_N2_RT - 2 * lambda_N2_Na * (m_Na + m_K + 2 * m_Ca + 2 * m_Mg) - xi_N2_NaCl * (m_Cl + 2 * m_SO4) * (m_Na + m_K + 2 * m_Ca + 2 * m_Mg) - 4 * 0.0371 * m_SO4)
-      solubility_N2_pTX_Duan2006 = solu * M_N2 * X(Brine.nX) 'molality->mass fraction
+      solubility_N2_pTX_Duan2006 = solu * M_N2 * x(Brine.nX) 'molality->mass fraction
     End If
 End Function
 
@@ -412,7 +412,7 @@ End Function
  End Function
 
 
-Function solubility_CH4_pTX_Duan2006(p As Double, T As Double, X, p_gas) 'Duan ZH, Mao SD. (2006) A thermodynamic model for calculating methane solubility, density and gas phase composition of methane-bearing aqueous fluids from 273 to 523 K and from 1 to 2000 bar. Geochimica et Cosmochimica Acta, 70 (13): 3369-3386.
+Function solubility_CH4_pTX_Duan2006(p As Double, T As Double, x, p_gas) 'Duan ZH, Mao SD. (2006) A thermodynamic model for calculating methane solubility, density and gas phase composition of methane-bearing aqueous fluids from 273 to 523 K and from 1 to 2000 bar. Geochimica et Cosmochimica Acta, 70 (13): 3369-3386.
 ' http://geochem-model.org/Publications/43-GCA_2006_3369.pdf
 ' http://dx.doi.org/10.1016/j.gca.2006.03.018TODO Umrechnung andere Salz in NaCl"
 '  output SI.MassFraction c_gas "gas concentration in kg_gas/kg_H2O"
@@ -451,7 +451,7 @@ Function solubility_CH4_pTX_Duan2006(p As Double, T As Double, X, p_gas) 'Duan Z
         End If
 
         Dim molalities '(nX)
-        molalities = massFractionsToMolalities(X, Brine.MM_vec)
+        molalities = massFractionsToMolalities(x, Brine.MM_vec)
         Dim m_Cl As Double, m_Na As Double, m_K As Double, m_Ca As Double, m_Mg As Double, m_SO4 As Double                 'Molality
         m_Cl = molalities(i_NaCl) + molalities(i_KCl) + 2 * molalities(i_CaCl2)  '+ 2 * molalities(i_MgCl2)
         m_Na = molalities(i_NaCl)
@@ -469,7 +469,7 @@ Function solubility_CH4_pTX_Duan2006(p As Double, T As Double, X, p_gas) 'Duan Z
         Dim solu As Double
         solu = p_gas / 10 ^ 5 * phi_CH4 * Exp(-mu_l0_CH4_RT - 2 * lambda_CH4_Na * (m_Na + m_K + 2 * m_Ca + 2 * m_Mg) - xi_CH4_NaCl * (m_Na + m_K + 2 * m_Ca + 2 * m_Mg) * (m_Cl + 2 * m_SO4) - 4 * 0.0332 * m_SO4)
         
-        solubility_CH4_pTX_Duan2006 = solu * M_CH4 * X(Brine.nX) 'molality->mass fraction
+        solubility_CH4_pTX_Duan2006 = solu * M_CH4 * x(Brine.nX) 'molality->mass fraction
     End If
 End Function
 
@@ -523,13 +523,13 @@ End Function
 
 Function p_sat_H2O_Duan2003(T) 'calculates saturation pressure of water, with the equation given in Duan2003
 'An improved model calculating CO2 solubility in pure water and aqueous NaCl solutions from 273 to 533 K and from 0 to 2000 bar
-    Dim c, P_c As Double, T_C As Double, t_ As Double
+    Dim c, P_c As Double, T_C As Double, T_ As Double
     c = Array(-38.640844, 5.894842, 59.876516, 26.654627, 10.637097)
     P_c = 220.85 * 10 ^ 5
     T_C = 647.29
-    t_ = (T - T_C) / T_C
+    T_ = (T - T_C) / T_C
     
-    p_sat_H2O_Duan2003 = (P_c * T / T_C) * (1 + c(1) * (-t_) ^ 1.9 + c(2) * t_ + c(3) * t_ ^ 2 + c(4) * t_ ^ 3 + c(5) * t_ ^ 4)
+    p_sat_H2O_Duan2003 = (P_c * T / T_C) * (1 + c(1) * (-T_) ^ 1.9 + c(2) * T_ + c(3) * T_ ^ 2 + c(4) * T_ ^ 3 + c(5) * T_ ^ 4)
 End Function
 
 Function fugacity_H2O_Duan2006CH4(p As Double, T As Double) 'Calculation of fugacity coefficient according to Duan ZH, Mao SD. (2006)

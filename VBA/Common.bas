@@ -11,24 +11,35 @@ Option Base 1
 
 Function Vector2String(vec)
     Dim val
+    Vector2String = "{"
     For Each val In vec
         Vector2String = Vector2String & CStr(val) & ";"
     Next val
+    Vector2String = Left(Vector2String, Len(Vector2String) - 1) & "}"
 End Function
 
 Function String2Vector(Xi_string, Optional ByRef n As Integer) 'As Double() Converts composition string to vector of doubles'
+    ' input as {1.1;2.2;3.3} or 1.1;2.2;3.3 or {1,1;2.2;3.3} or 1.1;2.2;3.3
     If Len(Xi_string) = 0 Then
         String2Vector = "#Xi is empty"
         Exit Function
     End If
         
-    Dim Xi_vec() As String:
+    Dim Xi_str As String: Xi_str = Trim(Xi_string)
+    If Left(Xi_str, 1) = "{" Then
+        Xi_str = Mid(Xi_str, 2, Len(Xi_str) - 2) ' remove curly braces
+    End If
+    
+    'Change decimal separator
     If Mid(CCur(1.1), 2, 1) = "," Then ' If Excel is set to dot as decimal separator, but system is not
-        Xi_vec = Split(Replace(Xi_string, ".", ","), ";")
+        Xi_str = Replace(Xi_str, ".", ",")
     Else
-        Xi_vec = Split(Replace(Xi_string, ",", "."), ";")
-     End If
-        
+        Xi_str = Replace(Xi_str, ",", ".")
+    End If
+     
+    Dim Xi_vec() As String:
+    Xi_vec = Split(Xi_str, ";")
+       
     n = UBound(Xi_vec) + 1 'Split returns vector starting at 0
     If Len(Xi_vec(n - 1)) = 0 Then 'if last field is empty then crop
         n = n - 1
@@ -47,6 +58,22 @@ Function String2Vector(Xi_string, Optional ByRef n As Integer) 'As Double() Conv
     String2Vector = Xi
 End Function
 
+
+Function GetValueFromJSON(JSON As String, PropertyName As String) 'Parse JSON String
+    Dim equations() As String
+    Dim equation
+    Dim keyval() As String
+    equations = Split(Mid(JSON, 2, Len(JSON) - 2), ",") ' remove curly braces
+    For Each equation In equations
+        keyval = Split(equation, ":")
+        If Trim(keyval(0)) = Trim(PropertyName) Then
+            GetValueFromJSON = keyval(1)
+            GoTo Done
+        End If
+    Next equation
+    GetValueFromJSON = "#Not found: '" & PropertyName & "'"
+Done:
+End Function
 
 Function SubArray(sourceArray, Indexfrom As Integer, IndexTo As Integer)
     Dim b() As Double, i As Integer
@@ -307,26 +334,26 @@ End Function
 
 Function FullMassVector(Xi, Optional ByRef nX As Integer) 'As Double()
     Dim nXi As Integer
-    Dim X '() As Double
-    X = ToDouble(Xi, nXi)
-    If VarType(X) = vbString Or VarType(X) = vbError Or IsEmpty(X) Then
-        FullMassVector = X
+    Dim x '() As Double
+    x = ToDouble(Xi, nXi)
+    If VarType(x) = vbString Or VarType(x) = vbError Or IsEmpty(x) Then
+        FullMassVector = x
         Exit Function
     End If
     nX = nXi + 1
-    ReDim Preserve X(1 To nX)
+    ReDim Preserve x(1 To nX)
   
-    X(nX) = 1 - Application.Sum(Xi)
-    If X(nX) > 1 Or X(nX) <= 0 Then
-        X(1) = -1
+    x(nX) = 1 - Application.Sum(Xi)
+    If x(nX) > 1 Or x(nX) <= 0 Then
+        x(1) = -1
         ' MsgBox "Mass vector is wrong"
     End If
-    FullMassVector = X
+    FullMassVector = x
 End Function
 
-Function massFractionsToMolalities(X, MM) 'Calculate molalities (mole_i per kg H2O) from mass fractions X
+Function massFractionsToMolalities(x, MM) 'Calculate molalities (mole_i per kg H2O) from mass fractions X
   Dim molalities, nX As Integer, nM As Integer
-  nX = Length(X)
+  nX = Length(x)
   nM = Length(MM)
   ReDim molalities(1 To nX) 'Molalities moles/m_H2O
     If nX <> nM Then
@@ -335,9 +362,9 @@ Function massFractionsToMolalities(X, MM) 'Calculate molalities (mole_i per kg H
 
     Dim i As Integer
     For i = 1 To nX
-        If X(nX) > 0 Then
-            If X(i) > 10 ^ -6 Then
-                molalities(i) = X(i) / (MM(i) * X(nX)) 'numerical errors my create X[i]>0, this prevents it
+        If x(nX) > 0 Then
+            If x(i) > 10 ^ -6 Then
+                molalities(i) = x(i) / (MM(i) * x(nX)) 'numerical errors my create X[i]>0, this prevents it
            'Else
            '    molalities(i) = 0
             End If
@@ -348,12 +375,12 @@ Function massFractionsToMolalities(X, MM) 'Calculate molalities (mole_i per kg H
   massFractionsToMolalities = molalities
 End Function
 
-Function massFractionToMolality(X, X_H2O, MM) 'Calculate molalities (mole_i per kg H2O) from mass fractions X
-  Dim nX As Integer: nX = Length(X)
+Function massFractionToMolality(x, X_H2O, MM) 'Calculate molalities (mole_i per kg H2O) from mass fractions X
+  Dim nX As Integer: nX = Length(x)
 
     If X_H2O > 0 Then
-        If X > 10 ^ -6 Then
-            massFractionToMolality = X / (MM * X_H2O) 'numerical errors my create X[i]>0, this prevents it
+        If x > 10 ^ -6 Then
+            massFractionToMolality = x / (MM * X_H2O) 'numerical errors my create X[i]>0, this prevents it
        'Else
        '    molalities(i) = 0
         End If
@@ -363,20 +390,20 @@ Function massFractionToMolality(X, X_H2O, MM) 'Calculate molalities (mole_i per 
 End Function
 
 
-Function CheckMassVector(X, nX_must) As Variant
+Function CheckMassVector(x, nX_must) As Variant
     Dim nX As Integer, msg As String
     Dim Xout, s2v As Boolean
-If VarType(X) = vbString Then
-        Xout = String2Vector(X, nX) 'make sure first index is 1
+If VarType(x) = vbString Then
+        Xout = String2Vector(x, nX) 'make sure first index is 1
         s2v = True 'stupid flag to avoid having to recheck or copy Xout=X
     Else
-        nX = Length(X)
-        Xout = X
+        nX = Length(x)
+        Xout = x
         s2v = False
     End If
     
     If nX = nX_must - 1 Then 'without water
-        Xout = FullMassVector(IIf(s2v, Xout, X), nX) 'make sure first index is 1
+        Xout = FullMassVector(IIf(s2v, Xout, x), nX) 'make sure first index is 1
         If VarType(Xout) = vbString Then
             CheckMassVector = Xout
         ElseIf VarType(Xout) = vbError Or Xout(1) = -1 Then
@@ -386,10 +413,10 @@ If VarType(X) = vbString Then
         End If
 '    ElseIf nX = nX_salt + 1 Then 'Full mass vector with water
     ElseIf nX = nX_must Then 'Full mass vector with water
-        If Abs(Application.Sum(IIf(s2v, Xout, X)) - 1) > 10 ^ -8 Then
+        If Abs(Application.Sum(IIf(s2v, Xout, x)) - 1) > 10 ^ -8 Then
             CheckMassVector = "#Mass vector does not add up to 1"
         Else
-            CheckMassVector = ToDouble(IIf(s2v, Xout, X)) 'to prevent adding a dimension
+            CheckMassVector = ToDouble(IIf(s2v, Xout, x)) 'to prevent adding a dimension
         End If
     Else
         CheckMassVector = "#Mass vector has wrong number of elements (" & nX & " instead of " & nX_must - 1 & " or " & nX_must & " )"
