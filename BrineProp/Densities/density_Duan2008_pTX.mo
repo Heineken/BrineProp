@@ -85,6 +85,10 @@ algorithm
       print("\nRunning density_Duan2008_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
   end if;
 
+  assert(size(ignoreLimitSalt_p,1)==nX_salt,"Wrong length of ignoreLimitSalt_T ("+String(size(ignoreLimitSalt_p,1))+")"); //needed here, because flag vector with fewer than nX_salts elements causes "out of bounds" and is not caught elsewere
+  assert(size(ignoreLimitSalt_T,1)==nX_salt,"Wrong length of ignoreLimitSalt_p ("+String(size(ignoreLimitSalt_T,1))+")"); //should be in PartialFlags, but asserts can't be in packages
+  assert(size(ignoreLimitSalt_b,1)==nX_salt,"Wrong length of ignoreLimitSalt_b ("+String(size(ignoreLimitSalt_b,1))+")");
+
   rho_H2O := Modelica.Media.Water.WaterIF97_pT.density_pT(max(p, p_sat + 1), T)*1e-3
     "kg/m^3->kg/dm^3";
   if debugmode then
@@ -96,6 +100,7 @@ algorithm
     d := rho_H2O*1000;
     return;
   end if;
+
   for i in 1:nX_salt loop
     if not X[i] > 0 then
       M_salt[i] := 1;
@@ -230,6 +235,7 @@ algorithm
       end if;
     end if;
   end for;
+
 //  d := m[1:nX_salt]*rho/(1-X[end]) "mass fraction weighted linear mixture (matrix multiplication)";
 //   d := m[1:nX_salt]*rho/(sum(m[1:nX_salt])) "molality weighted linear mixture (matrix multiplication)";
 // d := ((1 + m[1:end-1]*MM_vec[1:end-1])*1000*rho_H2O)/(1000 + m[1:nX_salt]*V_Phi*rho_H2O)*1000     "Mixing rule frei nach Duan";

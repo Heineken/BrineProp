@@ -32,6 +32,8 @@ protected
   Real x_NaCl "mol fraction";
   //  SI.MolarMass M_Solution "[kg/mol]";
 algorithm
+  assert(size(ignoreLimitSalt_p,1)>0,"Wrong length of ignoreLimitSalt_T ("+String(size(ignoreLimitSalt_p,1))+")"); //needed here, because flag vector with fewer than nX_salts elements causes "out of bounds" and is not caught elsewere
+  assert(size(ignoreLimitSalt_T,1)>0,"Wrong length of ignoreLimitSalt_p ("+String(size(ignoreLimitSalt_p,1))+")"); //should be in PartialFlags, but asserts can't be in packages
 
   if AssertLevel>0 then
     assert(ignoreLimitSalt_p[iNaCl] or (p_bar>=p_min and p_bar<=p_max),"Pressure p=" + String(p/1e5) + " bar is out of validity range ["+String(p_min/1e5)+"..."+String(p_max/1e5)+"]bar.\nTo ignore set ignoreLimitSalt_p["+String(iNaCl)+"]=true",aLevel);
