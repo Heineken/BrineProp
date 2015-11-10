@@ -1,2 +1,6 @@
 SaltConstants
-saltConstants
+saltConstants_NaCl
+saltConstants_KCl
+saltConstants_CaCl2
+saltConstants_MgCl2
+saltConstants_SrCl2

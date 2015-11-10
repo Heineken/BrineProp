@@ -32,7 +32,15 @@ package SaltDataDuan "Coefficients used in Duan density calculation"
     annotation (Documentation(info="<html></html>"));
   end SaltConstants;
 
-constant SaltConstants[:] saltConstants = {
+/*constant SaltConstants[:] saltConstants; = {
+  saltConstants_NaCl,
+  saltConstants_KCl,
+  saltConstants_CaCl2,
+  saltConstants_MgCl2,
+  saltConstants_SrCl2};*/
+
+//constant SaltConstants[:] saltConstants = {
+constant SaltConstants saltConstants_NaCl=
   SaltConstants(
      name=  "NaCl",
      M_salt= M_NaCl,
@@ -81,8 +89,9 @@ constant SaltConstants[:] saltConstants = {
     Zh_B=0.0799,
     Zh_D=0.01040,
     Zh_E=7.56,
-     mola_max_eta=  6),
-  SaltConstants(
+     mola_max_eta=  6);
+
+constant SaltConstants saltConstants_KCl = SaltConstants(
        name=  "KCl",
        M_salt=  M_KCl,
        m_r=  6,
@@ -130,8 +139,9 @@ constant SaltConstants[:] saltConstants = {
     Zh_B=-0.0152,
     Zh_D= 0.00725,
     Zh_E= 0.80,
-    mola_max_eta=  4.5),
-  SaltConstants(
+    mola_max_eta=  4.5);
+
+constant SaltConstants saltConstants_CaCl2 = SaltConstants(
      name=  "CaCl2",
      M_salt=  M_CaCl2,
      m_r=  5,
@@ -172,8 +182,9 @@ constant SaltConstants[:] saltConstants = {
     Zh_D=   0.04712,
     Zh_E=   94,
     Zh_F=   3,
-    mola_max_eta=  3),
-  SaltConstants(
+    mola_max_eta=  3);
+
+constant SaltConstants saltConstants_MgCl2 = SaltConstants(
      name=  "MgCl2",
      M_salt=  M_MgCl2,
      m_r=  2,
@@ -209,8 +220,9 @@ constant SaltConstants[:] saltConstants = {
      T_max_rho=543,
      p_min_rho=0.1e6,
      p_max_rho=40e6,
-     mola_max_eta=  0),
-  SaltConstants(
+     mola_max_eta=  0);
+
+constant SaltConstants saltConstants_SrCl2 = SaltConstants(
        name=  "SrCl2",
        M_salt=  M_SrCl2,
        m_r=  2,
@@ -246,6 +258,7 @@ constant SaltConstants[:] saltConstants = {
       T_max_rho=473,
       p_min_rho=0.1e6,
       p_max_rho=2e6,
-      mola_max_eta=  0)} "TODO: remove absolute indices";
+      mola_max_eta=  0);
+//      } "TODO: remove absolute indices";
 
 end SaltDataDuan;

@@ -55,7 +55,7 @@ model BrineProps2phaseFull
 
   Modelica.SIunits.MolarVolume Vm0 = Modelica.Constants.R*273.15/101325
     "molar volume at STP";
-  Modelica.SIunits.MolarVolume V_l = sum(props.X_l[6:8]./Medium.MM_gas)*Vm0*1000/props.X_l[end]
+  Modelica.SIunits.MolarVolume V_l = sum(props.X_l[Medium.nX_salt+1:Medium.nX-1]./Medium.MM_gas)*Vm0*1000/props.X_l[end]
     "Liter of dissolved gas per kg_brine would have after complete degassing at standard conditions";
   Real ratioGasLiquid_STP = V_l*props.d_l/1000
     "gas-liquid volume ratio at standard conditions, fully degassed";

@@ -40,14 +40,16 @@ protected
                               0};
 
   SI.MolarMass M_H2O = MM_vec[end];
-  Types.Molality molalities[size(X, 1)];
+  Types.Molality molalities[size(X, 1)]=Utilities.massFractionsToMolalities(X, MM_vec);
 //  Partial_Units.Molality molefractions[size(X,1)];
-  Types.Molality m_Cl;
-  Types.Molality m_Na;
-  Types.Molality m_K;
-  Types.Molality m_Ca;
-  Types.Molality m_Mg;
-  Types.Molality m_SO4;
+  Types.Molality m_Na=if iNaCl>0 then molalities[iNaCl] else 0;
+  Types.Molality m_K=if iKCl>0 then molalities[iKCl] else 0;
+  Types.Molality m_Ca=if iCaCl2>0 then molalities[iCaCl2] else 0;
+  Types.Molality m_Mg=if iMgCl2>0 then molalities[iMgCl2] else 0;
+  Types.Molality m_Sr=if iSrCl2>0 then molalities[iSrCl2] else 0;
+  Types.Molality m_SO4=0;
+  Types.Molality m_Cl=m_Na + m_K + 2*m_Mg + 2*m_Ca;
+
 //  Real X_NaCl = molalities[NaCl]*M_H2O "mole fraction of NaCl in liquid phase";
 
 //  SI.Pressure p_H2O = Modelica.Media.Water.WaterIF97_pT.saturationPressure(T);
@@ -62,15 +64,20 @@ protected
   Real lambda_CH4_Na;
   Real xi_CH4_NaCl;
 algorithm
+  if debugmode then
+      print("Running solubility_CH4_pTX_Duan2006("+String(p/1e5)+" bar,"+String(T-273.15)+" C, ignoreTlimit="+String(ignoreTlimit)+", X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
+  end if;
   if not p_gas>0 then
     X_gas:=0;
   else
   if AssertLevel>0 then
      assert(ignoreTlimit or ignoreLimitCH4_T or (273<T and T<273+250),"Temperature out of validity range: T=" + String(T) + " K.\nTo ignore set ignoreLimitCH4_T=true",aLevel);
      assert(ignoreLimitCH4_p or (1e5<p or p<2000e5),"Pressure out of validity range: p=" + String(p/1e5) + " bar.\nTo ignore set ignoreLimitCH4_p=true",aLevel);
+     assert(m_Sr==0 or ignoreLimitSalt_soluCH4[iSrCl2], "SrCl2 content is not considered here.",aLevel);
   end if;
 
-  //  (molefractions,molalities):=massFractionsToMoleFractions(X, MM);
+/*
+//  (molefractions,molalities):=massFractionsToMoleFractions(X, MM);
     molalities:=Utilities.massFractionsToMolalities(X, MM_vec);
   // print("molefractions[NaCl]="+String(molefractions[NaCl])+" (GasData.solubility_CH4_pTX_Duan1992)");
     m_Cl :=molalities[iNaCl] + molalities[iKCl] + 2*molalities[iMgCl2] + 2*
@@ -80,7 +87,7 @@ algorithm
     m_Ca :=molalities[iCaCl2];
     m_Mg :=molalities[iMgCl2];
     m_SO4 :=0 "TODO";
-
+*/
     phi_CH4 :=fugacity_CH4_Duan1992(p_gas + p_H2O, T);
     mu_l0_CH4_RT :=Par_CH4_Duan2006(p_gas+p_H2O,T,mu_l0_CH4_RT_c);
     lambda_CH4_Na :=Par_CH4_Duan2006(p_gas+p_H2O,T,lambda_CH4_Na_c);

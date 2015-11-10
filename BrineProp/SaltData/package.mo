@@ -1,8 +1,6 @@
 within BrineProp;
 package SaltData "Molar masses and mole numbers of the contained salts"
 
-
-  extends PartialFlags;
    constant SI.MolarMass M_NaCl = 0.058443 "[kg/mol]";
    constant Integer nM_NaCl = 2 "[ion moles/mol]";
    constant SI.MolarMass M_KCl = 0.074551 "[kg/mol]";

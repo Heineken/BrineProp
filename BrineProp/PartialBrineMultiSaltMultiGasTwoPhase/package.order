@@ -1,6 +1,8 @@
 input_ph
 input_dT
+nX_salt
 Salt_data
+saltConstants
 MM_gas
 nM_gas
 MM_salt
@@ -9,7 +11,6 @@ MM_vec
 nM_vec
 saltNames
 gasNames
-nX_salt
 nX_gas
 BaseProperties
 ThermodynamicState

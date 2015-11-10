@@ -61,26 +61,27 @@ protected
   //constant
   Types.Molality molalities[size(X, 1)]=Utilities.massFractionsToMolalities(X,MM_vec)
     "TODO neglecting CO2?";
-  Types.Molality m_Cl=molalities[iNaCl] + molalities[iKCl] + 2*molalities[iMgCl2]
-       + 2*molalities[iCaCl2];
-  Types.Molality m_Na=molalities[iNaCl];
-  Types.Molality m_K=molalities[iKCl];
-  Types.Molality m_Ca=molalities[iCaCl2];
-  Types.Molality m_Mg=molalities[iMgCl2];
+  Types.Molality m_Na=if iNaCl>0 then molalities[iNaCl] else 0;
+  Types.Molality m_K=if iKCl>0 then molalities[iKCl] else 0;
+  Types.Molality m_Ca=if iCaCl2>0 then molalities[iCaCl2] else 0;
+  Types.Molality m_Mg=if iMgCl2>0 then molalities[iMgCl2] else 0;
+  Types.Molality m_Sr=if iSrCl2>0 then molalities[iSrCl2] else 0;
   Types.Molality m_SO4=0;
+  Types.Molality m_Cl=m_Na + m_K + 2*m_Mg + 2*m_Ca;
 algorithm
-//  print("Running solubility_CO2_pTX_Duan2006("+String(p)+","+String(T)+","+String(X[end-3])+","+String(p_gas)+")");
-
+  if debugmode then
+    print("Running solubility_CO2_pTX_Duan2006("+String(p)+","+String(T)+","+String(X[end-3])+","+String(p_gas)+")");
+  end if;
   if not p_gas>0 then
     X_gas:=0;
   else
   if AssertLevel>0 then
      assert(ignoreTlimit or ignoreLimitCO2_T or (273<T and T<573),"Temperature out of validity range: T=" + String(T) + "K.\nTo ignore set ignoreLimitCO2_T=true",aLevel);
      assert(ignoreLimitCO2_p or (0<p and p<2000e5),"Pressure out of validity range p=" + String(p/1e5) + " bar.\nTo ignore set ignoreLimitCO2_p=true",aLevel);
+     assert(m_Sr==0 or ignoreLimitSalt_soluCO2[iSrCl2],  "The SrCl2 content is not considered here.",aLevel);
+     assert(max(molalities[1:end-1])<=4.5,"Maximum salt molality (="+String(max(molalities))+") too high",aLevel);
   end if;
-
   //equ. 9
-//    solu := y*phi*p_bar* exp(-mu_l0_CO2_RT
     phi :=fugacity_CO2_Duan2006(p_gas+p_H2O, T);
     mu_l0_CO2_RT :=Par_CO2_Duan2003(p_gas+p_H2O,T,mu_l0_CO2_RT_c);
     lambda_CO2_Na :=Par_CO2_Duan2003(p_gas+p_H2O,T,lambda_CO2_Na_c);
@@ -89,9 +90,9 @@ algorithm
     solu :=  phi*SI.Conversions.to_bar(p_gas)* exp(-mu_l0_CO2_RT
             -2*lambda_CO2_Na*(m_Na + m_K + 2*m_Ca + 2*m_Mg)
             -zeta_CO2_NaCl*m_Cl*(m_Na + m_K + m_Mg + m_Ca)
-            +0.07*m_SO4*0);
+            +0.07*m_SO4);
+
 //    solu := max(0, solu) "algorithm can return negative values";
-//  solu := p_H2O;
     X_gas :=solu*M_CO2*X[end] "molality->mass fraction";
   end if;
 //  c_gas:=solu*M_CO2 "kg_gas / kg_H2O";

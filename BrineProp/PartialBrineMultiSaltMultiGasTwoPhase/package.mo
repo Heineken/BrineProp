@@ -1,6 +1,5 @@
 within BrineProp;
 partial package PartialBrineMultiSaltMultiGasTwoPhase "Template medium for aqueous solutions of m Salts and n Gases, VLE solved by Newton's method"
-    //definition of molar masses
 
   //constant String explicitVars = "ph" "set of variables the model is explicit for, may be set to all combinations of ph or pT, setting pT should speed up the model in pT cases";
     constant Boolean input_ph=true
@@ -8,12 +7,25 @@ partial package PartialBrineMultiSaltMultiGasTwoPhase "Template medium for aqueo
     constant Boolean input_dT=false
   "activates inversion for state definition by dT, slows calculation down";
 
+//   extends BrineProp.PartialFlags_(final nX_salt=size(saltNames, 1));
+   constant Integer nX_salt = size(saltNames, 1) "Number of salt components"   annotation(Evaluate=true);
+
 
    replaceable package Salt_data = BrineProp.SaltData;
+   constant Salt_data.SaltConstants[:] saltConstants;
 
 
-   extends BrineProp.GasData;
+   extends BrineProp.GasData(final nX_salt_=nX_salt);
 
+
+   extends Densities(final nX_salt_=nX_salt);
+
+
+   extends SpecificEnthalpies(final nX_salt_=nX_salt);
+
+
+   extends Viscosities(final nX_salt_=nX_salt);
+    //definition of molar masses
    constant SI.MolarMass[:] MM_gas;
    constant Integer[:] nM_gas "number of ions per molecule";
 
@@ -27,7 +39,6 @@ partial package PartialBrineMultiSaltMultiGasTwoPhase "Template medium for aqueo
   constant String saltNames[:]={""} "TODO replace by saltorder enumeration";
   constant String gasNames[:]={""};
 
-  constant Integer nX_salt = size(saltNames, 1) "Number of salt components"   annotation(Evaluate=true);
   constant Integer nX_gas = size(gasNames, 1) "Number of gas components" annotation(Evaluate=true);
   //TWO-PHASE-STUFF
 

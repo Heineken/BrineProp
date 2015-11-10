@@ -47,13 +47,14 @@ protected
   SI.MolarMass M_H2O = MM_vec[end];
   Types.Molality molalities[size(X, 1)]=
       Utilities.massFractionsToMolalities(X,MM_vec);
-  Types.Molality m_Cl=molalities[iNaCl] + molalities[iKCl] + 2*molalities[iMgCl2]
-       + 2*molalities[iCaCl2];
-  Types.Molality m_Na=molalities[iNaCl];
-  Types.Molality m_K=molalities[iKCl];
-  Types.Molality m_Ca=molalities[iCaCl2];
-  Types.Molality m_Mg=molalities[iMgCl2];
-  Types.Molality m_SO4=0 "TODO";
+  Types.Molality m_Na=if iNaCl>0 then molalities[iNaCl] else 0;
+  Types.Molality m_K=if iKCl>0 then molalities[iKCl] else 0;
+  Types.Molality m_Ca=if iCaCl2>0 then molalities[iCaCl2] else 0;
+  Types.Molality m_Mg=if iMgCl2>0 then molalities[iMgCl2] else 0;
+  Types.Molality m_Sr=if iSrCl2>0 then molalities[iSrCl2] else 0;
+  Types.Molality m_SO4=0;
+  Types.Molality m_Cl=m_Na + m_K + 2*m_Mg + 2*m_Ca;
+//  Types.Molality m_Cl=molalities[iNaCl] + molalities[iKCl] + 2*molalities[iMgCl2]+ 2*molalities[iCaCl2];
 
   SI.Pressure p_H2O=Modelica.Media.Water.WaterIF97_pT.saturationPressure(T);
 //  Pressure_bar p_H2O_bar=SI.Conversions.to_bar(p_sat_H2O_Duan2003(T));
@@ -85,6 +86,7 @@ algorithm
      assert(ignoreTlimit or ignoreLimitN2_T or (273<T and T<400), "Temperature out of validity range: T=" + String(T - 273.15) + " C.\nTo ignore set ignoreLimitN2_T=true",aLevel);
      assert(ignoreLimitN2_p or (1e5<p and p<600e5),"Pressure out of validity rangep=" + String(p/1e5) + " bar.\nTo ignore set ignoreLimitN2_p=true",aLevel);
      assert(ignoreLimitN2_b or molalities[iNaCl]<6,"Molality out of validity range: mola[NaCl]=" + String(molalities[iNaCl]) + " mol/kg.\nTo ignore set ignoreLimitN2_b=true",aLevel);
+     assert(m_Sr==0 or ignoreLimitSalt_soluN2[iSrCl2], "SrCl2 content is not considered here.",aLevel);
     end if;
 
     phi_N2 :=fugacity_N2_Duan2006(p_gas+p_H2O, T);

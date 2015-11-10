@@ -22,4 +22,5 @@ Vacuum
 PartialMixtureTwoPhaseMedium
 WaterMixtureTwoPhase_pT
 PartialBrineMultiSaltMultiGasTwoPhase
+Brine3salts3gas
 Brine5salts3gas

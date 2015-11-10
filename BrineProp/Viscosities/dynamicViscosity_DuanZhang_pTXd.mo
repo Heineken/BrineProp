@@ -22,6 +22,7 @@ protected
 
 //  Integer nXi = size(X,1);
   Integer nX_salt = size(Salt_Constants,1);
+
 //  SI.DynamicViscosity[nX_salt] etas=fill(0,nX_salt);
   SI.DynamicViscosity eta_H2O;
   Modelica.Media.Water.WaterIF97_pT.ThermodynamicState state_H2O;
@@ -37,12 +38,12 @@ protected
   constant Pressure_bar p_max=1000;
   constant SI.Temp_C T_min=0;
   constant SI.Temp_C T_max=400;
-  String msg;
 algorithm
-//   print("X[3]="+String(X[3])+" (Brine.Viscosities.dynamicViscosity_DuanZhuang_pTXd)");
+  assert(size(Salt_Constants,1)==size(X,1)-1,"Number of components not matching between Salt_Constants("+String(size(Salt_Constants,1))+") and X("+String(size(X,1))+")");
   if debugmode then
-    print("p="+String(p_Pa)+" Pa, T_K"+String(T_K)+" K (Brine.Viscosities.dynamicViscosity_DuanZhuang_pTXd)");
+    print("Running dynamicViscosity_DuanZhuang_pTXd(p="+String(p_Pa)+" Pa, T_K"+String(T_K)+" K)");
   end if;
+//  print("nX_salts="+String(nX_salt)+", veclength="+String(size(ignoreLimitSalt_p,1)) + ", ignoreLimitSalt_p="+String(ignoreLimitSalt_p[1]));
 
 if AssertLevel>0 then
   assert(p_bar>=p_min and p_bar<=p_max, "p="+String(p_bar)+", but must be between "+String(p_min)+" and "+String(p_max)+" bar",aLevel);
@@ -67,11 +68,8 @@ end if;
 //    if X[i]>0 then
     if molalities[i]>1e-8 then
       salt := Salt_Constants[i];
-      /*if not (ignoreLimitSalt_b[i] or (molalities[i]>=0 and molalities[i]<=salt.mola_max_eta)) then
-        msg :="Molality of " + salt.name + " is " + String(molalities[i]) + "(X="
-           + String(X[i]) + "), but must be between 0 and " + String(salt.mola_max_eta)
-           + " mol/kg (dynamicViscosity_DuanZhang_pTXd)";
-      end if;*/
+//      print(salt.name + String(size(ignoreLimitSalt_p,1)));
+
       if AssertLevel>0 then
         assert(ignoreLimitSalt_p[i] or (p_bar>=p_min and p_bar<=p_max),"Pressure is out of validity range: p=" + String(p_bar) + " bar.\nTo ignore set ignoreLimitSalt_p["+String(i)+"]=true",aLevel);
         assert(ignoreLimitSalt_T[i] or (T_C>=T_min and T_C<=T_max),"Temperature is out of validity range: T=" + String(T_C) + " C.\nTo ignore set ignoreLimitSalt_T["+String(i)+"]=true",aLevel);
@@ -84,13 +82,13 @@ end if;
       phi:=molalities[i]/sum(molalities[1:nX_salt])
         "geometric mean mixture rule weighted with mass fraction (as in Laliberte)";
       assert(phi>0,"phi= "+String(phi)+" should not be possible.");
-      if i==3 then
+      if i==iCaCl2 then
         //Zhang (available for NaCl, KCl and CaCl)
          c :=X[i]/MM[i]*d/1000/phi "component molarity";
          eta_relative := 1 + salt.Zh_A*c^0.5 + salt.Zh_B*c + salt.Zh_D*c^2 + 1e-4*salt.Zh_E*c^3.5 + 1e-5*salt.Zh_F*c^7;
       else
         //Duan (available for NaCl and KCl)
-        assert(AssertLevel>0 and max(cat(1,salt.a,salt.b,salt.c))>0,"No coefficients for " + salt.name + " (b="+String(molalities[i])+" mol/kg");
+        assert(AssertLevel>0 and max(cat(1,salt.a,salt.b,salt.c))>0, "No coefficients for " + salt.name + " (b="+String(molalities[i])+" mol/kg");
         b:=molalities[i]/phi;
         A := salt.a[1] + salt.a[2]*T_K + salt.a[3]*T_K^2;
         B := salt.b[1] + salt.b[2]*T_K + salt.b[3]*T_K^2;

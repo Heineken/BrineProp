@@ -1,8 +1,13 @@
 within BrineProp;
 package Viscosities "Viscosity functions"
+  extends PartialFlags;
+
+
   extends Types;
 
 
-  extends PartialFlags;
+  extends ComponentsOrder;
+
+
 
 end Viscosities;

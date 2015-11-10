@@ -11,10 +11,19 @@ function density_Duan2008_pTX
   input SI.Temp_K T;
   input SI.MassFraction X[:] "mass fractions m_NaCl/m_Sol";
   input SI.MolarMass MM_vec[:] "molar masses of components";
+  input BrineProp.SaltDataDuan.SaltConstants[:] Salt_Constants; /*={
+  BrineProp.SaltDataDuan.saltConstants_NaCl,
+  BrineProp.SaltDataDuan.saltConstants_KCl,
+  BrineProp.SaltDataDuan.saltConstants_CaCl2,
+  BrineProp.SaltDataDuan.saltConstants_MgCl2,
+  BrineProp.SaltDataDuan.saltConstants_SrCl2};*/
 
   output SI.Density d;
 //SI.MolarMass MM_vec[:] "molar masses of components";
 protected
+ constant Integer nX_salt_ "set via extend";
+// constant Boolean[:] ignoreLimitSalt_p_=fill(false,5) "overwritten on extend";
+
  parameter Integer nX_salt=size(X,1)-1;
 
   final constant Real b=1.2;
@@ -81,9 +90,11 @@ protected
   constant Types.Molality[:] m=Utilities.massFractionsToMolalities(X,MM_vec);
   SI.Pressure p_sat=Modelica.Media.Water.IF97_Utilities.BaseIF97.Basic.psat(T);
 algorithm
+  assert(size(Salt_Constants,1)==size(X,1)-1,"Number of components not matching between Salt_Constants("+String(size(Salt_Constants,1))+") and X("+String(size(X,1))+")");
   if debugmode then
       print("\nRunning density_Duan2008_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
   end if;
+//  print("nX_salts="+String(nX_salt)+", veclength="+String(size(ignoreLimitSalt_p,1)) + ", ignoreLimitSalt_p="+String(ignoreLimitSalt_p[1]));
 
   assert(size(ignoreLimitSalt_p,1)==nX_salt,"Wrong length of ignoreLimitSalt_T ("+String(size(ignoreLimitSalt_p,1))+")"); //needed here, because flag vector with fewer than nX_salts elements causes "out of bounds" and is not caught elsewere
   assert(size(ignoreLimitSalt_T,1)==nX_salt,"Wrong length of ignoreLimitSalt_p ("+String(size(ignoreLimitSalt_T,1))+")"); //should be in PartialFlags, but asserts can't be in packages
@@ -100,12 +111,12 @@ algorithm
     d := rho_H2O*1000;
     return;
   end if;
-
   for i in 1:nX_salt loop
     if not X[i] > 0 then
       M_salt[i] := 1;
     else
-      salt :=BrineProp.SaltDataDuan.saltConstants[i];
+//      salt :=BrineProp.SaltDataDuan.saltConstants[i];
+      salt := Salt_Constants[i];
       if debugmode then
         print("X["+salt.name+"]: "+String(X[i]));
       end if;

@@ -12,27 +12,6 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
   constant String OutputDir=Modelica.Utilities.Files.loadResource("modelica://BrineProp/Resources/output");
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   annotation (Documentation(info="<html>
 <p><b>BrineProp</b> is a modelica package that calculates the thermodynamic properties of a specified brine, i.e. an aqueous solution of salts and gases, with a potential gas phase, including degassing/evaporation and solution/condensation.</p>
 <p>It was developed as a part of a PhD projected, documented in the thesis &QUOT;<a href=\"http://nbn-resolving.de/urn:nbn:de:kobv:83-opus4-47126\">Thermo-hydraulic model of the two-phase flow in the brine circuit of a geothermal power plant</a>&QUOT;. </p>
@@ -42,19 +21,21 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
 <p>Copyright &copy; 2009-2014 Henning Francke.</p>
 <p><br><i>This Modelica package is <u>free</u> software and the use is completely at <u>your own risk</u>; it can be redistributed and/or modified under the terms of the Modelica License 2. For license conditions (including the disclaimer of warranty) see <a href=\"modelica://Modelica.UsersGuide.ModelicaLicense2\">Modelica.UsersGuide.ModelicaLicense2</a> or visit <a href=\"http://www.modelica.org/licenses/ModelicaLicense2\">http://www.modelica.org/licenses/ModelicaLicense2</a>.</i> </p>
 <h4>Usage</h4>
-<p>Check the (non-partial) Brine packages (<a href=\"BrineProp.Brine_5salts\">Brine_5salts</a>, <a href=\"BrineProp.BrineGas_3Gas\">BrineGas_3Gas</a> or <a href=\"BrineProp.Brine_5salts_TwoPhase_3gas\">Brine_5salts_TwoPhase_3gas</a>) for instructions or run models from <code>BrineProp/Examples</code>. </p>
+<p>Check the (non-partial) Brine packages (<a href=\"BrineProp.Brine_5salts\">Brine_5salts</a>, <a href=\"BrineProp.BrineGas_3Gas\">BrineGas_3Gas</a> or <a href=\"BrineProp.Brine_5salts_TwoPhase_3gas\">Brine_5salts_TwoPhase_3gas</a>) for instructions or run models from <code><span style=\"font-family: Courier New,courier;\">BrineProp/Examples</span></code>. </p>
 <p>All calculated values are returned in SI-Units and are mass based. </p>
 <h4>Known issues:</h4>
 <ul>
 <li>no differentials implemented</li>
 <li>1phase-transient calculation does not compile, supposedly due to missing derivatives</li>
-<li>To switch from MSL 3.2 to MSL 3.2.1 (un)comment code in <code>PartialMixtureTwoPhaseMedium </code>to avoid warnings</li>
-<li>To switch from MSL 3.2.1 to MSL 3.2 (un)comment code in <code>PartialMixtureTwoPhaseMedium </code>to avoid errors</li>
+<li>To switch from MSL 3.2 to MSL 3.2.1 (un)comment code in <code><span style=\"font-family: Courier New,courier;\">PartialMixtureTwoPhaseMedium </span></code>to avoid warnings</li>
+<li>To switch from MSL 3.2.1 to MSL 3.2 (un)comment code in <code><span style=\"font-family: Courier New,courier;\">PartialMixtureTwoPhaseMedium </span></code>to avoid errors</li>
 <li>not fully compatible to OpenModelica(check OK, errors at compiling or simulation)</li>
 <li>not fully compatible to JModelica (String arguments not fully supported)</li>
 </ul>
+
+
 <h4>Compatibilty:</h4>
-<table cellspacing=\"2\" cellpadding=\"0\" border=\"1\"><tr>
+<table cellspacing=\"2\" cellpadding=\"0\" border=\"0\"><tr>
 <td></td>
 <td><p align=\"center\"><br><h4>OpenModelica 1.9.1 beta2</h4></p></td>
 <td><p align=\"center\"><h4>JModelica 1.14</h4></p></td>
@@ -107,23 +88,18 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
 <tr>
 <td><p>ConvertBrineComposition</p></td>
 <td><p>check</p></td>
-<td><p>?</p></td>
-</tr>
+<td><p>?</p></tr>
 </table>
-<p><br><h4>TODO:</h4></p>
+
+
+
+<h4>TODO:</h4>
 <ul>
-<li>implement differentials</li>
-<li>remove argument <code><font style=\"color: #006400; \">MM_vec</font></code> in property functions</li>
-<li>implement limit ignore switches consistently</li>
-<li>make SingleSalt correlations usable separately</li>
-<li>Add apparent molar heat capacity/enthalpy for (NaCl,) MgCl2 and SrCl2</li>
+<li>clean up examples, use all features in full example</li><li>add plot scripts</li><li>implement differentials</li><li>remove argument <code><span style=\"font-family: Courier New,courier; color: #006400;\">MM_vec</span></code> in property functions</li><li>implement limit ignore switches consistently</li><li>make SingleSalt correlations usable separately</li><li>Add apparent molar heat capacity/enthalpy for (NaCl,) MgCl2 and SrCl2</li>
 </ul>
-<h5>Created by</h5>
-<p>Henning Francke</p>
-<p>Helmholtz Centre Potsdam GFZ German Research Centre for Geosciences</p>
-<p>Telegrafenberg, D-14473 Potsdam</p>
-<p>Germany</p>
-<p><a href=\"mailto:francke@gfz-potsdam.de\">francke@gfz-potsdam.de</a></p>
+
+<h5>Created by</h5><p>Henning Francke</p><p>Helmholtz Centre Potsdam GFZ German Research Centre for Geosciences</p><p>Telegrafenberg, D-14473 Potsdam</p><p>Germany</p><p><a href=\"mailto:francke@gfz-potsdam.de\">francke@gfz-potsdam.de</a></p></td>
+
 </html>",
  revisions="<html></html>"),
     version="0.4.1",
