@@ -42,10 +42,19 @@ protected
 
   BrineProp.Types.PartialMolarEnthalpy[5] H_appmol
     "TODO: remove absolute indices";
+  parameter Integer[:] otherSalts=cat(1,
+  if iKCl>0 then {iKCl} else fill(0,0),
+  if iCaCl2>0 then {iCaCl2} else fill(0,0),
+  if iMgCl2>0 then {iMgCl2} else fill(0,0),
+  if iSrCl2>0 then {iSrCl2} else fill(0,0));
 algorithm
     if debugmode then
       print("\nRunning specificEnthalpy_pTX_liq_Francke_cp("+String(p/1e5)+" bar,"+String(T-273.15)+"degC, X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
     end if;
+
+  assert(size(ignoreLimitSalt_p,1)==size(X,1)-1,"Length of ignoreLimitSalt_p ("+String(size(ignoreLimitSalt_p,1))+" and X ("+String(size(X,1)-1)+") don't match."); //needed here, because flag vector with fewer than nX_salts elements causes "out of bounds" and is not caught elsewere
+  assert(size(ignoreLimitSalt_T,1)==size(X,1)-1,"Length of ignoreLimitSalt_T ("+String(size(ignoreLimitSalt_T,1))+" and X ("+String(size(X,1)-1)+") don't match."); //should be in PartialFlags, but asserts can't be in packages
+  assert(size(ignoreLimitSalt_b,1)==size(X,1)-1,"Length of ignoreLimitSalt_b ("+String(size(ignoreLimitSalt_b,1))+" and X ("+String(size(X,1)-1)+") don't match.");
 
   if String(T)== "-1.#IND" then
     assert(false, "T > 1e99, probably division by zero. Setting T=300 K.",AssertionLevel.warning);
@@ -67,12 +76,12 @@ algorithm
     b[iCaCl2],
     ignoreTlimit) else 0,0,0} "TODO: remove absolute indices";
 
-  h := (X[iNaCl]+X[end])*h_Driesner + X[end]*b[2:5]*H_appmol[2:5]
+  h := (X[iNaCl]+X[end])*h_Driesner + X[end]*b[otherSalts]*H_appmol[otherSalts]
     "TODO: remove absolute indices";
 
 //  print("MM_vec      :"+PowerPlant.vector2string(MM_vec));
 //  print("b                :"+PowerPlant.vector2string(b));
-//  print("int_cp_by_cpWater:"+Modelica.Math.Matrices.toString({int_cp_by_cpWater}));
+//  print("otherSalts:"+Modelica.Math.Matrices.toString({otherSalts}));
 //  print("H_appmol         :"+PowerPlant.vector2string(H_appmol));
 
 //  print("Brine.specificEnthalpy_pTX_Francke: "+String(p*1e-5)+"bar. "+String(T)+"degC->"+String(h)+" J/kg");

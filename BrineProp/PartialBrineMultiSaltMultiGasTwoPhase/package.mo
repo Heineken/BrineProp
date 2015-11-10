@@ -8,14 +8,12 @@ partial package PartialBrineMultiSaltMultiGasTwoPhase "Template medium for aqueo
   "activates inversion for state definition by dT, slows calculation down";
 
 //   extends BrineProp.PartialFlags_(final nX_salt=size(saltNames, 1));
+  constant String saltNames[:]={""} "TODO replace by saltorder enumeration";
    constant Integer nX_salt = size(saltNames, 1) "Number of salt components"   annotation(Evaluate=true);
 
 
    replaceable package Salt_data = BrineProp.SaltData;
    constant Salt_data.SaltConstants[:] saltConstants;
-
-
-   extends BrineProp.GasData(final nX_salt_=nX_salt);
 
 
    extends Densities(final nX_salt_=nX_salt);
@@ -26,45 +24,29 @@ partial package PartialBrineMultiSaltMultiGasTwoPhase "Template medium for aqueo
 
    extends Viscosities(final nX_salt_=nX_salt);
     //definition of molar masses
-   constant SI.MolarMass[:] MM_gas;
-   constant Integer[:] nM_gas "number of ions per molecule";
 
    constant SI.MolarMass[:] MM_salt;
    constant Integer[:] nM_salt "number of ions per molecule";
 
+  //TWO-PHASE-STUFF
    constant SI.MolarMass[:] MM_vec = cat(1,MM_salt, MM_gas, {M_H2O});
    constant Integer[:] nM_vec = cat(1,nM_salt, nM_gas, {1});
 
-  //TWO-PHASE-STUFF
-  constant String saltNames[:]={""} "TODO replace by saltorder enumeration";
-  constant String gasNames[:]={""};
+   constant String gasNames[:]={""};
 
-  constant Integer nX_gas = size(gasNames, 1) "Number of gas components" annotation(Evaluate=true);
-  //TWO-PHASE-STUFF
+   extends BrineProp.GasData(final nX_salt_=nX_salt);
+
+   constant Integer nX_gas = size(gasNames, 1) "Number of gas components" annotation(Evaluate=true);
+   constant SI.MolarMass[:] MM_gas;
+   constant Integer[:] nM_gas "number of ions per molecule";
 
 
    extends PartialMixtureTwoPhaseMedium(
-     final mediumName="TwoPhaseMixtureMedium",
+     final mediumName="TwoPhaseBrine",
      final substanceNames=cat(1,saltNames,gasNames,{"water"}),
      final reducedX =  true,
      final singleState=false,
      reference_X=cat(1,fill(0,nX-1),{1}));
-
-//, fluidConstants = BrineProp.BrineConstants
-
-  /*
-,
-   AbsolutePressure(
-     min=1,
-     max=500),
-   Temperature(
-     min=283.15,
-     max=623.15,
-     start=323)
-   final fixedX = false
-     */
-
-  //  type Pressure_bar = Real(final quantity="Pressure", final unit="bar") "pressure in bar";
 
 
    redeclare model extends BaseProperties(d(start=1000))

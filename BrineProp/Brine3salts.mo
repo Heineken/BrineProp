@@ -1,40 +1,34 @@
 within BrineProp;
-package Brine5salts "One-phase (liquid) multisalt brine solution"
-  extends SpecificEnthalpies(
+package Brine3salts "One-phase (liquid) multisalt brine solution"
+  extends SaltDataDuan;// "for the molar masses below"
+  extends BrineProp.PartialBrineMultiSaltOnePhase(
+    redeclare package Salt_data = BrineProp.SaltDataDuan,
+    saltNames = {"sodium chloride","potassium chloride","calcium chloride"},
+    saltConstants = {
+      saltConstants_NaCl,
+      saltConstants_KCl,
+      saltConstants_CaCl2},
+    MM_salt = {M_NaCl,M_KCl,M_CaCl2},
+    nM_salt = {nM_NaCl,nM_KCl,nM_CaCl2},
       final iNaCl=1,
       final iKCl=2,
-      final iCaCl2=3,
-      final iMgCl2=4,
-      final iSrCl2=5);
+      final iCaCl2=3);
 
-
-  extends Densities;
-
-
-  extends Viscosities;
-
-
-  extends BrineProp.PartialBrineMultiSaltOnePhase(
-    final saltNames = {"sodium chloride","potassium chloride","calcium chloride","magnesium chloride","strontium chloride"},
-    final MM_salt = {M_NaCl,M_KCl,M_CaCl2,M_MgCl2,M_SrCl2},
-    final nM_salt = {nM_NaCl,nM_KCl,nM_CaCl2,nM_MgCl2,nM_SrCl2});
-/*    redeclare package Salt_data = BrineProp.SaltDataDuan,
+    /*    redeclare package Salt_data = BrineProp.SaltDataDuan,
     final MM_salt = Salt_data.MM_salt,
     final nM_salt = Salt_data.nM_salt*/
 
-
-  redeclare function density_pTX
-    extends density_Duan2008_pTX(MM_vec=cat(1,MM_salt, {M_H2O}));
+  redeclare function extends density_pTX
+  //  extends density_Duan2008_pTX(MM_vec=cat(1,MM_salt, {M_H2O}));
      //TODO should take MM_vec;
 
   //  extends Densities.density_Duan2008_pTX(MM_vec=MM_vec);
-  /*algorithm 
-//   print("density_liquid_pTX: "+String(p*1e-5)+" bar,"+String(T)+" K->"+String(d)+"kg/m^3");
-  d := Densities.density_Duan2008_pTX(p,T,X,MM_vec);*/
-  //  d := Brine_Driesner.density_pTX(p,T,X[1:nX_salt],MM_salt);
+  algorithm
+  //   print("density_liquid_pTX: "+String(p*1e-5)+" bar,"+String(T)+" K->"+String(d)+"kg/m^3");
+    d := density_Duan2008_pTX(p,T,X,MM_vec,saltConstants);
+  //  d := Brine_Driesner.density_pTX(p,T,X[1:nX_salt],MM_salt,saltConstants);
   //  d := Modelica.Media.Water.WaterIF97_pT.density_pT(p,T)  "*(1+sum(X[1:nX_salt]))/X[end]";
   end density_pTX;
-
 
  redeclare function specificEnthalpy_pTX
  // Partial_Units.Molality molalities = massFractionsToMoleFractions(X, MM_vec);
@@ -60,9 +54,8 @@ package Brine5salts "One-phase (liquid) multisalt brine solution"
  //print("h="+String(X[1])+"*"+String(h_vec[1])+"="+String(X[1:nX_salt]*h_vec));
  end specificEnthalpy_pTX;
 
-
  redeclare function extends dynamicViscosity_pTXd
-protected
+  protected
    SI.Temperature T_corr;
  algorithm
  //print("p="+String(p)+" Pa, T="+String(T)+" K (BrineProp.Brine_5salts_noGas.dynamicViscosity_pTX)");
@@ -72,7 +65,7 @@ protected
   end if;
      T_corr:= max(273.16,T);
 
-    eta := Viscosities.dynamicViscosity_DuanZhang_pTXd(
+    eta := dynamicViscosity_DuanZhang_pTXd(
        p,
        T_corr,
        X,
@@ -81,24 +74,21 @@ protected
        saltConstants);
  end dynamicViscosity_pTXd;
 
-
   redeclare function extends specificHeatCapacityCp
-  "calculation of liquid specific heat capacity from apparent molar heat capacities"
+    "calculation of liquid specific heat capacity from apparent molar heat capacities"
   algorithm
       cp:=specificHeatCapacityCp_pTX_liq_Francke(p=state.p,T=state.T,X=state.X,
           MM_vec=MM_salt);
   end specificHeatCapacityCp;
 
-
   redeclare function extends surfaceTension_T
   algorithm
      sigma:=Modelica.Media.Water.IF97_Utilities.surfaceTension(T)
-    "TODO http://www.if.ufrgs.br/~levin/Pdfs.dir/6756.pdf";
+      "TODO http://www.if.ufrgs.br/~levin/Pdfs.dir/6756.pdf";
   end surfaceTension_T;
 
-
   redeclare function extends thermalConductivity
-  "Thermal conductivity of water TODO"
+    "Thermal conductivity of water TODO"
   algorithm
     lambda := Modelica.Media.Water.IF97_Utilities.thermalConductivity(
         Modelica.Media.Water.IF97_Utilities.rho_props_pT(state.p, state.T, Modelica.Media.Water.IF97_Utilities.waterBaseProp_pT(state.p, state.T, 1)),
@@ -107,9 +97,8 @@ protected
         1);
   end thermalConductivity;
 
-
  redeclare function extends dynamicViscosity_pTX
-protected
+  protected
    SI.Temperature T_corr;
  algorithm
  //print("p="+String(p)+" Pa, T="+String(T)+" K (BrineProp.Brine_5salts_noGas.dynamicViscosity_pTX)");
@@ -125,7 +114,6 @@ protected
        MM_vec,
        saltConstants);
  end dynamicViscosity_pTX;
-
 
   annotation (Documentation(info="<html>
 <p><b>BrineProp.Brine_5salts</b> is a medium package that provides properties of one-phase solution of five salts (NaCl, KCl, CaCl<sub>2</sub>, MgCl<sub>2</sub>, SrCl<sub>2</sub>).</p>
@@ -146,4 +134,4 @@ protected
 <p>The model is explicit for p and T, but for h(p,T) the inverse function T(p,h) is defined. T(p,h) is inverts h(p,T) numerically by bisection, stopping at a given tolerance.</p>
 <p>Density and enthalpy are calculated like the liquid phase properties in <code>BrineProp.Brine_5salts_TwoPhase_3gas</code> .</p>
 </html>"));
-end Brine5salts;
+end Brine3salts;

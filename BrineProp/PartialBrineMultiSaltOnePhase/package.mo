@@ -1,10 +1,29 @@
 within BrineProp;
 partial package PartialBrineMultiSaltOnePhase "Template medium for  one-phase aqueous solution of m Salts and n Gases based on PartialMediaMixtureMedium"
-  extends PartialFlags;
+// extends PartialFlags;
+
+ constant String saltNames[:]={""} "TODO: replace by saltOrder";
+  constant Integer nX_salt = size(saltNames, 1) "Number of salt components"   annotation(Evaluate=true);
+
+
+  replaceable package Salt_data = BrineProp.SaltData;
+  constant Salt_data.SaltConstants[:] saltConstants;
+
+
+  extends Densities(final nX_salt_=nX_salt);
+
+
+  extends SpecificEnthalpies(final nX_salt_=nX_salt);
+
+
+  extends Viscosities(final nX_salt_=nX_salt);
+
+  constant SI.MolarMass[:] MM_salt "TODO: redundant with MM_vec";
+  constant Integer[:] nM_salt "number of ions per molecule";
 
 
   extends Modelica.Media.Interfaces.PartialMixtureMedium(
-   final mediumName="TwoPhaseMixtureMedium",
+   final mediumName="OnePhaseBrine",
    final substanceNames=cat(1,saltNames,{"water"}),
    final reducedX =  true,
    final singleState=false,
@@ -28,15 +47,8 @@ partial package PartialBrineMultiSaltOnePhase "Template medium for  one-phase aq
   constant String explicitVars = "ph"
   "set of variables the model is explicit for, may be set to all combinations of ph or pT, setting pT should speed up the model in pT cases";
 
- constant SI.MolarMass[:] MM_salt "TODO: redundant with MM_vec";
- constant Integer[:] nM_salt "number of ions per molecule";
-
  constant SI.MolarMass[:] MM_vec = cat(1,MM_salt, {M_H2O});
  constant Integer nM_vec[:] = cat(1,nM_salt, {1});
-
- constant String saltNames[:]={""} "TODO: replace by saltOrder";
-
- constant Integer nX_salt = size(saltNames, 1) "Number of salt components"   annotation(Evaluate=true);
 
 
 redeclare record extends ThermodynamicState

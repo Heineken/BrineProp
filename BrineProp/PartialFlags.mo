@@ -11,14 +11,14 @@ package PartialFlags
     "ignore pressure limits {NaCl, KCl, CaCl2, MgCl2, SrCl2}";
     constant Boolean[:] ignoreLimitSalt_T=fill(false,nX_salt_)
     "ignore temperature limits         {NaCl, KCl, CaCl2, MgCl2, SrCl2}";
-    constant Boolean[5] ignoreLimitSalt_b=fill(false,nX_salt_)
+    constant Boolean[:] ignoreLimitSalt_b=fill(false,nX_salt_)
     "ignore salinity limits            {NaCl, KCl, CaCl2, MgCl2, SrCl2}";
 
-    constant Boolean[5] ignoreLimitSalt_soluCO2=fill(false,nX_salt_)
+    constant Boolean[:] ignoreLimitSalt_soluCO2=fill(false,nX_salt_)
     "ignore salinity limits in CO2 solubility {NaCl, KCl, CaCl2, MgCl2, SrCl2}";
-    constant Boolean[5] ignoreLimitSalt_soluN2=fill(false,nX_salt_)
+    constant Boolean[:] ignoreLimitSalt_soluN2=fill(false,nX_salt_)
     "ignore salinity limits in N2 solubility {NaCl, KCl, CaCl2, MgCl2, SrCl2}";
-    constant Boolean[5] ignoreLimitSalt_soluCH4=fill(false,nX_salt_)
+    constant Boolean[:] ignoreLimitSalt_soluCH4=fill(false,nX_salt_)
     "ignore salinity limits in CH4 solubility {NaCl, KCl, CaCl2, MgCl2, SrCl2}";
 
     //GAS stuff

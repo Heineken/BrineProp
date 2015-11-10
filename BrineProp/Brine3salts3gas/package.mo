@@ -5,22 +5,23 @@ package Brine3salts3gas "Two-phase aqueous solution of NaCl, KCl, CaCl2, N2, CO2
 
 
   extends SaltDataDuan;
+                       // "for the molar masses below"
 
   extends PartialBrineMultiSaltMultiGasTwoPhase(
+    saltNames = {"sodium chloride","potassium chloride","calcium chloride"},
     redeclare package Salt_data = BrineProp.SaltDataDuan,
     saltConstants = {
       saltConstants_NaCl,
       saltConstants_KCl,
       saltConstants_CaCl2},
+    MM_salt = {M_NaCl,M_KCl,M_CaCl2},
+    nM_salt = {nM_NaCl,nM_KCl,nM_CaCl2},
     iNaCl=1,
     iKCl=2,
     iCaCl2=3,
     final gasNames = {"carbondioxide","nitrogen","methane"},
-    saltNames = {"sodium chloride","potassium chloride","calcium chloride"},
     final MM_gas = {M_CO2,M_N2,M_CH4},
-    final nM_gas = {nM_CO2,nM_N2,nM_CH4},
-    MM_salt = {M_NaCl,M_KCl,M_CaCl2},
-    nM_salt = {nM_NaCl,nM_KCl,nM_CaCl2});
+    final nM_gas = {nM_CO2,nM_N2,nM_CH4});
 
 
 
@@ -81,9 +82,11 @@ protected
  redeclare function extends specificEnthalpy_liq_pTX
  // Partial_Units.Molality molalities = massFractionsToMoleFractions(X, MM_vec);
  //  SI.SpecificEnthalpy h_H2O := Modelica.Media.Water.WaterIF97_pT.specificEnthalpy_pT(p, T) "H2O";
- extends specificEnthalpy_pTX_liq_Francke_cp(MM_vec=MM_salt);
- /*algorithm 
-    h := SpecificEnthalpies.specificEnthalpy_pTX_liq_Francke_cp(p,T,X);*/
+ //extends specificEnthalpy_pTX_liq_Francke_cp(MM_vec=MM_salt);
+protected
+   parameter Integer[:] liqIndex=cat(1,1:nX_salt,{nX});
+ algorithm
+     h := specificEnthalpy_pTX_liq_Francke_cp(p,T,X[liqIndex],MM_vec[liqIndex]);
  //    h := SpecificEnthalpies.specificEnthalpy_pTX_Driesner(p,T,X);
  //  print(String(p*1e-5)+" bar,"+String(T)+" K->"+String(h)+" J/kg (Brine_Duan_Multi_TwoPhase_ngas_3.specificEnthalpy_liq_pTX)");
  end specificEnthalpy_liq_pTX;
