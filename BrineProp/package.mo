@@ -21,10 +21,12 @@ package BrineProp "Media models for p-h-T-rho-eta properties of aqueous solution
 <p>Copyright &copy; 2009-2014 Henning Francke.</p>
 <p><br><i>This Modelica package is <u>free</u> software and the use is completely at <u>your own risk</u>; it can be redistributed and/or modified under the terms of the Modelica License 2. For license conditions (including the disclaimer of warranty) see <a href=\"modelica://Modelica.UsersGuide.ModelicaLicense2\">Modelica.UsersGuide.ModelicaLicense2</a> or visit <a href=\"http://www.modelica.org/licenses/ModelicaLicense2\">http://www.modelica.org/licenses/ModelicaLicense2</a>.</i> </p>
 <h4>Usage</h4>
+<p>set <code>Advanced.PedanticModelica:=false;</code>
 <p>Check the (non-partial) Brine packages (<a href=\"BrineProp.Brine_5salts\">Brine_5salts</a>, <a href=\"BrineProp.BrineGas_3Gas\">BrineGas_3Gas</a> or <a href=\"BrineProp.Brine_5salts_TwoPhase_3gas\">Brine_5salts_TwoPhase_3gas</a>) for instructions or run models from <code><span style=\"font-family: Courier New,courier;\">BrineProp/Examples</span></code>. </p>
 <p>All calculated values are returned in SI-Units and are mass based. </p>
 <h4>Known issues:</h4>
 <ul>
+<li>does not run with PedanticMode</li>
 <li>no differentials implemented</li>
 <li>1phase-transient calculation does not compile, supposedly due to missing derivatives</li>
 <li>To switch from MSL 3.2 to MSL 3.2.1 (un)comment code in <code><span style=\"font-family: Courier New,courier;\">PartialMixtureTwoPhaseMedium </span></code>to avoid warnings</li>
