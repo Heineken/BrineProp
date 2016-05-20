@@ -9,14 +9,15 @@ function specificHeatCapacityCp_pTX_liq_Francke
 //  extends BrineProp.SaltDataDuan.defineSaltOrder_;
 
 protected
-  Types.Molality b[size(X_, 1)]
+  Integer nX_salt = size(X, 1)-1;
+  Types.Molality b[nX_salt+1]
     "=Utilities.massFractionsToMolalities(X_,cat(1,MM_vec,fill(-1, size(X_, 1) - size(MM_vec, 1))))";
 
 /*  Real cp_by_cpWater[:]={0,
       SpecificEnthalpies.HeatCapacityRatio_KCl_White(T, b[KCl]),
       SpecificEnthalpies.HeatCapacityRatio_CaCl2_White(T, b[CaCl2]),
       0,0} "cp/cp_H2O of salt solutions";*/
-  Types.PartialMolarHeatCapacity[5] Cp_appmol
+  Types.PartialMolarHeatCapacity[nX_salt] Cp_appmol
     "Apparent molar enthalpy of salts";
 
   SI.SpecificHeatCapacity cp_Driesner;
@@ -26,7 +27,7 @@ protected
 //  SI.MassFraction X_[:]=state.X "mass fraction m_NaCl/m_Sol";
 //    SI.MassFraction X_[:]=cat(1,state.X[1:end-1],{1-sum(state.X[1:end-1])}) "Doesn't work in function in OM";
 //    SI.MassFraction X_[size(state.X,1)] "OM workaround for cat";
-    SI.MassFraction X_[size(X,1)]
+    SI.MassFraction X_[nX_salt+1]
     "OM workaround for cat TODO: still necessary?";
 algorithm
     if debugmode then
@@ -36,25 +37,16 @@ algorithm
     X_[end]:=1-sum(X[1:end-1]) "OM workaround for cat";
     b:=Utilities.massFractionsToMolalities(X_, cat(
     1,MM_vec,fill(-1, size(X_, 1) - size(MM_vec, 1))));
-
 //    assert(X[end]>0, "No water in brine.");
     cp_Driesner:=specificHeatCapacity_pTX_Driesner(p,T,X_[1]/(X_[1] + X_[end]));
 
-  Cp_appmol:={0,if b[iKCl] > 0 then
-      appMolarHeatCapacity_KCl_White(T, b[iKCl]) else 0,
-      if b[iCaCl2] > 0 then appMolarHeatCapacity_CaCl2_White(T,
-        b[iCaCl2]) else 0,0,0} "Apparent molar enthalpy of salts";
+  Cp_appmol:=cat(1,{0,
+      if b[iKCl] > 0 then appMolarHeatCapacity_KCl_White(T, b[iKCl]) else 0,
+      if b[iCaCl2] > 0 then appMolarHeatCapacity_CaCl2_White(T,b[iCaCl2]) else 0},
+      fill(0,nX_salt-3)) "Apparent molar enthalpy of salts";
 //    Cp_appmol:={(if b[i] > 0 and cp_by_cpWater[i]>0 then ((1 .+ MM_vec[i] .* b[i]) .* cp_by_cpWater[i] .- 1)*cp_H2O ./ b[i] else 0) for i in 1:5};
 
-    cp := (X_[iNaCl]+X_[end])*cp_Driesner + X_[end]*b[2:5]*(Cp_appmol[2:5])
-    "TODO: remove absolute indices";
-
-//  cp:=(specificEnthalpy_pTX(state.p,state.T+.1,state.X)-state.h)/.1;
-//  cp := Modelica.Media.Water.IF97_Utilities.cp_pT(state.p, state.T)+mola[1:size(MM_vec,1)];
-//  print("b: "+Modelica.Math.Matrices.toString(transpose([b]))+" mol/kg");
-//  print("Cp_appmol: "+Modelica.Math.Matrices.toString(transpose([Cp_appmol]))+" J/kg/K");
-//  print("cp_Driesner("+String(cp_Driesner)+")= J/(kg.K)");
-
+    cp := (X_[iNaCl]+X_[end])*cp_Driesner + X_[end]*b[2:nX_salt]*(Cp_appmol[2:nX_salt]);
     annotation (Documentation(info="<html>
                                 <p>In the two phase region this function returns the interpolated heat capacity between the
                                 liquid and vapour state heat capacities.</p>
