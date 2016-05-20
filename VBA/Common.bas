@@ -345,8 +345,9 @@ Function FullMassVector(Xi, Optional ByRef nX As Integer) 'As Double()
   
     X(nX) = 1 - Application.Sum(Xi)
     If X(nX) > 1 Or X(nX) < 0 Then 'removed X(nX) <= 0 to allow for pure gases
-        X(1) = -1
-        ' MsgBox "Mass vector is wrong"
+        'X(1) = -1
+        FullMassVector = "Mass vector is wrong"
+        Exit Function
     End If
     FullMassVector = X
 End Function
@@ -363,19 +364,20 @@ Function massFractionsToMolalities(X, MM) 'Calculate molalities (mole_i per kg H
     Dim i As Integer
     For i = 1 To nX
         If X(nX) > 0 Then
-            If X(i) > 10 ^ -6 Then
-                molalities(i) = X(i) / (MM(i) * X(nX)) 'numerical errors my create X[i]>0, this prevents it
+            If X(i) > 10 ^ -6 Then 'to prevent division by zero
+                molalities(i) = X(i) / (MM(i) * X(nX)) 'numerical errors may create X[i]>0 for non-present salts, this prevents it
            'Else
            '    molalities(i) = 0
             End If
         Else
-           molalities = -1
+           molalities(i) = -1 ' High number that will exceed any molality limit
         End If
     Next i
   massFractionsToMolalities = molalities
 End Function
 
 Function massFractionToMolality(X, X_H2O, MM) 'Calculate molalities (mole_i per kg H2O) from mass fractions X
+'used in worksheet
   Dim nX As Integer: nX = Length(X)
 
     If X_H2O > 0 Then
