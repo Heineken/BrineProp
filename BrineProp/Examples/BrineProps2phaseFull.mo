@@ -1,5 +1,6 @@
 within BrineProp.Examples;
-model BrineProps2phaseFull
+model BrineProps2phaseFull "Two-phase example demonstrating all features"
+  //needs "Advanced.PedanticModelica:=false" to run
 
 //SPECIFY MEDIUM
 //   package Medium = BrineProp.Brine5salts3gas(ignoreLimitN2_T=true);

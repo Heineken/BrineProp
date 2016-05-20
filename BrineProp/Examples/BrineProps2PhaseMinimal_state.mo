@@ -1,6 +1,7 @@
 within BrineProp.Examples;
 model BrineProps2PhaseMinimal_state
   "Using the state record instead of Baseproperties"
+  //needs "Advanced.PedanticModelica:=false" to run
 
 package Medium = BrineProp.Brine5salts3gas(ignoreLimitN2_T=true);
 //  package Medium = Modelica.Media.Water.WaterIF97_ph;

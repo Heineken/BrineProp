@@ -1,6 +1,7 @@
 within BrineProp.Examples;
 model BrineProps1PhaseFull
-  "Example for 1-phase brine property model using all properties"
+  "Example for 1-phase brine property model demonstrating all features"
+  //needs "Advanced.PedanticModelica:=false" to run
 
   //SPECIFY MEDIUM
   package Medium = Brine5salts(AssertLevel=2,ignoreLimitSalt_T={false,true,true,false,false});

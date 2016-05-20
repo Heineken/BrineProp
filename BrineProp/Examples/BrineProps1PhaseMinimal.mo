@@ -1,6 +1,8 @@
 within BrineProp.Examples;
 model BrineProps1PhaseMinimal
   "Minimal example for 1-phase brine property model"
+  //needs "Advanced.PedanticModelica:=false" to run
+
   package Medium = Brine3salts(ignoreLimitSalt_p={false,true,true})
     "specify medium";
   Medium.BaseProperties props;
