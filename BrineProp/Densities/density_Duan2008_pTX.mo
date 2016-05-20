@@ -5,7 +5,7 @@ function density_Duan2008_pTX
   Mixing rule acc. to Laliberte&Cooper2004
   http://dx.doi.org/10.1016/j.jct.2008.03.005
   http://www.geochem-model.org/wp-content/uploads/2009/09/55-JCT_40_1046.pdf
-  Problems: Brine has the same evaporation temperature as pure water, only different  "
+  Problems: Brine has the same evaporation temperature as pure water"
 */
   input SI.Pressure p;
   input SI.Temp_K T;

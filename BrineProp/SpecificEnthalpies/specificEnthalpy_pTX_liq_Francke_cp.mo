@@ -63,10 +63,7 @@ algorithm
     T2 := T;
   end if;
 
-  h_Driesner :=specificEnthalpy_pTX_Driesner(
-    p,
-    T2,
-    X[1]/(X[1] + X[end]));
+  h_Driesner :=specificEnthalpy_pTX_Driesner(p,T2,X[1]/(X[1] + X[end]));
 
   H_appmol:={0,if b[iKCl] > 0 then appMolarEnthalpy_KCl_White(
     T2,
