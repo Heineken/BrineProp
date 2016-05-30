@@ -26,7 +26,7 @@ protected
 
   constant Molality[:] molalities=Utilities.massFractionsToMolalities(X,MM);
  // constant Partial_Units.Molality[:] molalities=X[1:nX_salt] ./ MM[1:nX_salt]/      X[end];
-  Molarity_molperliter c = X[3]/MM[3]*d/1000;
+  Types.Molarity c=X[3]/MM[3]*d/1000;
 algorithm
 //   print("X[3]="+String(X[3])+" (Brine.Viscosities.dynamicViscosity_Duan_pTX)");
   if debugmode then

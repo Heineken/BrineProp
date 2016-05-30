@@ -30,7 +30,7 @@ protected
   SaltDataDuan.SaltConstants salt;
   constant Molality[:] molalities=Utilities.massFractionsToMolalities(X,MM);
  // constant Partial_Units.Molality[:] molalities=X[1:nX_salt] ./ MM[1:nX_salt]/X[end];
-   Molarity_molperliter c;
+  Types.Molarity c;
   Molality b "component molality";
   Real phi "mixing weight";
 protected
