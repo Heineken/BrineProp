@@ -100,8 +100,9 @@ Private Sub TestMulVecElwise()
     Dim b() As Double: b = MulVecElwise(a, a)
 End Sub
 
-Function Length(vec) As Integer
+Function Length(vec, Optional ByRef offset As Integer) As Integer
     Dim vt As Integer
+    offset = 0
     vt = VarType(vec) 'http://www.java2s.com/Code/VBA-Excel-Access-Word/Data-Type/ValuesreturnedbytheVarTypefunction.htm
     If vt < 2 Then
         Length = 0
@@ -111,7 +112,8 @@ Function Length(vec) As Integer
         Length = vec.Count
     Else
         On Error Resume Next 'return length=0 for empty error
-        Length = UBound(vec) ' gives error for empty array
+        offset = LBound(vec) - 1
+        Length = UBound(vec) - LBound(vec) + 1 ' gives error for empty array
     End If
 End Function
 
@@ -122,7 +124,8 @@ Function ToDouble(vec, Optional ByRef n As Integer, Optional reduce = False) 'Ty
         Exit Function
     End If
         
-    n = Length(vec)
+    Dim offset As Integer
+    n = Length(vec, offset)
     Dim vt As Integer
     vt = VarType(vec)
     If vt < 12 Then ' if scalar
@@ -136,11 +139,13 @@ Function ToDouble(vec, Optional ByRef n As Integer, Optional reduce = False) 'Ty
         End If
         ReDim dbl(1 To n)
         Dim i As Integer
+ '       Dim offset As Integer: offset = LBound(vec) - 1
+
         For i = 1 To n
             'If vt = 8204 Then
             '    dbl(i) = vec(i, 1)
             'Else
-                dbl(i) = vec(i)
+                dbl(i) = vec(i + offset)
             'End If
         Next i
         ToDouble = dbl
