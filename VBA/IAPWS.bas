@@ -73,7 +73,7 @@ Function region_pT(p_MPa As Double, ByVal T As Double) 'From MSL
       End If
     Else
       'test for regions 1,2,3
-      If T < 623.15 Then
+      If T <= 623.15 Then 'changed from ">" to avoid getting stuck at 623.15 K and 31 MPa
         region_pT = 1
       ElseIf T < boundary23ofp(p) Then
         region_pT = 3
@@ -90,7 +90,7 @@ Function boundary23ofp(p As Double)
   Dim Pi As Double: Pi = p / 10 ^ 6 'dimensionless pressure
   If p < ptriple Then boundary23ofp = "IF97 medium function boundary23ofp called with too low pressure\n" _
                                     & "p = " & p & " Pa <= " & ptriple & " Pa (triple point pressure)"
-  T = n(4) + ((Pi - n(5)) / n(3)) ^ 0.5
+  boundary23ofp = n(4) + ((Pi - n(5)) / n(3)) ^ 0.5
 End Function
 
 
@@ -489,7 +489,8 @@ Private Function h3_pT(p As Double, ByVal T As Double) As Double
     End If
     'ver2.6 End corrected bug
     Ts = T + 1
-    While Abs(T - Ts) > 0.00001
+    Dim counter As Integer: counter = 0
+    While Abs(T - Ts) > 0.00001 And counter < 100
         hs = (Low_Bound + High_Bound) / 2
         Ts = T3_ph(p, hs)
         If Ts > T Then
@@ -497,6 +498,7 @@ Private Function h3_pT(p As Double, ByVal T As Double) As Double
         Else
             Low_Bound = hs
         End If
+        counter = counter + 1
     Wend
     h3_pT = hs
 End Function
@@ -506,7 +508,10 @@ Function T3_ph(p As Double, h As Double)
     '2004
     'Section 3.3 Backward Equations T(p,h) and v(p,h) for Subregions 3a and 3b
     'Boundary equation, Eq 1 Page 5
-    h3ab = 2014.64004206875 + 3.74696550136983 * p - 2.19921901054187E-02 * p ^ 2 + 8.7513168600995E-05 * p ^ 3
+    Dim h3ab As Double: h3ab = 2014.64004206875 + 3.74696550136983 * p - 2.19921901054187E-02 * p ^ 2 + 8.7513168600995E-05 * p ^ 3
+    Dim Ii As Variant, Ji  As Variant, ni  As Variant
+    Dim ps As Double, hs As Double, Ts As Double
+    Dim i As Double
     If h < h3ab Then
         'Subregion 3a
         'Eq 2, Table 3, Page 7
