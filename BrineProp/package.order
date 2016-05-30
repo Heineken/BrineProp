@@ -8,6 +8,7 @@ SaltDataDuan
 Densities
 SpecificEnthalpies
 Viscosities
+Resistivities
 Types
 PartialFlags
 PartialBrineMultiSaltOnePhase
