@@ -550,7 +550,7 @@ Function density(p As Double, T As Double, Xin) ', p_sat_MPa As Double) 'Brine d
     Dim B_v As Double
     Dim C_v As Double
     Dim V_m_r As Double
-    Dim Bb As Double
+    Dim BB As Double
     Dim Cc As Double
     Dim D_1000 As Double
     Dim d As Double
@@ -615,7 +615,7 @@ Function density(p As Double, T As Double, Xin) ', p_sat_MPa As Double) 'Brine d
                   End If
                 End If
                 If Not (ignoreLimitSalt_T(j) Or (T >= Salts(j).T_min_rho And T <= Salts(j).T_max_rho)) Then
-                  MsgTxt = "#T=" & T - 273.15 & "°C but for " & Salts(j).name & " must be between within " & Salts(j).T_min_rho - 273.15 & "..." & Salts(j).T_max_rho - 273.15 & "°C (Density)"
+                  MsgTxt = "#T=" & T - 273.15 & "°C but for " & Salts(j).name & " must be within " & Salts(j).T_min_rho - 273.15 & "..." & Salts(j).T_max_rho - 273.15 & "°C (Density)"
                   If outOfRangeMode = 1 Then
                     Debug.Print MsgTxt
                   ElseIf outOfRangeMode = 2 Then
@@ -665,10 +665,10 @@ Function density(p As Double, T As Double, Xin) ', p_sat_MPa As Double) 'Brine d
             ' Appendix A: Debye-Hückel limiting law slopes'
             '---------------------------------------------------
             
-            Bb = U(7) + U(8) / T + U(9) * T
+            BB = U(7) + U(8) / T + U(9) * T
             Cc = U(4) + U(5) / (U(6) + T)
             D_1000 = U(1) * Exp(U(2) * T + U(3) * T ^ 2)
-            d = D_1000 + Cc * Log((Bb + p_bar) / (Bb + 1000))
+            d = D_1000 + Cc * Log((BB + p_bar) / (BB + 1000))
             
             'DH-slope for osmotic coefficient according to Bradley and Pitzer (1979)
             A_Phi = 1 / 3 * ((2 * Application.Pi() * N_0 * rho_H2O) / 1000) ^ (1 / 2) * (E ^ 2 / (d * k * T)) ^ (3 / 2)
@@ -677,8 +677,8 @@ Function density(p As Double, T As Double, Xin) ', p_sat_MPa As Double) 'Brine d
             dp = 0.001 * p_bar
             p_plus_bar = p_bar + dp '/2
             p_minus_bar = p_bar '- dp/2
-            D_plus = D_1000 + Cc * Log((Bb + p_plus_bar) / (Bb + 1000))
-            D_minus = D_1000 + Cc * Log((Bb + p_minus_bar) / (Bb + 1000))
+            D_plus = D_1000 + Cc * Log((BB + p_plus_bar) / (BB + 1000))
+            D_minus = D_1000 + Cc * Log((BB + p_minus_bar) / (BB + 1000))
             
             rho_H2O_plus = Density_pT(p_plus_bar * 10 ^ 5, T) / 1000 'kg/m³->kg/dm³
             
@@ -713,3 +713,95 @@ End Function
 
 
 
+Function resistivity(p As Double, T As Double, Xin) 'electrical density'
+    Dim d: d = density(p, T, Xin)
+    If VarType(d) = vbString Then
+        resistivity = d & " (Brine_liq.resistivity)"
+        Exit Function
+    End If
+    
+    Dim X
+    X = CheckMassVector(Xin, nX) ' TODO get from density, checked there already
+    If Not X(UBound(X)) < 1 Then
+        resistivity = "#infinite resistivity for pure water"
+        Exit Function
+    Else
+        Dim j As Integer
+        For j = 1 To nX_salt
+            If outOfRangeMode > 0 Then
+              Dim MsgTxt As String
+                If Not (X(j) = 0 Or (X(j) >= 0.03 And X(j) <= 0.26)) Then
+                  MsgTxt = Salts(j).name & " content X(" & j & ")=" & X(j) & " out of limits {0.03...0.26} kg/kg (resistivity)"
+                  Debug.Print MsgTxt
+                  If outOfRangeMode = 1 Then
+                    Debug.Print MsgTxt
+                  ElseIf outOfRangeMode = 2 Then
+                    resistivity = MsgTxt
+                    Exit Function
+                  End If
+                End If
+                If Not (ignoreLimitSalt_T(j) Or (T - 273.15 >= 22 And T - 273.15 <= 375)) Then
+                  MsgTxt = "#T=" & T - 273.15 & "°C but for resistivity must be within 22...375 °C"
+                  If outOfRangeMode = 1 Then
+                    Debug.Print MsgTxt
+                  ElseIf outOfRangeMode = 2 Then
+                    resistivity = MsgTxt
+                    Exit Function
+                  End If
+                End If
+            End If
+        Next j
+    End If
+        
+    Dim i As Integer
+    Dim gamma_vec As Variant
+    Dim n_vec As Variant: n_vec = Array(1, 1, 2) 'ion valence TODO get from elsewhere
+    Dim c_vec As Variant: c_vec = Array(0, 0, 0)
+    For i = 1 To 3
+        c_vec(i) = X(i) / MM_vec(i) * CDbl(d) / 1000
+    Next i
+    gamma_vec = Conductivity_Ucok1980_Tcd(T, c_vec, CDbl(d))
+    
+    Dim gamma As Double
+    With WorksheetFunction
+        gamma = .SumProduct(c_vec, n_vec, gamma_vec) / .SumProduct(c_vec, n_vec)
+    End With
+    resistivity = 1 / gamma
+End Function
+
+Function Conductivity_Ucok1980_Tcd(T As Double, c_vec, d As Double) As Variant 'electrical density'
+  Dim B_NaCl As Variant: B_NaCl = Array( _
+    Array(3.47, -59.21, 0.4551, -0.0000935, -0.00000177), _
+    Array(-6.65, 198.1, -0.2058, 0.0000737, 0.000000877), _
+    Array(2.633, -64.8, 0.005799, 0.0000674, -0.000000214))
+  Dim B_KCl As Variant: B_KCl = Array( _
+    Array(5.783, -59.23, 0.2051, 0.000182, -0.00000109), _
+    Array(-6.607, 149.7, 0.1064, -0.000704, 0.00000108), _
+    Array(1.665, -31.21, -0.03418, 0.000154, -0.000000195))
+  Dim B_CaCl2 As Variant: B_CaCl2 = Array( _
+    Array(-34.62, 780.3, 1.05, -0.002459, 0.000000999), _
+    Array(24.64, -492.3, -0.5922, 0.001461, -0.000000711), _
+    Array(-3.907, 64.59, 0.06735, -0.000122, -0.00000000473))
+  Dim BB As Variant: BB = Array(B_NaCl, B_KCl, B_CaCl2)
+    
+  Dim T_C As Double: T_C = T - 273.15
+  Dim T_vec As Variant: T_vec = Array(1, 1 / T_C, T_C, T_C ^ 2, T_C ^ 3)
+  Dim c As Double
+  Dim C_ As Variant
+  Dim D_ As Variant
+  Dim i As Integer
+  Dim gamma(3) As Double
+  Dim offset As Integer: offset = LBound(c_vec) - 1
+  
+    For i = 1 To 3
+    c = c_vec(i + offset)
+    If Not c > 0 Then
+      gamma(i) = 0 ' gamma
+    Else
+      C_ = Array(c, c * Sqr(c), c * c * Log(c))
+      D_ = WorksheetFunction.MMult(C_, BB(i))
+      gamma(i) = WorksheetFunction.SumProduct(D_, T_vec)  ' gamma
+    End If
+    Next i
+    Conductivity_Ucok1980_Tcd = gamma
+End Function
