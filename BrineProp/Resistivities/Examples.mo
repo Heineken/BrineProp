@@ -8,17 +8,13 @@ package Examples
     parameter SI.Temp_C T_C=25;
     SI.Temperature T=T_C+273.15;
     parameter SI.MassFraction x_NaCl = 0;
-    parameter SI.MassFraction x_KCl = 0;
-    parameter SI.MassFraction x_CaCl2 = 0.03;
+    parameter SI.MassFraction x_KCl = 0.1;
+    parameter SI.MassFraction x_CaCl2 = 0;
 
-    package Medium = Brine3salts(ignoreLimitSalt_p={false,true,true},ignoreLimitSalt_T={false,true,true})
+    package Medium = Brine3salts(ignoreLimitSalt_p={false,true,true},ignoreLimitSalt_T={false,true,true},ignoreLimitSalt_b={true,true,true})
       "specify medium";
     Medium.BaseProperties props;
-    Types.Molarity c[:]=props.X[1:end-1] ./ Medium.MM_vec[1:end-1]*props.d/1000;
-
-  //  SI.Conductivity gamma[:]=Conductivity_Ucok1980_Tbd(props.T,c,props.d);
-    SI.Resistivity rho=Resistivity_Francke_Tcd(props.T,c,props.d);
-  //  SI.Resistivity Resistivity_Ucok1980_TdX(props.T,props.d, Utilities.massFractionsToMolalities(props.X,Medium(MM_vec)));
+    SI.Resistivity rho=Resistivity_Francke_TXd(props.T,props.X,props.d,Medium.MM_vec,Medium.AssertLevel);
 
   equation
   //specify thermodynamic state
