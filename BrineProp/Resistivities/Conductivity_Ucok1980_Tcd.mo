@@ -28,8 +28,8 @@ algorithm
   BB[2,:,:] :=B_KCl;
   BB[3,:,:] :=B_CaCl2;
 
+//print("c_vec="+Modelica.Math.Matrices.toString(transpose([c_vec])));
 //print("T="+Modelica.Math.Matrices.toString(transpose([T_vec])));
-//  print("C="+Modelica.Math.Matrices.toString(C_));
 
   for i in 1:3 loop
     c:=c_vec[i];
@@ -37,11 +37,12 @@ algorithm
       gamma[i] := 0;
     else
       C_:=[c,c*sqrt(c),c*c*log(c)];
+//      print("C="+Modelica.Math.Matrices.toString(C_));
       D:=C_*BB[i, :, :];
-//      print("D="+Modelica.Math.Matrices.toString(D));
       gamma[i] :=D*T_vec*{1};
-//      print("gamma="+Modelica.Math.Matrices.toString([gamma]));
-//    rho[i] :=1/(D*T_*{1});
+//      print("D="+Modelica.Math.Matrices.toString(D));
     end if;
   end for;
+
+//  print("gamma="+Modelica.Math.Matrices.toString(transpose([gamma])));
 end Conductivity_Ucok1980_Tcd;

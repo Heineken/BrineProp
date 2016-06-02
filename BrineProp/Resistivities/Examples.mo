@@ -5,10 +5,10 @@ package Examples
   model ResistivityUcok1980
     //needs "Advanced.PedanticModelica:=false" to run
 
-    parameter SI.Temp_C T_C=25;
+    parameter SI.Temp_C T_C=225;
     SI.Temperature T=T_C+273.15;
-    parameter SI.MassFraction x_NaCl = 0;
-    parameter SI.MassFraction x_KCl = 0.1;
+    parameter SI.MassFraction x_NaCl = 0.03;
+    parameter SI.MassFraction x_KCl = 0.03;
     parameter SI.MassFraction x_CaCl2 = 0;
 
     package Medium = Brine3salts(ignoreLimitSalt_p={false,true,true},ignoreLimitSalt_T={false,true,true},ignoreLimitSalt_b={true,true,true})

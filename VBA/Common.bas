@@ -413,7 +413,7 @@ If VarType(X) = vbString Then
         Xout = FullMassVector(IIf(s2v, Xout, X), nX) 'make sure first index is 1
         If VarType(Xout) = vbString Then
             CheckMassVector = Xout
-        ElseIf VarType(Xout) = vbError Or IIf(s2v, Xout(1), X(1)) = -1 Then
+        ElseIf VarType(Xout) = vbError Then ' Or IIf(s2v, Xout(1), X(1)) = -1
             CheckMassVector = "#Mass vector is wrong"
         Else
             CheckMassVector = Xout

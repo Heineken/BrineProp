@@ -726,12 +726,23 @@ Function resistivity(p As Double, T As Double, Xin) 'electrical density'
         resistivity = "#infinite resistivity for pure water"
         Exit Function
     Else
+        Dim i As Integer
+        Dim gamma_vec As Variant
+        Dim n_vec As Variant: n_vec = Array(1, 1, 2) 'ion valence TODO get from elsewhere
+        Dim c_vec As Variant: c_vec = Array(0, 0, 0)
+        For i = 1 To 3
+            c_vec(i) = X(i) / MM_vec(i) * CDbl(d) / 1000
+        Next i
+
+        Dim c_total As Double: c_total = c_vec(1) + c_vec(2) + c_vec(3) ' WorksheetFunction.Sum(SubArray(X,1,3))
         Dim j As Integer
+        Dim X_total As Double
         For j = 1 To nX_salt
             If outOfRangeMode > 0 Then
-              Dim MsgTxt As String
-                If Not (X(j) = 0 Or (X(j) >= 0.03 And X(j) <= 0.26)) Then
-                  MsgTxt = Salts(j).name & " content X(" & j & ")=" & X(j) & " out of limits {0.03...0.26} kg/kg (resistivity)"
+                X_total = c_total * MM_vec(j)
+                Dim MsgTxt As String
+                If Not (X_total = 0 Or (X_total >= 0.03 And X_total <= 0.26)) Then
+                  MsgTxt = "Total salinity X=" & X_total & " out of " & Salts(j).name & " limits {0.03...0.26} kg/kg (resistivity)"
                   Debug.Print MsgTxt
                   If outOfRangeMode = 1 Then
                     Debug.Print MsgTxt
@@ -753,14 +764,7 @@ Function resistivity(p As Double, T As Double, Xin) 'electrical density'
         Next j
     End If
         
-    Dim i As Integer
-    Dim gamma_vec As Variant
-    Dim n_vec As Variant: n_vec = Array(1, 1, 2) 'ion valence TODO get from elsewhere
-    Dim c_vec As Variant: c_vec = Array(0, 0, 0)
-    For i = 1 To 3
-        c_vec(i) = X(i) / MM_vec(i) * CDbl(d) / 1000
-    Next i
-    gamma_vec = Conductivity_Ucok1980_Tcd(T, c_vec, CDbl(d))
+    gamma_vec = Conductivity_Ucok1980_Tcd(T, fill(c_total, nX_salt), CDbl(d))
     
     Dim gamma As Double
     With WorksheetFunction
