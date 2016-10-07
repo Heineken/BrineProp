@@ -1,0 +1,21 @@
+﻿// Runs all models in /Examples and lists the ones that fail to simulate
+ExampleDir = Modelica.Utilities.Files.loadResource("modelica:/BrineProp/Examples");
+n_files=Modelica.Utilities.Internal.FileSystem.getNumberOfFiles(ExampleDir);
+files = Modelica.Utilities.Internal.FileSystem.readDirectory(ExampleDir, n_files);
+files;
+fails = fill("",0);
+for fileName in files loop
+  l=Modelica.Utilities.Strings.length(fileName);
+  if ".mo" == Modelica.Utilities.Strings.substring(fileName,l-2,l) then
+    modelName = Modelica.Utilities.Strings.substring(fileName,1,l-3);
+    Modelica.Utilities.Streams.print("Simulating " + fileName);
+    if not simulateModel("BrineProp.Examples."+modelName, method="dassl", resultFile="PureWaterMinimal") then
+      fails = cat(1,fails,{modelName});
+    end if;
+  else
+    Modelica.Utilities.Streams.print("Skipping " + fileName);
+    n_files = n_files-1;
+  end if;
+end for;
+Modelica.Utilities.Streams.print(String(size(fails,1))+"/"+String(n_files)+" models failed:");
+fails;
