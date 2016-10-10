@@ -64,6 +64,7 @@ protected
   Real lambda_CH4_Na;
   Real xi_CH4_NaCl;
 algorithm
+  assert(iNaCl>0,"iNaCl is not set. Call this function as Medium.solubility..., not directly!");
   if debugmode then
       print("Running solubility_CH4_pTX_Duan2006("+String(p/1e5)+" bar,"+String(T-273.15)+" C, ignoreTlimit="+String(ignoreTlimit)+", X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
   end if;

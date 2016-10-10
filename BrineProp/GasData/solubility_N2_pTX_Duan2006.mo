@@ -14,6 +14,7 @@ function solubility_N2_pTX_Duan2006 "solubility calculation of N2 in seawater Ma
   output SI.MassFraction c_gas "gas concentration in kg_gas/kg_H2O";
 */
 protected
+  Types.Molality solu "CO2 solubility in mol_CO2/kg H2O";
   Real[:] mu_l0_N2_RT_c = { -0.23093813E+02,
                              0.56048525E-01,
                              0.98808898E+04,
@@ -44,9 +45,13 @@ protected
                           0,
                           0};
 
-  SI.MolarMass M_H2O = MM_vec[end];
-  Types.Molality molalities[size(X, 1)]=
-      Utilities.massFractionsToMolalities(X,MM_vec);
+  SI.Pressure p_H2O=Modelica.Media.Water.WaterIF97_pT.saturationPressure(T) "SPEEDUP: get from outside";
+  Real phi_N2;
+  Real mu_l0_N2_RT;
+  Real lambda_N2_Na;
+  Real xi_N2_NaCl;
+
+  Types.Molality molalities[size(X, 1)]=Utilities.massFractionsToMolalities(X,MM_vec);
   Types.Molality m_Na=if iNaCl>0 then molalities[iNaCl] else 0;
   Types.Molality m_K=if iKCl>0 then molalities[iKCl] else 0;
   Types.Molality m_Ca=if iCaCl2>0 then molalities[iCaCl2] else 0;
@@ -56,25 +61,25 @@ protected
   Types.Molality m_Cl=m_Na + m_K + 2*m_Mg + 2*m_Ca;
 //  Types.Molality m_Cl=molalities[iNaCl] + molalities[iKCl] + 2*molalities[iMgCl2]+ 2*molalities[iCaCl2];
 
-  SI.Pressure p_H2O=Modelica.Media.Water.WaterIF97_pT.saturationPressure(T);
 //  Pressure_bar p_H2O_bar=SI.Conversions.to_bar(p_sat_H2O_Duan2003(T));
 //  Partial_Units.Pressure_bar p_bar=SI.Conversions.to_bar(p);
-  SI.MassFraction X_NaCl = molalities[iNaCl]*M_H2O
-    "mole fraction of NaCl in liquid phase";
+
+/*
+  SI.MolarMass M_H2O = MM_vec[end];
+  SI.MassFraction X_NaCl = molalities[iNaCl]*M_H2O "mole fraction of NaCl in liquid phase";
   SI.MolarVolume v_l_H2O=M_H2O/Modelica.Media.Water.WaterIF97_pT.density_pT(p,T);
   Real phi_H2O = fugacity_H2O_Duan2006N2(p,T);
+  
   final constant Real R(final unit="bar.cm3/(mol.K)") = 83.14472
     "Molar gas constant";
-/*  Real y_H20 = (1-2*X_NaCl) * p_H2O/(phi_H2O*p) * exp(v_l_H2O*(p-p_H2O)/(Modelica.Constants.R*T)) 
+  Real y_H20 = (1-2*X_NaCl) * p_H2O/(phi_H2O*p) * exp(v_l_H2O*(p-p_H2O)/(Modelica.Constants.R*T)) 
     "equ. 4 (gamma_H2O=1";
   Real y_N2 = 1-y_H20 "mole fraction of CO2 in vapor phase";*/
 //  Real y_N2 = p_gas/p "mole fraction of N2 in vapor phase";
-  Real phi_N2;
-  Real mu_l0_N2_RT;
-  Real lambda_N2_Na;
-  Real xi_N2_NaCl;
+
 algorithm
-  if debugmode then
+  assert(iNaCl>0,"iNaCl is not set. Call this function as Medium.solubility..., not directly!");
+  if iNaCl<>1 or debugmode then
       print("Running solubility_N2_pTX_Duan2006("+String(p/1e5)+" bar,"+String(T-273.15)+" C, ignoreTlimit="+String(ignoreTlimit)+", X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
   end if;
 // print("mola_N2("+String(p_gas)+","+String(T-273.16)+") (solubility_N2_pTX_Duan2006)");
@@ -100,7 +105,6 @@ algorithm
 
 //    solu := max(0, solu) "algorithm can return negative values";
 //  solu := p_H2O;
-//  solu := 0;
     X_gas :=solu*M_N2*X[end] "molality->mass fraction";
   end if;
   //    print("mola_N2("+String(p_gas)+","+String(T-273.16)+","+String(X[1])+")="+String(c_gas)+" (solubility_N2_pTX_Duan2006)");

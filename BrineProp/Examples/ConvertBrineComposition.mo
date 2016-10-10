@@ -3,7 +3,7 @@ model ConvertBrineComposition
   "convert volume related composition into mass fraction g/l -> kg/kg"
 //  Finds brine composition as mass fraction from infos in g/l by iterative density calculation
 
-  package Medium = BrineProp.Brine5salts3gas;
+  package Medium = BrineProp.Brine5salts3gas(AssertLevel=0);
 
   constant SI.MolarMass M_cation[:] = {22.98977,39.0983,40.078,24.305,87.62}/1000 "kg/mol";
   constant SI.MolarMass M_Cl = 35.453/1000;
@@ -49,17 +49,19 @@ Real gasLiquidRatio=0.8475 "GVF/(1-GVF) at STP";*/
   // SI.MassConcentration[:] X_g_gas(each start=0)={max(0,g/(1+sum(g)))  for  g in  gasMassPerLiquidMass};
   SI.Pressure[:] PartialPressures(each start=1e4)=(props.p-props.p_H2O)*gasVolumeFractions;
   SI.MassConcentration[:] X_l_gas(each start=0) = {
-    GasData.solubility_CO2_pTX_Duan2006(
+    Medium.solubility_CO2_pTX_Duan2006(
         props.p,
         props.T,
         props.X,
         Medium.MM_vec,
-        PartialPressures[1]),GasData.solubility_N2_pTX_Duan2006(
+        PartialPressures[1]),
+    Medium.solubility_N2_pTX_Duan2006(
         props.p,
         props.T,
         props.X,
         Medium.MM_vec,
-        PartialPressures[2]),GasData.solubility_CH4_pTX_Duan2006(
+        PartialPressures[2]),
+    Medium.solubility_CH4_pTX_Duan2006(
         props.p,
         props.T,
         props.X,
@@ -67,10 +69,10 @@ Real gasLiquidRatio=0.8475 "GVF/(1-GVF) at STP";*/
         PartialPressures[3])}/(1 - props.x)
     "gas mass in liquid phase per fluid mass";
 
-  Real V_l = sum(props.X_l[6:8]./Medium.MM_gas)*22.4/props.X_l[Medium.nX]
+  Real V_l = sum(props.X_l[i_gas]./Medium.MM_gas)*22.4/props.X_l[Medium.nX]
     "Volume dissolved gas would have at standard conditions / OM workaround: Medium.nX instead of end";
   SI.MassConcentration TDS= sum(props.X_l[1:Medium.nX_salt])*props.d_l;
-  Real[:] y_l=if not max(props.X_l[6:8])>0 then fill(0,Medium.nX_gas) else props.X_l[6:8]./Medium.MM_gas / sum(props.X_l[6:8]./Medium.MM_gas)
+  Real[:] y_l=if not max(props.X_l[i_gas])>0 then fill(0,Medium.nX_gas) else props.X_l[i_gas]./Medium.MM_gas / sum(props.X_l[i_gas]./Medium.MM_gas)
     "mol fraction of dissolved gases";
   Real[:] y=props.p_gas/props.p "volume fraction of gas phase";
   SI.MassFraction[:] X_g=props.X-props.X_l*(1-props.x)
@@ -80,14 +82,15 @@ Real gasLiquidRatio=0.8475 "GVF/(1-GVF) at STP";*/
   SI.Pressure p_degas_N2=Medium.degassingPressure_N2_Duan2006(props.p,props.T,props.X,Medium.MM_vec);
   SI.Pressure p_degas_CH4=Medium.degassingPressure_CH4_Duan2006(props.p,props.T,props.X,Medium.MM_vec);
   */
-
+protected
+  Integer i_gas[:]=(Medium.nX-Medium.nX_gas):(Medium.nX-1);
 equation
   props.p = 1.01325e5 "STP";
   props.T = 273.16+23 "STP";
   props.Xi = cat(1,c/d_l/0.999190406582784,X_g_gas+X_l_gas) "props.state.d_l";
 
 algorithm
-  print("rho_l="+String(props.state.d_l)+" kg/m^3, TDS = " + String(TDS) + " g/l");
+//  print("rho_l="+String(props.state.d_l)+" kg/m^3, TDS = " + String(TDS) + " g/l");
   print("X=" + Modelica.Math.Matrices.toString({props.X}) + " ");
 
 //  print("sum(X_l)="+String(sum(props.state.X_l)-1)+"");

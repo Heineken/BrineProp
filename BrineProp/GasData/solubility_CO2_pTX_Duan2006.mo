@@ -69,6 +69,7 @@ protected
   Types.Molality m_SO4=0;
   Types.Molality m_Cl=m_Na + m_K + 2*m_Mg + 2*m_Ca;
 algorithm
+  assert(iNaCl>0,"iNaCl is not set. Call this function as Medium.solubility..., not directly!");
   if debugmode then
     print("Running solubility_CO2_pTX_Duan2006("+String(p)+","+String(T)+","+String(X[end-3])+","+String(p_gas)+")");
   end if;
