@@ -6,7 +6,7 @@ files;
 fails = fill("",0);
 for fileName in files loop
   l=Modelica.Utilities.Strings.length(fileName);
-  if ".mo" == Modelica.Utilities.Strings.substring(fileName,l-2,l) then
+  if fileName<>"package.mo" and ".mo" == Modelica.Utilities.Strings.substring(fileName,l-2,l) then
     modelName = Modelica.Utilities.Strings.substring(fileName,1,l-3);
     Modelica.Utilities.Streams.print("Simulating " + fileName);
     if not simulateModel("BrineProp.Examples."+modelName, method="dassl", resultFile="PureWaterMinimal") then
