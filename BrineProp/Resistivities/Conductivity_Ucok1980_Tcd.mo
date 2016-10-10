@@ -1,5 +1,6 @@
 within BrineProp.Resistivities;
 function Conductivity_Ucok1980_Tcd
+  //http://dx.doi.org/10.2118/7878-PA
   //returns conductivity instead of resistivity to allow easy handling of zero salinities
   //salinity validity can't be checked here because it's given in weight-%, which is unknown here
   //measured at 31 MPa
