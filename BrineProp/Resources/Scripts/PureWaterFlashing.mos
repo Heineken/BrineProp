@@ -1,0 +1,15 @@
+simulateModel("BrineProp.Examples.PureWaterFlashing", stopTime=1.95, numberOfIntervals=20, method="dassl", resultFile="PureWaterFlashing");
+
+removePlots(false);
+Advanced.FilenameInLegend = false;
+Advanced.SequenceInLegend = true;
+Advanced.PlotLegendTooltip = true;
+Advanced.FullPlotTooltip = true;
+Advanced.DefaultAutoErase = true;
+Advanced.Legend.Horizontal = true;
+Advanced.Legend.Frame = false;
+Advanced.Legend.Transparent = true;
+Advanced.Legend.Location = 1;
+Advanced.FilesToKeep = 2;
+createPlot(id=1, position={35, 30, 584, 421}, x="p", y={"x"}, heading="Pure water flashing", range={0.0, 200000.0, 0.14, 0.30000000000000004}, grid=true, leftTitleType=2, leftTitle="gas mass fraction", bottomTitleType=2, bottomTitle="p / [bar]", colors={{28,108,200}});
+

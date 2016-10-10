@@ -188,6 +188,11 @@ Function specificHeatCapacity_pTX_Driesner(p As Double, T As Double, x_NaCl As D
 End Function
 
 Private Function T_Scale_h_Driesner(p As Double, T As Double, X_NaCl_ As Double, Optional ByRef q_2 As Double) 'enthalpy calculation according to Driesner 2007 et al: 0-1000°C; 0.1-500MPa (doi:10.1016/j.gca.2007.05.026)"
+  If Not X_NaCl_ > 0 Then 'pure water -> trivial
+    T_Scale_h_Driesner = T
+    Exit Function
+  End If
+  
   Const p_min = 1 'bar
   Const p_max = 1000 'bar
   Const T_min = 0 '°C
@@ -229,7 +234,7 @@ Private Function T_Scale_h_Driesner(p As Double, T As Double, X_NaCl_ As Double,
   If X_NaCl_ = 0 Then
     x_NaCl = 0
   Else
-    x_NaCl = 1 / (M_NaCl / M_H2O * (1 / X_NaCl_ - 1) + 1) 'mol fraction
+    x_NaCl = 1 / (M_NaCl / M_H2O * (1 / X_NaCl_ - 1) + 1) 'mass fraction -> mol fraction
   End If
 
 'CALCULATION OF EQUIVALENT TEMPERATURE_h

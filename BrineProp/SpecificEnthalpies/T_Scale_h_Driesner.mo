@@ -36,8 +36,8 @@ algorithm
   assert(size(ignoreLimitSalt_T,1)>0,"Wrong length of ignoreLimitSalt_p ("+String(size(ignoreLimitSalt_p,1))+")"); //should be in PartialFlags, but asserts can't be in packages
 
   if AssertLevel>0 then
-    assert(ignoreLimitSalt_p[iNaCl] or (p_bar>=p_min and p_bar<=p_max),"Pressure p=" + String(p/1e5) + " bar is out of validity range ["+String(p_min/1e5)+"..."+String(p_max/1e5)+"]bar.\nTo ignore set ignoreLimitSalt_p["+String(iNaCl)+"]=true",aLevel);
-    assert(ignoreLimitSalt_T[iNaCl] or (T_C>=T_min and T_C<=T_max),"Temperature T=" + String(T-273.15) + " C out of validity range ["+String(T_min)+"..."+String(T_max)+"]C.\nTo ignore set ignoreLimitSalt_T["+String(iNaCl)+"]=true",aLevel);
+    assert(not X_NaCl>0 or ignoreLimitSalt_p[iNaCl] or (p_bar>=p_min and p_bar<=p_max),"Pressure p=" + String(p/1e5) + " bar is out of validity range ["+String(p_min/1e5)+"..."+String(p_max/1e5)+"]bar.\nTo ignore set ignoreLimitSalt_p["+String(iNaCl)+"]=true",aLevel);
+    assert(not X_NaCl>0 or ignoreLimitSalt_T[iNaCl] or (T_C>=T_min and T_C<=T_max),"Temperature T=" + String(T-273.15) + " C out of validity range ["+String(T_min)+"..."+String(T_max)+"]C.\nTo ignore set ignoreLimitSalt_T["+String(iNaCl)+"]=true",aLevel);
 //    assert(ignoreLimitSalt_b[1] or (mola>=0.25 and mola<=5),"NaCl-Molality is out of validity range: m[i]=" + String(mola) + " mol/kg.\nTo ignore set ignoreLimitSalt_b["+String(iNaCl)+"]=true\n",aLevel);
   end if;
 
