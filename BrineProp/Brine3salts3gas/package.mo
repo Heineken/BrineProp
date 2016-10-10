@@ -86,7 +86,7 @@ protected
 protected
    parameter Integer[:] liqIndex=cat(1,1:nX_salt,{nX});
  algorithm
-     h := specificEnthalpy_pTX_liq_Francke_cp(p,T,X[liqIndex],MM_vec[liqIndex]);
+     h := specificEnthalpy_pTX_liq_Francke_cp(p,T,X[liqIndex],MM_vec[liqIndex],ignoreTlimit=ignoreTlimit);
  //    h := SpecificEnthalpies.specificEnthalpy_pTX_Driesner(p,T,X);
  //  print(String(p*1e-5)+" bar,"+String(T)+" K->"+String(h)+" J/kg (Brine_Duan_Multi_TwoPhase_ngas_3.specificEnthalpy_liq_pTX)");
  end specificEnthalpy_liq_pTX;
