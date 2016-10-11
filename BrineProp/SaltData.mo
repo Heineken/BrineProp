@@ -1,5 +1,6 @@
 within BrineProp;
-package SaltData "Molar masses and mole numbers of the contained salts"
+package SaltData
+  "Molar masses and mole numbers of the contained salts"
 
    constant SI.MolarMass M_NaCl = 0.058443 "[kg/mol]";
    constant Integer nM_NaCl = 2 "[ion moles/mol]";
@@ -11,24 +12,7 @@ package SaltData "Molar masses and mole numbers of the contained salts"
    constant Integer nM_MgCl2 = 3 "[ion moles/mol]";
    constant SI.MolarMass M_SrCl2 = 0.158536 "[kg/mol]";
    constant Integer nM_SrCl2 = 3 "[ion moles/mol]";
-//   constant SI.MolarMass M_H2O = 0.018015 "[kg/mol]";
-
-/*  constant SI.MolarMass[:] MM_salt = {
-    M_NaCl,
-    M_KCl,
-    M_CaCl2,
-    M_MgCl2,
-    M_SrCl2};
-//    ,    M_H2O};
-
-  constant Integer[:] nM_salt = {
-    nM_NaCl,
-    nM_KCl,
-    nM_CaCl2,
-    nM_MgCl2,
-    nM_SrCl2};
-*/
-
+   //   constant SI.MolarMass M_H2O = 0.018015 "[kg/mol]"; provided by MSL
 
   replaceable record SaltConstants
     extends Modelica.Icons.Record;
@@ -37,6 +21,5 @@ package SaltData "Molar masses and mole numbers of the contained salts"
     String name;
     annotation (Documentation(info="<html></html>"));
   end SaltConstants;
-//    ,    M_H2O};
 
 end SaltData;

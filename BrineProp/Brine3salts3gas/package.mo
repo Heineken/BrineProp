@@ -36,24 +36,19 @@ package Brine3salts3gas "Two-phase aqueous solution of NaCl, KCl, CaCl2, N2, CO2
   redeclare function extends solubilities_pTX
   "solubility calculation of CO2 in seawater Duan, Sun(2003), returns gas concentration in kg/kg H2O"
   algorithm
+  //  print("p_gas={"+String(p_gas[1])+", "+String(p_gas[2])+", "+String(p_gas[3])+"} (solubilities_pTX)");
     if debugmode then
         print("Running solubilities_pTX("+String(p/1e5)+" bar,"+String(T-273.15)+" C, ignoreTlimit="+String(ignoreTlimit)+", X="+Modelica.Math.Matrices.toString(transpose([X]))+")");
     end if;
-  //  print("p="+String(p)+" bar, T=("+String(T)+") (solubilities_pTX)");
-  //  if gasname =="carbondioxide" then
       solu[1] := if X[nX_salt+1]>0 then solubility_CO2_pTX_Duan2006(p,T,X_l,MM_vec,p_gas[1],ignoreTlimit) else -1
     "aus GasData, mol/kg_H2O -> kg_CO2/kg_H2O";
-  //  elseif gasname =="nitrogen" then
       solu[2] := if X[nX_salt+2]>0 then solubility_N2_pTX_Duan2006(p,T,X_l,MM_vec,p_gas[2],ignoreTlimit) else -1
     "aus GasData, mol/kg_H2O -> kg_N2/kg_H2O";
   //    solu[2] := if X[nX_salt+2]>0 then solubility_N2_pTX_Harting(p,T,X_l,MM_vec,p_gas[2]) else -1
-  //  elseif gasname =="methane" then
       solu[3] := if X[nX_salt+3]>0 then solubility_CH4_pTX_Duan2006(p,T,X_l,MM_vec,p_gas[3],ignoreTlimit) else -1
     "aus GasData, mol/kg_H2O -> kg_CH4/kg_H2O";
   //    solu[3] := if X[nX_salt+3]>0 then solubility_CH4_pTX_Harting(p,T,X_l,MM_vec,p_gas[3]) else -1
-  //  end if;
 
-  //  print("p_gas={"+String(p_gas[1])+", "+String(p_gas[2])+", "+String(p_gas[3])+"} (solubilities_pTX)");
   //  print("k={"+String(solu[1]/p_gas[1])+", "+String(solu[2]/p_gas[2])+", "+String(solu[3]/p_gas[3])+"}(solubilities_pTX)");
   //  print("solu={"+String(solu[1])+", "+String(solu[2])+", "+String(solu[3])+"}(solubilities_pTX)");
   //  print(Modelica.Math.Matrices.toString({MM_vec}));

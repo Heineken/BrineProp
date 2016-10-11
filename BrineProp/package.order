@@ -12,11 +12,11 @@ Resistivities
 Types
 PartialFlags
 PartialBrineMultiSaltOnePhase
+ComponentsOrder
+BrineDriesner
+BrineDuan
 Brine3salts
 Brine5salts
-ComponentsOrder
-BrineDuan
-BrineDriesner
 GasData
 PartialBrineGas
 BrineGas3Gas

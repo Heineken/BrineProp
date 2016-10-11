@@ -33,5 +33,5 @@ package PartialFlags
     constant Boolean ignoreNoCompositionInBrineGas=false;
 
 protected
- constant Integer nX_salt_;
+ constant Integer nX_salt_; //set via extend
 end PartialFlags;

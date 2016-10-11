@@ -21,7 +21,6 @@ package Brine3salts "One-phase (liquid) multisalt brine solution"
   redeclare function extends density_pTX
   //  extends density_Duan2008_pTX(MM_vec=cat(1,MM_salt, {M_H2O}));
      //TODO should take MM_vec;
-
   //  extends Densities.density_Duan2008_pTX(MM_vec=MM_vec);
   algorithm
   //   print("density_liquid_pTX: "+String(p*1e-5)+" bar,"+String(T)+" K->"+String(d)+"kg/m^3");
@@ -31,27 +30,7 @@ package Brine3salts "One-phase (liquid) multisalt brine solution"
   end density_pTX;
 
  redeclare function specificEnthalpy_pTX
- // Partial_Units.Molality molalities = massFractionsToMoleFractions(X, MM_vec);
- //  SI.SpecificEnthalpy h_H2O := Modelica.Media.Water.WaterIF97_pT.specificEnthalpy_pT(p, T) "H2O";
- extends specificEnthalpy_pTX_liq_Francke_cp(MM_vec=MM_salt);
- /*algorithm 
-    h := specificEnthalpy_pTX_liq_Francke_cp(p,T,X);
-*/
- //    h_app[1] :=Brine_Driesner.specificEnthalpy_pTX(p,T,X) "NaCl";
- /*    h_app[1] :=apparentMolarEnthalpy_NaCl(p,T) "NaCl";
-    h_app[2] := 0 "apparentMolarEnthalpy_KCl_Holmes1983(T)KCl";
-    h_app[3] := 0 "apparentMolarEnthalpy_CaCl(p,T)CaCl2";
-    h_app[4] := 0 "apparentMolarEnthalpy_MgCl2(p,T)MgCl2";
-    h_app[5] := 0 "apparentMolarEnthalpy_SrCl2(p,T)0SrCl2";
-
-    h := (h_H2O + h_app*molalities) * X[end];
-*/
-
- //    h := SpecificEnthalpies.specificEnthalpy_pTX_Driesner(p,T,X);
- //    h := BrineProp.SpecificEnthalpies.specificEnthalpy_pTX_liq_Francke_cp(p,T,X);
-
- //  print(String(p*1e-5)+" bar,"+String(T)+" K->"+String(h)+" J/kg (Brine_Duan_Multi_TwoPhase_ngas_3.specificEnthalpy_liq_pTX)");
- //print("h="+String(X[1])+"*"+String(h_vec[1])+"="+String(X[1:nX_salt]*h_vec));
+   extends specificEnthalpy_pTX_liq_Francke_cp(MM_vec=MM_salt);
  end specificEnthalpy_pTX;
 
  redeclare function extends dynamicViscosity_pTXd
