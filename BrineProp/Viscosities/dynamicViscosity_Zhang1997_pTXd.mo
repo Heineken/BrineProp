@@ -1,5 +1,5 @@
 within BrineProp.Viscosities;
-function dynamicViscosity_Zhang_pTXd
+function dynamicViscosity_Zhang1997_pTXd
   "Multisalt-Version of viscosity calculation according to Zhang et al 1997: Considers NaCl and CaCl, with geometric mixture rule"
   //doi:10.1007/s10765-009-0646-7
 
@@ -53,4 +53,4 @@ algorithm
   print("Molality b= "+String(molalities[3])+" mol/kg (BrineProp.Viscosities.dynamicViscosity_Zhang_pTX)");
   print("eta_relative CaCl2: "+String(eta_relative)+" Pa.s (BrineProp.Viscosities.dynamicViscosity_Zhang_pTX)");
 //  print("Viscosity CaCl2: "+String(eta)+" Pa.s (BrineProp.Viscosities.dynamicViscosity_Zhang_pTX)");
-end dynamicViscosity_Zhang_pTXd;
+end dynamicViscosity_Zhang1997_pTXd;

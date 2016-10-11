@@ -1,5 +1,5 @@
 within BrineProp.Viscosities;
-function dynamicViscosity_Duan_pTX
+function dynamicViscosity_Duan2009NaClKCl_pTX
   "Multisalt-Version of viscosity calculation according to Duan et al 2009: Considers NaCl and KCL, with geometric mixture rule"
   //doi:10.1007/s10765-009-0646-7
 
@@ -29,11 +29,10 @@ protected
   constant Molality[:] molalities=Utilities.massFractionsToMolalities(X,MM);
  String msg;
 algorithm
-   print("X[1]="+String(X[1])+" (Brine.Viscosities.dynamicViscosity_Duan_pTX)");
   if debugmode then
-    print("p="+String(p_Pa)+" Pa, T_K"+String(T_K)+" K (Brine.Viscosities.dynamicViscosity_Duan_pTX)");
+    print("p="+String(p_Pa)+" Pa, T_K"+String(T_K)+"X[1]="+String(X[1])+" K (Brine.Viscosities.dynamicViscosity_Duan2009NaClKCl_pTX)");
   end if;
-  assert(T_C>=0 and T_C<=400, "Temperature must be between 10 and 350degC");
+  assert(T_C>=0 and T_C<=350, "Temperature must be between 10 and 350degC");
   assert(p_bar>=1 and p_bar<=1000, "Pressure must be between 1 and 500 bar");
 
   //viscosity calculation
@@ -75,4 +74,4 @@ algorithm
       eta:= eta*eta_relative^phi;
   end for;
 //  print("Viscosity("+String(p_Pa)+","+String(T_K)+"): "+String(eta)+" Pa.s (Partial_Viscosity_Phillips.dynamicViscosity_Duan_pTX)");
-end dynamicViscosity_Duan_pTX;
+end dynamicViscosity_Duan2009NaClKCl_pTX;

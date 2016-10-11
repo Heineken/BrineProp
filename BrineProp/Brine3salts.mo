@@ -86,7 +86,7 @@ package Brine3salts "One-phase (liquid) multisalt brine solution"
      print("T="+String(T)+" too low (<0 degC), setting to 0 degC in PartialBrine_ngas_Newton.quality_pTX()");
   end if;
      T_corr:= max(273.16,T);
-    eta := dynamicViscosity_Duan_pTX(
+    eta :=Viscosities.dynamicViscosity_Duan2009NaClKCl_pTX(
        p,
        T_corr,
        X,

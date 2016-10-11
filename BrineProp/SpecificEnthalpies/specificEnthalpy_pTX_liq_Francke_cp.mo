@@ -87,5 +87,5 @@ algorithm
 //  print("otherSalts:"+Modelica.Math.Matrices.toString({otherSalts}));
 //  print("H_appmol         :"+PowerPlant.vector2string(H_appmol));
 
- print("Brine.specificEnthalpy_pTX_Francke: "+String(p*1e-5)+"bar. "+String(T)+"degC->"+String(h)+" J/kg");
+// print("Brine.specificEnthalpy_pTX_Francke: "+String(p*1e-5)+"bar. "+String(T)+"degC->"+String(h)+" J/kg");
 end specificEnthalpy_pTX_liq_Francke_cp;
