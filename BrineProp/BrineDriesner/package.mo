@@ -3,9 +3,10 @@ package BrineDriesner "NaCl solution using Driesner density and enthalpy functio
   extends BrineProp.PartialBrineMultiSaltOnePhase(
       redeclare package Salt_data = BrineProp.SaltDataDuan,
       final saltNames = {"sodium chloride"},
+      saltConstants = {Salt_data.saltConstants_NaCl},
       final MM_salt = {Salt_data.M_NaCl},
-      final nM_salt = {Salt_data.nM_NaCl});
-
+      final nM_salt = {Salt_data.nM_NaCl},
+      final iNaCl=1);
 
   redeclare function extends density_pTX
   "density calculation according to Driesner et al: 10-1000degC; 0.1-500MPa; 0.25-5 mol/kg"
@@ -115,7 +116,7 @@ protected
   output SI.SpecificEnthalpy h;*/
 
   algorithm
-    h := BrineProp.SpecificEnthalpies.specificEnthalpy_pTX_Driesner(p,T,X[1]);
+    h := specificEnthalpy_pTX_Driesner(p,T,X[1]);
 
   //  print("Brine_Driesner.specificEnthalpy_pTX: "+String(p*1e-5)+"bar."+String(T_Scale_h)+"degC->"+String(h)+" J/kg");
   end specificEnthalpy_pTX;

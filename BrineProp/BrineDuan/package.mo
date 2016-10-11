@@ -3,15 +3,12 @@ package BrineDuan "NaCl solution using Duan density"
   extends BrineProp.PartialBrineMultiSaltOnePhase(
       redeclare package Salt_data = BrineProp.SaltDataDuan,
       final saltNames = {"sodium chloride"},
+      saltConstants = {Salt_data.saltConstants_NaCl},
       final MM_salt = {Salt_data.M_NaCl},
-      final nM_salt = {Salt_data.nM_NaCl});
-
+      final nM_salt = {Salt_data.nM_NaCl},
+      final iNaCl=1);
 
   redeclare function extends dynamicViscosity_pTX
-   //  constant Real M_NaCl=0.058443 "molar mass in [kg/mol]";
-    /*  public 
-     constant SI.MolarMass M_NaCl = salt.M_salt; ;
-      "[kg/mol]";*/
 protected
     Types.Molality mola=X[1]/(MM_salt[1]*(1 - X[1]))
     "molality b (mol_NaCl/kg_H2O)";
@@ -70,7 +67,7 @@ protected
 
   redeclare function extends density_pTX
   algorithm
-    d:=BrineProp.Densities.density_Duan2008_pTX(p,T,X,MM_vec);
+    d:=density_Duan2008_pTX(p,T,X,MM_vec,saltConstants);
   end density_pTX;
 
 

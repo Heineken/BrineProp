@@ -8,12 +8,6 @@ function specificEnthalpy_pTX_liq_Francke_cp "enthalpy calculation DIY"
   input SI.MolarMass MM_vec[:];
   input Boolean ignoreTlimit=false "activated by temperature_phX";
   output SI.SpecificEnthalpy h;
-//  constant Real M_NaCl=Salt_Data.M_NaCl "molar mass in [kg/mol]";
-//  output Real val2=H_appmol[CaCl2];
-//  extends BrineProp.SaltDataDuan.defineSaltOrder_;
-
-//  SI.MolarMass MM_vec[:]=BrineProp.SaltData.MM_salt[1:5];
-//  SI.MolarMass MM_vec[:];
 
 protected
   SI.MolarInternalEnergy Delta_h_solution_NaCl = 0
@@ -40,8 +34,7 @@ protected
 //  SI.SpecificEnthalpy h_H2O =  Modelica.Media.Water.WaterIF97_pT.specificEnthalpy_pT(p, T);
   SI.SpecificEnthalpy h_Driesner;
 
-  BrineProp.Types.PartialMolarEnthalpy[5] H_appmol
-    "TODO: remove absolute indices";
+  BrineProp.Types.PartialMolarEnthalpy H_appmol[:]=fill(0,size(X,1)-1);
   parameter Integer[:] otherSalts=cat(1,
   if iKCl>0 then {iKCl} else fill(0,0),
   if iCaCl2>0 then {iCaCl2} else fill(0,0),
@@ -62,24 +55,37 @@ algorithm
   else
     T2 := T;
   end if;
+  h_Driesner :=specificEnthalpy_pTX_Driesner(p,T2,X[iNaCl]/(X[iNaCl] + X[end]));
 
-  h_Driesner :=specificEnthalpy_pTX_Driesner(p,T2,X[1]/(X[1] + X[end]));
+  if iKCl>0 then
+    H_appmol[iKCl] :=if b[iKCl] > 0 then appMolarEnthalpy_KCl_White(
+      T2,
+      b[iKCl],
+      ignoreTlimit) else 0;
+  end if;
 
-  H_appmol:={0,if b[iKCl] > 0 then appMolarEnthalpy_KCl_White(
+  if iCaCl2>0 then
+    H_appmol[iCaCl2] :=if b[iCaCl2] > 0 then appMolarEnthalpy_CaCl2_White(
+      T2,
+      b[iCaCl2],
+      ignoreTlimit) else 0;
+  end if;
+
+  /*H_appmol:={0,if b[iKCl] > 0 then appMolarEnthalpy_KCl_White(
     T2,
     b[iKCl],
     ignoreTlimit) else 0,if b[iCaCl2] > 0 then appMolarEnthalpy_CaCl2_White(
     T2,
     b[iCaCl2],
     ignoreTlimit) else 0,0,0} "TODO: remove absolute indices";
+    */
 
-  h := (X[iNaCl]+X[end])*h_Driesner + X[end]*b[otherSalts]*H_appmol[otherSalts]
-    "TODO: remove absolute indices";
+  h := (X[iNaCl]+X[end])*h_Driesner + X[end]*b[otherSalts]*H_appmol[otherSalts];
 
 //  print("MM_vec      :"+PowerPlant.vector2string(MM_vec));
 //  print("b                :"+PowerPlant.vector2string(b));
 //  print("otherSalts:"+Modelica.Math.Matrices.toString({otherSalts}));
 //  print("H_appmol         :"+PowerPlant.vector2string(H_appmol));
 
-//  print("Brine.specificEnthalpy_pTX_Francke: "+String(p*1e-5)+"bar. "+String(T)+"degC->"+String(h)+" J/kg");
+ print("Brine.specificEnthalpy_pTX_Francke: "+String(p*1e-5)+"bar. "+String(T)+"degC->"+String(h)+" J/kg");
 end specificEnthalpy_pTX_liq_Francke_cp;
