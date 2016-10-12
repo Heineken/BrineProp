@@ -16,8 +16,9 @@ equation
   for i in 1:n loop
     props[i].p=data[i,4]*1e5;
     props[i].T=data[i,5];
-    props[i].Xi = {data[i,1]*SaltData.M_NaCl,data[i,2]*SaltData.M_KCl,data[i,3]*SaltData.M_CaCl2} /
-        (1+data[i,1]*SaltData.M_NaCl+data[i,2]*SaltData.M_KCl+data[i,3]*SaltData.M_CaCl2);
+    props[i].Xi ={data[i, 1]*SaltData.M_NaCl,data[i, 2]*SaltData.M_KCl,data[i,
+      3]*SaltData.M_CaCl2}/(1 + data[i, 1]*SaltData.M_NaCl + data[i, 2]*
+      SaltData.M_KCl + data[i, 3]*SaltData.M_CaCl2);
 
     d[i]=props[i].d;
   end for;

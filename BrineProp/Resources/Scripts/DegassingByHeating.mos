@@ -1,0 +1,17 @@
+p_bar = signalOperatorValue("DegassingByHeating[end].props.p", SignalOperator.Max)/1e5;
+
+// Plot commands
+removePlots(false);
+Advanced.FilenameInLegend = false;
+Advanced.SequenceInLegend = true;
+Advanced.PlotLegendTooltip = true;
+Advanced.FullPlotTooltip = true;
+Advanced.DefaultAutoErase = true;
+Advanced.Legend.Horizontal = true;
+Advanced.Legend.Frame = false;
+Advanced.Legend.Transparent = true;
+Advanced.Legend.Location = 1;
+Advanced.FilesToKeep = 2;
+createPlot(id=1, x="T_C", y={"GVF", "props.x"}, heading="Degassing by decompression at "+String(p_bar)+" bar", range={20, 100, 0, 1}, autoscale=false, grid=true, legends={"gas void fraction", "gas mass fraction"}, colors={{28,108,200}, {238,46,47}}, thicknesses={0.5, 0.5}, range2={0.1, 0.9});
+createPlot(id=1, x="T_C", y={"props.y_g[1]", "props.y_g[2]", "props.y_g[3]", "props.y_g[4]"}, range={20, 100, 0, 1}, autoscale=false, grid=true, legends={"y_CO2", "y_N2", "y_CH4", "y_H2O"}, subPlot=2, leftTitleType=2, leftTitle="mole fraction", colors={{128,128,128}, {0,0,0}, {0,140,72}, {28,108,200}}, thicknesses={0.5, 0.5, 0.5, 0.5}, range2={0.25000000000000006, 0.75});
+
