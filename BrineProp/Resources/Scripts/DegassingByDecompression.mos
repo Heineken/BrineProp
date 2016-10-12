@@ -12,5 +12,6 @@ Advanced.Legend.Frame = false;
 Advanced.Legend.Transparent = true;
 Advanced.Legend.Location = 1;
 Advanced.FilesToKeep = 2;
-createPlot(id=1, x="p_bar", y={"GVF", "props.x"}, heading="Degassing by heating at "+String(T_C)+" °C", range={0, 90, 0, 1}, autoscale=false, grid=true, legends={"gas void fraction", "gas mass fraction"}, colors={{28,108,200}, {238,46,47}});
+createPlot(id=1, x="p_bar", y={"GVF", "props.x"}, heading="Degassing by decompression at "+String(T_C)+" °C", range={0, 90, 0, 1}, autoscale=false, grid=true, legends={"gas volume fraction", "gas mass fraction"}, colors={{28,108,200}, {238,46,47}});
 createPlot(id=1, x="p_bar", y={"props.y_g[1]", "props.y_g[2]", "props.y_g[3]", "props.y_g[4]"}, range={0, 90, 0, 1}, autoscale=false, grid=true, legends={"y_CO2", "y_N2", "y_CH4", "y_H2O"}, subPlot=2, leftTitleType=2, leftTitle="mole fraction", colors={{128,128,128}, {0,0,0}, {0,140,72}, {28,108,200}}, thicknesses={0.5, 0.5, 0.5, 0.5});
+//Plotting over p_bar only works for last simulation

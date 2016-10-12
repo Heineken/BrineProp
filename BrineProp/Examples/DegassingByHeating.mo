@@ -17,12 +17,15 @@ equation
   //SPECIFY THERMODYNAMIC STATE
   //degassing by heating starting at STP
   props.p = 1.01325e5;
-  props.T = 20+273.15+time;
+  props.T = 273.15+time;
 
-  //specify brine composition
+  //SPECIFY BRINE COMPOSITION
   props.Xi = {0.0839077010751,0.00253365118988,0.122786737978,7.2426359111e-05,0.000689505657647,6.14906384726e-05}
     "GrSk brine (Feldbusch 2-2013 1.1775g/ml V2)";
-  annotation (experiment(StopTime=90, __Dymola_NumberOfIntervals=100),
+  annotation (experiment(
+      StartTime=20,
+      StopTime=108,
+      __Dymola_NumberOfIntervals=100),
       __Dymola_experimentSetupOutput,
     __Dymola_Commands(file="Resources/Scripts/DegassingByHeating.mos"
         "Plot degassing"));
