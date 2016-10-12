@@ -1,4 +1,5 @@
 ﻿// Runs all models in /Examples and lists the ones that fail to simulate
+// simulates only first second, errors may occur at longer simulations
 ExampleDir = Modelica.Utilities.Files.loadResource("modelica:/BrineProp/Examples");
 n_files=Modelica.Utilities.Internal.FileSystem.getNumberOfFiles(ExampleDir);
 files = Modelica.Utilities.Internal.FileSystem.readDirectory(ExampleDir, n_files);
