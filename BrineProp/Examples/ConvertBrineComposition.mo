@@ -54,19 +54,19 @@ Real gasLiquidRatio=0.8475 "GVF/(1-GVF) at STP";*/
         props.T,
         props.X,
         Medium.MM_vec,
-        PartialPressures[1]),
+        PartialPressures[1],false),
     Medium.solubility_N2_pTX_Mao2006(
         props.p,
         props.T,
         props.X,
         Medium.MM_vec,
-        PartialPressures[2]),
+        PartialPressures[2],false),
     Medium.solubility_CH4_pTX_Duan2006(
         props.p,
         props.T,
         props.X,
         Medium.MM_vec,
-        PartialPressures[3])}/(1 - props.x)
+        PartialPressures[3],false)}/(1 - props.x)
     "gas mass in liquid phase per fluid mass";
 
   Real V_l = sum(props.X_l[i_gas]./Medium.MM_gas)*22.4/props.X_l[Medium.nX]
