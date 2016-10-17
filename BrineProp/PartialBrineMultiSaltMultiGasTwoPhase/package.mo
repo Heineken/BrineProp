@@ -536,7 +536,7 @@ protected
         end if;
         x:=0;
         //p_H2O := p_sat_H2O;
-       elseif not max(X[1:end-1])>0 then
+       elseif not max(X[1:end-1])>0 then //no gas, no salts
         isTwoPhaseWater:=true;
           if debugmode then
             print("2Phase water (PartialBrine_Multi_TwoPhase_ngas.setState_pTX("+String(p)+","+String(T2)+"))");
@@ -550,7 +550,7 @@ protected
 */
         d_l := 1;//dummy
         d_g :=Modelica.Media.Water.IF97_Utilities.rhov_T(T);
-        x:=1;
+        x:=1; // can't be in the 2-phase range with p,T
 
        else
         assert(max(X[end-nX_gas:end-1])>0,"Phase equilibrium cannot be calculated without dissolved gas at "+String(p/1e5)+" bar, "+String(T2-273.15)+"degC with p_degas="+String(sum(p_degas)/1e5)+" bar.");
