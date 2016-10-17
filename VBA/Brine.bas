@@ -18,7 +18,7 @@ Type BrineProps
     'h   As Double 'Specific enthalpy
     'h_g As Double 'Specific enthalpy gas phase
     'h_l As Double 'Specific enthalpy liquid phase
-    x As Double 'gas mass fraction
+    x_ As Double 'gas mass fraction
     'cp_l As Double 'Specific heat capacity liquid phase
     X_l() As Double '(nX) composition of liquid phase
     X_g() As Double '(nX_gas + 1)  composition of gas phase
@@ -197,7 +197,7 @@ Function gasMassFraction(pOrVLEstate, Optional T As Double = -1, Optional Xi = -
     If Len(VLEstate.error) > 0 Then
         gasMassFraction = VLEstate.error
     Else
-        gasMassFraction = VLEstate.x
+        gasMassFraction = VLEstate.x_
     End If
 End Function
 
@@ -216,7 +216,7 @@ Function specificEnthalpy(pOrVLEstate, Optional T As Double = -1, Optional Xi = 
     End If
     
     Dim h_g
-    If VLEstate.x > 0 Then
+    If VLEstate.x_ > 0 Then
             h_g = Brine_gas.specificEnthalpy(VLEstate.p, VLEstate.T, ToDouble(SubArray(VLEstate.X_g, 1, nX_gas)))     'gas specific enthalpy
         'Else
         '    specificEnthalpy_gas = 0 'no gas phase
@@ -225,7 +225,7 @@ Function specificEnthalpy(pOrVLEstate, Optional T As Double = -1, Optional Xi = 
         specificEnthalpy = h_g
         Exit Function
     End If
-    specificEnthalpy = VLEstate.x * h_g + (1 - VLEstate.x) * h_l
+    specificEnthalpy = VLEstate.x_ * h_g + (1 - VLEstate.x_) * h_l
 End Function
 Function specificEnthalpy_liq(pOrVLEstate, Optional T As Double = -1, Optional Xi = -1, Optional phase As Integer = 0)
     Dim VLEstate As BrineProps: VLEstate = getVLEstate(pOrVLEstate, T, Xi, phase)
@@ -240,7 +240,7 @@ Function specificEnthalpy_gas(pOrVLEstate, Optional T As Double = -1, Optional X
     Dim VLEstate As BrineProps: VLEstate = getVLEstate(pOrVLEstate, T, Xi, phase)
     If Len(VLEstate.error) > 0 Then
         specificEnthalpy_gas = VLEstate.error
-    ElseIf VLEstate.x = 0 Then
+    ElseIf VLEstate.x_ = 0 Then
         specificEnthalpy_gas = "#no gas phase"
     Else
         Dim h_g: h_g = Brine_gas.specificEnthalpy(VLEstate.p, VLEstate.T, ToDouble(SubArray(VLEstate.X_g, 1, nX_gas)))  'gas specific enthalpy
@@ -259,7 +259,7 @@ Function gasVolumeFraction(pOrVLEstate, Optional T As Double = -1, Optional Xi =
             gasVolumeFraction = d
             Exit Function
         End If
-        gasVolumeFraction = IIf(VLEstate.x > 0, VLEstate.x * d / d_g, 0)
+        gasVolumeFraction = IIf(VLEstate.x_ > 0, VLEstate.x_ * d / d_g, 0)
     End If
 End Function
 
@@ -269,13 +269,13 @@ Function density(pOrVLEstate, Optional T As Double = -1, Optional Xi = -1, Optio
         density = VLEstate.error
     Else
 
-        'Dim d_l: d_l = IIf(VLEstate.x < 1, Brine_liq.density(VLEstate.p, VLEstate.T, VLEstate.Xi_l), -1) 'liquid density
-        Dim d_l: d_l = IIf(VLEstate.x < 1, Brine_liq.density(VLEstate.p, VLEstate.T, ToDouble(SubArray(VLEstate.X_l, 1, nX_salt))), -1) 'liquid density
+        'Dim d_l: d_l = IIf(VLEstate.x_ < 1, Brine_liq.density(VLEstate.p, VLEstate.T, VLEstate.Xi_l), -1) 'liquid density
+        Dim d_l: d_l = IIf(VLEstate.x_ < 1, Brine_liq.density(VLEstate.p, VLEstate.T, ToDouble(SubArray(VLEstate.X_l, 1, nX_salt))), -1) 'liquid density
         If VarType(d_l) = vbString Then 'if error
             density = d_l
             Exit Function
         End If
-        If VLEstate.x > 0 Then
+        If VLEstate.x_ > 0 Then
  '           d_g = Brine_gas.density(VLEstate.p, T, VLEstate.X_g) 'gas density
             Dim d_g_tmp: d_g_tmp = Brine_gas.density(VLEstate.p, VLEstate.T, VLEstate.X_g) 'gas density
             If VarType(d_g_tmp) = vbString Then 'if error
@@ -288,7 +288,7 @@ Function density(pOrVLEstate, Optional T As Double = -1, Optional Xi = -1, Optio
             d_g = -1 'no gas phase
         End If
         
-        density = 1 / (VLEstate.x / d_g + (1 - VLEstate.x) / d_l)       'fluid density
+        density = 1 / (VLEstate.x_ / d_g + (1 - VLEstate.x_) / d_l)       'fluid density
     End If
 End Function
 
@@ -306,8 +306,8 @@ Function density_liq(pOrVLEstate, Optional T As Double = -1, Optional Xi = -1, O
     If Len(VLEstate.error) > 0 Then
         density_liq = VLEstate.error
     Else
-'        Dim d_l: d_l = IIf(VLEstate.x < 1, Brine_liq.density(p, T, VLEstate.Xi_l), -1) 'liquid density
-        Dim d_l: d_l = IIf(VLEstate.x < 1, Brine_liq.density(VLEstate.p, VLEstate.T, ToDouble(SubArray(VLEstate.X_l, 1, nX_salt))), -1) 'liquid density
+'        Dim d_l: d_l = IIf(VLEstate.x_ < 1, Brine_liq.density(p, T, VLEstate.Xi_l), -1) 'liquid density
+        Dim d_l: d_l = IIf(VLEstate.x_ < 1, Brine_liq.density(VLEstate.p, VLEstate.T, ToDouble(SubArray(VLEstate.X_l, 1, nX_salt))), -1) 'liquid density
         density_liq = d_l
     End If
 End Function
@@ -316,7 +316,7 @@ Function density_gas(pOrVLEstate, Optional T As Double = -1, Optional Xi = -1, O
     Dim VLEstate As BrineProps: VLEstate = getVLEstate(pOrVLEstate, T, Xi, phase)
     If Len(VLEstate.error) > 0 Then
         density_gas = VLEstate.error
-    ElseIf VLEstate.x = 0 Then
+    ElseIf VLEstate.x_ = 0 Then
         density_gas = "#no gas phase"
     Else
         density_gas = Brine_gas.density(VLEstate.p, VLEstate.T, VLEstate.X_g) 'gas density
@@ -335,7 +335,7 @@ Function specificHeatCapacityCp(pOrVLEstate, Optional T As Double = -1, Optional
         End If
         
         Dim cp_g:
-        If VLEstate.x > 0 Then
+        If VLEstate.x_ > 0 Then
             cp_g = Brine_gas.specificHeatCapacityCp(VLEstate.p, VLEstate.T, ToDouble(SubArray(VLEstate.X_g, 1, nX_gas))) 'gas specific enthalpy
         'Else
         '    specificEnthalpy_gas = 0 'no gas phase
@@ -345,7 +345,7 @@ Function specificHeatCapacityCp(pOrVLEstate, Optional T As Double = -1, Optional
             Exit Function
         End If
 
-        specificHeatCapacityCp = VLEstate.x * cp_g + (1 - VLEstate.x) * cp_l
+        specificHeatCapacityCp = VLEstate.x_ * cp_g + (1 - VLEstate.x_) * cp_l
     End If
 End Function
 Function specificHeatCapacityCp_liq(pOrVLEstate, Optional T As Double = -1, Optional Xi = -1, Optional phase As Integer = 0)
@@ -361,7 +361,7 @@ Function specificHeatCapacityCp_gas(pOrVLEstate, Optional T As Double = -1, Opti
     Dim VLEstate As BrineProps: VLEstate = getVLEstate(pOrVLEstate, T, Xi, phase)
     If Len(VLEstate.error) > 0 Then
         specificHeatCapacityCp_gas = VLEstate.error
-    ElseIf VLEstate.x = 0 Then
+    ElseIf VLEstate.x_ = 0 Then
         specificHeatCapacityCp_gas = "#no gas phase"
     Else
         Dim cp_g: cp_g = Brine_gas.specificHeatCapacityCp(VLEstate.p, VLEstate.T, ToDouble(SubArray(VLEstate.X_g, 1, nX_gas)))  'gas specific enthalpy
@@ -384,7 +384,7 @@ End Function
 '    If Len(VLEstate.error) > 0 Then
 '        MassComposition = VLEstate.error
 '    Else
-'        MassComposition = VLEstate.x 'Vector2String(VLEstate.X)
+'        MassComposition = VLEstate.x_ 'Vector2String(VLEstate.X)
 '    End If
 'End Function
 
@@ -401,7 +401,7 @@ Function MassComposition_gas(pOrVLEstate, Optional T As Double = -1, Optional Xi
     Dim VLEstate As BrineProps: VLEstate = getVLEstate(pOrVLEstate, T, Xi, phase)
     If Len(VLEstate.error) > 0 Then
         MassComposition_gas = VLEstate.error
-    ElseIf VLEstate.x = 0 Then
+    ElseIf VLEstate.x_ = 0 Then
         MassComposition_gas = "#no gas phase"
     Else
         MassComposition_gas = Vector2String(VLEstate.X_g)
@@ -412,7 +412,7 @@ Function p_gas(pOrVLEstate, Optional T As Double = -1, Optional Xi = -1, Optiona
     Dim VLEstate As BrineProps: VLEstate = getVLEstate(pOrVLEstate, T, Xi, phase)
     If Len(VLEstate.error) > 0 Then
         p_gas = VLEstate.error
-    ElseIf VLEstate.x = 0 Then
+    ElseIf VLEstate.x_ = 0 Then
         p_gas = "#no gas phase"
     Else
 '        p_gas = Vector2String(VLEstate.p_gas)
@@ -434,7 +434,7 @@ Function dynamicViscosity_gas(pOrVLEstate, Optional T As Double = -1, Optional X
     Dim VLEstate As BrineProps: VLEstate = getVLEstate(pOrVLEstate, T, Xi, phase)
     If Len(VLEstate.error) > 0 Then
         dynamicViscosity_gas = VLEstate.error
-    ElseIf VLEstate.x = 0 Then
+    ElseIf VLEstate.x_ = 0 Then
         dynamicViscosity_gas = "#no gas phase"
     Else
         dynamicViscosity_gas = Brine_gas.dynamicViscosity(VLEstate.p, VLEstate.T, SubArray(VLEstate.X_g, 1, nX_gas))
@@ -525,6 +525,9 @@ Private Function VLE(p As Double, T As Double, Xi, Optional phase As Integer = 0
         If DebugMode Then
             Debug.Print ("1Phase-Liquid (VLE(" & p & "," & T & "))")
         End If
+    ElseIf Not Application.Max(SubArray(x, 1, nX - 1)) > 0 Then
+        Debug.Print "2-phase water"
+        x_ = 1
     Else
         If Not Application.Max(SubArray(x, nX_salt + 1, nX - 1)) > 0 Then
             VLE.error = "#Phase equilibrium cannot be calculated without dissolved gas" ' at "+String(p/1e5)+" bar, "+String(T-273.15)+"°C with p_degas="+String(sum(p_degas)/1e5)+" bar.")
@@ -633,7 +636,7 @@ Break:
     With VLEstate
         .p = p
         .T = T
-        .x = x_ 'mass fraction
+        .x_ = x_ 'mass fraction
         .X_l = X_l
         .X_g = X_g
         '.Xi_l = Xi_l 'only salts
@@ -667,12 +670,12 @@ Dim VLEstruct As BrineProps: VLEstruct = VLE(p, T, Xi, phase)
             VLEasJSON = "{" & _
                     "p:" & .p & ", " & _
                     "T:" & .T & ", " & _
-                    "x:" & .x & ", " & _
+                    "x:" & .x_ & ", " & _
                     "p_degas:" & .p_degas & ", " & _
                     "p_gas:" & Vector2String(.p_gas) & ", " & _
                     "X_l:" & Vector2String(.X_l) & ", " & _
                     "X_g:" & Vector2String(.X_g) & ", " & _
-                    "phase:" & IIf(VLEstruct.x > 0 And VLEstruct.x < 1, 2, 1) & ", " & _
+                    "phase:" & IIf(VLEstruct.x_ > 0 And VLEstruct.x_ < 1, 2, 1) & ", " & _
                     "error:" & .error & _
                     "}"
 '                    "Xi_l:" & Vector2String(.Xi_l) & ", " & _
@@ -693,7 +696,7 @@ Function JSON2VLEstate(VLE_JSON As String) As BrineProps 'create VLE struct from
         .phase = GetValueFromJSON(VLE_JSON, "phase")
         .X_l = String2Vector(GetValueFromJSON(VLE_JSON, "X_l"))
         .X_g = String2Vector(GetValueFromJSON(VLE_JSON, "X_g"))
-        .x = GetValueFromJSON(VLE_JSON, "x")
+        .x_ = GetValueFromJSON(VLE_JSON, "x")
         .error = GetValueFromJSON(VLE_JSON, "error")
     End With
 End Function
@@ -722,7 +725,7 @@ Function JSON2VLEstate2(VLE_JSON As String) As BrineProps 'create VLE struct fro
             ElseIf key = "X_g" Then
                 .X_g = String2Vector(keyval(1))
             ElseIf key = "x" Then
-                .x = keyval(1)
+                .x_ = keyval(1)
             ElseIf key = "error" Then
                 .error = keyval(1)
             End If

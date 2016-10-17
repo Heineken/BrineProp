@@ -29,7 +29,6 @@ Type SaltProps
      Zh_D As Double
      Zh_E As Double
      Zh_F As Double
-
      mola_max_eta As Double 'maximum molality for which viscosity function is valid
 End Type
 Public Const M_NaCl = 0.058443
