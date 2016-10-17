@@ -445,7 +445,7 @@ protected
 
 
     redeclare replaceable partial function extends setState_pTX
-  "finds the VLE iteratively by varying the normalized quantity of gas in the gasphase, calculates the densities"
+      "finds the VLE iteratively by varying the normalized quantity of gas in the gasphase, calculates the densities"
     input Real[nX_gas + 1] n_g_norm_start= fill(0.1,nX_gas+1)
     "start value, all gas in gas phase, all water liquid, set in BaseProps";
     /*
@@ -541,13 +541,16 @@ protected
           if debugmode then
             print("2Phase water (PartialBrine_Multi_TwoPhase_ngas.setState_pTX("+String(p)+","+String(T2)+"))");
           end if;
-          X_l:=X_l;
+    //      X_l:=X_l;
        // h:=Modelica.Media.Water.WaterIF97_pT.specificEnthalpy_pT(p, T);
-        h_l :=Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.hl_p(p);
-        h_g :=Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.hv_p(p);
-        x :=min(max((Modelica.Media.Water.WaterIF97_pT.specificEnthalpy_pT(p, T) - h_l)/(h_g - h_l + 1e-18), 0), 1);
-        d_l :=Modelica.Media.Water.IF97_Utilities.rhol_T(T);
+    /*    h_l :=Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.hl_p(p);
+    h_g :=Modelica.Media.Water.IF97_Utilities.BaseIF97.Regions.hv_p(p);
+    x :=min(max((Modelica.Media.Water.WaterIF97_pT.specificEnthalpy_pT(p, T) - h_l)/(h_g - h_l + 1e-18), 0), 1);
+    d_l :=Modelica.Media.Water.IF97_Utilities.rhol_T(T);
+*/
+        d_l := 1;//dummy
         d_g :=Modelica.Media.Water.IF97_Utilities.rhov_T(T);
+        x:=1;
 
        else
         assert(max(X[end-nX_gas:end-1])>0,"Phase equilibrium cannot be calculated without dissolved gas at "+String(p/1e5)+" bar, "+String(T2-273.15)+"degC with p_degas="+String(sum(p_degas)/1e5)+" bar.");
@@ -577,6 +580,7 @@ protected
       //DEGASSING PRESSURE
             (p_H2O,p_H2O_0):=saturationPressure_H2O(p,T2,X_l,MM_vec,nM_vec)
         "X_l changes";
+
         if (p_H2O>p) then
             print("p_H2O(" + String(p/1e5) + " bar," +
               String(T2 - 273.15) + "degC, " + Modelica.Math.Matrices.toString(transpose([X])) + ") = "
