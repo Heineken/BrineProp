@@ -9,19 +9,35 @@ Attribute VB_Name = "Common"
 Option Explicit
 Option Base 1
 
+Public Function isArrayEmpty(vec As Variant) As Boolean
+'Returns false if not an array or dynamic array that has not been initialised (ReDim) or has been erased (Erase)
+
+    If IsArray(vec) = False Then isArrayEmpty = True
+    
+    On Error Resume Next
+    If vec.Count > 0 Then isArrayEmpty = False: Exit Function 'Range
+    If UBound(vec) < LBound(vec) Then isArrayEmpty = True: Exit Function Else: isArrayEmpty = False 'Array
+End Function
+
 Function Vector2String(vec)
+'    Vector2String = "{" & Join(vec, ";") & "}" Works only for string arrays
+    If isArrayEmpty(vec) Then
+        Vector2String = "{}"
+        Exit Function
+    End If
+        
     Dim val
     Vector2String = "{"
     For Each val In vec
         Vector2String = Vector2String & CStr(val) & ";"
     Next val
-    Vector2String = Left(Vector2String, Len(Vector2String) - 1) & "}"
+    Vector2String = Left(Vector2String, Len(Vector2String) - 1) & "}" ' crop last semicolon
 End Function
 
 Function String2Vector(Xi_string, Optional ByRef n As Integer) 'As Double() Converts composition string to vector of doubles'
     ' input as {1.1;2.2;3.3} or 1.1;2.2;3.3 or {1,1;2.2;3.3} or 1.1;2.2;3.3
-    If Len(Xi_string) = 0 Then
-        String2Vector = "#Xi is empty"
+    If Len(Xi_string) = 0 Or Xi_string = "{}" Then
+        String2Vector = "#Stringvector is empty"
         Exit Function
     End If
         
@@ -141,15 +157,20 @@ Function ToDouble(vec, Optional ByRef n As Integer, Optional reduce = False) 'Ty
         Dim i As Integer
  '       Dim offset As Integer: offset = LBound(vec) - 1
 
+'Is passed array 1D or 2D (when given anot as String or Range, but as {1,2,3})
+On Error GoTo TwoD: 'coz there is no function to query the number of dimensions in VBA (https://stackoverflow.com/questions/6901991/how-to-return-the-number-of-dimensions-of-a-variant-variable-passed-to-it-in-v)
         For i = 1 To n
-            'If vt = 8204 Then
-            '    dbl(i) = vec(i, 1)
-            'Else
-                dbl(i) = vec(i + offset)
-            'End If
+            dbl(i) = vec(i + offset) ' Try 1D Array
         Next i
         ToDouble = dbl
     End If
+    Exit Function
+    
+TwoD:
+    For i = 1 To n
+        dbl(i) = vec(i + offset, 1) ' 2D Array
+    Next i
+    ToDouble = dbl
 End Function
 
 Function VecAbs(vec) 'As Double()
@@ -339,27 +360,27 @@ End Function
 
 Function FullMassVector(Xi, Optional ByRef nX As Integer) 'As Double()
     Dim nXi As Integer
-    Dim X '() As Double
-    X = ToDouble(Xi, nXi)
-    If VarType(X) = vbString Or VarType(X) = vbError Or IsEmpty(X) Then
-        FullMassVector = X
+    Dim x '() As Double
+    x = ToDouble(Xi, nXi)
+    If VarType(x) = vbString Or VarType(x) = vbError Or IsEmpty(x) Then
+        FullMassVector = x
         Exit Function
     End If
     nX = nXi + 1
-    ReDim Preserve X(1 To nX)
+    ReDim Preserve x(1 To nX)
   
-    X(nX) = 1 - Application.Sum(Xi)
-    If X(nX) > 1 Or X(nX) < 0 Then 'removed X(nX) <= 0 to allow for pure gases
+    x(nX) = 1 - Application.Sum(Xi)
+    If x(nX) > 1 Or x(nX) < 0 Then 'removed X(nX) <= 0 to allow for pure gases
         'X(1) = -1
         FullMassVector = "Mass vector is wrong"
         Exit Function
     End If
-    FullMassVector = X
+    FullMassVector = x
 End Function
 
-Function massFractionsToMolalities(X, MM) 'Calculate molalities (mole_i per kg H2O) from mass fractions X
+Function massFractionsToMolalities(x, MM) 'Calculate molalities (mole_i per kg H2O) from mass fractions X
   Dim molalities, nX As Integer, nM As Integer
-  nX = Length(X)
+  nX = Length(x)
   nM = Length(MM)
   ReDim molalities(1 To nX) 'Molalities moles/m_H2O
     If nX <> nM Then
@@ -368,9 +389,9 @@ Function massFractionsToMolalities(X, MM) 'Calculate molalities (mole_i per kg H
 
     Dim i As Integer
     For i = 1 To nX
-        If X(nX) > 0 Then
-            If X(i) > 10 ^ -6 Then 'to prevent division by zero
-                molalities(i) = X(i) / (MM(i) * X(nX)) 'numerical errors may create X[i]>0 for non-present salts, this prevents it
+        If x(nX) > 0 Then
+            If x(i) > 10 ^ -6 Then 'to prevent division by zero
+                molalities(i) = x(i) / (MM(i) * x(nX)) 'numerical errors may create X[i]>0 for non-present salts, this prevents it
            'Else
            '    molalities(i) = 0
             End If
@@ -381,13 +402,13 @@ Function massFractionsToMolalities(X, MM) 'Calculate molalities (mole_i per kg H
   massFractionsToMolalities = molalities
 End Function
 
-Function massFractionToMolality(X, X_H2O, MM) 'Calculate molalities (mole_i per kg H2O) from mass fractions X
+Function massFractionToMolality(x, X_H2O, MM) 'Calculate molalities (mole_i per kg H2O) from mass fractions X
 'used in worksheet
-  Dim nX As Integer: nX = Length(X)
+  Dim nX As Integer: nX = Length(x)
 
     If X_H2O > 0 Then
-        If X > 10 ^ -6 Then
-            massFractionToMolality = X / (MM * X_H2O) 'numerical errors my create X[i]>0, this prevents it
+        If x > 10 ^ -6 Then
+            massFractionToMolality = x / (MM * X_H2O) 'numerical errors my create X[i]>0, this prevents it
        'Else
        '    molalities(i) = 0
         End If
@@ -397,33 +418,38 @@ Function massFractionToMolality(X, X_H2O, MM) 'Calculate molalities (mole_i per 
 End Function
 
 
-Function CheckMassVector(X, nX_must) As Variant
+Function CheckMassVector(x, nX_must) As Variant
     Dim nX As Integer, msg As String
     Dim Xout, s2v As Boolean
-If VarType(X) = vbString Then
-        Xout = String2Vector(X, nX) 'make sure first index is 1
+If VarType(x) = vbString Then
+        Xout = String2Vector(x, nX) 'make sure first index is 1
+        If VarType(Xout) = vbString Then
+            CheckMassVector = Xout
+            Exit Function
+        End If
         s2v = True 'stupid flag to avoid having to recheck or copy Xout=X
     Else
-        nX = Length(X)
+        nX = Length(x)
         ' Xout = X Doesn't work
         s2v = False
     End If
     
     If nX = nX_must - 1 Then 'without water
-        Xout = FullMassVector(IIf(s2v, Xout, X), nX) 'make sure first index is 1
-        If VarType(Xout) = vbString Then
-            CheckMassVector = Xout
-        ElseIf VarType(Xout) = vbError Then ' Or IIf(s2v, Xout(1), X(1)) = -1
+        Xout = FullMassVector(IIf(s2v, Xout, x), nX) 'make sure first index is 1
+        'If VarType(Xout) = vbString Then
+        '    CheckMassVector = Xout
+        'Else
+        If VarType(Xout) = vbError Then ' Or IIf(s2v, Xout(1), X(1)) = -1 'when does that happen?
             CheckMassVector = "#Mass vector is wrong"
-        Else
+        Else 'also if error string was returned
             CheckMassVector = Xout
         End If
 '    ElseIf nX = nX_salt + 1 Then 'Full mass vector with water
     ElseIf nX = nX_must Then 'Full mass vector with water
-        If Abs(Application.Sum(IIf(s2v, Xout, X)) - 1) > 10 ^ -8 Then
+        If Abs(Application.Sum(IIf(s2v, Xout, x)) - 1) > 10 ^ -8 Then
             CheckMassVector = "#Mass vector does not add up to 1"
         Else
-            CheckMassVector = ToDouble(IIf(s2v, Xout, X)) 'to prevent adding a dimension
+            CheckMassVector = ToDouble(IIf(s2v, Xout, x)) 'to prevent adding a dimension
         End If
     Else
         CheckMassVector = "#Mass vector has wrong number of elements (" & nX & " instead of " & nX_must - 1 & " or " & nX_must & " )"
