@@ -516,9 +516,11 @@ protected
       end if;
 
       p_H2O := saturationPressure_H2O(p,T2,X,MM_vec,nM_vec);
+      //  assert(ignoreCompleteEvaporation or p_H2O<p or not max(X[1:nX_salts])>0,""); should be caught by salinity limits
 
     /*     p_degas := cat(1,saturationPressures(p,T2,X,MM_vec), {p_H2O}); 60% slower*/
         p_gas :=fill(p/(nX_gas + 1), nX_gas + 1);
+
         solu :=solubilities_pTX(p,T,X_l,X,p_gas[1:nX_gas],ignoreTlimit=ignoreTlimit);
 
         k :=solu ./ p_gas[1:nX_gas];
@@ -670,7 +672,12 @@ protected
 
       if not isTwoPhaseWater then
     //DENSITY
-       X_g:=if x>0 then (X[end-nX_gas:end]-X_l[end-nX_gas:end]*(1-x))/x else fill(0,nX_gas+1);
+       X_g:=if x>0 then (X[end-nX_gas:end]-X_l[end-nX_gas:end]*(1-x))/x else fill(0,nX_gas+1); //Total gas - gas in liquid phase
+       if x==1 then
+         X_g :=X_g/sum(X_g); //Normalize
+       end if;
+    //   assert(x==0 or abs(sum(X_g)-1)<1e-6,"Gas phase mass composition doesn't add up to 1");
+
       /*Calculation here  R_gas :=if x > 0 then sum(Modelica.Constants.R*X_g ./ cat(1,MM_gas,{M_H2O})) else -1;
     d_g :=if x > 0 then p/(T2*R_gas) else -1;*/
       //  d_g:= if x>0 then p/(Modelica.Constants.R*T2)*(n_g*cat(1,MM_gas,{M_H2O}))/sum(n_g) else -1;
@@ -761,8 +768,8 @@ protected
       X_g=fill(0,nX_gas+1),
       s=0,
       x=x,
-      d_l=  d_l,
-      d_g=  d_g);
+      d_l = d_l,
+      d_g = d_g);
     else
       state := setState_pTX(p,
         temperature_phX(p,h,X,phase),
