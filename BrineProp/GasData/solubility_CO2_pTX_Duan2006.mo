@@ -77,7 +77,7 @@ algorithm
     X_gas:=0;
   else
   if AssertLevel>0 then
-     assert(ignoreTlimit or ignoreLimitCO2_T or (273<T and T<573),"Temperature out of validity range: T=" + String(T) + "K.\nTo ignore set ignoreLimitCO2_T=true",aLevel);
+//     assert(ignoreTlimit or ignoreLimitCO2_T or (273<T and T<573),"Temperature out of validity range: T=" + String(T) + "K.\nTo ignore set ignoreLimitCO2_T=true",aLevel);
      assert(ignoreLimitCO2_p or (0<p and p<2000e5),"Pressure out of validity range p=" + String(p/1e5) + " bar.\nTo ignore set ignoreLimitCO2_p=true",aLevel);
      assert(m_Sr==0 or ignoreLimitSalt_soluCO2[iSrCl2],  "The SrCl2 content is not considered here.",aLevel);
      assert(max(molalities[1:end-1])<=4.5,"Maximum salt molality (="+String(max(molalities))+") too high",aLevel);

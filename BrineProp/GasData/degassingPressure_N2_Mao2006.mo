@@ -15,7 +15,7 @@ algorithm
       T=T,
       X=X,
       MM_vec=MM_vec,
-      c_gas=X[iN2],ignoreTlimit=ignoreTlimit),
+      c_gas=X[iN2]),
     0,
     600e5,
     1e-8);

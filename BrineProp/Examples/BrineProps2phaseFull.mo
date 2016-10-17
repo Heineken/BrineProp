@@ -65,25 +65,21 @@ model BrineProps2phaseFull "Two-phase example demonstrating all features"
 //SI.SurfaceTension sigma = Modelica.Media.Water.WaterIF97_pT.surfaceTension(sat);
 //  SI.SurfaceTension sigma = Modelica.Media.Water.WaterIF97_pT.surfaceTension(props.sat);
 
-//  Real c_CO2=GasData.solubility_CO2_pTX_Duan2003(props.p,props.T,props.X,Medium.MM_vec,props.p);
-//  Real c_N2=GasData.solubility_N2_pTX_Duan2006(props.p,props.T,props.X,Medium.MM_vec,props.p);
-//  Real c=GasData.solubility_CH4_pTX_Duan2006(props.p,props.T,props.X,Medium.MM_vec,props.p_gas[2]);
+  Real c_CO2=Medium.solubility_CO2_pTX_Duan2006(props.p,props.T,props.X,Medium.MM_vec,props.p, false);
+  Real c_N2=Medium.solubility_N2_pTX_Mao2006(props.p,props.T,props.X,Medium.MM_vec,props.p, false);
+  Real c_CH4=Medium.solubility_CH4_pTX_Duan2006(props.p,props.T,props.X,Medium.MM_vec,props.p_gas[2], false);
 
-/*    SI.Pressure p_degas_CO2=Medium.degassingPressure_CO2_Duan2003(props.p,props.T,props.X,Medium.MM_vec);
-  SI.Pressure p_degas_N2=Medium.degassingPressure_N2_Duan2006(props.p,props.T,props.X,Medium.MM_vec);
+  SI.Pressure p_degas_CO2=Medium.degassingPressure_CO2_Duan2006(props.p,props.T,props.X,Medium.MM_vec);
+  SI.Pressure p_degas_N2=Medium.degassingPressure_N2_Mao2006(props.p,props.T,props.X,Medium.MM_vec);
   SI.Pressure p_degas_CH4=Medium.degassingPressure_CH4_Duan2006(props.p,props.T,props.X,Medium.MM_vec);
-  */
+/*  */
+  SI.MassConcentration TDS= sum(props.X_l[1:Medium.nX_salt])*props.d_l;
 
-  /*  SI.MassConcentration TDS= sum(props.X_l[1:Medium.nX_salt])*props.d_l;
-  SI.MassFraction[:] X_g=props.X-props.X_l*(1-props.x);*/
-//  Real[:] yy=y[2:3]./fill(1-y[4],2) "volume fraction of gas phase w/o H2O";
-//  Real[:] yy=(props.p_gas/props.p./{.038,.829,.128}-{1,1,1});
-//  Real[:] xx=(X_g[6:8]-{5.87E-05,8.04E-04,7.14E-05})./{5.87E-05,8.04E-04,7.14E-05};
 
-/*  Real[:] y_l=if not max(props.X_l[6:8])>0 then fill(0,Medium.nX_gas) else props.X_l[6:8]./Medium.MM_gas / sum(props.X_l[6:8]./Medium.MM_gas) 
+  Real[:] y_l=if not max(props.X_l[6:8])>0 then fill(0,Medium.nX_gas) else props.X_l[6:8]./Medium.MM_gas / sum(props.X_l[6:8]./Medium.MM_gas)
     "mol fraction of dissolved gases";
 
-*/
+
 /*
   Real[:] m=y[2:3]./fill(1-y[4],2) "mass fraction of gas in gas phase";
 
