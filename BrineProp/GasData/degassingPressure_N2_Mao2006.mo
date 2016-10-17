@@ -15,11 +15,11 @@ algorithm
       T=T,
       X=X,
       MM_vec=MM_vec,
-      c_gas=X[end - 2]),
+      c_gas=X[iN2],ignoreTlimit=ignoreTlimit),
     0,
     600e5,
     1e-8);
-  assert(size(X,1)==9 or size(X,1)==7,"Wenn es nicht 9 Komponenten gibt, dann haut die Konzentrationszuordnung hier nich hin (degassingPressure_N2_Duan2006)"); //TODO
+//  assert(size(X,1)==9 or size(X,1)==7,"Wenn es nicht 9 Komponenten gibt, dann haut die Konzentrationszuordnung hier nich hin (degassingPressure_N2_Duan2006)"); //TODO
 //  print("p_sat_N2("+String(X[end-2])+")="+String(p_gas)+" (degassingPressure_N2_Duan2006)");
 
 end degassingPressure_N2_Mao2006;

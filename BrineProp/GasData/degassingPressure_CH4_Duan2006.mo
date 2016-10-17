@@ -17,7 +17,7 @@ algorithm
   p_gas := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
       function solubility_res(
         solufun=function solubility_CH4_pTX_Duan2006(),p=p,T=T,X=X,MM_vec=MM_vec,
-        c_gas=X[end-1]),
+        c_gas=X[iCH4],ignoreTlimit=ignoreTlimit),
       0,
       2000e5,
       1e-8);

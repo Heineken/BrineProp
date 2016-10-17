@@ -7,7 +7,7 @@ algorithm
   p_gas := Modelica.Math.Nonlinear.solveOneNonlinearEquation(
       function solubility_res(
         solufun=function solubility_CO2_pTX_Duan2006(),p=p,T=T,X=X,MM_vec=MM_vec,
-        c_gas=X[end-3]),
+        c_gas=X[iCO2],ignoreTlimit=ignoreTlimit),
       0,
       1990e5,
       1e-8);

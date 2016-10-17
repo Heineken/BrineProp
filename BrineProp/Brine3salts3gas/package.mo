@@ -16,12 +16,16 @@ package Brine3salts3gas "Two-phase aqueous solution of NaCl, KCl, CaCl2, N2, CO2
       saltConstants_CaCl2},
     MM_salt = {M_NaCl,M_KCl,M_CaCl2},
     nM_salt = {nM_NaCl,nM_KCl,nM_CaCl2},
-    iNaCl=1,
-    iKCl=2,
-    iCaCl2=3,
+    final iNaCl=1,
+    final iKCl=2,
+    final iCaCl2=3,
+    iCO2=4,
+    iN2=5,
+    iCH4=6,
     final gasNames = {"carbondioxide","nitrogen","methane"},
     final MM_gas = {M_CO2,M_N2,M_CH4},
-    final nM_gas = {nM_CO2,nM_N2,nM_CH4});
+    final nM_gas = {nM_CO2,nM_N2,nM_CH4}); //iGas not final, because reassigned in Brine5salts3gas
+
 
 
 
