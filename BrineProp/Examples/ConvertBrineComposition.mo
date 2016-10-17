@@ -55,7 +55,7 @@ Real gasLiquidRatio=0.8475 "GVF/(1-GVF) at STP";*/
         props.X,
         Medium.MM_vec,
         PartialPressures[1]),
-    Medium.solubility_N2_pTX_Duan2006(
+    Medium.solubility_N2_pTX_Mao2006(
         props.p,
         props.T,
         props.X,

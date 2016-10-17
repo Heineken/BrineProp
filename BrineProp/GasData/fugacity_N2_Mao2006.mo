@@ -1,5 +1,5 @@
 within BrineProp.GasData;
-function fugacity_N2_Duan2006 "Zero search with EOS from Duan2006"
+function fugacity_N2_Mao2006 "Zero search with EOS from Duan2006"
   //doi:10.1016/j.?uid.2006.07.020
   //Shide Mao, Zhenhao Duan:A thermodynamic model for calculating nitrogen solubility, gas phase composition and density of the N2?H2O?NaCl system
   extends partial_fugacity_pTX;
@@ -78,4 +78,4 @@ while abs(V-V_neu)>1e-8 loop
 //  print("z="+String(z));
 //  print("V="+String(V));
 //  PowerPlant.Components.PipeStuff.print_msg(phi,"phi_N2=");
-end fugacity_N2_Duan2006;
+end fugacity_N2_Mao2006;

@@ -15,12 +15,12 @@ p_sat_H2O_Duan2003
 Par_CO2_Duan2003
 fugacity_CO2_Duan2006
 degassingPressure_CO2_Duan2006
-solubility_N2_pTX_Duan2006
+solubility_N2_pTX_Mao2006
 solubility_N2_pTX_Harting
-Par_N2_Duan2006
-fugacity_N2_Duan2006
-fugacity_H2O_Duan2006N2
-degassingPressure_N2_Duan2006
+Par_N2_Mao2006
+fugacity_N2_Mao2006
+fugacity_H2O_Mao2006N2
+degassingPressure_N2_Mao2006
 solubility_CH4_pTX_Duan2006
 solubility_CH4_pTX_Harting
 Par_CH4_Duan2006

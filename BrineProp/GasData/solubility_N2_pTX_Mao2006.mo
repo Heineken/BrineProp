@@ -1,5 +1,5 @@
 within BrineProp.GasData;
-function solubility_N2_pTX_Duan2006 "solubility calculation of N2 in seawater Mao&Duan(2006)
+function solubility_N2_pTX_Mao2006 "solubility calculation of N2 in seawater Mao&Duan(2006)
   Shide Mao and Zhenhao Duan (2006) A thermodynamic model for calculating nitrogen solubility, gas phase composition and density of the H2O-N2-NaCl system. Fluid Phase Equilibria, 248 (2): 103-114
   273-400 K, 1-600 bar and 0-6 mol/kg
   http://dx.doi.org/10.1016/j.fluid.2006.07.020
@@ -88,16 +88,25 @@ algorithm
   else
 
     if AssertLevel>0 then
-     assert(ignoreTlimit or ignoreLimitN2_T or (273<T and T<400), "Temperature out of validity range: T=" + String(T - 273.15) + " C.\nTo ignore set ignoreLimitN2_T=true",aLevel);
-     assert(ignoreLimitN2_p or (1e5<p and p<600e5),"Pressure out of validity rangep=" + String(p/1e5) + " bar.\nTo ignore set ignoreLimitN2_p=true",aLevel);
-     assert(ignoreLimitN2_b or molalities[iNaCl]<6,"Molality out of validity range: mola[NaCl]=" + String(molalities[iNaCl]) + " mol/kg.\nTo ignore set ignoreLimitN2_b=true",aLevel);
+     assert(ignoreTlimit or ignoreLimitN2_T or (273<=T and T<=400), "Temperature out of validity range: T=" + String(T - 273.15) + " C.\nTo ignore set ignoreLimitN2_T=true",aLevel);
+     assert(ignoreLimitN2_p or (1e5<=p and p<=600e5),"Pressure out of validity range: p=" + String(p/1e5) + " bar.\nTo ignore set ignoreLimitN2_p=true",aLevel);
+     assert(ignoreLimitN2_b or molalities[iNaCl]<=6,"Molality out of validity range: mola[NaCl]=" + String(molalities[iNaCl]) + " mol/kg.\nTo ignore set ignoreLimitN2_b=true",aLevel);
      assert(m_Sr==0 or ignoreLimitSalt_soluN2[iSrCl2], "SrCl2 content is not considered here.",aLevel);
     end if;
 
-    phi_N2 :=fugacity_N2_Duan2006(p_gas+p_H2O, T);
-    mu_l0_N2_RT :=Par_N2_Duan2006(p_gas+p_H2O,T,mu_l0_N2_RT_c);
-    lambda_N2_Na :=Par_N2_Duan2006(p_gas+p_H2O,T,lambda_N2_Na_c);
-    xi_N2_NaCl :=Par_N2_Duan2006(p_gas+p_H2O,T,xi_N2_NaCl_c);
+    phi_N2 :=fugacity_N2_Mao2006(p_gas + p_H2O, T);
+    mu_l0_N2_RT :=Par_N2_Mao2006(
+      p_gas + p_H2O,
+      T,
+      mu_l0_N2_RT_c);
+    lambda_N2_Na :=Par_N2_Mao2006(
+      p_gas + p_H2O,
+      T,
+      lambda_N2_Na_c);
+    xi_N2_NaCl :=Par_N2_Mao2006(
+      p_gas + p_H2O,
+      T,
+      xi_N2_NaCl_c);
 
   //equ. 9
 //    solu := y_N2*p_bar*phi_N2 * exp(-mu_l0_N2_RT - 2*lambda_N2_Na*(m_Na + m_K + 2*m_Ca + 2*m_Mg) - xi_N2_NaCl*(m_Cl+2*m_SO4)*(m_Na + m_K + 2*m_Ca + 2*m_Mg) - 4*0.0371*m_SO4);
@@ -111,4 +120,4 @@ algorithm
 
 //  c_gas:=solu*M_N2 "kg_gas / kg_H2O";
 //    print("mola_N2("+String(p_gas)+","+String(T-273.16)+")="+String(X_gas)+"->k="+String(X_gas/max(1,p_gas))+" (solubility_N2_pTX_Duan2006)");
-end solubility_N2_pTX_Duan2006;
+end solubility_N2_pTX_Mao2006;
