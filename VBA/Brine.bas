@@ -34,10 +34,11 @@ Type BrineProps
     error As Variant 'String
 End Type
 
-Public Const outOfRangeMode = 2 '0-ignore, 1-print warning, 2 - throw error
+Public Const outOfRangeMode = 2 'on out of range: 0-ignore, 1-print warning, 2 - throw error
 Public Const DebugMode = False 'prints status messages
-Const ignoreLimitN2_T = True
-Const ignoreLimitN2_p = True
+Const ignoreLimitN2_T = False
+Const ignoreLimitN2_p = False
+Public Const ignoreResistivity_X = True
 
 
 Public Const nX = nX_salt + nX_gas + 1
@@ -277,7 +278,7 @@ Function density(pOrVLEstate, Optional T As Double = -1, Optional Xi = -1, Optio
         End If
         If VLEstate.x_ > 0 Then
  '           d_g = Brine_gas.density(VLEstate.p, T, VLEstate.X_g) 'gas density
-            Dim d_g_tmp: d_g_tmp = Brine_gas.density(VLEstate.p, VLEstate.T, VLEstate.X_g) 'gas density
+            Dim d_g_tmp: d_g_tmp = Brine_gas.density(VLEstate.p, VLEstate.T, VLEstate.X_g) 'gas density in temporary Variant, because d_g declared as double
             If VarType(d_g_tmp) = vbString Then 'if error
                 density = d_g_tmp
                 Exit Function
@@ -496,6 +497,10 @@ Private Function VLE(p As Double, T As Double, Xi, Optional phase As Integer = 0
     
     If T < 273.15 Then
         VLE.error = "T=" & T & " too low (<0°C) (VLE())"
+    End If
+    If p < 0 Then
+        VLE.error = "Negative pressure: p=" & p & " ( VLE() )"
+        Exit Function
     End If
     
         ' DEGASSING PRESSURE
@@ -733,7 +738,7 @@ Function JSON2VLEstate2(VLE_JSON As String) As BrineProps 'create VLE struct fro
     Next equation
 End Function
 
-Function getVLEstate(ByRef pOrVLEstate, Optional T As Double = -1, Optional Xi = -1, Optional phase As Integer = 0) As BrineProps 'make VLE struct from String or calculate
+Private Function getVLEstate(ByRef pOrVLEstate, Optional T As Double = -1, Optional Xi = -1, Optional phase As Integer = 0) As BrineProps 'make VLE struct from String or calculate
     If VarType(pOrVLEstate) = vbString Then
         getVLEstate = JSON2VLEstate2(CStr(pOrVLEstate))
     Else
