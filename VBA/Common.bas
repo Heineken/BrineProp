@@ -41,9 +41,18 @@ Function String2Vector(Xi_string, Optional ByRef n As Integer) 'As Double() Conv
         Exit Function
     End If
         
+    If Left(Xi_string, 1) = "#" Then 'ErrorMsg
+        String2Vector = Xi_string
+        Exit Function
+    End If
+    
+    
     Dim Xi_str As String: Xi_str = Trim(Xi_string)
-    If Left(Xi_str, 1) = "{" Then
+    If Left(Xi_str, 1) = "{" And Right(Xi_string, 1) = "}" Then
         Xi_str = Mid(Xi_str, 2, Len(Xi_str) - 2) ' remove curly braces
+    Else
+        String2Vector = "String format incorrect"
+        Exit Function
     End If
     
     'Change decimal separator
@@ -66,7 +75,7 @@ Function String2Vector(Xi_string, Optional ByRef n As Integer) 'As Double() Conv
     Dim i As Integer
     For i = 1 To n
         If Not IsNumeric(Xi_vec(i - 1)) Then
-            String2Vector = "#Error in composition string"
+            String2Vector = "#Error in input string"
             Exit Function
         End If
         Xi(i) = CDbl(Xi_vec(i - 1))
@@ -446,7 +455,7 @@ If VarType(x) = vbString Then
         End If
 '    ElseIf nX = nX_salt + 1 Then 'Full mass vector with water
     ElseIf nX = nX_must Then 'Full mass vector with water
-        If Abs(Application.Sum(IIf(s2v, Xout, x)) - 1) > 10 ^ -8 Then
+        If Abs(Application.Sum(IIf(s2v, Xout, x)) - 1) > 10 ^ -6 Then
             CheckMassVector = "#Mass vector does not add up to 1"
         Else
             CheckMassVector = ToDouble(IIf(s2v, Xout, x)) 'to prevent adding a dimension
