@@ -1,3 +1,5 @@
+# Repo has been moved to [GFZ-Git](https://gitext.gfz-potsdam.de/francke/BrineProp/)!
+
 BrineProp
 =========
 BrineProp is a modelica package that calculates the thermodynamic properties of a specified brine, i.e., an aqueous solution of salts and gases, with a potential gas phase, including degassing/evaporation and solution/condensation.
