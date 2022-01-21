@@ -1,4 +1,4 @@
-# Repo has been moved to [GFZ-Git](https://gitext.gfz-potsdam.de/francke/BrineProp/)!
+# Repo has been moved to [GFZ-Git](https://git.gfz-potsdam.de/francke/BrineProp/)!
 
 BrineProp
 =========
